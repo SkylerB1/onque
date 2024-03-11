@@ -56,13 +56,14 @@ const SocialMediaConnection = ({ children }) => {
 
   const handleSelected = async (data) => {
     try {
+      setLoading(true);
       const URL = ConnectUrl[selected];
-
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
         getConnections();
         removeSelected();
         handleCloseModal();
+        setLoading(false);
       }
     } catch (err) {}
   };

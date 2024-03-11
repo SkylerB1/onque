@@ -78,8 +78,8 @@ const Connection = () => {
 
   const handleSelected = async (data) => {
     try {
+      setLoading(true);
       const URL = ConnectUrl[selected];
-
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
         const user = useLocalStorage("user", "get");
@@ -87,6 +87,7 @@ const Connection = () => {
         getConnections(brandId);
         removeSelected();
         handleCloseModal();
+        setLoading(false);
       }
     } catch (err) {
       console.log(err);

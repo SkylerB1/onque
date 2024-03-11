@@ -16,16 +16,15 @@ import {
 } from "../common/commonString";
 import { useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
+import { Textarea } from "@material-tailwind/react";
 
 const ModalInput = ({
   selectedPreview,
   toggleimgUploadModal,
   toggleVideoUploadModal,
-  showEmoji,
   toggleEmojiModal,
   closeEmoji,
   toggleAiModal,
-  handleFile,
   handleCaption,
   files,
   handleimgError,
@@ -33,7 +32,6 @@ const ModalInput = ({
   removeimg,
   handleEdit,
   caption,
-  setCaption,
   OpenEditor,
   selectedPlaforms,
   additionalPresets,
@@ -149,16 +147,18 @@ const ModalInput = ({
                       />
                     </div>
                   )} */}
-              <label htmlFor="editor" className="sr-only">
-                Publish
-              </label>
-              <textarea
-                // contentEditable="true"
-                onFocus={closeEmoji}
-                className=" w-full flex flex-1 px-0 text-sm text-gray-800 bg-white dark:bg-gray-800 focus:ring-0 border-0 dark:text-white dark:placeholder-gray-400 overflow-y-auto min-h-[180px]"
-                type="text"
-                value={caption}
+              <Textarea
+                rows={1}
+                resize={true}
+                placeholder="Write your captions here..."
+                className="min-h-full !border-0 focus:border-transparent"
+                containerProps={{
+                  className: "grid h-full",
+                }}
                 onInput={(e) => handleCaption(e.target.value)}
+                labelProps={{
+                  className: "before:content-none after:content-none",
+                }}
               />
 
               <RenderFiles

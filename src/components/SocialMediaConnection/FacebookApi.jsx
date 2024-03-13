@@ -3,7 +3,7 @@ import { API_URL } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import FacebookFilled from "../svg/FacebookFilled";
 import { useSelector } from "react-redux";
-import { FacebookPagePlatform } from "../common/commonString";
+import { FacebookPagePlatform, InstagramAccount } from "../common/commonString";
 import { useAppContext } from "../../context/AuthContext";
 
 const FacebookApi = ({
@@ -13,6 +13,7 @@ const FacebookApi = ({
   label,
   backgroundColor,
   icon,
+  selected,
 }) => {
   const user = useSelector((state) => state.user.value);
   const { broadcastConnection } = useAppContext();
@@ -90,9 +91,7 @@ const FacebookApi = ({
       <span className="me-8 h-12 py-3 text-base text-white">
         <p className="font-bold whitespace-nowrap">{label}</p>
       </span>
-      <span className="h-12 text-xl py-3 text-stone-600">
-        {icon}
-      </span>
+      <span className="h-12 text-xl py-3 text-stone-600">{icon}</span>
     </div>
   );
 };

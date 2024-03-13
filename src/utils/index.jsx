@@ -25,7 +25,7 @@ export const user = useLocalStorage("user", "get");
 export const brandId = user?.brand?.id;
 export const ConnectUrl = {
   facebook_page: API_URL + `/auth/facebook/connection?brandId=${brandId}`,
-  instagram_account: API_URL + `/auth/facebook/connection?brandId=${brandId}`,
+  instagram_account: API_URL + `/auth/instagram/connection?brandId=${brandId}`,
   linkedin_page:
     API_URL + `/auth/linkedin/connection?type=page&brandId=${brandId}`,
   linkedin_profile:

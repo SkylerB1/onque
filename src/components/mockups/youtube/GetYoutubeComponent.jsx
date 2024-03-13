@@ -29,7 +29,7 @@ function GetYoutubeComponent({
   } else if (mediaType == "VIDEO" && !viewMode) {
     return (
       <VideoMobile
-        captions={captions}
+        captions={caption}
         viewMode={viewMode}
         files={files}
         data={data}

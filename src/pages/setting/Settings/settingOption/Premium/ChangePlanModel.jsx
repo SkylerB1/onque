@@ -81,12 +81,11 @@ const ChangePlanModel = ({ open, handleClose, listData, selectedOption }) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog size="xl" open={open} onClose={handleClose}>
       <DialogBody>
         <div className="social-tabme-modal">
           <div className="flex flex-1 items-center justify-between mb-5 mt-2">
             <Typography
-              id="modal-modal-title"
               variant="h6"
               component="h2"
               sx={{ marginBottom: "20px", fontWeight: "bold" }}

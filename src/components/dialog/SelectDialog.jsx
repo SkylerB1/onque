@@ -19,7 +19,6 @@ const SelectionModal = ({
   handleClose,
   platformIcon,
 }) => {
-  console.log(data)
   return (
     <Dialog size="sm" className="bg-[#efefef]" open={open}>
       <DialogHeader className="">{title}</DialogHeader>

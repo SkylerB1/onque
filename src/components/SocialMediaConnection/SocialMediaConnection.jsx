@@ -33,7 +33,7 @@ const SocialMediaConnection = ({ children }) => {
 
   const handleMenuItemClick = (item) => {
     setSelected(item);
-    handleClose();
+    handler();
   };
   const handler = () => {
     setOpen(!open);

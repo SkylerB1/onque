@@ -19,11 +19,15 @@ const SelectionModal = ({
   handleClose,
   platformIcon,
 }) => {
+  console.log(data)
   return (
-    <Dialog className="bg-[#efefef]" open={open}>
+    <Dialog size="sm" className="bg-[#efefef]" open={open}>
       <DialogHeader className="">{title}</DialogHeader>
       <p className="ml-4 mb-4 text-sm">{subTitle}</p>
-      <DialogBody divider={false} className="bg-white mx-4 rounded-md">
+      <DialogBody
+        divider={false}
+        className="bg-white mx-4 rounded-md overflow-y-auto"
+      >
         {!data || loading ? (
           <div className="flex flex-row justify-center">
             <Spinner className="h-10 w-10" />
@@ -75,7 +79,7 @@ const SelectionModal = ({
       </DialogBody>
       <DialogFooter>
         <Button
-          variant="text"
+          variant="outlined"
           color="red"
           onClick={handleClose}
           className="mr-1"

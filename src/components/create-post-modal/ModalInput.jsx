@@ -155,6 +155,7 @@ const ModalInput = ({
                 containerProps={{
                   className: "grid h-full",
                 }}
+                value={caption}
                 onInput={(e) => handleCaption(e.target.value)}
                 labelProps={{
                   className: "before:content-none after:content-none",

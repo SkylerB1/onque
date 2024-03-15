@@ -14,6 +14,7 @@ function YoutubePresets({ setAdditionalPresets, additionalPresets }) {
   const CATEGORIES_URL =
     API_URL + "/auth/youtube/categories?brandId=" + brandId;
   const [categories, setCategories] = useState([]);
+  const [open, setOpen] = useState(false);
   const visibilityOptions = useMemo(
     () => [
       { label: "Unlisted", value: "unlisted" },
@@ -38,7 +39,6 @@ function YoutubePresets({ setAdditionalPresets, additionalPresets }) {
       },
     }));
   };
-  const [open, setOpen] = useState(false);
 
   const toggleAccordion = () => {
     setOpen(!open);

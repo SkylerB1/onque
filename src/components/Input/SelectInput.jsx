@@ -3,6 +3,7 @@ import { Option, Select } from "../imports/imports";
 
 const SelectInput = ({
   label,
+  value,
   onChange,
   options,
   identifier,

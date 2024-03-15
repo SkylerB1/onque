@@ -47,7 +47,7 @@ const NavProfile = ({ clientData, setOpen }) => {
     localStorage.removeItem("user");
     removeCookie('access_token')
     navigate("/login");
-    const message = "User logout succesfully";
+    const message = "User logout successfully";
     toast.success(message);
   };
 

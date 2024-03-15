@@ -1,3 +1,4 @@
+import FlagIcon from "../assets/FlagIcon";
 import GoogleBusiness from "../assets/GoogleBusiness";
 import InstagramFilled from "../assets/InstagramFilled";
 import LinkedInUser from "../assets/LinkedInUser";
@@ -173,16 +174,22 @@ export const SocialPlatforms = {
     coloredIcon: (width, height) => (
       <div className="relative">
         <LinkedIn fill="#0077B5" width={width} height={height} />
-        <span className="absolute -top-[6px] -right-[6px] bg-gray-50 rounded-full p-[2px]">
-          <LinkedInUser width={12} height={12} fill={"#000000"} />
+        <span
+          style={{ top: "-5px", right: "-5px" }}
+          className="absolute bg-gray-50 rounded-full p-[2px]"
+        >
+          <FlagIcon width={12} height={12} fill={"#000000"} />
         </span>
       </div>
     ),
     nonColoredIcon: (width, height) => (
       <div className="relative">
         <LinkedIn fill="#D3D3D3" width={width} height={height} />
-        <span className="absolute -top-[6px] -right-[6px] bg-white rounded-full p-[2px]">
-          <LinkedInUser width={10} height={10} fill={"#D3D3D3"} />
+        <span
+          style={{ top: "-5px", right: "-5px" }}
+          className="absolute bg-white rounded-full p-[2px]"
+        >
+          <FlagIcon width={10} height={10} fill={"#D3D3D3"} />
         </span>
       </div>
     ),
@@ -194,7 +201,10 @@ export const SocialPlatforms = {
     coloredIcon: (width, height) => (
       <div className="relative">
         <LinkedIn fill="#0077B5" width={width} height={height} />
-        <span className="absolute -top-[6px] -right-[6px] bg-gray-50 rounded-full p-[2px]">
+        <span
+          style={{ top: "-5px", right: "-5px" }}
+          className="absolute bg-gray-50 rounded-full p-[2px]"
+        >
           <LinkedInUser width={12} height={12} fill={"#000000"} />
         </span>
       </div>
@@ -202,7 +212,10 @@ export const SocialPlatforms = {
     nonColoredIcon: (width, height) => (
       <div className="relative">
         <LinkedIn fill="#D3D3D3" width={width} height={height} />
-        <span className="absolute -top-[6px] -right-[6px] bg-white rounded-full p-[2px]">
+        <span
+          style={{ top: "-5px", right: "-5px" }}
+          className="absolute bg-white rounded-full p-[2px]"
+        >
           <LinkedInUser width={10} height={10} fill={"#D3D3D3"} />
         </span>
       </div>

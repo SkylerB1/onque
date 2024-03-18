@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import TwitterApi from "./TwitterApi";
-import { YouTubeApi } from "./YouTubeApi";
-import GoogleBusinessApi from "./GoogleBusinessApi";
-import LinkedInConnectProfile from "./LinkedinConnectProfile";
-import LinkedInConnectPage from "./LinkedInConnectPage";
 import SelectionModal from "../dialog/SelectDialog";
-import { API_URL, ConnectUrl } from "../../utils";
+import { ConnectUrl } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import useConnections from "../customHooks/useConnections.jsx";
 import { socialMediaList } from "../common/index";

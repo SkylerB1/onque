@@ -128,7 +128,7 @@ const ClientDetails = () => {
                                     <div className="">
                                         <div className="items-start justify-between">
                                             <div className="mt-4 w-[300px]">
-                                                <label>Change your brand name:</label>
+                                                <label>Change your client name:</label>
                                                 <div className="mt-4">
                                                     <Input
                                                         color="purple"

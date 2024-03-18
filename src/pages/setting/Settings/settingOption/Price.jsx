@@ -26,7 +26,7 @@ const Price = () => {
   const selectedPlanList = [
     {
       key: "starter",
-      title: "Stater Plan",
+      title: "Starter Plan",
       color: "#95C1D5",
       monthly_price: 85,
       annualy_price: 850,
@@ -117,6 +117,7 @@ const Price = () => {
       ]);
     }
   };
+
 
   return (
     <div className="mr-52 mb-32">

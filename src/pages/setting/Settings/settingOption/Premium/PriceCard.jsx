@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Radio, Typography } from "@material-tailwind/react";
 import ChangePlanModel from "./ChangePlanModel";
+import { axiosInstance } from "../../../../../utils/Interceptor";
 
 const PriceCard = ({ selectedPlanList, selectedOption }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,11 +14,24 @@ const PriceCard = ({ selectedPlanList, selectedOption }) => {
     setIsOpen(false);
   };
 
+
+  const handleSubscription = async () => {
+    try {
+      const response = await axiosInstance.post("/payments/create-checkout-session", {
+        lookup_keys: "starter_plan",
+      });
+      console.log(response);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div>
       <div className="w-96 shadow-lg rounded-2xl dark:bg-gray-800">
         <div
-          style={{ backgroundColor: color }} className="rounded-t-2xl text-white p-4"
+          style={{ backgroundColor: color }}
+          className="rounded-t-2xl text-white p-4"
         >
           <div className="flex flex-1 justify-between items-start">
             <p className="mb-4 text-xl font-medium text-gray-800 dark:text-gray-50">
@@ -84,7 +97,8 @@ const PriceCard = ({ selectedPlanList, selectedOption }) => {
       </div>
       <button
         type="button"
-        onClick={handleOpen}
+        // onClick={handleOpen}
+        onClick={handleSubscription}
         className="py-2 px-4 mt-5 bg-indigo-600 hover:bg-green-500 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
       >
         Upgrade plan

@@ -10,6 +10,8 @@ import {
   MenuItem,
   MenuList,
 } from "@material-tailwind/react";
+import InstagramAuthDialog from "./InstagramAuthDialog.jsx";
+import { useSelector } from "react-redux";
 
 const initialHeader = {
   title: "",
@@ -25,14 +27,53 @@ const SocialMediaConnection = ({ children }) => {
   const [modalHeader, setModalHeader] = useState(initialHeader);
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [instagramAuth, setInstagramAuth] = useState(false);
+  const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand?.id;
 
+  const instagramLogin = async () => {
+    try {
+      const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${
+        user?.id
+      }&brandId=${brandId}`;
+      const width = 450;
+      const height = 730;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+      window.open(
+        oauthUrl,
+        "instagram",
+        "menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=" +
+          width +
+          ", height=" +
+          height +
+          ", top=" +
+          top +
+          ", left=" +
+          left
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleInstagramLogin = () => {
+    instagramDialogHandler();
+    instagramLogin();
+  };
+
+  const instagramDialogHandler = () => {
+    setInstagramAuth(!instagramAuth);
+  };
   const handleMenuItemClick = (item) => {
     setSelected(item);
     handler();
   };
+
   const handler = () => {
     setOpen(!open);
   };
+
 
   const removeSelected = () => {
     setSelected(null);
@@ -86,6 +127,7 @@ const SocialMediaConnection = ({ children }) => {
                       setModalData={setModalData}
                       loading={loading}
                       setLoading={setLoading}
+                      instagramDialogHandler={instagramDialogHandler}
                       handleShowModal={handleShowModal}
                     />
                   }
@@ -105,6 +147,11 @@ const SocialMediaConnection = ({ children }) => {
         platformIcon={modalHeader.icon}
         handleClose={handleCloseModal}
         handleSelect={handleSelected}
+      />
+      <InstagramAuthDialog
+        open={instagramAuth}
+        handler={instagramDialogHandler}
+        onConfirm={handleInstagramLogin}
       />
     </>
   );

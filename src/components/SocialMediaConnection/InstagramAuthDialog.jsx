@@ -1,7 +1,14 @@
-import React from 'react'
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Typography } from '@material-tailwind/react'
+import React from "react";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+  Typography,
+} from "@material-tailwind/react";
 
-const InstagramAuthDialog = ({open,handler,onConfirm}) => {
+const InstagramAuthDialog = ({ open, handler, onConfirm }) => {
   return (
     <Dialog open={open} handler={handler}>
       <DialogHeader>Authenticate with Facebook</DialogHeader>
@@ -33,6 +40,6 @@ const InstagramAuthDialog = ({open,handler,onConfirm}) => {
       </DialogFooter>
     </Dialog>
   );
-}
+};
 
-export default InstagramAuthDialog
+export default InstagramAuthDialog;

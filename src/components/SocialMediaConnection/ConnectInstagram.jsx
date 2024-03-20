@@ -3,13 +3,8 @@ import { API_URL } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import FacebookFilled from "../svg/FacebookFilled";
 import { useSelector } from "react-redux";
-import {
-  FacebookPagePlatform,
-  InstagramPlatform,
-} from "../common/commonString";
+import { InstagramPlatform } from "../common/commonString";
 import { useAppContext } from "../../context/AuthContext";
-import useConnections from "../customHooks/useConnections";
-import InstagramAuthDialog from "./InstagramAuthDialog";
 
 const ConnectInstagram = ({
   setModalData,
@@ -17,15 +12,11 @@ const ConnectInstagram = ({
   handleShowModal,
   label,
   backgroundColor,
+  instagramDialogHandler,
   icon,
 }) => {
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
-  const { connections } = useConnections();
-  const [openDialog, setOpenDialog] = useState(false);
-  const isFbConnected = connections?.some(
-    (item) => item.platform === FacebookPagePlatform
-  );
   const { broadcastConnection } = useAppContext();
   const GET_ACCOUNTS_URL =
     API_URL + `/auth/instagram-business-accounts?brandId=${brandId}`;
@@ -34,58 +25,6 @@ const ConnectInstagram = ({
     subTitle: "Select the account you want to connect with this client.",
     icon: <FacebookFilled fill={"0095f6"} width={30} height={30} />,
   }));
-
-  const handleFacebookLogin = async () => {
-    try {
-      const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/facebook?userId=${
-        user?.id
-      }&brandId=${brandId}`;
-      const width = 450;
-      const height = 730;
-      const left = window.screen.width / 2 - width / 2;
-      const top = window.screen.height / 2 - height / 2;
-      window.open(
-        oauthUrl,
-        "facebook",
-        "menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=" +
-          width +
-          ", height=" +
-          height +
-          ", top=" +
-          top +
-          ", left=" +
-          left
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const handleInstagramLogin = async () => {
-    try {
-      const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${
-        user?.id
-      }&brandId=${brandId}`;
-      const width = 450;
-      const height = 730;
-      const left = window.screen.width / 2 - width / 2;
-      const top = window.screen.height / 2 - height / 2;
-      window.open(
-        oauthUrl,
-        "instagram",
-        "menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=" +
-          width +
-          ", height=" +
-          height +
-          ", top=" +
-          top +
-          ", left=" +
-          left
-      );
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const handleAccounts = async () => {
     try {
@@ -112,15 +51,6 @@ const ConnectInstagram = ({
     }
   };
 
-  const dialogHandler = () => {
-    setOpenDialog(!openDialog);
-  };
-
-  const handleLogin = () => {
-    dialogHandler();
-    isFbConnected ? handleInstagramLogin() : handleFacebookLogin();
-  };
-
   useEffect(() => {
     const handleConnection = ({ platform }) => {
       if (platform === InstagramPlatform) {
@@ -133,7 +63,7 @@ const ConnectInstagram = ({
   return (
     <>
       <div
-        onClick={dialogHandler}
+        onClick={instagramDialogHandler}
         className="flex w-full justify-between items-center rounded-md px-5"
         style={{ background: backgroundColor }}
       >
@@ -142,11 +72,6 @@ const ConnectInstagram = ({
         </span>
         <span className="h-12 text-xl py-3 text-stone-600">{icon}</span>
       </div>
-      <InstagramAuthDialog
-        open={openDialog}
-        handler={dialogHandler}
-        onConfirm={handleLogin}
-      />
     </>
   );
 };

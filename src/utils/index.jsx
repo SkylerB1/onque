@@ -178,7 +178,7 @@ export const SocialPlatforms = {
           style={{ top: "-5px", right: "-5px" }}
           className="absolute bg-gray-50 rounded-full p-[2px]"
         >
-          <FlagIcon width={12} height={12} fill={"#000000"} />
+          <FlagIcon width={width / 2} height={height / 2} fill={"#000000"} />
         </span>
       </div>
     ),
@@ -189,7 +189,7 @@ export const SocialPlatforms = {
           style={{ top: "-5px", right: "-5px" }}
           className="absolute bg-white rounded-full p-[2px]"
         >
-          <FlagIcon width={10} height={10} fill={"#D3D3D3"} />
+          <FlagIcon width={width / 2} height={height / 2} fill={"#D3D3D3"} />
         </span>
       </div>
     ),
@@ -205,7 +205,11 @@ export const SocialPlatforms = {
           style={{ top: "-5px", right: "-5px" }}
           className="absolute bg-gray-50 rounded-full p-[2px]"
         >
-          <LinkedInUser width={12} height={12} fill={"#000000"} />
+          <LinkedInUser
+            width={width / 2}
+            height={height / 2}
+            fill={"#000000"}
+          />
         </span>
       </div>
     ),
@@ -216,7 +220,11 @@ export const SocialPlatforms = {
           style={{ top: "-5px", right: "-5px" }}
           className="absolute bg-white rounded-full p-[2px]"
         >
-          <LinkedInUser width={10} height={10} fill={"#D3D3D3"} />
+          <LinkedInUser
+            width={width / 2}
+            height={height / 2}
+            fill={"#D3D3D3"}
+          />
         </span>
       </div>
     ),
@@ -230,5 +238,20 @@ export const SocialPlatforms = {
     nonColoredIcon: (width, height) => (
       <GoogleBusiness fill="#D3D3D3" width={width} height={height} />
     ),
+  },
+};
+
+export const lookupKeys = {
+  starter: {
+    monthly: "starter_plan_gbp",
+    yearly: "starter_plan_gbp_yearly",
+  },
+  advanced: {
+    monthly: "advanced_plan_gbp",
+    yearly: "advanced_plan_gbp_yearly",
+  },
+  enterprise: {
+    monthly: "enterprise_plan_gbp",
+    yearly: "enterprise_plan_gbp_yearly",
   },
 };

@@ -8,18 +8,12 @@ import {
   Collapse,
 } from "@material-tailwind/react";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import NavProfile from "../drop-down/navProfile";
-import { showSuccessMessage } from "../../utils/notificatuon";
 import { AppLogo } from "../common/Images";
 import DropdownClientList from "../drop-down/DropdownClientList";
 import { useDispatch, useSelector } from "react-redux";
-import { axiosInstance } from "../../utils/Interceptor";
-import { setUser } from "../../redux/features/userSlice";
 import useConnections from "../customHooks/useConnections";
-import AddClientModal from "../modal/addClientModal";
-import CustomModal from "../modal/customModal";
 import AddModal from "../modal/addClientModal";
 
 export default function Header({ children }) {
@@ -190,9 +184,7 @@ export default function Header({ children }) {
             </Button>
           </Collapse>
         </Navbar>
-        {/* Main Content */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
-          {/* ... Your main content here ... */}
           {children}
         </main>
       </div>

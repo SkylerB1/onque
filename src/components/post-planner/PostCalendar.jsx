@@ -19,7 +19,7 @@ const PostCalendar = (props) => {
   const [scheduledDate, setScheduledDate] = useState(dayjs());
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
-  const { connections, getConnections } = useConnections();
+  const { connections } = useConnections();
 
   const renderContentType = (type) => {
     if (type === "reels") {

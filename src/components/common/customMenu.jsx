@@ -3,8 +3,6 @@ import useConnections from '../customHooks/useConnections';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocalStorage } from '../../utils/LocalStorage';
 import { setUser } from '../../redux/features/userSlice';
-import { Link } from 'react-router-dom';
-import { GoPlus } from "react-icons/go";
 import FacebookFilled from "../svg/FacebookFilled";
 import Instagram from "../svg/Instagram";
 import Youtube from "../svg/Youtube";
@@ -17,7 +15,6 @@ const CustomMenu = ({ clientDatas }) => {
   const ref = useRef();
   const [selectedData, setSelectedData] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [opens, setOpen] = useState(false);
   const { getConnections } = useConnections();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);

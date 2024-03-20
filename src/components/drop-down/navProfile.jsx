@@ -1,5 +1,3 @@
-;
-
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MdPersonAddAlt1 } from "react-icons/md";
@@ -22,19 +20,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { getUserFromLocalStorage } from "../../redux/features/userSlice";
 import AddClientModal from "../modal/addClientModal";
 import { toast } from "react-hot-toast";
-import { Cookies, useCookies } from "react-cookie";
-const cookie = new Cookies()
+import { useCookies } from "react-cookie";
 
 const NavProfile = ({ clientData, setOpen }) => {
-  const ref = useRef()
+  const ref = useRef();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [platformes, setPlatformes] = useState([]);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.value);
   const [cookies, setCookie, removeCookie] = useCookies();
-
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -45,35 +39,35 @@ const NavProfile = ({ clientData, setOpen }) => {
   };
   const handlerLogOut = () => {
     localStorage.removeItem("user");
-    removeCookie('access_token')
+    removeCookie("access_token");
     navigate("/login");
     const message = "User logout successfully";
     toast.success(message);
   };
 
   useEffect(() => {
-    const checkIfClickedOutside = e => {
+    const checkIfClickedOutside = (e) => {
       if (isDropdownOpen && ref.current && !ref.current.contains(e.target)) {
-        setIsDropdownOpen(false)
+        setIsDropdownOpen(false);
       }
-    }
-    document.addEventListener("mousedown", checkIfClickedOutside)
+    };
+    document.addEventListener("mousedown", checkIfClickedOutside);
     return () => {
-      document.removeEventListener("mousedown", checkIfClickedOutside)
-    }
-  }, [isDropdownOpen])
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [isDropdownOpen]);
 
   useEffect(() => {
-    const checkIfClickedOutside = e => {
+    const checkIfClickedOutside = (e) => {
       if (isDropdownOpen && ref.current && !ref.current.contains(e.target)) {
-        setIsDropdownOpen(false)
+        setIsDropdownOpen(false);
       }
-    }
-    document.addEventListener("mousedown", checkIfClickedOutside)
+    };
+    document.addEventListener("mousedown", checkIfClickedOutside);
     return () => {
-      document.removeEventListener("mousedown", checkIfClickedOutside)
-    }
-  }, [isDropdownOpen])
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [isDropdownOpen]);
 
   useEffect(() => {
     dispatch(getUserFromLocalStorage());

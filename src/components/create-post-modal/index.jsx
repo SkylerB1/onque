@@ -61,6 +61,7 @@ import DeleteIconFilled from "../../assets/DeleteIconFilled.jsx";
 import AlertModal from "../modal/AlertModal.jsx";
 import toast from "react-hot-toast";
 import Dropzone from "react-dropzone";
+import { useLocalStorage } from "../../utils/LocalStorage.js";
 
 const CreatePostModal = ({
   openModal,
@@ -441,15 +442,24 @@ const CreatePostModal = ({
         setSelectedPlatforms(platforms);
         setSelectedPreview(platforms[0]);
       } else {
-        const { platform, screenName } = connections[0];
-        const { mediaType } = SocialPlatforms[platform];
-        const initialPlatform = {
-          platform,
-          screenName,
-          mediaType: mediaType || "POST",
-        };
-        setSelectedPlatforms([initialPlatform]);
-        setSelectedPreview(initialPlatform);
+        const savedPlatforms = useLocalStorage(
+          `brand.${brandId}.planner.networks`,
+          "get"
+        );
+        if (savedPlatforms) {
+          setSelectedPlatforms(savedPlatforms);
+          setSelectedPreview(savedPlatforms[0]);
+        } else {
+          const { platform, screenName } = connections[0];
+          const { mediaType } = SocialPlatforms[platform];
+          const initialPlatform = {
+            platform,
+            screenName,
+            mediaType: mediaType || "POST",
+          };
+          setSelectedPlatforms([initialPlatform]);
+          setSelectedPreview(initialPlatform);
+        }
       }
     }
   }, [connections, postData]);
@@ -1007,8 +1017,9 @@ const CreatePostModal = ({
                                 >
                                   <SocialPlatform
                                     id={item.id}
+                                    brandId={brandId}
                                     selectedPlaforms={selectedPlaforms}
-                                    tooltip={screenName}
+                                    screenName={screenName}
                                     setSelectedPlatforms={setSelectedPlatforms}
                                     platform={platform}
                                     selectedPreview={selectedPreview}

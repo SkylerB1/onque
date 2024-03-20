@@ -13,21 +13,21 @@ const PrivateRoute = ({ children }) => {
 
 
 
-  const getUserInfo = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/user/user-info`
-      );
-      const data = response?.data;
-      localStorage.setItem("user", JSON.stringify(data));
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  // const getUserInfo = async () => {
+  //   try {
+  //     const response = await axiosInstance.get(
+  //       `${import.meta.env.VITE_API_URL}/user/user-info`
+  //     );
+  //     const data = response?.data;
+  //     localStorage.setItem("user", JSON.stringify(data));
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 
-  useEffect(() => {
-    getUserInfo()
-  }, [memoizedToken])
+  // useEffect(() => {
+  //   getUserInfo()
+  // }, [memoizedToken])
 
   useEffect(() => {
     const checkAuthentication = async () => {

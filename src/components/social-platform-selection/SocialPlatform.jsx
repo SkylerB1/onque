@@ -1,9 +1,10 @@
-import { Tooltip } from "@material-tailwind/react";
 import React from "react";
+import { Tooltip } from "@material-tailwind/react";
 import { SocialPlatforms } from "../../utils";
+import { useLocalStorage } from "../../utils/LocalStorage";
 
 const SocialPlatform = ({
-  tooltip,
+  brandId,
   screenName,
   selectedPlaforms,
   setSelectedPlatforms,
@@ -28,10 +29,23 @@ const SocialPlatform = ({
       mediaType: mediaType || "POST",
     };
     if (!selected) {
-      setSelectedPlatforms((prev) => [...prev, newPlatform]);
+      const newPlatforms = [...selectedPlaforms, newPlatform];
+      setSelectedPlatforms(newPlatforms);
+      const platformNames = JSON.stringify(newPlatforms);
+      useLocalStorage(
+        `brand.${brandId}.planner.networks`,
+        "add",
+        platformNames
+      );
     } else {
       const newPlatforms = selectedPlaforms.filter(
         (item) => item.platform != platform
+      );
+      const platformNames = JSON.stringify(newPlatforms);
+      useLocalStorage(
+        `brand.${brandId}.planner.networks`,
+        "add",
+        platformNames
       );
       if (newPlatforms.length > 0) {
         if (selectedPreview.platform === platform) {
@@ -56,13 +70,13 @@ const SocialPlatform = ({
 
   return (
     <>
-      <Tooltip content={tooltip + tooltipSuffix}>
+      <Tooltip content={screenName + tooltipSuffix}>
         {selected ? (
           <div
             className="cursor-pointer relative ml-3"
             onClick={handlePlatform}
           >
-            {coloredIcon()}
+            {coloredIcon(22, 22)}
             {options.length > 0 && (
               <div className="absolute -right-1 -bottom-1 bg-white rounded-full w-4 h-4 flex justify-center items-center">
                 {options.map((item, index) => {
@@ -75,7 +89,7 @@ const SocialPlatform = ({
           </div>
         ) : (
           <div className="cursor-pointer ml-3" onClick={handlePlatform}>
-            {nonColoredIcon()}
+            {nonColoredIcon(22, 22)}
           </div>
         )}
       </Tooltip>

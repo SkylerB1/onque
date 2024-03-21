@@ -108,7 +108,7 @@ const SocialMediaConnection = ({ children }) => {
     <>
       <Menu open={open} handler={handler} placement="right-end">
         <MenuHandler>{children}</MenuHandler>
-        <MenuList>
+        <MenuList className="px-0">
           {socialMediaList.map((item, index) => {
             const isConnected = connections?.some(
               (conn) => conn.platform === item.platform
@@ -118,6 +118,7 @@ const SocialMediaConnection = ({ children }) => {
                 <MenuItem
                   onClick={() => handleMenuItemClick(item.key)}
                   key={index}
+                  className="rounded-none"
                 >
                   {
                     <item.component

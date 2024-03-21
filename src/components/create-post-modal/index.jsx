@@ -446,7 +446,7 @@ const CreatePostModal = ({
           `brand.${brandId}.planner.networks`,
           "get"
         );
-        if (savedPlatforms) {
+        if (savedPlatforms && savedPlatforms.length > 0) {
           setSelectedPlatforms(savedPlatforms);
           setSelectedPreview(savedPlatforms[0]);
         } else {
@@ -482,9 +482,7 @@ const CreatePostModal = ({
         );
       }
     });
-    // if (!selectedPlaforms.some((item) => item.id == selectedPreview?.id)) {
-    //   setSelectedPreview(selectedPlaforms[0]);
-    // }
+
     if (!canPublish && !isDuplicating) {
       setErrors((prev) => [
         ...prev,
@@ -585,27 +583,33 @@ const CreatePostModal = ({
             {
               id: dimensions?.id,
               platform: "instagram",
-              error: `Instagram - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions.duration.toFixed(
+              error: `Instagram - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
                 1
               )}s long`,
             },
           ]);
         }
-
-        if (
-          item.mediaType == "REEL" &&
-          dimensions?.type == "image" &&
-          dimensions?.aspectRatio !== 0.56
-        ) {
+        if (item.mediaType == "REEL" && dimensions?.type?.includes("image")) {
           setErrors((prev) => [
             ...prev,
             {
               id: dimensions.id,
               platform: "instagram",
+              error: `Instagram - Images are not supported as Reels, Please upload a 9:16 video.`,
+            },
+          ]);
+        } else if (
+          item.mediaType == "REEL" &&
+          dimensions?.aspectRatio !== 0.5625
+        ) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions?.id,
+              platform: "instagram",
               error: `Instagram - Invalid aspect ratio for Reels, it must be 9:16. You can crop this in the editor.`,
             },
           ]);
-        } else {
         }
       }
       if (platform.includes(FacebookPagePlatform)) {

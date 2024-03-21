@@ -17,7 +17,9 @@ import ConnectInstagram from "../SocialMediaConnection/ConnectInstagram";
 
 export const socialMediaList = [
   {
-    icon: (color) => <Twitter fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <Twitter fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "Twitter",
     label: "CONNECT ACCOUNT",
     platform: "Twitter",
@@ -28,7 +30,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <FacebookFilled fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <FacebookFilled fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "Facebook Page",
     label: "CONNECT PAGE",
     platform: "Facebook_Page",
@@ -39,7 +43,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <Instagram fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <Instagram fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "Instagram",
     label: "CONNECT PROFESSIONAL ACCOUNT",
     platform: "Instagram",
@@ -50,7 +56,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <Youtube fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <Youtube fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "YouTube",
     label: "CONNECT ACCOUNT",
     key: "youtube",
@@ -61,7 +69,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <Tiktok fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <Tiktok fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "TikTok Personal",
     label: "CONNECT PERSONAL ACCOUNT",
     platform: "TikTok_Personal",
@@ -72,7 +82,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <Tiktok fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <Tiktok fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "TikTok Business",
     label: "CONNECT BUSINESS ACCOUNT",
     platform: "TikTok_Business",
@@ -83,7 +95,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <LinkedIn fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <LinkedIn fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "LinkedIn",
     label: "CONNECT PROFILE",
     platform: "LinkedIn",
@@ -94,7 +108,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <LinkedIn fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <LinkedIn fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "LinkedIn Page",
     label: "CONNECT PAGE",
     platform: "LinkedIn_Page",
@@ -105,7 +121,9 @@ export const socialMediaList = [
     screenName: "",
   },
   {
-    icon: (color) => <GoogleBusiness fill={color ?? "#828487"} width={24} height={24} />,
+    icon: (color, width = 24, height = 24) => (
+      <GoogleBusiness fill={color ?? "#828487"} width={width} height={height} />
+    ),
     title: "Google Business",
     label: "CONNECT ACCOUNT",
     platform: "Google_Business",

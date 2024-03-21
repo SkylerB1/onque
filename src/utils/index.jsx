@@ -55,54 +55,84 @@ export const getFirstLetter = (str) => (str ? str[0] : "Y");
 
 const FacebookOptions = [
   {
-    icon: <GridSvg width={10} height={10} fill="#000000" />,
+    icon: (width = 10, height = 10) => (
+      <GridSvg width={width} height={height} fill="#000000" />
+    ),
     label: "POST",
+    description: "Standard Facebook publication",
   },
   {
-    icon: <ReelsSvg width={14} height={14} fill="#000000" />,
+    icon: (width = 14, height = 14) => (
+      <ReelsSvg width={width} height={height} fill="#000000" />
+    ),
     label: "REEL",
+    description: "Automatic posting",
   },
 ];
 
 export const InstagramOptions = [
   {
-    icon: <GridSvg width={10} height={10} fill="#000000" />,
+    icon: (width = 10, height = 10) => (
+      <GridSvg width={width} height={height} fill="#000000" />
+    ),
     label: "POST",
+    description:
+      "Automatic posting of an image, a carousel or a video (as a Reel)",
   },
   {
-    icon: <ReelsSvg width={14} height={14} fill="#000000" />,
+    icon: (width = 14, height = 14) => (
+      <ReelsSvg width={width} height={height} fill="#000000" />
+    ),
     label: "REEL",
+    description: "Automatic posting of a video",
   },
   {
-    icon: <StorySvg width={10} height={10} fill="#000000" />,
+    icon: (width = 10, height = 10) => (
+      <StorySvg width={width} height={height} fill="#000000" />
+    ),
     label: "STORY",
+    description: "Automatic posting one or multiple stories",
   },
 ];
 
 export const YoutubeOptions = [
   {
-    icon: <YoutubeVideo width={15} height={15} fill="#000000" />,
+    icon: (width = 15, height = 15) => (
+      <YoutubeVideo width={width} height={height} fill="#000000" />
+    ),
     label: "VIDEO",
+    description: "Standard YouTube video",
   },
   {
-    icon: <YotubeShorts width={14} height={14} fill="#000000" />,
+    icon: (width = 14, height = 14) => (
+      <YotubeShorts width={width} height={height} fill="#000000" />
+    ),
     label: "SHORTS",
+    description: "Short-form, vertical video content",
   },
 ];
 
 export const GoogleBusinessOptions = [
   {
-    icon: <GridSvg width={10} height={10} fill="#000000" />,
+    icon: (width = 10, height = 10) => (
+      <GridSvg width={width} height={height} fill="#000000" />
+    ),
     label: "POST",
+    description: "For posting an update to your Google Business Profile",
   },
   {
-    icon: <OfferSvg width={10} height={10} fill="#000000" />,
+    icon: (width = 10, height = 10) => (
+      <OfferSvg width={width} height={height} fill="#000000" />
+    ),
     label: "OFFER",
-    selected: true,
+    description: "For posting an offer to your Google Business Profile",
   },
   {
-    icon: <EventSvg width={12} height={12} fill="#000000" />,
+    icon: (width = 12, height = 12) => (
+      <EventSvg width={width} height={height} fill="#000000" />
+    ),
     label: "EVENT",
+    description: "For posting an event to your Google Business Profile",
   },
 ];
 

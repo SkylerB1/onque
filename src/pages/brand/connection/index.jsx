@@ -25,6 +25,7 @@ const Connection = () => {
   const { broadcastConnection } = useAppContext();
   const { connections, getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand.id || "";
   const [premium, setPremium] = useState(true);
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -32,7 +33,6 @@ const Connection = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalHeader, setModalHeader] = useState(initialHeader);
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const [opens, setOpen] = useState(false);
   const [ids, setIds] = useState();
   const [platformName, setPlatformName] = useState();
@@ -218,13 +218,17 @@ const Connection = () => {
                         ) : (
                           <div className="flex flex-1 items-center justify-start border p-2 rounded-md border-blue-gray-400">
                             <div className="flex flex-1 items-center justify-start">
-                              <div className="relative inline-flex items-center justify-center w-8 h-8 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-                                <span className="font-medium text-gray-600 dark:text-gray-300">
-                                  {conn.screenName
-                                    ? conn.screenName.charAt(0)
-                                    : "E"}
-                                </span>
-                              </div>
+                              {conn.screenName ? (
+                                <div className="relative inline-flex items-center justify-center w-8 h-8 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                                  <span className="font-medium text-gray-600 dark:text-gray-300">
+                                    {conn.screenName.charAt(0).toUpperCase()}
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="w-8 h-8 flex items-center justify-center">
+                                  {item.icon(15, 15)}
+                                </div>
+                              )}
                               <p className="ml-2 text-xl">
                                 {conn.screenName ? conn.screenName : ""}
                               </p>

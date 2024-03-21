@@ -18,10 +18,10 @@ function Dropdown({ children, options }) {
     <>
       <Menu open={open} handler={handler} placement="bottom-end">
         <MenuHandler>{children}</MenuHandler>
-        <MenuList>
+        <MenuList className="px-0">
           {options.map((option, index) => (
             <MenuItem
-              className="flex items-center gap-4 py-2 pl-2 pr-8"
+              className="flex items-center gap-4 py-2 pl-2 pr-8 rounded-none"
               key={index}
               value={option.value}
               onClick={() => handleClick(option.onClick)}

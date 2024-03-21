@@ -6,6 +6,7 @@ import { axiosInstance } from "../../utils/Interceptor";
 import { socialMediaList } from "../common/index.jsx";
 import { useSelector } from "react-redux";
 import { useLocalStorage } from "../../utils/LocalStorage";
+import InstagramAuthDialog from "../SocialMediaConnection/InstagramAuthDialog.jsx";
 
 const initialHeader = {
   title: "",

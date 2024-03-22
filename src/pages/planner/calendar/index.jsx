@@ -71,6 +71,10 @@ const Calendar = () => {
       broadcastConnection.removeEventListener("message", handleConnection);
     };
   }, [broadcastConnection]);
+
+   useEffect(() => {
+     getConnections();
+   }, []);
   
   if (!connections) {
     return (

@@ -117,6 +117,10 @@ const SocialLinkPostCalendar = () => {
     broadcastConnection.addEventListener("message", handleConnection);
   }, [broadcastConnection]);
 
+  useEffect(() => {
+   getConnections() 
+  },[])
+
   return (
     <>
       <div className="mt-20 flex mb-2">

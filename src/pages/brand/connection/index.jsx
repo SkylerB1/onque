@@ -14,6 +14,7 @@ import { useAppContext } from "../../../context/AuthContext";
 import { useSelector } from "react-redux";
 import CustomModal from "../../../components/modal/customModal";
 import InstagramAuthDialog from "../../../components/SocialMediaConnection/InstagramAuthDialog";
+import ErrorConnectionDialog from "../../../components/dialog/ErrorConnectionDialog";
 
 const initialHeader = {
   title: "",
@@ -37,6 +38,7 @@ const Connection = () => {
   const [ids, setIds] = useState();
   const [platformName, setPlatformName] = useState();
   const [instagramAuth, setInstagramAuth] = useState(false);
+  const [isConnectionError, setConnectionError] = useState(null);
 
   const instagramLogin = async () => {
     try {
@@ -91,6 +93,10 @@ const Connection = () => {
     setSelected(null);
   };
 
+  const closeErrorDialog = () => {
+    setConnectionError(null);
+  };
+
   const handleDelete = async (id) => {
     try {
       const response = await axiosInstance.delete(
@@ -132,9 +138,11 @@ const Connection = () => {
   };
 
   useEffect(() => {
-    const handleConnection = () => {
-      const brandId = user?.brand.id;
-      if (brandId) {
+    const handleConnection = ({ platform, error }) => {
+      if (platform && error) {
+        setConnectionError({ platform, error });
+      } else {
+        const brandId = user?.brand.id;
         getConnections(brandId);
       }
     };
@@ -276,6 +284,10 @@ const Connection = () => {
         open={instagramAuth}
         handler={instagramDialogHandler}
         onConfirm={handleInstagramLogin}
+      />
+      <ErrorConnectionDialog
+        data={isConnectionError}
+        handler={closeErrorDialog}
       />
     </div>
   );

@@ -8,9 +8,10 @@ const Connect = () => {
   const searchParams = new URLSearchParams(location.search);
   const { broadcastConnection } = useAppContext();
   const platform = searchParams.get("platform");
+  const error = searchParams.get("error");
 
   useEffect(() => {
-    broadcastConnection.postMessage({ platform: platform });
+    broadcastConnection.postMessage({ platform: platform, error: error });
     window.close();
   }, []);
 

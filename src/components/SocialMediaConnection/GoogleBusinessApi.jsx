@@ -100,11 +100,11 @@ function GoogleBusinessApi({
   return (
     <div
       onClick={handleGoogleLogin}
-      className="flex w-full justify-between rounded-md px-5"
+      className="flex w-full justify-between items-center rounded-md px-5"
       style={{ background: backgroundColor }}
     >
-      <span className="me-8 h-12 py-3 text-sm text-white">
-        <Typography className="font-bold whitespace-nowrap">{label}</Typography>
+      <span className="me-8 py-3 text-sm text-white">
+        <Typography className="font-bold">{label}</Typography>
       </span>
       <span className="h-12 text-xl py-3 text-stone-600">
         {icon}

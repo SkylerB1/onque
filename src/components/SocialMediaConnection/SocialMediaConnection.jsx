@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectionModal from "../dialog/SelectDialog";
 import { ConnectUrl } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
@@ -12,6 +12,8 @@ import {
 } from "@material-tailwind/react";
 import InstagramAuthDialog from "./InstagramAuthDialog.jsx";
 import { useSelector } from "react-redux";
+import ErrorConnectionDialog from "../dialog/ErrorConnectionDialog.jsx";
+import { useAppContext } from "../../context/AuthContext.jsx";
 
 const initialHeader = {
   title: "",
@@ -28,6 +30,9 @@ const SocialMediaConnection = ({ children }) => {
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [instagramAuth, setInstagramAuth] = useState(false);
+  const [isConnectionError, setConnectionError] = useState(null);
+  const { broadcastConnection } = useAppContext();
+
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
 
@@ -74,7 +79,6 @@ const SocialMediaConnection = ({ children }) => {
     setOpen(!open);
   };
 
-
   const removeSelected = () => {
     setSelected(null);
   };
@@ -103,6 +107,19 @@ const SocialMediaConnection = ({ children }) => {
       }
     } catch (err) {}
   };
+
+  const closeErrorDialog = () => {
+    setConnectionError(null);
+  };
+
+  useEffect(() => {
+    const handleConnection = ({ platform, error }) => {
+      if (platform && error) {
+        setConnectionError({ platform, error });
+      }
+    };
+    broadcastConnection.addEventListener("message", handleConnection);
+  }, [broadcastConnection]);
 
   return (
     <>
@@ -153,6 +170,10 @@ const SocialMediaConnection = ({ children }) => {
         open={instagramAuth}
         handler={instagramDialogHandler}
         onConfirm={handleInstagramLogin}
+      />
+      <ErrorConnectionDialog
+        data={isConnectionError}
+        handler={closeErrorDialog}
       />
     </>
   );

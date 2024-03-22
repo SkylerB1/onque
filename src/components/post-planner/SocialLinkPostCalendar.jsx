@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SelectionModal from "../dialog/SelectDialog";
 import useConnections from "../customHooks/useConnections";
 import { API_URL, ConnectUrl } from "../../utils";
@@ -7,6 +7,8 @@ import { socialMediaList } from "../common/index.jsx";
 import { useSelector } from "react-redux";
 import { useLocalStorage } from "../../utils/LocalStorage";
 import InstagramAuthDialog from "../SocialMediaConnection/InstagramAuthDialog.jsx";
+import ErrorConnectionDialog from "../dialog/ErrorConnectionDialog.jsx";
+import { useAppContext } from "../../context/AuthContext.jsx";
 
 const initialHeader = {
   title: "",
@@ -26,7 +28,9 @@ const SocialLinkPostCalendar = () => {
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [instagramAuth, setInstagramAuth] = useState(false);
-  
+  const [isConnectionError, setConnectionError] = useState(null);
+  const { broadcastConnection } = useAppContext();
+
   const instagramLogin = async () => {
     try {
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${
@@ -100,6 +104,19 @@ const SocialLinkPostCalendar = () => {
     }
   };
 
+  const closeErrorDialog = () => {
+    setConnectionError(null);
+  };
+
+  useEffect(() => {
+    const handleConnection = ({ platform, error }) => {
+      if (platform && error) {
+        setConnectionError({ platform, error });
+      }
+    };
+    broadcastConnection.addEventListener("message", handleConnection);
+  }, [broadcastConnection]);
+
   return (
     <>
       <div className="mt-20 flex mb-2">
@@ -167,6 +184,10 @@ const SocialLinkPostCalendar = () => {
         open={instagramAuth}
         handler={instagramDialogHandler}
         onConfirm={handleInstagramLogin}
+      />
+      <ErrorConnectionDialog
+        data={isConnectionError}
+        handler={closeErrorDialog}
       />
     </>
   );

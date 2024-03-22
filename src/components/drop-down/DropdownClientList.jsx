@@ -28,6 +28,7 @@ const DropdownClientList = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand?.id;
   const brandName = user?.brand?.brand_name;
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -70,6 +71,9 @@ const DropdownClientList = () => {
         if (!user?.brand) {
           const userBrand = { ...user, brand: data };
           dispatch(setUser(userBrand));
+          getConnections(data.id);
+        } else {
+          getConnections(brandId);
         }
       }
     } catch (error) {

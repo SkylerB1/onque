@@ -15,7 +15,6 @@ import { setUser } from "../../../redux/features/userSlice";
 const ClientDetails = () => {
     const [premium, setPremium] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
-    const [clientDatas, setClientsData] = useState([]);
     const [selectedValue, setSelectedValue] = useState("");
     const { getConnections } = useConnections();
     const dispatch = useDispatch();

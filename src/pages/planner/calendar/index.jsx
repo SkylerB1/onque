@@ -72,10 +72,6 @@ const Calendar = () => {
     };
   }, [broadcastConnection]);
 
-   useEffect(() => {
-     getConnections();
-   }, []);
-  
   if (!connections) {
     return (
       <>

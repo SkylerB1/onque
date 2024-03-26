@@ -24,7 +24,6 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
     return files.map((file) => getSource(file));
   }, [files]);
 
-  draggable="false"
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
   }, [muted]);

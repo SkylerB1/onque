@@ -5,7 +5,13 @@ import Share from "../../../assets/facebook-share.svg?react";
 import FacebookPlay from "../../../assets/facebook-play.svg?react";
 // import AudioMuted from "../../../assets/audio-muted.svg?react";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import VideoComponent from "../../video/VideoComponent";
 import ImageComponent from "../../Image/ImageComponent";
 import { getSource, isContainImage } from "../../../utils";
@@ -15,6 +21,9 @@ function Post({ files, captions, viewMode, screenName, date }) {
   const [play, setPlay] = useState([false, false, false, false, false]);
   const videoRef = useRef([]);
   const [filteredFiles, setFilteredFiles] = useState([]);
+  const memoizedSources = useMemo(() => {
+    return filteredFiles.map((file) => getSource(file));
+  }, [filteredFiles]);
 
   const togglePlay = useCallback(
     (index) => {
@@ -44,8 +53,8 @@ function Post({ files, captions, viewMode, screenName, date }) {
     }
   }, [files]);
 
-  const renderVideoComponent = (file, index) => {
-    const src = getSource(file);
+  const renderVideoComponent = (index = 0) => {
+    const src = memoizedSources[index];
     return (
       <VideoComponent
         ref={(el) => (videoRef.current[0] = el)}
@@ -60,20 +69,22 @@ function Post({ files, captions, viewMode, screenName, date }) {
         play={!play[index]}
         onTogglePlay={togglePlay}
         icon={<FacebookPlay width={40} height={40} />}
+        draggable="false"
       />
     );
   };
 
-  const renderImageComponent = (file, index = 0) => {
-    const src = getSource(file);
+  const renderImageComponent = (index = 0) => {
+    const src = memoizedSources[index];
     return (
-      <ImageComponent
+      <img
         key={index}
         alt="img"
         className="w-full h-full object-cover"
         width={16}
         height={16}
         src={src}
+        draggable="false"
       />
     );
   };
@@ -83,9 +94,9 @@ function Post({ files, captions, viewMode, screenName, date }) {
       return filteredFiles.map((file, index) => {
         let mimeType = file.type || file.mimetype;
         if (mimeType.includes("video")) {
-          return renderVideoComponent(file, index);
+          return renderVideoComponent(index);
         } else {
-          return renderImageComponent(file, index);
+          return renderImageComponent(index);
         }
       });
     } else if (filteredFiles.length === 2) {
@@ -99,7 +110,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
                 index > 0 && "ml-[1px]"
               } relative justify-center items-center flex flex-1 h-full`}
             >
-              {renderImageComponent(file, index)}
+              {renderImageComponent(index)}
             </div>
           );
         }
@@ -107,17 +118,13 @@ function Post({ files, captions, viewMode, screenName, date }) {
     } else if (filteredFiles.length === 3) {
       return (
         <div className="flex flex-1 flex-row h-full">
-          <div className="flex flex-1 h-full ">
-            {renderImageComponent(filteredFiles[0], 0)}
-          </div>
+          <div className="flex flex-1 h-full ">{renderImageComponent(0)}</div>
 
           <div className="flex flex-1 flex-col w-full h-full ml-[2px]">
-            <div className="flex flex-1 h-1/2">
-              {renderImageComponent(filteredFiles[1], 1)}
-            </div>
+            <div className="flex flex-1 h-1/2">{renderImageComponent(1)}</div>
 
             <div className="flex flex-1 h-1/2 mt-[2px]">
-              {renderImageComponent(filteredFiles[2], 2)}
+              {renderImageComponent(2)}
             </div>
           </div>
         </div>
@@ -137,12 +144,13 @@ function Post({ files, captions, viewMode, screenName, date }) {
                 : ""
             }`}
           >
-            {renderImageComponent(item, index)}
+            {renderImageComponent(index)}
           </div>
         );
       });
     } else if (filteredFiles.length >= 5) {
       return filteredFiles.map((item, index) => {
+        const src = memoizedSources[index];
         if (index < 2) {
           return (
             <div
@@ -155,7 +163,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
                   className="w-full h-full object-cover"
                   width={1}
                   height={1}
-                  src={URL.createObjectURL(item)}
+                  src={src}
                 />
               </>
             </div>
@@ -175,7 +183,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
                     className="w-full h-full object-cover"
                     width={1}
                     height={1}
-                    src={URL.createObjectURL(item)}
+                    src={src}
                   />
                 )}
                 {index == 4 && filteredFiles.length > 5 && (
@@ -204,14 +212,18 @@ function Post({ files, captions, viewMode, screenName, date }) {
           <div className="flex flex-col ml-2 justify-between">
             <h1 className="text-sm font-bold leading-none">{screenName}</h1>
             <div className="flex flex-row items-center">
-              {date && <h3 className="text-xs text-gray-400 mr-1"> {date} · </h3>}
+              {date && (
+                <h3 className="text-xs text-gray-400 mr-1"> {date} · </h3>
+              )}
               <Globe width={12} height={12} fill="#D3D3D3" />
             </div>
           </div>
         </div>
         <HorizontalDots width={20} height={20} fill="#737373" />
       </div>
-      {captions && <p className="px-3 text-sm mb-2 whitespace-pre-line"> {captions} </p>}
+      {captions && (
+        <p className="px-3 text-sm mb-2 whitespace-pre-line"> {captions} </p>
+      )}
       {files?.length > 0 ? (
         <div
           className={`relative ${

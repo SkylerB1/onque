@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper";
 import Save from "../../../assets/save.svg?react";
@@ -20,7 +20,11 @@ import HorizontalDots from "../../../assets/HorizontalDots";
 
 function InstagramPostMobile({ files, captions, viewMode, screenName }) {
   const [muted, setMuted] = useState(false);
+  const memoizedSources = useMemo(() => {
+    return files.map((file) => getSource(file));
+  }, [files]);
 
+  draggable="false"
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
   }, [muted]);
@@ -44,7 +48,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
             files?.map((file, key) => {
               const type = file.type || file.mimetype;
               if (type?.includes("video")) {
-                const src = getSource(file);
+                const src = memoizedSources[key];
                 return (
                   <>
                     <video
@@ -55,6 +59,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                       muted={muted}
                       controls={false}
                       src={src}
+                      draggable="false"
                     />
 
                     <div
@@ -70,7 +75,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                   </>
                 );
               } else {
-                const src = getSource(file);
+                const src = memoizedSources[key];
                 return (
                   <img
                     key={key}
@@ -79,6 +84,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                     width={16}
                     height={16}
                     src={src}
+                    draggable="false"
                   />
                 );
               }
@@ -97,7 +103,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
             >
               {files.map((file, key) => {
                 if (isContainVideo(file)) {
-                  const src = getSource(file);
+                  const src = memoizedSources[key];
                   return (
                     <SwiperSlide key={key}>
                       <video
@@ -108,6 +114,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                         muted={muted}
                         controls={false}
                         src={src}
+                        draggable="false"
                       />
 
                       <div
@@ -123,7 +130,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                     </SwiperSlide>
                   );
                 } else {
-                  const src = getSource(file);
+                  const src = memoizedSources[key];
                   return (
                     <SwiperSlide key={key}>
                       <img
@@ -133,6 +140,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                         width={16}
                         height={16}
                         src={src}
+                        draggable="false"
                       />
                     </SwiperSlide>
                   );
@@ -174,9 +182,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
       </div>
       <div className="mt-3">
         <div className="ml-2 font-semibold text-xs">{screenName}</div>
-        <div className="text-xs ml-2 whitespace-pre-line">
-          {captions}
-        </div>
+        <div className="text-xs ml-2 whitespace-pre-line">{captions}</div>
       </div>
     </>
   );

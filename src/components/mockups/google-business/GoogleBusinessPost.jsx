@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useMemo } from "react";
 import User from "../../../assets/user-filled-colored.svg?react";
 import Globe from "../../../assets/facebook-globe.svg?react";
 import Dots from "../../../assets/vertical-dots.svg?react";
@@ -24,7 +24,7 @@ function GoogleBusinessPost({
   const { screenName = "" } = connections.find((item) =>
     item.platform.includes(GoogleBusinessPlatform)
   );
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]); 
   const GetDate = useCallback(
     (StartDate, EndDate, StartTime, EndTime) => {
       return (
@@ -74,6 +74,7 @@ function GoogleBusinessPost({
               muted={false}
               controls={false}
               src={src}
+              draggable="false"
             />
           ) : (
             <img
@@ -82,6 +83,7 @@ function GoogleBusinessPost({
               width={16}
               height={16}
               src={src}
+              draggable="false"
             />
           )}
         </div>

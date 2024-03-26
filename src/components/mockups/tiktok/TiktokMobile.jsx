@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import UserIcon from "../../../assets/userIcon";
 import HeartFilled from "../../../assets/HeartFilled";
 import TikokComment from "../../../assets/TikokComment";
@@ -16,7 +16,7 @@ import "../swiper/swiper.css";
 import { getSource, isContainVideo } from "../../../utils";
 
 function TiktokMobile({ files, captions, viewMode, screenName }) {
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]);
   return (
     <>
       <div className="absolute top-10 flex flex-row justify-between w-full px-4 z-10">
@@ -36,6 +36,7 @@ function TiktokMobile({ files, captions, viewMode, screenName }) {
           isContainVideo(files[0]) ? (
             <>
               <video
+                draggable="false"
                 className=" w-full h-full object-cover"
                 loop={true}
                 autoPlay={true}
@@ -57,7 +58,7 @@ function TiktokMobile({ files, captions, viewMode, screenName }) {
               if (file.type == "video/mp4") {
                 return (
                   <>
-                    <video
+                    <video draggable="false"
                       key={key}
                       className=" w-full h-full object-cover"
                       loop={true}

@@ -13,6 +13,7 @@ const VideoComponent = ({
   muted = true,
   icon,
   type = "video/mp4",
+  ...props
 }) => {
   return (
     <>
@@ -23,6 +24,7 @@ const VideoComponent = ({
         ref={ref}
         muted={muted}
         controls={controls}
+        {...props}
       >
         <source src={src} type={type} />
       </video>

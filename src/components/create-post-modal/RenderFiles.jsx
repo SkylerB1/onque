@@ -1,8 +1,8 @@
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import Cross from "../svg/Cross";
 import Edit from "../svg/Edit";
 import PlayFilled from "../svg/PlayFilled";
-import { getSource, isContainImage, isContainVideo } from "../../utils";
+import { getSource, isContainVideo } from "../../utils";
 
 const RenderFiles = ({
   files,
@@ -13,6 +13,9 @@ const RenderFiles = ({
   handleEdit,
   isDuplicating,
 }) => {
+  const memoizedSources = useMemo(() => {
+    return files.map((file) => getSource(file));
+  }, [files]);
   const videoRef = useRef();
 
   const onClickEdit = (index) => {
@@ -23,7 +26,7 @@ const RenderFiles = ({
   return (
     <div className="flex flex-row">
       {files?.map((file, index) => {
-        const src = getSource(file);
+        const src = memoizedSources[index];
         return (
           <div
             key={index}
@@ -92,6 +95,4 @@ const RenderFiles = ({
   );
 };
 
-export default React.memo(RenderFiles, (prev, next) => {
-  return prev.files.length === next.files.length;
-});
+export default RenderFiles;

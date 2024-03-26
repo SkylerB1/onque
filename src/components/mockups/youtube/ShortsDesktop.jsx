@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Pause from "../../../assets/pause-filled.svg?react";
 import { getSource, isContainVideo } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
@@ -8,7 +8,7 @@ import FacebookCommentFilled from "../../../assets/FacebookCommentFilled";
 import FacebookShareFilled from "../../../assets/FacebookShareFilled";
 
 function ShortsDesktop({ files, captions, screenName }) {
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]);
   return (
     <>
       <div className="absolute w-full top-4 px-4 z-50 flex justify-between  ">
@@ -24,6 +24,7 @@ function ShortsDesktop({ files, captions, screenName }) {
           </>
         ) : (
           <video
+            draggable="false"
             className="w-full h-full object-cover brightness-[0.95] contrast-[0.95]"
             loop={true}
             autoPlay={true}

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Like from "../../../assets/youtube-like.svg?react";
 import Dislike from "../../../assets/youtube-dislike.svg?react";
 import Share from "../../../assets/youtube-share.svg?react";
@@ -17,8 +17,7 @@ import AudioFilled from "../../../assets/AudioFilled";
 function VideoDesktop({ data, files, screenName }) {
   const { title } = data;
   const [play, setPlay] = useState(false);
-  const src = getSource(files[0]);
-
+  const src = useMemo(() => getSource(files[0]), [files]);
   const videoRef = useRef(null);
 
   const handlePlay = () => {
@@ -45,6 +44,7 @@ function VideoDesktop({ data, files, screenName }) {
         ) : (
           <>
             <video
+              draggable="false"
               className="w-full h-full object-cover"
               muted
               ref={videoRef}

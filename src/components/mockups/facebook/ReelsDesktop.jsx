@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Pause from "../../svg/Pause";
 import Globe from "../../svg/Globe";
 import Dots from "../../svg/horizontalDots";
@@ -11,7 +11,7 @@ import { getSource } from "../../../utils";
 
 function Reels({ files, captions, screenName }) {
   const [muted, setMuted] = useState(true);
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]); 
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
   }, [muted]);
@@ -67,6 +67,7 @@ function Reels({ files, captions, screenName }) {
             muted={muted}
             controls={false}
             src={src}
+            draggable="false"
           />
         )}
       </div>

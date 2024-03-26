@@ -1207,6 +1207,7 @@ const CreatePostModal = ({
         />
         <ImageEditorModal
           files={files}
+          setFiles={setFiles}
           index={editIndex}
           toggleModal={toggleImageEditorModal}
           show={showimgEditorModal}

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import Globe from "../../../assets/facebook-globe.svg?react";
 import Dots from "../../../assets/vertical-dots.svg?react";
 import Like from "../../../assets/linkedin-like.svg?react";
@@ -12,12 +12,16 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
   const { screenName = "" } = connections.find((item) =>
     item.platform.includes(LinkedInPlatform)
   );
+  const memoizedSources = useMemo(() => {
+    return files.map((file) => getSource(file));
+  }, [files]);
   const renderMedia = useCallback(() => {
     if (files.length === 1) {
-      const src = getSource(files[0]);
+      const src = memoizedSources[0];
 
       return isContainVideo(files[0]) ? (
         <video
+          draggable="false"
           className="w-full h-full object-cover"
           loop={true}
           autoPlay={true}
@@ -27,6 +31,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
         />
       ) : (
         <img
+          draggable="false"
           alt="img"
           className="w-full h-full object-cover"
           width={16}
@@ -36,7 +41,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
       );
     } else if (files.length === 2) {
       return files.map((item, index) => {
-        const src = getSource(item);
+        const src = memoizedSources[index];
         return (
           <div
             key={index}
@@ -44,6 +49,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
           >
             {isContainVideo(item) ? (
               <video
+                draggable="false"
                 className="w-full h-full object-cover"
                 loop={true}
                 autoPlay={true}
@@ -53,6 +59,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
               />
             ) : (
               <img
+                draggable="false"
                 alt="img"
                 className="w-full h-full object-cover"
                 width={16}
@@ -67,12 +74,13 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
       return (
         <div className="flex flex-1 flex-row h-full flex-wrap">
           {files.map((item, index) => {
-            const src = getSource(item);
+            const src = memoizedSources[index];
             if (index == 0) {
               return (
                 <div key={index} className="w-full border-b-2">
                   {isContainVideo(item) ? (
                     <video
+                      draggable="false"
                       className="w-full h-full object-cover"
                       loop={true}
                       autoPlay={true}
@@ -82,6 +90,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                     />
                   ) : (
                     <img
+                      draggable="false"
                       alt="img"
                       className="w-full h-full object-cover"
                       width={1}
@@ -99,6 +108,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                 >
                   {isContainVideo(item) ? (
                     <video
+                      draggable="false"
                       className="w-full h-full object-cover"
                       loop={true}
                       autoPlay={true}
@@ -108,6 +118,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                     />
                   ) : (
                     <img
+                      draggable="false"
                       alt="img"
                       className="w-full h-full object-cover"
                       width={1}
@@ -125,12 +136,13 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
       return (
         <div className="flex flex-1 flex-row h-full flex-wrap">
           {files.map((item, index) => {
-            const src = getSource(item);
+            const src = memoizedSources[index];
             if (index == 0) {
               return (
                 <div key={index} className="w-full border-b-2">
                   {isContainVideo(item) ? (
                     <video
+                      draggable="false"
                       className="w-full h-full object-cover"
                       loop={true}
                       autoPlay={true}
@@ -140,6 +152,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                     />
                   ) : (
                     <img
+                      draggable="false"
                       alt="img"
                       className="w-full h-full object-cover"
                       width={1}
@@ -157,6 +170,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                 >
                   {isContainVideo(item) ? (
                     <video
+                      draggable="false"
                       className="w-full h-full object-cover"
                       loop={true}
                       autoPlay={true}
@@ -166,6 +180,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                     />
                   ) : (
                     <img
+                      draggable="false"
                       alt="img"
                       className="w-full h-full object-cover"
                       width={1}
@@ -183,7 +198,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
       return (
         <div className="flex flex-1 flex-row h-full flex-wrap">
           {files.map((item, index) => {
-            const src = getSource(item);
+            const src = memoizedSources[index];
             if (index <= 1) {
               return (
                 <div
@@ -192,6 +207,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                 >
                   {isContainVideo(item) ? (
                     <video
+                      draggable="false"
                       className="w-full h-full object-cover"
                       loop={true}
                       autoPlay={true}
@@ -201,6 +217,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                     />
                   ) : (
                     <img
+                      draggable="false"
                       alt="img"
                       className="w-full h-full object-cover"
                       width={1}
@@ -220,6 +237,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                 >
                   {isContainVideo(item) ? (
                     <video
+                      draggable="false"
                       className="w-full h-full object-cover"
                       loop={true}
                       autoPlay={true}
@@ -231,6 +249,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
                     <>
                       {index < 5 && (
                         <img
+                          draggable="false"
                           alt="img"
                           className="w-full h-full object-cover"
                           width={1}

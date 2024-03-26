@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { getSource, isContainVideo } from "../../../utils";
 import AudioMuted from "../../svg/AudioMuted";
 import UserIcon from "../../../assets/userIcon";
@@ -9,9 +9,9 @@ import SaveOutline from "../../../assets/SaveOutline";
 import HorizontalDots from "../../../assets/HorizontalDots";
 import AudioFilled from "../../../assets/AudioFilled";
 
-function ReelsMobile({ files, viewMode, captions,screenName }) {
+function ReelsMobile({ files, viewMode, captions, screenName }) {
   const [muted, setMuted] = useState(true);
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]);
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
   }, [muted]);
@@ -51,6 +51,7 @@ function ReelsMobile({ files, viewMode, captions,screenName }) {
               muted={muted}
               controls={false}
               src={src}
+              draggable="false"
             />
           </>
         )}

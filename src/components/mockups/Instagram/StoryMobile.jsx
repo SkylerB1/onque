@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import RightArrow from "../../../assets/insta-right-arrow.svg?react";
 import LeftArrow from "../../../assets/insta-left-arrow.svg?react";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -12,7 +12,9 @@ import HeartOutline from "../../../assets/HeartOutline";
 import InstaShareOutline from "../../../assets/InstaShareOutline";
 import UserIcon from "../../../assets/userIcon";
 const StoryMobile = ({ viewMode, files, screenName }) => {
-  console.log(viewMode);
+  const memoizedSources = useMemo(() => {
+    return files.map((file) => getSource(file));
+  }, [files]);
   const [swiperIndex, setIndex] = useState(0);
   return (
     <div className="w-full h-full bg-black">
@@ -42,30 +44,32 @@ const StoryMobile = ({ viewMode, files, screenName }) => {
         {files.length > 0 ? (
           files.length == 1 ? (
             files.map((file, key) => {
-              const src = getSource(file);
+              const src = memoizedSources[key];
               if (isContainVideo(file)) {
                 return (
                   <video
                     key={key}
-                    className="w-full h-full object-cover rounded-b-md"
+                    className="w-full h-full object-contain rounded-b-md"
                     loop={true}
                     autoPlay={true}
                     muted={false}
                     controls={false}
                     src={src}
+                    draggable="false"
                   />
                 );
               } else {
-                const src = getSource(file);
+                const src = memoizedSources[key];
 
                 return (
                   <img
                     key={key}
                     alt=""
-                    className="w-full h-full object-cover rounded-b-md"
+                    className="w-full h-full object-contain rounded-b-md"
                     width={16}
                     height={16}
                     src={src}
+                    draggable="false"
                   />
                 );
               }
@@ -84,7 +88,7 @@ const StoryMobile = ({ viewMode, files, screenName }) => {
             >
               {files.map((file, key) => {
                 if (isContainVideo(file)) {
-                  const src = getSource(file);
+                  const src = memoizedSources[key];
 
                   return (
                     <SwiperSlide key={key}>
@@ -99,7 +103,7 @@ const StoryMobile = ({ viewMode, files, screenName }) => {
                     </SwiperSlide>
                   );
                 } else {
-                  const src = getSource(file);
+                  const src = memoizedSources[key];
 
                   return (
                     <SwiperSlide key={key}>

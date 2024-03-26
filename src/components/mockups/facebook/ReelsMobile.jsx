@@ -1,6 +1,4 @@
-import React, { useCallback, useState } from "react";
-// import LeftArrow from "../../../assets/left-arrow.svg?react";
-
+import React, { useCallback, useMemo, useState } from "react";
 import LeftArrow from "../../svg/LeftArrow";
 import Globe from "../../svg/Globe";
 import Dots from "../../svg/horizontalDots";
@@ -14,7 +12,7 @@ import { getSource, isContainVideo } from "../../../utils";
 
 function Reels({ files, captions, screenName }) {
   const [muted, setMuted] = useState(true);
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]); 
 
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
@@ -57,6 +55,7 @@ function Reels({ files, captions, screenName }) {
             muted={muted}
             controls={false}
             src={src}
+            draggable="false"
           />
         )}
       </div>

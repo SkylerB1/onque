@@ -1,5 +1,4 @@
-import React from "react";
-import Youtube from "../../../assets/youtube-icon.svg?react";
+import React, { useMemo } from "react";
 import { getSource } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
 
@@ -8,7 +7,7 @@ import FacebookCommentFilled from "../../../assets/FacebookCommentFilled";
 import FacebookLikeFilled from "../../../assets/FacebookLikeFilled";
 
 function ShortsMobile({ files, captions, screenName }) {
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]);
   return (
     <>
       {/* <div className="absolute w-full p-4 pt-6 z-50 flex justify-start ">
@@ -23,6 +22,7 @@ function ShortsMobile({ files, captions, screenName }) {
           </>
         ) : (
           <video
+            draggable="false"
             className="w-full h-full object-cover brightness-[0.95] contrast-[0.95]"
             loop={true}
             autoPlay={true}

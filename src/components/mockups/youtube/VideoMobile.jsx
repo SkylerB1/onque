@@ -1,7 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import Youtube from "../../../assets/youtube-icon.svg?react";
-import Search from "../../../assets/search.svg?react";
-import VerticalDots from "../../../assets/vertical-dots.svg?react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Like from "../../../assets/youtube-like.svg?react";
 import Dislike from "../../../assets/youtube-dislike.svg?react";
 import Share from "../../../assets/youtube-share.svg?react";
@@ -15,9 +12,9 @@ import PlayNext from "../../../assets/PlayNext";
 import { getSource, isContainVideo } from "../../../utils";
 
 function VideoMobile({ files, data, screenName }) {
-  const { title='' } = data;
+  const { title = "" } = data;
   const [play, setPlay] = useState(false);
-  const src = getSource(files[0]);
+  const src = useMemo(() => getSource(files[0]), [files]);
 
   const videoRef = useRef(null);
 
@@ -55,6 +52,7 @@ function VideoMobile({ files, data, screenName }) {
         ) : (
           <>
             <video
+              draggable="false"
               className="w-full h-full object-cover"
               muted
               ref={videoRef}

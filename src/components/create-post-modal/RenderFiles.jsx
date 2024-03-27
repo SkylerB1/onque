@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from "react";
 import Cross from "../svg/Cross";
 import Edit from "../svg/Edit";
 import PlayFilled from "../svg/PlayFilled";
-import { getSource, isContainVideo } from "../../utils";
+import { getSource, isContainImage, isContainVideo } from "../../utils";
 
 const RenderFiles = ({
   files,
@@ -80,12 +80,14 @@ const RenderFiles = ({
                 >
                   <Cross width={22} height={22} />
                 </div>
-                <div
-                  onClick={() => onClickEdit(index)}
-                  className="absolute rounded-full border bg-white right-1 bottom-1 cursor-pointer"
-                >
-                  <Edit width={22} height={22} />
-                </div>
+                {isContainImage(file) && (
+                  <div
+                    onClick={() => onClickEdit(index)}
+                    className="absolute rounded-full border bg-white right-1 bottom-1 cursor-pointer"
+                  >
+                    <Edit width={22} height={22} />
+                  </div>
+                )}
               </>
             )}
           </div>

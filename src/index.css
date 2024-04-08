@@ -55,10 +55,6 @@ button {
   transition: border-color 0.25s;
 }
 
-span {
-  color: #fff;
-}
-
 .accordian-container .overflow-hidden {
   overflow: visible;
 }

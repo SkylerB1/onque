@@ -208,6 +208,16 @@ const ModalInput = ({
               />
             );
           }
+          if (platform.includes(InstagramPlatform)) {
+            return (
+              <InstagramPresets
+                key={index}
+                platform={platform}
+                additionalPresets={additionalPresets[platform]}
+                setAdditionalPresets={setAdditionalPresets}
+              />
+            );
+          }
           if (platform === InstagramPlatform && item.mediaType === "REEL") {
             return (
               <InstagramPresets

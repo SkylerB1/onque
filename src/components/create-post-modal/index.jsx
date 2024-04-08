@@ -133,6 +133,7 @@ const CreatePostModal = ({
       commercialContentOwnBrand: false,
       commercialContentThirdParty: false,
       maxVideoPostDuration: "",
+      autoPublish: true,
     },
     TikTok_Business: {
       privacyLevel: "",
@@ -143,9 +144,11 @@ const CreatePostModal = ({
       commercialContentOwnBrand: false,
       commercialContentThirdParty: false,
       maxVideoPostDuration: "",
+      autoPublish: true,
     },
     Instagram: {
       showReelOnFeed: true,
+      autoPublish: true,
     },
     YouTube: {
       title: "",

@@ -1,30 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { lazy, useEffect, useState } from "react";
 import PaymentHistoryTable from "./Premium/PaymentHistoryTable";
 import { axiosInstance } from "../../../../utils/Interceptor";
-import CurrentSubscription from "./CurrentSubscription";
-import SubscriptionPlans from "./SubscriptionPlans";
-import { Spinner } from "@material-tailwind/react";
+const CurrentSubscription = lazy(() => import("./CurrentSubscription"));
+const SubscriptionPlans = lazy(() => import("./SubscriptionPlans"));
 import { ColorRing } from "react-loader-spinner";
 
 const Price = () => {
   const [subscription, setSubscription] = useState(null);
+  const subscriptionId = subscription?.subscriptionId || null;
+
   const [loading, setLoading] = useState(true);
 
   const getSubscriptions = async () => {
     try {
       const res = await axiosInstance.get("/user/subscription");
       setSubscription(res.data);
-      setLoading(false)
+      setLoading(false);
     } catch (err) {
       console.log(err);
       setLoading(false);
-
     }
   };
 
   useEffect(() => {
     getSubscriptions();
   }, []);
+
+  useEffect(() => {
+    console.log(subscription);
+  }, [subscription]);
 
   if (loading)
     return (
@@ -43,7 +47,7 @@ const Price = () => {
 
   return (
     <>
-      {subscription ? (
+      {subscriptionId ? (
         <CurrentSubscription
           subscription={subscription}
           getSubscriptions={getSubscriptions}

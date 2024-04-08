@@ -10,6 +10,9 @@ import { Alert, Spinner, Typography } from "@material-tailwind/react";
 import CustomCheckbox from "../../Input/CustomCheckbox";
 import InfoIcon from "../../../assets/InfoIcon";
 import CustomLabel from "../../Input/CustomLabel";
+import PublishPostModal from "../../modal/publishPostModal";
+import QuestionMark from "../../../assets/QuestionMark";
+import { TikTokPlatform } from "../../common/commonString";
 
 const getPrivacyLabel = {
   PUBLIC_TO_EVERYONE: (
@@ -46,6 +49,8 @@ function TikTokPresets({
   const brandId = user?.brand?.id;
   const [privacyOptions, setPrivacyOptions] = useState([]);
   const [disabled, setDisabled] = useState();
+  const [modalOpen, setModalOpen] = useState(false);
+
   const memoizedPrivacyOptions = useMemo(
     () => privacyOptions,
     [privacyOptions]
@@ -98,12 +103,21 @@ function TikTokPresets({
           maxVideoPostDuration: max_video_post_duration_sec,
         },
       }));
-      setDisabled(data)
+      setDisabled(data);
       generatePrivacyOptions(data?.privacy_level_options);
       setLoading(false);
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const handleModalOpen = (e) => {
+    e.stopPropagation();
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
   };
 
   useEffect(() => {
@@ -116,6 +130,24 @@ function TikTokPresets({
         onClick={toggleAccordion}
         icon={<TikTok width={18} height={18} />}
         title={"TikTok presets"}
+        headerItems={
+          <div className="absolute right-20 bottom-5 flex gap-2  items-center">
+            <CustomSwitch
+              identifier="autoPublish"
+              color="green"
+              label={
+                <Typography variant="small" className="font-normal text-s">
+                  Auto Publishing
+                </Typography>
+              }
+              checked={additionalPresets?.autoPublish}
+              onChange={handleChange}
+            />
+            <div onClick={(e) => handleModalOpen(e)}>
+              <QuestionMark width={17} height={17} />
+            </div>
+          </div>
+        }
       >
         {loading ? (
           <div className="flex flex-row justify-center">
@@ -282,6 +314,11 @@ function TikTokPresets({
           </>
         )}
       </Accordion>
+      <PublishPostModal
+        open={modalOpen}
+        onClose={handleModalClose}
+        platform={TikTokPlatform}
+      />
     </div>
   );
 }

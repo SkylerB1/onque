@@ -164,35 +164,3 @@ const NavProfile = ({ clientData, setOpen }) => {
 };
 
 export default NavProfile;
-
-const NavIcon = ({ platformes }) => {
-  return (
-    <div className="flex items-center gap-1 justify-start">
-      {platformes.map((item) => {
-        return (
-          <div key={item}>
-            {item === "twitter" && (
-              <Twitter fill="#03A9F4" width={16} height={16} />
-            )}
-            {item === "youtube" && (
-              <YoutubeFilled fill="red" width={20} height={18} />
-            )}
-            {item === "facebook" && (
-              <FacebookFilled fill="red" width={20} height={18} />
-            )}
-            {item === "instagram" && (
-              <Instagram fill="red" width={20} height={18} />
-            )}
-            {item === "tiktok" && <TikTok fill="red" width={20} height={18} />}
-            {item === "linkedin" && (
-              <LinkedIn fill="blue" width={20} height={18} />
-            )}
-            {item === "google-business" && (
-              <GoogleBusiness fill="blue" width={20} height={18} />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-};

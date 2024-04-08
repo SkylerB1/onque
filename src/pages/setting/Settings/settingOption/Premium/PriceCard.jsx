@@ -1,29 +1,23 @@
 import React, { useState } from "react";
 import ChangePlanModel from "./ChangePlanModel";
 import { axiosInstance } from "../../../../../utils/Interceptor";
+import LoadingButton from "../../../../../components/button/LoadingButton";
+import { lookupKeys } from "../../../../../utils";
+import { useSelector } from "react-redux";
+import { Button } from "@material-tailwind/react";
 
-const PriceCard = ({ selectedPlanList, selectedOption }) => {
+const PriceCard = ({ selectedPlan, selectedOption, switchDuration }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const color = selectedPlanList.color;
+  const [loading, setLoading] = useState(false);
+  const color = selectedPlan.color;
+  const user = useSelector((state) => state.user.value);
 
   const handleOpen = () => {
-    // alert("test");
     setIsOpen(true);
   };
-  const handleClose = () => {
-    setIsOpen(false);
-  };
 
-
-  const handleSubscription = async () => {
-    try {
-      const response = await axiosInstance.post("/payments/create-checkout-session", {
-        lookup_keys: "starter_plan",
-      });
-      console.log(response);
-    } catch (err) {
-      console.log(err);
-    }
+  const handler = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
@@ -35,9 +29,9 @@ const PriceCard = ({ selectedPlanList, selectedOption }) => {
         >
           <div className="flex flex-1 justify-between items-start">
             <p className="mb-4 text-xl font-medium text-gray-800 dark:text-gray-50">
-              {selectedPlanList.title}
+              {selectedPlan.title}
             </p>
-            {selectedPlanList.recommended === true && (
+            {selectedPlan.recommended === true && (
               <div className="bg-black p-1 flex items-center justify-center -mt-4 rounded-b-md">
                 <p>Recommended</p>
               </div>
@@ -45,22 +39,21 @@ const PriceCard = ({ selectedPlanList, selectedOption }) => {
           </div>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">
             from{" "}
-            {selectedOption === "Monthly"
-              ? selectedPlanList.monthly_price
-              : selectedPlanList.annualy_price}{" "}
-            GBP/
+            {selectedOption === "monthly"
+              ? selectedPlan.monthly_price
+              : selectedPlan.annualy_price}
+            GBP
             <span className="text-xl font-medium text-gray-900">
-              {" "}
-              {selectedOption === "Monthly" ? "Monthly" : "Annualy"}
+              {selectedOption === "monthly" ? "Monthly" : "Annualy"}
             </span>
           </p>
           <p className="mt-2 text-xl font-medium text-gray-900">
-            with {selectedOption === "Monthly" ? "monthly" : "annualy"} payment
+            with {selectedOption === "monthly" ? "monthly" : "annualy"} payment
           </p>
         </div>
         <div style={{ borderColor: color }} className={`border p-4`}>
           <ul className="w-full mt-6 mb-6 text-sm text-gray-600 dark:text-gray-100">
-            {selectedPlanList.priceBody.map((item, index) => (
+            {selectedPlan.priceBody.map((item, index) => (
               <li className="mb-3 flex items-center" key={index}>
                 <svg
                   className="w-6 h-6 mr-2"
@@ -78,37 +71,33 @@ const PriceCard = ({ selectedPlanList, selectedOption }) => {
             ))}
           </ul>
         </div>
-        <div style={{ borderColor: color }} className={`border p-4`}>
-          {/* Radio buttons here */}
-        </div>
+        <div style={{ borderColor: color }} className={`border p-4`}></div>
         <div
           style={{ backgroundColor: color }}
           className={`border border-[${color}] rounded-b-2xl p-4 flex flex-1 items-center justify-between`}
         >
-          <p>{selectedOption === "Monthly" ? "Monthly" : "Annualy"} price</p>
+          <p>{selectedOption === "monthly" ? "Monthly" : "Annualy"} price</p>
           <p className="text-lg font-bold text-gray-900 dark:text-white">
-            {" "}
-            {selectedOption === "Monthly"
-              ? selectedPlanList.monthly_price
-              : selectedPlanList.annualy_price}{" "}
+            {selectedOption === "monthly"
+              ? selectedPlan.monthly_price
+              : selectedPlan.annualy_price}
             GBP
           </p>
         </div>
       </div>
-      <button
-        type="button"
-        // onClick={handleOpen}
-        onClick={handleSubscription}
-        className="py-2 px-4 mt-5 bg-indigo-600 hover:bg-green-500 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+      <Button
+        onClick={handleOpen}
+        className="py-3 px-4 mt-5 bg-black hover:bg-black text-white w-full transition ease-in duration-200 text-center font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
       >
-        Upgrade plan
-      </button>
+        Upgrade
+      </Button>
 
       <ChangePlanModel
         open={isOpen}
-        handleClose={handleClose}
-        listData={selectedPlanList}
+        handler={handler}
+        listData={selectedPlan}
         selectedOption={selectedOption}
+        switchDuration={switchDuration}
       />
     </div>
   );

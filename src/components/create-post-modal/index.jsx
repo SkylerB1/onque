@@ -62,6 +62,7 @@ import AlertModal from "../modal/AlertModal.jsx";
 import toast from "react-hot-toast";
 import Dropzone from "react-dropzone";
 import { useLocalStorage } from "../../utils/LocalStorage.js";
+import UpgradeSubscription from "../modal/UpgradeSubscription.jsx";
 
 const CreatePostModal = ({
   openModal,
@@ -84,7 +85,7 @@ const CreatePostModal = ({
     () => isEdit === "Published" ?? false,
     [isEdit]
   );
-
+  const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [viewMode, setViewMode] = useState(0);
   const [showEmoji, setShowEmoji] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
@@ -295,6 +296,9 @@ const CreatePostModal = ({
         setLoading(false);
       }
     } catch (err) {
+      if (err.response.status === 403) {
+        setOpenSubscriptionModal(true);
+      }
       setLoading(false);
     }
   };
@@ -311,6 +315,10 @@ const CreatePostModal = ({
       console.log(err);
       setLoading(false);
     }
+  };
+
+  const toggleSubscriptionModal = () => {
+    setOpenSubscriptionModal(!openSubscriptionModal);
   };
 
   const handlePublish = async () => {
@@ -1216,6 +1224,13 @@ const CreatePostModal = ({
           show={showAlertModal}
           alertData={alertData}
           toggleModal={toggleAlertModal}
+        />
+        <UpgradeSubscription
+          open={openSubscriptionModal}
+          toggleModal={toggleSubscriptionModal}
+          body={
+            "You have reached the maximum limit for your posts. In order to create more post, you either need a PREMIUM account or upgrade subscription."
+          }
         />
         <TextGeneratorModal open={showAiModal} toggleModal={toggleAiModal} />
       </Dialog>

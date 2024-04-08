@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { SocialPlatforms } from "../../utils";
 
-const DropdownClientList = () => {
+const DropdownClientList = ({setOpen}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [clientData, setClientsData] = useState([]);
   const { getConnections } = useConnections();
@@ -136,6 +136,7 @@ const DropdownClientList = () => {
             />
           )}
           <button
+            onClick={() => setOpen(true)}
             className=" w-full text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200"
             role="menuitem"
           >

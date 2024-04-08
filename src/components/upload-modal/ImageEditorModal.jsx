@@ -47,6 +47,7 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
               [2 / 3, "2:3 Facebook Story"],
               [4 / 5, "4:5 Twitter Portrait"],
             ]}
+            cropEnableRotateMatchImageAspectRatio="always"
             enableButtonExport={false}
           />
         </div>

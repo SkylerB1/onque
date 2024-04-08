@@ -6,7 +6,8 @@ const LoadingButton = ({
   title,
   fullWidth = true,
   onClick,
-  className="",
+  className = "",
+  ...props
 }) => {
   return (
     <Button
@@ -14,9 +15,10 @@ const LoadingButton = ({
       fullWidth={fullWidth}
       onClick={onClick}
       className={
-        `flex justify-center items-center bg-light-blue-600 hover:bg-blue-500 ` +
+        `flex justify-center items-center ` +
         className
       }
+      {...props}
     >
       {loading ? <Spinner /> : <span>{title}</span>}
     </Button>

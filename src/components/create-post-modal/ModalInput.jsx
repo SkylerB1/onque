@@ -20,9 +20,11 @@ import { Textarea } from "@material-tailwind/react";
 
 const ModalInput = ({
   selectedPreview,
+  setCaption,
   toggleimgUploadModal,
   toggleVideoUploadModal,
   toggleEmojiModal,
+  showEmoji,
   closeEmoji,
   toggleAiModal,
   handleCaption,
@@ -106,7 +108,7 @@ const ModalInput = ({
                     </svg>
                     <span className="sr-only">Add emoji</span>
                   </button>
-                  <button
+                  {/* <button
                     type="button"
                     className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
                   >
@@ -131,22 +133,22 @@ const ModalInput = ({
                     className="p-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600"
                   >
                     <Robot width={20} height={20} />
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
 
             <div className="flex flex-1 flex-col px-4 py-2 bg-white rounded-b-lg dark:bg-gray-800">
-              {/* {showEmoji && (
-                    <div className="absolute left-20">
-                      <EmojiPicker
-                        autoFocusSearch={true}
-                        onEmojiClick={(emoji) =>
-                          setCaption((prevCaption) => prevCaption + emoji.emoji)
-                        }
-                      />
-                    </div>
-                  )} */}
+              {showEmoji && (
+                <div className="absolute left-20 z-50">
+                  <EmojiPicker
+                    autoFocusSearch={true}
+                    onEmojiClick={(emoji) =>
+                      setCaption((prevCaption) => prevCaption + emoji.emoji)
+                    }
+                  />
+                </div>
+              )}
               <Textarea
                 rows={1}
                 resize={true}

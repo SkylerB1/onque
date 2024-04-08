@@ -188,7 +188,7 @@ export default function Header({ children }) {
           {children}
         </main>
       </div>
-      <AddModal open={opens} Close={() => setOpen(false)} title={`Add Client`} id={""} />
+      <AddModal open={opens} Close={() => setOpen(false)} title={`Add Client`} />
     </div>
   );
 }

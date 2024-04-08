@@ -285,3 +285,12 @@ export const lookupKeys = {
     yearly: "enterprise_plan_gbp_yearly",
   },
 };
+
+export const planLabel = {
+  starter_plan_gbp: "Starter Plan - Monthly",
+  starter_plan_gbp_yearly: "Starter Plan - Yearly",
+  advanced_plan_gbp: "Advance Plan - Monthly",
+  advanced_plan_gbp_yearly: "Advance Plan - Yearly",
+  enterprise_plan_gbp: "Enterprise Plan - Monthly",
+  enterprise_plan_gbp_yearly: "Enterprise Plan - Yearly",
+};

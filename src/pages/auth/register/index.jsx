@@ -43,14 +43,6 @@ const Register = () => {
         };
 
         setLoading(false);
-        await axios.post(
-          `${import.meta.env.VITE_API_URL}/brands/create`,
-          { data: data },
-          {
-            headers: { authorization: `Bearer ${response.data.token}` },
-          }
-        );
-
         showSuccessMessage(RegisterSuccessful);
         navigate("/login");
       } else {
@@ -123,7 +115,6 @@ const Register = () => {
                           label="First Name"
                           className="focus:shadow-none"
                           size="regular"
-
                         />
                       </div>
                       <div className="mb-4  w-full">
@@ -134,7 +125,6 @@ const Register = () => {
                           label="Last Name"
                           className="focus:shadow-none"
                           size="regular"
-
                         />
                       </div>
                     </div>
@@ -146,7 +136,6 @@ const Register = () => {
                         className="focus:shadow-none"
                         label="Email"
                         size="regular"
-
                       />
                     </div>
                     <div className="mb-4">

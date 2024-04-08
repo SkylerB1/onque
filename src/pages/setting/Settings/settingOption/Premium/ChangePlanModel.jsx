@@ -1,316 +1,266 @@
-import React, { useState } from "react";
-import { GrClose } from "react-icons/gr";
+import React, { useEffect, useMemo, useState } from "react";
+
 import {
-  FaRegCreditCard,
-  FaCcMastercard,
-  FaCcVisa,
-  FaCcAmex,
-} from "react-icons/fa";
-import {
-  Input,
+  Alert,
   Button,
-  Typography,
   Dialog,
   DialogBody,
+  DialogFooter,
+  IconButton,
+  Input,
+  Radio,
+  Typography,
 } from "@material-tailwind/react";
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionBody,
-} from "@material-tailwind/react";
-import countries from "./CountryName";
-
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "65%",
-  bgcolor: "#EFEFEF",
-  boxShadow: 24,
-  p: 2,
-  borderRadius: "10px",
+import { DownArrow, StarPng } from "../../../../../components/common/Images";
+import DeleteIconFilled from "../../../../../assets/DeleteIconFilled";
+import { axiosInstance } from "../../../../../utils/Interceptor";
+import LoadingButton from "../../../../../components/button/LoadingButton";
+import toast from "react-hot-toast";
+import InfoIcon from "../../../../../assets/InfoIcon";
+import { lookupKeys } from "../../../../../utils";
+const initial = {
+  code: "",
+  isValid: false,
+  label: "",
 };
+const ChangePlanModel = ({
+  open,
+  handler,
+  listData,
+  selectedOption,
+  switchDuration,
+}) => {
+  const { key,bgClass, savingWithAnnualPlan, monthly_price, annualy_price } = listData;
+  const isMonthly = selectedOption === "monthly" || false;
+  const [openDiscount, setOpenDiscount] = useState(false);
+  const [discount, setDiscount] = useState(initial);
+  const [loading, setLoading] = useState(false);
 
-const ChangePlanModel = ({ open, handleClose, listData, selectedOption }) => {
-  const prices =
-    selectedOption === "Monthly"
-      ? listData.monthly_price
-      : listData.annualy_price;
-  const [formData, setFormData] = useState({
-    company: "",
-    taxId: "",
-    address: "",
-    country: "",
-    email: "",
-    cardDitels: {
-      cardNumber: "",
-      exp: "",
-      cvv: "",
-    },
-    price: prices,
-  });
-
-  const [opens, setOpen] = useState(1);
-  const handleOpen = (value) => setOpen(opens === value ? 0 : value);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const toggleDiscountInput = () => {
+    setOpenDiscount(!openDiscount);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Send formData to the backend using an API call.
-    // You can use libraries like Axios to make the request.
-    console.log(formData);
-    // Reset the form or perform any necessary actions after submitting.
+  const removeDiscountCode = () => {
+    setDiscount(initial);
   };
 
-  const formatCardNumber = (input) => {
-    const cardNumber = input.replace(/\D/g, "");
-    let formattedCardNumber = "";
-
-    for (let i = 0; i < cardNumber.length; i += 4) {
-      formattedCardNumber += cardNumber.slice(i, i + 4) + " ";
+  const validateDiscountCode = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get(`/payments/coupon/${discount.code}`);
+      if (res.status === 200) {
+        const { data } = res;
+        setDiscount((prev) => ({ ...prev, isValid: true, label: data.label }));
+      }
+      setLoading(false);
+    } catch (err) {
+      setDiscount({
+        code: "",
+        isValid: false,
+        label: err?.response?.data?.message || "Invalid code",
+      });
+      toast.error(err?.response?.data?.message || "Invalid code");
+      setLoading(false);
     }
-
-    formattedCardNumber = formattedCardNumber.trim();
-
-    return formattedCardNumber;
   };
 
+  const handleSubscription = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post(
+        "/payments/create-checkout-session",
+        {
+          lookup_key: lookupKeys[key][selectedOption],
+          code: discount.code,
+        }
+      );
+      setLoading(false);
+      if (response.status === 200) {
+        window.location.href = response.data.url;
+      }
+    } catch (err) {
+      console.log(err);
+      setLoading(false);
+    }
+  };
   return (
-    <Dialog size="xl" open={open} onClose={handleClose}>
+    <Dialog size="xs" open={open} handler={handler}>
       <DialogBody>
-        <div className="social-tabme-modal">
-          <div className="flex flex-1 items-center justify-between mb-5 mt-2">
-            <Typography
-              variant="h6"
-              component="h2"
-              sx={{ marginBottom: "20px", fontWeight: "bold" }}
-            >
-              Change plan
-            </Typography>
-            <button
-              className="p-2  rounded-2xl"
-              onClick={() => handleClose(false)}
-            >
-              <GrClose className="text-xl" />
-            </button>
+        <div>
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row items-center">
+              <img src={listData.icon} className="w-10 h-auto" />
+              <span className="font-semibold text-xl ml-4 text-black">
+                {listData.title}
+              </span>
+            </div>
           </div>
-          <hr className="h-px bg-gray-300 border-0 dark:bg-gray-500"></hr>
-          <div className="flex flex-1 mt-8">
-            <div className="w-full">
-              <h2 className="text-lg font-semibold">Billing information</h2>
-              <div color="transparent" shadow={false}>
-                <form className="mt-6 mb-2" onSubmit={handleSubmit}>
-                  <div className="flex flex-1 items-start">
-                    <div className="w-3/4 mr-5">
-                      <div className="flex flex-1 items-start justify-between ">
-                        <div className="w-1/2 mr-8">
-                          <Input
-                            color="purple"
-                            type="text"
-                            size="lg"
-                            label="Company"
-                            name="company"
-                            value={formData.company}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="w-1/2 mr-8">
-                          <Input
-                            color="purple"
-                            type="text"
-                            size="lg"
-                            label="VAT/Tax Id Number"
-                            name="taxId"
-                            value={formData.taxId}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-1 items-start justify-between mt-8">
-                        <div className="w-1/2 mr-8">
-                          <Input
-                            color="purple"
-                            type="text"
-                            size="lg"
-                            label="Full address"
-                            name="address"
-                            value={formData.address}
-                            onChange={handleInputChange}
-                          />
-                        </div>
-                        <div className="w-1/2 mr-8">
-                          <select
-                            aria-label="Country"
-                            name="country"
-                            value={formData.country}
-                            onChange={handleInputChange}
-                            className="w-full bg-[#EFEFEF] p-2 border rounded-lg"
-                          >
-                            <option value="">Country</option>
-                            {countries.map((country, index) => (
-                              <option key={index} value={country}>
-                                {country}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="mt-8 mr-8">
-                        <p>Payment method</p>
-                        <Accordion
-                          open={opens === 1}
-                          className="mb-2 mt-5 rounded-lg border border-blue-gray-100 px-4"
-                        >
-                          <AccordionHeader
-                            onClick={() => handleOpen(1)}
-                            className={`border-b-2 transition-colors ${
-                              opens === 1 ? "" : ""
-                            }`}
-                          >
-                            <div className="flex flex-1 items-center justify-between">
-                              <div className="flex flex-1 items-center gap-1">
-                                <FaRegCreditCard /> Credit card
-                              </div>
-                              <div className="flex flex-1 items-end justify-end gap-1">
-                                <FaCcMastercard /> <FaCcVisa /> <FaCcAmex />
-                              </div>
-                            </div>
-                          </AccordionHeader>
-                          <AccordionBody className="pt-3 text-base font-normal">
-                            <div className="flex flex-1 items-start justify-between mt-8">
-                              <div className="w-1/2 mr-8">
-                                <Input
-                                  color="purple"
-                                  type="text"
-                                  size="lg"
-                                  label="Card Number"
-                                  name="cardNumber"
-                                  value={formData.cardDitels.cardNumber}
-                                  onChange={(e) => {
-                                    const formattedCardNumber =
-                                      formatCardNumber(e.target.value);
-                                    setFormData({
-                                      ...formData,
-                                      cardDitels: {
-                                        ...formData.cardDitels,
-                                        cardNumber: formattedCardNumber,
-                                      },
-                                    });
-                                  }}
-                                />
-                              </div>
-                              <div className="w-1/2 mr-8">
-                                <Input
-                                  color="purple"
-                                  type="text"
-                                  size="lg"
-                                  label="Expiration Date"
-                                  // placeholder="12/12"
-                                  name="exp"
-                                  value={formData.cardDitels.exp}
-                                  onChange={handleInputChange}
-                                />
-                              </div>
-                              <div className="w-1/2 mr-8">
-                                <Input
-                                  color="purple"
-                                  type="number"
-                                  size="lg"
-                                  label="CVV"
-                                  name="cvv"
-                                  value={formData.cardDitels.cvv}
-                                  onChange={handleInputChange}
-                                />
-                              </div>
-                            </div>
-                          </AccordionBody>
-                        </Accordion>
-                        <Accordion
-                          open={opens === 2}
-                          className="mb-2 rounded-lg border border-blue-gray-100 px-4"
-                        >
-                          <AccordionHeader
-                            onClick={() => handleOpen(2)}
-                            className={`border-b-0 transition-colors ${
-                              open === 2
-                                ? "text-blue-500 hover:!text-blue-700"
-                                : ""
-                            }`}
-                          >
-                            <img
-                              src="/assets/PayPal.svg?react" // Path relative to the "public" directory
-                              alt="On Que Logo"
-                              width={60}
-                              height={5}
-                            />
-                          </AccordionHeader>
-                          <AccordionBody className="pt-0 text-base font-normal">
-                            <div className="flex flex-1 items-center justify-center mb-3">
-                              <button className="bg-[#F9C338] px-14 py-2 rounded-2xl">
-                                <img
-                                  src="/assets/PayPal.svg?react" // Path relative to the "public" directory
-                                  alt="On Que Logo"
-                                  width={60}
-                                  height={5}
-                                />
-                              </button>
-                            </div>
-                          </AccordionBody>
-                        </Accordion>
-                      </div>
-                    </div>
-                    <div className="w-1/4">
-                      <p className="font-semibold  text-xl">{listData.title}</p>
-                      <hr className="h-px my-8 bg-black border-0 dark:bg-black"></hr>
-                      <div>
-                        <div className="flex flex-1 items-center justify-between">
-                          <div>Annual plan price</div>
-                          <div className="font-semibold">
-                            {selectedOption === "Monthly"
-                              ? listData.monthly_price
-                              : listData.annualy_price}
-                            .00 GBP
-                          </div>
-                        </div>
-                        <div className="flex flex-1 items-center justify-between">
-                          <div>Taxes (21%)</div>
-                          <div className="font-semibold">113.40 GBP</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <hr className="h-px my-8 bg-black border-0 dark:bg-black"></hr>
-                  <div className="mt-8 flex flex-1 items-center justify-between">
-                    <div className="flex flex-1 items-center justify-start">
-                      Final price{" "}
-                      <p className="font-semibold ml-2">
-                        {selectedOption === "Monthly"
-                          ? listData.monthly_price
-                          : listData.annualy_price}{" "}
-                        GBP
-                      </p>
-                    </div>
+          <hr className="h-px my-4 bg-black border-0 dark:bg-black"></hr>
+          <div>
+            <div className="flex flex-1 items-center">
+              <div className="flex flex-col justify-center">
+                <Radio
+                  name="plan"
+                  checked={isMonthly}
+                  label={
                     <div>
-                      <Button
-                        type="submit"
-                        className="mt-6 bg-black text-white"
-                        fullWidth
+                      <Typography color="blue-gray" className="font-medium">
+                        Monthly Plan
+                      </Typography>
+                      <Typography
+                        variant="small"
+                        color="gray"
+                        className="font-normal"
                       >
-                        Upgrade Plan
-                      </Button>
+                        {monthly_price}
+                        .00 GBP billed monthly
+                      </Typography>
                     </div>
-                  </div>
-                </form>
+                  }
+                  containerProps={{
+                    className: "-mt-5",
+                  }}
+                  onClick={() => switchDuration("monthly")}
+                />
+                <div className="my-2">
+                  <Radio
+                    name="plan"
+                    checked={!isMonthly}
+                    label={
+                      <div>
+                        <Typography color="blue-gray" className="font-medium">
+                          Annual Plan
+                        </Typography>
+                        <Typography
+                          variant="small"
+                          color="gray"
+                          className="font-normal"
+                        >
+                          {annualy_price}
+                          .00 GBP billed yearly
+                        </Typography>
+                      </div>
+                    }
+                    containerProps={{
+                      className: "-mt-5",
+                    }}
+                    onClick={() => switchDuration("yearly")}
+                  />
+                </div>
               </div>
             </div>
+
+            {isMonthly ? (
+              <Alert
+                className="bg-[#3b82f61a] flex items-center my-2"
+                icon={<InfoIcon width={22} height={22} fill={"#2196f3"} />}
+              >
+                <Typography className="text-sm text-[#3b82f6cc]">
+                  Your can save{" "}
+                  <strong className="font-bold">{`${savingWithAnnualPlan} GBP`}</strong>{" "}
+                  with the annual plan
+                </Typography>
+              </Alert>
+            ) : (
+              <div
+                className={`text-black text-center text-sm py-2 px-3 my-2 rounded-lg flex items-center justify-center ${bgClass}`}
+              >
+                <img
+                  width={20}
+                  height={20}
+                  alt="star"
+                  className="mr-2"
+                  src={StarPng}
+                />
+                <span>
+                  You saved
+                  <strong className="font-bold">{` ${savingWithAnnualPlan} GBP `}</strong>{" "}
+                  with the annual plan
+                </span>
+                <img
+                  width={20}
+                  height={20}
+                  alt="star"
+                  className="ml-2"
+                  src={StarPng}
+                />
+              </div>
+            )}
+            <div className="flex flex-row justify-end">
+              <Button
+                variant="text"
+                onClick={toggleDiscountInput}
+                className="underline normal-case"
+              >
+                <div className="flex flex-row items-center">
+                  Add discount code
+                  <span className="ml-1">
+                    <DownArrow width={15} height={15} />
+                  </span>
+                </div>
+              </Button>
+            </div>
+            {openDiscount &&
+              (discount.isValid ? (
+                <>
+                  <hr className="my-4" />
+                  <div className="flex flex-row justify-between items-center">
+                    <span className="text-sm">Discount code:</span>
+                    <span className="flex flex-row items-center">
+                      <strong className="font-bold text-sm">
+                        {discount.code}
+                      </strong>
+                      <IconButton onClick={removeDiscountCode} variant="text">
+                        <DeleteIconFilled />
+                      </IconButton>
+                    </span>
+                  </div>
+                  <span className="text-sm">{discount.label}</span>
+                </>
+              ) : (
+                <>
+                  <hr className="my-4" />
+                  <div className="flex flex-row">
+                    <Input
+                      placeholder="Enter the code"
+                      className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+                      labelProps={{
+                        className: "before:content-none after:content-none",
+                      }}
+                      onChange={(e) =>
+                        setDiscount((prev) => ({
+                          ...prev,
+                          code: e.target.value,
+                        }))
+                      }
+                    />
+                    <LoadingButton
+                      onClick={validateDiscountCode}
+                      title={"Apply"}
+                      loading={loading}
+                      disabled={discount.code === "" || false}
+                      className="normal-case ml-5 w-30"
+                    />
+                  </div>
+                  <hr className="mt-4" />
+                </>
+              ))}
           </div>
         </div>
       </DialogBody>
+      <DialogFooter>
+        <div className="flex flex-1 flex-row justify-between">
+          <Button variant="outlined" onClick={handler}>
+            Cancel
+          </Button>
+          <LoadingButton
+            onClick={handleSubscription}
+            loading={loading}
+            title={"Upgrade Plan"}
+            className="w-40 bg-black"
+          />
+        </div>
+      </DialogFooter>
     </Dialog>
   );
 };

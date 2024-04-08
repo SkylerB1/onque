@@ -41,7 +41,7 @@ const Setting = () => {
 
 
   return (
-    <div className="p-4 sm:ml-64 mt-20">
+    <div className="p-4 mx-72 mt-20">
       <div className=" mt-2 mb-2">
         <div className="mt-5 mb-5 text-2xl font-light">Setting</div>
         <Tabs value={activeTab}>

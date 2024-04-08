@@ -23,6 +23,10 @@ import { Toaster } from "react-hot-toast";
 import { CookiesProvider } from "react-cookie";
 import PrivateRoute from "./PrivateRoute";
 import Home from "./pages";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
+const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const router = createBrowserRouter([
   {
@@ -131,29 +135,24 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  // {
-  //   path: "/user/new",
-  //   element: (
-  //     <Layout>
-  //       <CreateUser />
-  //     </Layout>
-  //   ),
-  // },
 ]);
+const stripePromise = loadStripe(stripeKey);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
-    <Provider store={store}>
-      <div>
-        <Toaster position="bottom-center" reverseOrder={false} />
-      </div>
-        <ThemeProvider>
-          <CookiesProvider>
-            <AppContextProvider>
-              <RouterProvider router={router} />
-            </AppContextProvider>
-          </CookiesProvider>
-        </ThemeProvider>
-    </Provider>
+  <Provider store={store}>
+    <div>
+      <Toaster position="bottom-center" reverseOrder={false} />
+    </div>
+    <ThemeProvider>
+      <CookiesProvider>
+        <AppContextProvider>
+          <Elements stripe={stripePromise}>
+            <RouterProvider router={router} />
+          </Elements>
+        </AppContextProvider>
+      </CookiesProvider>
+    </ThemeProvider>
+  </Provider>
   // </React.StrictMode>
 );

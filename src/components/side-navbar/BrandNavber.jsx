@@ -15,12 +15,11 @@ import { setUser } from "../../redux/features/userSlice";
 
 const BrandNavber = () => {
   const { pathname } = useLocation();
-  const [clientDatas, setClientsData] = useState([]);
+  const [clientData, setClientData] = useState([]);
   const [selectedValue, setSelectedValue] = useState("");
   const url = pathname;
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand?.id;
-  const userIdId = user?.id;
+  const { id: brandId, brand_name: brandName } = user?.brand;
   const dispatch = useDispatch();
   const [opens, setOpen] = useState(false);
 
@@ -28,9 +27,6 @@ const BrandNavber = () => {
     setSelectedValue(event);
   };
 
-  const handleOpen = () => {
-    setIsOpen(true);
-  };
   const getFirstLetter = (name) => {
     return name ? name.charAt(0).toUpperCase() : "";
   };
@@ -41,7 +37,7 @@ const BrandNavber = () => {
         `${import.meta.env.VITE_API_URL}/brands`
       );
       let responseData = response?.data?.rows;
-      setClientsData(responseData);
+      setClientData(responseData);
       setSelectedValue(responseData[0].brand_name);
     } catch (error) {
       console.log(error);
@@ -180,22 +176,22 @@ const BrandNavber = () => {
             Team access
           </Link>
         </ListItem>
-        <ListItem
-          className=" w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
-          onClick={() => setOpen(true)}
-        >
-          <ListItemPrefix>
-            <MdAutoDelete className="h-5 w-5" />
-          </ListItemPrefix>
-          <p className="w-full text-base text-[#646BFE]">Delete client</p>
-        </ListItem>
+        {clientData && clientData.length > 1 && (
+          <ListItem
+            className=" w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
+            onClick={() => setOpen(true)}
+          >
+            <ListItemPrefix>
+              <MdAutoDelete className="h-5 w-5" />
+            </ListItemPrefix>
+            <p className="w-full text-base text-[#646BFE]">Delete client</p>
+          </ListItem>
+        )}
       </div>
       <CustomModal
         open={opens}
         Close={() => setOpen(false)}
-        title={`Are you sure that you want to delete ${
-          user?.firstName + " " + user?.lastName
-        }?`}
+        title={`Are you sure that you want to delete ${brandName}?`}
         handleDelete={handleDeleteClient}
         id={brandId}
       />

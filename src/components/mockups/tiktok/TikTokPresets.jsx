@@ -6,7 +6,7 @@ import { axiosInstance } from "../../../utils/Interceptor";
 import { API_URL } from "../../../utils";
 import CustomSwitch from "../../Input/CustomSwitch";
 import SelectInput from "../../Input/SelectInput";
-import { Alert, Checkbox, Spinner, Typography } from "@material-tailwind/react";
+import { Alert, Spinner, Typography } from "@material-tailwind/react";
 import CustomCheckbox from "../../Input/CustomCheckbox";
 import InfoIcon from "../../../assets/InfoIcon";
 import CustomLabel from "../../Input/CustomLabel";

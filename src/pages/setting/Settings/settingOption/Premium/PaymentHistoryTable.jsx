@@ -1,174 +1,213 @@
-import React from "react";
 import {
   Card,
   CardHeader,
   Typography,
-  Button,
   CardBody,
-  Chip,
-  CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
-  Input,
 } from "@material-tailwind/react";
+import InvoiceSvg from "../../../../../assets/Invoice";
+import { useEffect, useState } from "react";
+import { axiosInstance } from "../../../../../utils/Interceptor";
+import { getDateFromUnix } from "../../../../../utils/dateUtils";
+import { planLabel } from "../../../../../utils";
+import { PaymentHistoryEmpty } from "../../../../../components/common/Images";
+import Cross from "../../../../../assets/Cross";
 
-const TABLE_HEAD = [
-  "Date",
-  "Discription",
-  "Billing period",
-  "Amount",
-  "Document",
-];
-
-const TABLE_ROWS = [
-  {
-    date: "Wed 3:00pm",
-    discription: "Spotify",
-    billingPeriod: "paid",
-    amount: "$2,500",
-    document: "visa",
-  },
-];
+const TABLE_HEAD = ["Date", "Plan", "Billing period", "Amount", "Document"];
 
 const PaymentHistoryTable = () => {
+  const [payments, setPayments] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const getPayments = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.get("/user/payments");
+      setPayments(res.data);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+    }
+  };
+
+  const redirectToStripeInvoice = (url) => {
+    window.open(url, "_blank");
+  };
+
+  useEffect(() => {
+    getPayments();
+  }, []);
+
+  if (loading) return <>Loading..</>;
+
   return (
-    <div className="h-full w-full">
-      {/* <CardHeader floated={false} shadow={false} className="rounded-none">
-        <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+    <Card className="h-full w-full ">
+      <CardHeader floated={false} shadow={false} className="rounded-none">
+        <div className="flex items-center justify-between gap-8">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Recent Transactions
+              Payments History
             </Typography>
-            <Typography color="gray" className="mt-1 font-normal">
-              These are details about the last transactions
+            <Typography color="gray" className="my-1 font-normal">
+              See information about all your payments
             </Typography>
           </div>
-          <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
+        </div>
+      </CardHeader>
+      <CardBody className="overflow-auto p-0 max-h-[500px]">
+        {payments && payments?.length > 0 ? (
+          <table className="mt-4 w-full min-w-max table-auto text-left">
+            <thead className="sticky top-0 z-10 bg-white">
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50 p-4"
+                  >
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="mt-12">
+              {payments &&
+                payments?.map(({ lines, hosted_invoice_url }, index) => {
+                  const isLast = index === payments?.length - 1;
+                  const classes = isLast
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
+
+                  if (lines.data.length > 0) {
+                    const { price, amount, currency, period } = lines.data[0];
+                    const { start, end } = period;
+                    const { lookup_key } = price;
+                    return (
+                      <tr key={index}>
+                        <td className={classes}>{getDateFromUnix(start)}</td>
+                        <td className={classes}>{planLabel[lookup_key]}</td>
+                        <td className={classes}>
+                          {getDateFromUnix(start)} -{getDateFromUnix(end)}
+                        </td>
+                        <td className={classes}>
+                          {amount / 100} {currency}
+                        </td>
+                        {hosted_invoice_url && (
+                          <td className={classes}>
+                            <Tooltip content="Invoice">
+                              <IconButton
+                                onClick={() =>
+                                  redirectToStripeInvoice(hosted_invoice_url)
+                                }
+                                variant="text"
+                              >
+                                <InvoiceSvg width={20} height={20} />
+                              </IconButton>
+                            </Tooltip>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  }
+                })}
+              {payments &&
+                payments?.map(({ lines, hosted_invoice_url }, index) => {
+                  console.log(lines.data);
+                  const isLast = index === payments?.length - 1;
+                  const classes = isLast
+                    ? "p-4"
+                    : "p-4 border-b border-blue-gray-50";
+
+                  if (lines.data.length > 0) {
+                    const { price, amount, currency, period } = lines.data[0];
+                    const { start, end } = period;
+                    const { lookup_key } = price;
+                    return (
+                      <tr key={index}>
+                        <td className={classes}>{getDateFromUnix(start)}</td>
+                        <td className={classes}>{planLabel[lookup_key]}</td>
+                        <td className={classes}>
+                          {getDateFromUnix(start)} -{getDateFromUnix(end)}
+                        </td>
+                        <td className={classes}>
+                          {amount / 100} {currency}
+                        </td>
+                        {hosted_invoice_url && (
+                          <td className={classes}>
+                            <Tooltip content="Invoice">
+                              <IconButton
+                                onClick={() =>
+                                  redirectToStripeInvoice(hosted_invoice_url)
+                                }
+                                variant="text"
+                              >
+                                <InvoiceSvg width={20} height={20} />
+                              </IconButton>
+                            </Tooltip>
+                          </td>
+                        )}
+                      </tr>
+                    );
+                  }
+                })}
+            </tbody>
+          </table>
+        ) : payments?.length === 0 ? (
+          <div class="p-8 mb-4 flex justify-center">
+            <div
+              class="flex gap-4 justify-center items-center"
+              style={{ maxWidth: 600 }}
+            >
+              <img alt src={PaymentHistoryEmpty} />
+              <div>
+                <p class="text-muted mb-1">
+                  There is no payment in your history yet.
+                </p>
+                <p class="text-muted mb-0">
+                  You will be able to check your invoices here.
+                </p>
+              </div>
             </div>
-            <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
+          </div>
+        ) : (
+          <div class="p-8 mb-4 flex justify-center">
+            <div
+              class="flex gap-4 justify-center items-center"
+              style={{ maxWidth: 600 }}
+            >
+              <Cross width={100} height={100} fill="red" />
+              <div>
+                <p class="text-muted mb-1">
+                  There is some error fetching your payment history.
+                </p>
+                <p class="text-muted mb-0">We are working on the fix.</p>
+              </div>
+            </div>
+          </div>
+        )}
+      </CardBody>
+      {/* {payments && payments.length > 0 && (
+        <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
+          <Typography variant="small" color="blue-gray" className="font-normal">
+            Page 1 of 10
+          </Typography>
+          <div className="flex gap-2">
+            <Button variant="outlined" size="sm">
+              Previous
+            </Button>
+            <Button variant="outlined" size="sm">
+              Next
             </Button>
           </div>
-        </div>
-      </CardHeader> */}
-      <CardBody className="overflow-scroll px-0">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
-                  >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TABLE_ROWS.map(({ date, discription, billingPeriod, amount, document }, index) => {
-              const isLast = index === TABLE_ROWS.length - 1;
-              const classes = isLast
-                ? "p-4"
-                : "p-4 border-b border-blue-gray-50";
-
-              return (
-                <tr key={date}>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-bold"
-                    >
-                      {date}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {discription}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {billingPeriod}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {amount}
-                    </Typography>
-                  </td>
-                  <td className={classes}>
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal"
-                    >
-                      {document}
-                    </Typography>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
-        </div>
-        <Button variant="outlined" size="sm">
-          Next
-        </Button>
-      </CardFooter>
-    </div>
+        </CardFooter>
+      )} */}
+    </Card>
   );
 };
 

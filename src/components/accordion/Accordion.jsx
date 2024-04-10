@@ -21,7 +21,7 @@ function Accordion({ children, title, icon, open, onClick, headerItems }) {
         className="border-b-0 flex justify-between items-center relative"
       >
         <div className="flex flex-row items-center">
-          {icon}
+          {icon ? { icon } : null}
           <Typography letterSpacing={"-0.5px"} className="ml-2">
             {title}
           </Typography>

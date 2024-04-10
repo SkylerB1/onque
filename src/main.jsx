@@ -19,6 +19,7 @@ import Connection from "./pages/brand/connection";
 import ClientDetails from "./pages/brand/clientDetails";
 import TeamAccess from "./pages/brand/teamAccess";
 import Setting from "./pages/setting/Settings/index";
+import UserManagement from "./pages/userManagement/index";
 import { Toaster } from "react-hot-toast";
 import { CookiesProvider } from "react-cookie";
 import PrivateRoute from "./PrivateRoute";
@@ -131,6 +132,16 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <Header>
           <Setting />
+        </Header>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/userManagement/:tab",
+    element: (
+      <PrivateRoute>
+        <Header>
+          <UserManagement />
         </Header>
       </PrivateRoute>
     ),

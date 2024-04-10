@@ -5,7 +5,7 @@ import { PiPlugsConnectedBold } from "react-icons/pi";
 import { FaMoneyBill } from "react-icons/fa";
 import { IoIosMenu, IoMdClose } from "react-icons/io";
 import { BsPersonFillGear } from "react-icons/bs";
-import { HiOutlineLogout } from "react-icons/hi";
+import { HiOutlineLogout, HiUserCircle } from "react-icons/hi";
 import Twitter from "../../assets/twitter.svg?react";
 import YoutubeFilled from "../../assets/youtube-filled.svg?react";
 import Instagram from "../../assets/instagram.svg?react";
@@ -21,6 +21,7 @@ import { getUserFromLocalStorage } from "../../redux/features/userSlice";
 import AddClientModal from "../modal/addClientModal";
 import { toast } from "react-hot-toast";
 import { useCookies } from "react-cookie";
+import UserIcon from "../../assets/userIcon";
 
 const NavProfile = ({ clientData, setOpen }) => {
   const ref = useRef();
@@ -145,6 +146,18 @@ const NavProfile = ({ clientData, setOpen }) => {
               <li className="gap-2 flex flex-1 items-center justify-start  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-[#a202f2]">
                 <BsPersonFillGear className="text-lg" />
                 Settings
+              </li>
+            </Link>
+            <Link
+              to="/userManagement/users"
+              onClick={closeDropdown}
+              className={`py-2 hover:bg-[#fde8ef] pl-8 block px-4  hover:text-[#a202f2]  ${
+                pathname.includes("/userManagement") ? `bg-[#fde8ef] ` : ""
+              }`}
+            >
+              <li className="gap-2 flex flex-1 items-center justify-start  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-[#a202f2]">
+                <HiUserCircle className="text-lg" />
+                User Management
               </li>
             </Link>
             <li className="pl-4 flex flex-1 items-center justify-start text-[#646BFE]  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600">

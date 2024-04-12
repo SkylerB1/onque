@@ -7,13 +7,17 @@ import CustomSwitch from "../../Input/CustomSwitch";
 import { Typography, IconButton } from "@material-tailwind/react";
 import PublishPostModal from "../../modal/publishPostModal";
 import { InstagramPlatform } from "../../common/commonString";
+import { useLocalStorage } from "../../../utils/LocalStorage";
+import AutoPublishPompt from "../../common/AutoPublishPompt";
 
 function InstagramPresets({
   setAdditionalPresets,
   additionalPresets,
   platform,
+  brandId,
 }) {
   const [open, setOpen] = useState(false);
+  const [openInstagramPrompt, setOpenInstagramPrompt] = useState(false);
 
   const toggleAccordion = () => {
     setOpen(!open);
@@ -24,6 +28,14 @@ function InstagramPresets({
       ...prev,
       [platform]: { ...prev[platform], [identifier]: value },
     }));
+
+    const promptValue = useLocalStorage(
+      `brand.${brandId}.planner.instaPrompt`,
+      "get"
+    );
+    if (value === false && !promptValue) {
+      setOpenInstagramPrompt(!openInstagramPrompt);
+    }
   };
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -75,6 +87,16 @@ function InstagramPresets({
         open={modalOpen}
         onClose={handleModalClose}
         platform={InstagramPlatform}
+      />
+      <AutoPublishPompt
+        isOpen={openInstagramPrompt}
+        onClose={() => {
+          setOpenInstagramPrompt(false);
+        }}
+        additionalPresets={additionalPresets?.autoPublish}
+        setAdditionalPresets={setAdditionalPresets}
+        platform={platform}
+        brandId={brandId}
       />
     </div>
   );

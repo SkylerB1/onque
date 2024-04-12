@@ -1085,6 +1085,7 @@ const CreatePostModal = ({
                       additionalPresets={additionalPresets}
                       setAdditionalPresets={setAdditionalPresets}
                       isDuplicating={isDuplicating}
+                      brandId={brandId}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">

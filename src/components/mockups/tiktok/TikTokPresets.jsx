@@ -13,6 +13,7 @@ import CustomLabel from "../../Input/CustomLabel";
 import PublishPostModal from "../../modal/publishPostModal";
 import QuestionMark from "../../../assets/QuestionMark";
 import { TikTokPlatform } from "../../common/commonString";
+import AutoPublishPompt from "../../common/AutoPublishPompt";
 
 const getPrivacyLabel = {
   PUBLIC_TO_EVERYONE: (
@@ -50,6 +51,7 @@ function TikTokPresets({
   const [privacyOptions, setPrivacyOptions] = useState([]);
   const [disabled, setDisabled] = useState();
   const [modalOpen, setModalOpen] = useState(false);
+  const [openTiktokPrompt, setOpenTiktokPrompt] = useState(false);
 
   const memoizedPrivacyOptions = useMemo(
     () => privacyOptions,
@@ -80,6 +82,14 @@ function TikTokPresets({
       ...prev,
       [platform]: { ...prev[platform], [identifier]: value },
     }));
+
+    const promptValue = useLocalStorage(
+      `brand.${brandId}.planner.instaPrompt`,
+      "get"
+    );
+    if (value === false && !promptValue) {
+      setOpenTiktokPrompt(!openInstagramPrompt);
+    }
   };
 
   const getCreatorInfo = async () => {
@@ -317,6 +327,14 @@ function TikTokPresets({
       <PublishPostModal
         open={modalOpen}
         onClose={handleModalClose}
+        platform={TikTokPlatform}
+      />
+      <AutoPublishPompt
+        isOpen={openTiktokPrompt}
+        brandId={brandId}
+        onClose={() => setOpenTiktokPrompt(!openTiktokPrompt)}
+        additionalPresets={additionalPresets?.autoPublish}
+        setAdditionalPresets={setAdditionalPresets}
         platform={TikTokPlatform}
       />
     </div>

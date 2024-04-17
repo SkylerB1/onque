@@ -15,6 +15,7 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
     navigate("/setting/Settings/account");
     toggleModal()
   };
+
   return (
     <Dialog open={open} onClose={toggleModal}>
       <DialogBody>
@@ -27,7 +28,7 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
             ></img>
           </div>
           <div class="text-center flex items-center flex-col">
-            <p class="mb-6 text-2xl text-black">Update your suscription</p>
+            <p class="mb-6 text-2xl text-black">Update your subscription</p>
             <div class="text-base">
               <p class="mb-0 text-black">{body}</p>
             </div>

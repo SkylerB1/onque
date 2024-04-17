@@ -27,7 +27,7 @@ const getPrivacyLabel = {
   MUTUAL_FOLLOW_FRIENDS: (
     <CustomLabel
       title={"Friends"}
-      body={"Only followers you followe can view this post"}
+      body={"Only followers you follow can view this post"}
     />
   ),
   SELF_ONLY: (

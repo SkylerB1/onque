@@ -12,7 +12,7 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
   const navigate = useNavigate();
 
   const redirectToPlans = () => {
-    navigate("/setting/Settings/account");
+    navigate("/setting/Settings/price");
     toggleModal()
   };
 

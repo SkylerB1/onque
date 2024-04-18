@@ -379,9 +379,9 @@ const CreatePostModal = ({
   };
 
   const handleDateChange = async (date) => {
-    setScheduledDate(dayjs(date));
+    date = dayjs(date).startOf('minute');
+    setScheduledDate(date);
   };
-
   const handleEdit = (index) => {
     setEditIndex(index);
   };
@@ -1042,13 +1042,13 @@ const CreatePostModal = ({
                             })}
                           </div>
 
-                          {selectedPlaforms?.length !== 9 &&
-                            < SocialMediaConnection >
+                          < SocialMediaConnection >
+                            {selectedPlaforms?.length !== 9 &&
                               <div className="ml-4 cursor-pointer">
                                 <Add width={20} height={15} fill={"#D3D3D3"} />
                               </div>
-                            </SocialMediaConnection>
-                          }
+                            }
+                          </SocialMediaConnection>
                         </div>
 
                         <DesktopDateTimePicker

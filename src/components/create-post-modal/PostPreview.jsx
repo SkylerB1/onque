@@ -24,9 +24,8 @@ const PostPreview = ({
             <div
               key={index}
               onClick={() => handlePlatformPreview(item)}
-              className={` rounded-xl px-3 py-1 ${index > 0 && "ml-1"} ${
-                isSelected && "bg-[#D3D3D3]"
-              }  rounded cursor-pointer hover:bg-gray-100`}
+              className={` rounded-xl px-3 py-1 ${index > 0 && "ml-1"} ${isSelected && "bg-[#D3D3D3]"
+                }  rounded cursor-pointer hover:bg-gray-100`}
             >
               {isSelected ? coloredIcon(22, 22) : nonColoredIcon(22, 22)}
             </div>

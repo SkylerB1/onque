@@ -21,7 +21,7 @@ import {
 } from "@material-tailwind/react";
 import { SocialPlatforms } from "../../utils";
 
-const DropdownClientList = ({setOpen}) => {
+const DropdownClientList = ({ setOpen }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [clientData, setClientsData] = useState([]);
   const { getConnections } = useConnections();
@@ -180,13 +180,17 @@ const DropdownClientList = ({setOpen}) => {
                           {item.brand_name}
                         </Typography>
                         <div className="flex flex-1 items-center justify-start gap-2 mt-1">
-                          {item.socialTokens.map((item) => {
-                            const { platform } = item;
-                            if (platform) {
-                              const { coloredIcon } = SocialPlatforms[platform];
-                              return coloredIcon(13, 13);
-                            }
-                          })}
+                          {item.socialTokens.length > 0 ? (
+                            item.socialTokens.map((item) => {
+                              const { platform } = item;
+                              if (platform) {
+                                const { coloredIcon } = SocialPlatforms[platform];
+                                return coloredIcon(13, 13);
+                              }
+                            })
+                          ) : (
+                            <span style={{ fontStyle: 'italic' }}>No networks connected</span>
+                          )}
                         </div>
                       </div>
                     </div>

@@ -14,49 +14,26 @@ import toast from "react-hot-toast";
 
 export default function ForgotPassword({ open, Close }) {
   const { register, handleSubmit, reset } = useForm();
+
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/user/send-email`,
-        { data }
+        `${import.meta.env.VITE_API_URL}/user/forgot-password`,
+        data
       );
-      toast.success(response?.data?.message);
+      console.log(response);
+      toast.success(response?.data?.msg);
       reset();
       Close();
     } catch (error) {
       toast.error(error?.response?.data?.message);
     }
   };
+
   const handleclose = async () => {
     Close();
     reset();
   };
-
-  // const handleInputChange = (e) => {
-  //   e.preventDefault();
-  //   setFormData(e.target.value);
-  // };
-
-  // const handleSave = async (e) => {
-  //   try {
-  //     e.preventDefault();
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_API_URL}/user/send-email`,
-  //       { email: email }
-  //     );
-  //     if (response.status === 200) {
-  //       const message = response.data.message;
-  //       showSuccessMessage(message);
-  //       handleClose();
-  //     } else {
-  //       const message = err.response.data.message;
-  //       showErrorMessage(message);
-  //     }
-  //   } catch (err) {
-  //     const message = err.response.data.message;
-  //     showErrorMessage(message);
-  //   }
-  // };
 
   return (
     <Dialog open={open} onClose={handleclose}>
@@ -107,4 +84,4 @@ export default function ForgotPassword({ open, Close }) {
       </DialogBody>
     </Dialog>
   );
-}
+};

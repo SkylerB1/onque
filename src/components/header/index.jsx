@@ -191,4 +191,4 @@ export default function Header({ children }) {
       <AddModal open={opens} Close={() => setOpen(false)} title={`Add Client`} />
     </div>
   );
-}
+};

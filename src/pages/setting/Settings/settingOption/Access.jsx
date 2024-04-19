@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Input, Button, Typography } from "@material-tailwind/react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
@@ -29,10 +29,13 @@ const Access = () => {
 
   return (
     <div>
-      <p className='text-xl font-bold mb-8'>Access information</p>
+      <p className="text-xl font-bold mb-8">Access information</p>
       <div>
-        <p>This is your access information. You'll need to introduce your password to perform any change</p>
-        <div className='mt-5 w-3/4 mb-8'>
+        <p>
+          This is your access information. You'll need to introduce your
+          password to perform any change
+        </p>
+        <div className="mt-5 mb-8">
           <form className="mt-6 mb-2" onSubmit={handleSubmit}>
             <div className="flex flex-1 items-start justify-between">
               <div className="w-1/2 mr-8">
@@ -90,6 +93,6 @@ const Access = () => {
       </div>
     </div>
   );
-}
+};
 
 export default Access;

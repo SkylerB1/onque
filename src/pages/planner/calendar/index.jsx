@@ -95,7 +95,7 @@ const Calendar = () => {
 
   return (
     <>
-      <div className="p-4 sm:ml-64 bg-[#F1F2F4]">
+      <div className="p-4 sm:ml-20 bg-[#F1F2F4] xl:ml-64">
         {connections.length === 0 ? (
           <SocialLinkPostCalendar getPostData={getPostData} />
         ) : (

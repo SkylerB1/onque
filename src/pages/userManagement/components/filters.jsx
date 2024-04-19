@@ -61,7 +61,7 @@ const Filters = ({ options, selectedOptions, onChange, title }) => {
     >
       <MenuHandler>
         {title ? (
-          <div className="w-[14rem] rounded-md bg-white cursor-pointer h-10">
+          <div className="w-full rounded-md bg-white cursor-pointer h-10">
             <div className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal text-left outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 disabled:cursor-not-allowed transition-all border text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 items-center justify-between flex whitespace-nowrap">
               {title}
               <svg

@@ -26,7 +26,6 @@ const AutoPublishPompt = ({
   const [tiktokDontShowAgain, setTiktokDontShowAgain] = useState(false);
 
   const handleClick = (identifier, value) => {
-    debugger;
     setAdditionalPresets((prev) => ({
       ...prev,
       [platform]: { ...prev[platform], [identifier]: value },
@@ -72,7 +71,7 @@ const AutoPublishPompt = ({
           color="blue-gray"
           size="sm"
           variant="text"
-          onClick={onClose}
+          onClick={() => handleClick("autoPublish", true)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

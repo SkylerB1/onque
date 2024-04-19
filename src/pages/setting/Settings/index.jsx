@@ -1,5 +1,3 @@
-;
-
 import React, { useEffect, useState } from "react";
 import {
   Tabs,
@@ -14,7 +12,7 @@ import Price from "./settingOption/Price";
 import { useNavigate, useParams } from "react-router-dom";
 
 const Setting = () => {
-  const {tab} = useParams();
+  const { tab } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState(tab.toLowerCase());
   const data = [
@@ -36,12 +34,11 @@ const Setting = () => {
   ];
 
   useEffect(() => {
-    navigate('/setting/Settings/'+activeTab);
-  },[activeTab]);
-
+    navigate("/setting/Settings/" + activeTab);
+  }, [activeTab]);
 
   return (
-    <div className="p-4 mx-72 mt-20">
+    <div className="p-4 xl:mx-72 mt-20 md:mx-32">
       <div className=" mt-2 mb-2">
         <div className="mt-5 mb-5 text-2xl font-light">Setting</div>
         <Tabs value={activeTab}>

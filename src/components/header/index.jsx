@@ -15,18 +15,19 @@ import DropdownClientList from "../drop-down/DropdownClientList";
 import { useDispatch, useSelector } from "react-redux";
 import useConnections from "../customHooks/useConnections";
 import AddModal from "../modal/addClientModal";
+import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch()
-  const { getConnections } = useConnections()
+  const dispatch = useDispatch();
+  const { getConnections } = useConnections();
   const [openNav, setOpenNav] = React.useState(false);
   const user = useSelector((state) => state.user.value);
   const [opens, setOpen] = useState(false);
 
   const navList = (
-    <ul className="mb-4 mt-2 flex flex-col gap-1 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+    <ul className="mb-4 mt-2 flex flex-col gap-1 md:flex-row md:mt-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
         as="li"
         variant="h6"
@@ -37,17 +38,20 @@ export default function Header({ children }) {
         </Link>*/}
         <div class="group relative flex justify-center">
           <Link>Analytics</Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">Coming Soon</span>
+          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
+            Coming Soon
+          </span>
         </div>
       </Typography>
       <Typography
         as="li"
         variant="h6"
         color="blue-gray"
-        className={`p-1 font-bold  text-base rounded-lg hover:bg-[#fde8ef] hover:text-[#ec407a] ${pathname === "/planner/calendar"
-          ? "text-black font-semibold bg-gray-200 rounded-md shadow-sm hover:bg-gray-200 hover:text-black"
-          : ""
-          }`}
+        className={`p-1 font-bold  text-base rounded-lg hover:bg-[#fde8ef] hover:text-[#ec407a] ${
+          pathname === "/planner/calendar"
+            ? "text-black font-semibold bg-gray-200 rounded-md shadow-sm hover:bg-gray-200 hover:text-black"
+            : ""
+        }`}
       >
         <Link to="/planner/calendar" className="flex items-center">
           Planning
@@ -77,7 +81,9 @@ export default function Header({ children }) {
         </Link> */}
         <div class="group relative flex justify-center">
           <Link>SmartLinks</Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">Coming Soon</span>
+          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
+            Coming Soon
+          </span>
         </div>
       </Typography>
       {/* <Typography
@@ -120,7 +126,7 @@ export default function Header({ children }) {
                 variant="gradient"
                 size="sm"
                 className="hidden lg:inline-block"
-                onClick={() => navigate('/setting/Settings/price')}
+                onClick={() => navigate("/setting/Settings/price")}
               >
                 <span>Buy Now</span>
               </Button>
@@ -140,46 +146,28 @@ export default function Header({ children }) {
             </Typography> */}
               <IconButton
                 variant="text"
-                className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+                className="ml-auto text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
                 ripple={false}
                 onClick={() => setOpenNav(!openNav)}
               >
                 {openNav ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    className="h-6 w-6"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <IoMdArrowDropupCircle className="text-2xl font-medium" />
                 ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
-                  </svg>
+                  <IoMdArrowDropdownCircle className="text-2xl font-medium" />
                 )}
               </IconButton>
             </div>
           </div>
-          <Collapse open={openNav}>
+          <Collapse
+            open={openNav}
+            className="flex items-center justify-center mt-3"
+          >
             {navList}
-            <Button variant="gradient" size="sm" fullWidth className="mb-2">
+            <Button
+              variant="gradient"
+              size="sm"
+              className="mb-2 h-5 w-max flex items-center ml-2"
+            >
               <span>Buy Now</span>
             </Button>
           </Collapse>
@@ -188,7 +176,11 @@ export default function Header({ children }) {
           {children}
         </main>
       </div>
-      <AddModal open={opens} Close={() => setOpen(false)} title={`Add Client`} />
+      <AddModal
+        open={opens}
+        Close={() => setOpen(false)}
+        title={`Add Client`}
+      />
     </div>
   );
 }

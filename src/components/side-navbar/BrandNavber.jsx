@@ -82,7 +82,7 @@ const BrandNavber = () => {
 
   return (
     <div>
-      <div className="ml-2">
+      <div className="ml-2 mr-2">
         {/* <>
           <div className="flex flex-1 items-center justify-between mt-8 mr-8">
             <p>
@@ -136,7 +136,7 @@ const BrandNavber = () => {
           // className="mt-8"
           className={
             url === "/brand/connection"
-              ? "w-[260px] text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
+              ? "w-full text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a] "
               : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
           }
         >
@@ -150,7 +150,7 @@ const BrandNavber = () => {
         <ListItem
           className={
             url === "/brand/name"
-              ? "w-[260px] text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
+              ? "w-full text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
               : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
           }
         >
@@ -165,7 +165,7 @@ const BrandNavber = () => {
           // className="mt-8 mb-8"
           className={
             url === "/brand/team/access"
-              ? " w-[260px] hover:w-[260px] mt-8 mb-8 text-black bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
+              ? " w-full hover:w-[260px] mt-8 mb-8 text-black bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
               : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
           }
         >

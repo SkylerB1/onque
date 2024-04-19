@@ -99,7 +99,7 @@ const SubscriptionPlans = () => {
           </Button>
         </ButtonGroup>
       </div>
-      <div className="flex flex-1 items-center justify-between ">
+      <div className="flex flex-1 items-center justify-between overflow-scroll gap-4">
         {selectedPlanList.map((item, index) => (
           <div className="" key={index}>
             <PriceCard
@@ -112,7 +112,7 @@ const SubscriptionPlans = () => {
       </div>
       <div className="mt-10 mb-20">
         <p className="text-[#839DBF] mb-10">*Taxes not included</p>
-        <div className="w-2/5 bg-white dark:bg-gray-800 rounded-xl p-4">
+        <div className="w-max bg-white dark:bg-gray-800 rounded-xl p-4">
           <div className="flex items-start justify-between p-4">
             <p className="mt-2 font-normals">Current plan</p>
           </div>

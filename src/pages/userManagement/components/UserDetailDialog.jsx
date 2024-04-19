@@ -29,6 +29,10 @@ const UserDetailDialog = ({ isOpen, onClose, user }) => {
       connections: [
         { name: "Facebook", count: 1000 },
         { name: "Twitter", count: 500 },
+        { name: "Facebook", count: 1000 },
+        { name: "Twitter", count: 500 },
+        { name: "Facebook", count: 1000 },
+        { name: "Twitter", count: 500 },
       ],
     },
     {
@@ -108,14 +112,14 @@ const UserDetailDialog = ({ isOpen, onClose, user }) => {
         </DialogHeader>
         <Dialog.Body>
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-            <div className="w-full">
+            <div className="w-2/5">
               <Input
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                 onChange={handleSearch}
               />
             </div>
-            <div className="flex w-full shrink-0 gap-2 md:w-max">
+            <div className="flex w-full gap-2 md:w-5/6">
               <Filters
                 options={brands}
                 selectedOptions={selectedBrands}
@@ -144,45 +148,46 @@ const UserDetailDialog = ({ isOpen, onClose, user }) => {
               </Select> */}
             </div>
           </div>
-          <table className="w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {tableHead.map((item, index) => (
-                  <th
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                    key={index}
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
+          <div className="sm:overflow-x-scroll">
+            <table className="w-full table-auto text-left">
+              <thead>
+                <tr>
+                  {tableHead.map((item, index) => (
+                    <th
+                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                      key={index}
                     >
-                      {item}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredUserDetails.map((currentUser, index) => (
-                <tr key={index}>
-                  <td className="p-4 w-30">
-                    <div className="flex items-center gap-3">
-                      <CustomSwitch />
-                      <Avatar
-                        src={
-                          "https://docs.material-tailwind.com/img/logos/logo-google.svg"
-                        }
-                        alt={currentUser.brand}
-                        size="md"
-                        className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                      />
-                      <Typography variant="body" color="blue-gray">
-                        {currentUser.brand}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {item}
                       </Typography>
-                    </div>
-                  </td>
-                  {/* <td className=" ">
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUserDetails.map((currentUser, index) => (
+                  <tr key={index}>
+                    <td className="p-4 w-30  ">
+                      <div className="flex items-center gap-3 md:mr-4 md:w-52">
+                        parentTableData{" "}
+                        <Avatar
+                          src={
+                            "https://docs.material-tailwind.com/img/logos/logo-google.svg"
+                          }
+                          alt={currentUser.brand}
+                          size="md"
+                          className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
+                        />
+                        <Typography variant="body" color="blue-gray">
+                          {currentUser.brand}
+                        </Typography>
+                      </div>
+                    </td>
+                    {/* <td className=" ">
                     <div
                       className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal text-left outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 disabled:cursor-not-allowed transition-all border text-sm px-3 py-1 rounded-[7px] border-blue-gray-200 items-center justify-between flex whitespace-nowrap"
                       onClick={handleDialogToggle}
@@ -201,28 +206,35 @@ const UserDetailDialog = ({ isOpen, onClose, user }) => {
                       </svg>
                     </div>
                   </td> */}
-                  <td>
-                    <RoleUpdate
-                      roles={["HR", "manager", "content creator"]}
-                      title="Select Role"
-                    />
-                  </td>
-                  <td className="p-4">
-                    <div className="p-4">
-                      <Typography variant="body" color="blue-gray">
+                    <td className="p-4 w-30">
+                      <RoleUpdate
+                        roles={["HR", "manager", "content creator"]}
+                        title="Select Role"
+                      />
+                    </td>
+                    <td className="p-4 w-30">
+                      <Typography
+                        variant="body"
+                        color="blue-gray"
+                        className="whitespace-nowrap"
+                      >
                         {currentUser.connections
                           .map((connection) => connection.name)
                           .join(", ")}
                       </Typography>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </Dialog.Body>
         <DialogFooter>
-          <Button variant="gradient" color="green">
+          <Button
+            variant="gradient"
+            color="green"
+            className="whitespace-nowrap"
+          >
             <span>Save</span>
           </Button>
         </DialogFooter>

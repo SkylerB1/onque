@@ -105,12 +105,12 @@ const PostCalendar = (props) => {
 
   return (
     <>
-      <div className="mt-[90px]  mb-2">
-        <div className="mt-6">
+      <div className="mt-[88px]  mb-2">
+        <div>
           <button
             type="button"
             onClick={handleModal}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center inline-flex items-center mr-5 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center inline-flex items-center mr-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Create Post
           </button>

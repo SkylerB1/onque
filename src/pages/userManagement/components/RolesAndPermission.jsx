@@ -42,10 +42,10 @@ const RolesAndPermission = () => {
 
   return (
     <>
-      <div className="mr-52">
+      <div className="xl:mr-52 md:mr-0 sm:mr-0">
         <Card>
           <CardBody>
-            <div className="mb-4 mt-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+            <div className="mb-4 mt-4 flex flex-col gap-2 justify-between md:flex-row md:items-center">
               <div className="w-full">
                 <Input label="Search" />
               </div>

@@ -32,7 +32,7 @@ const UserManagement = () => {
   }, [activeTab]);
 
   return (
-    <div className="p-4 sm:ml-64 mt-20">
+    <div className="xl:ml-64 xl:mt-20 xl:block  xl:p-4 md:block md:ml-20 md:p-2 md:mt-20 sm:ml-20  ">
       <div className=" mt-2 mb-2">
         <div className="mt-5 mb-5 text-2xl font-light">Users management</div>
         <Tabs value={activeTab}>

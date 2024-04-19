@@ -30,7 +30,7 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} size="lg" className="max-h-">
+    <Dialog open={isOpen} onClose={onClose} size="md">
       <DialogHeader className="justify-between my-2">
         <Typography variant="h5">Add Role</Typography>
         <IconButton
@@ -57,7 +57,7 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
         </IconButton>
       </DialogHeader>
       <DialogBody>
-        <div className="overflow-y-auto max-h-[700px]">
+        <div className="overflow-y-auto xl:max-h-[700px] sm:max-h-[500px]">
           <div className="grid sm:grid-cols-2 gap-4 gap-x-10 mb-3">
             <div className="w-100">
               <Input label="RoleName" />

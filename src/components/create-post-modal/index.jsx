@@ -101,6 +101,9 @@ const CreatePostModal = ({
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
+
+  const [showPreview, setShowPreview] = useState(false);
+
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
       OFFER: {
@@ -971,6 +974,10 @@ const CreatePostModal = ({
     return isEdit === "Published" ? true : false;
   }, [isEdit]);
 
+  const togglePreview = () => {
+    setShowPreview(!showPreview);
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Dialog
@@ -1005,12 +1012,23 @@ const CreatePostModal = ({
                       </div>
                     </div>
                   )}
-                  <div className="flex flex-1 flex-col ">
+                  <div
+                    className={`xl:flex flex-1 flex-col xl:w-5/12 ${
+                      !showPreview ? "" : "hidden"
+                    } `}
+                  >
                     <div className="p-2">
-                      <div>
+                      <div className="flex justify-between">
                         <h1 className="text-xl text-black">
                           {isEdit ? "Edit Post" : "Create Post"}
                         </h1>
+                        <Button
+                          className={`xl:rounded-full text-center flex items-center h-6 2xl:hidden rounded-lg justify-center `}
+                          size="sm"
+                          onClick={togglePreview}
+                        >
+                          Show Preview
+                        </Button>
                       </div>
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
@@ -1190,7 +1208,9 @@ const CreatePostModal = ({
                     </div>
                   </div>
                   <div
-                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 hidden rounded-lg justify-center items-center`}
+                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${
+                      showPreview ? "" : "hidden"
+                    } rounded-lg justify-center items-center`}
                   >
                     <PostPreview
                       selectedPlaforms={selectedPlaforms}
@@ -1200,6 +1220,7 @@ const CreatePostModal = ({
                       handlePlatformPreview={handlePlatformPreview}
                       handlePreview={handlePreview}
                       handleView={handleView}
+                      togglePreview={togglePreview}
                     />
                   </div>
                 </div>

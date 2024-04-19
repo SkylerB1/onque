@@ -21,8 +21,8 @@ const MyTeam = () => {
           notifications in the method in which you select
         </Typography>
       </div>
-      <div className="body mt-8">
-        <table className="w-full min-w-max table-auto text-left">
+      <div className="body mt-8 overflow-scroll">
+        <table className="w-full min-w-max table-auto text-left ">
           <thead>
             <tr>
               {tableHead.map((item, index) => (

@@ -31,7 +31,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
-  const [cookies,setCookie] = useCookies(["access_token"])
+  const [cookies, setCookie] = useCookies(["access_token"]);
   const [showPassword, setShowPassword] = useState(false);
 
   const user = localStorage.getItem("user");
@@ -60,7 +60,7 @@ const Login = () => {
       if (response.status === 200) {
         const { data } = response;
         localStorage.setItem("user", JSON.stringify(data));
-        setCookie('access_token',data?.access_token) 
+        setCookie("access_token", data?.access_token);
         dispatch(setUser(data));
         setLoading(false);
         navigate("/planner/calendar");
@@ -76,18 +76,21 @@ const Login = () => {
     }
   };
 
-
   const handleFacebookLogin = () => {
     try {
-      window.location.href = `${import.meta.env.VITE_API_URL}/auth/facebook/login`;
+      window.location.href = `${
+        import.meta.env.VITE_API_URL
+      }/auth/facebook/login`;
     } catch (err) {
       console.log(err);
     }
-  }
+  };
 
   const handleTwitterLogin = () => {
     try {
-      window.location.href = `${import.meta.env.VITE_API_URL}/auth/twitter/login`;
+      window.location.href = `${
+        import.meta.env.VITE_API_URL
+      }/auth/twitter/login`;
     } catch (err) {
       console.log(err);
     }
@@ -197,7 +200,11 @@ const Login = () => {
                     >
                       <span className="flex items-center justify-between h-12 pl-3 pr-3 py-3 text-white cursor-pointer">
                         <p className="mr-2">Continue with Facebook</p>
-                        <FacebookFilled width={18} height={18} fill={"#ffffff"} />
+                        <FacebookFilled
+                          width={18}
+                          height={18}
+                          fill={"#ffffff"}
+                        />
                       </span>
                     </div>
                     <div

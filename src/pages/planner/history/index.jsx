@@ -1,5 +1,3 @@
-;
-
 import React, { useEffect, useState } from "react";
 import ToggleButton from "../../../components/button/ToggleButton";
 import PlanningNavbar from "../../../components/side-navbar/PlanningNavbar";
@@ -25,7 +23,7 @@ const History = () => {
   const handleValueChange = (newValue) => {
     console.log("newValue:", newValue);
     setValue(newValue);
-  }
+  };
 
   const handleButtonClick = (value) => {
     if (selectedValues.includes(value)) {
@@ -40,17 +38,19 @@ const History = () => {
     setLowercaseSelectedValues(lowercaseValues);
   }, [selectedValues]);
 
-
   const getPostData = async () => {
     try {
-
-      const platformParams = selectedValues.length > 0
-        ? selectedValues.map((value) => `platform=${value.toLowerCase()}`).join('&')
-        : '';
-
+      const platformParams =
+        selectedValues.length > 0
+          ? selectedValues
+              .map((value) => `platform=${value.toLowerCase()}`)
+              .join("&")
+          : "";
 
       const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/user/getPostData/${brand?.id}?date=startDate=${value.startDate}&endDate=${value.endDate}`
+        `${import.meta.env.VITE_API_URL}/user/getPostData/${
+          brand?.id
+        }?date=startDate=${value.startDate}&endDate=${value.endDate}`
       );
       if (response.status === 200) {
         let twitterPostData = [];
@@ -85,7 +85,7 @@ const History = () => {
   }, [value]);
 
   return (
-    <div className="p-4 sm:ml-64">
+    <div className="p-4 sm:ml-20 xl:ml-64">
       <div className="flex flex-1 items-start justify-between mb-2 mt-20">
         <p className="text-lg ml-2">History</p>
         <div className="w-96">

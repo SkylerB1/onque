@@ -5,9 +5,7 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import TextGeneratorModal from "../text-generator-modal";
-
 import VideoUploadModal from "../upload-modal/VideoUploadModal";
 import SocialPlatform from "../social-platform-selection/SocialPlatform";
 import GetFacebookComponent from "../mockups/facebook/GetFacebookComponent";
@@ -382,6 +380,7 @@ const CreatePostModal = ({
     date = dayjs(date).startOf('minute');
     setScheduledDate(date);
   };
+
   const handleEdit = (index) => {
     setEditIndex(index);
   };
@@ -1059,6 +1058,7 @@ const CreatePostModal = ({
                           timeSteps={{ hours: 1, minutes: 1, seconds: 5 }}
                           onChange={handleDateChange}
                           className={`${isDuplicating && "opacity-50"}`}
+                          disabled={loading}
                         />
                       </div>
                     </div>

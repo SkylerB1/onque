@@ -44,7 +44,7 @@ const PriceCard = ({ selectedPlan, selectedOption, switchDuration }) => {
               : selectedPlan.annualy_price}
             GBP
             <span className="text-xl font-medium text-gray-900">
-              {selectedOption === "monthly" ? "Monthly" : "Annualy"}
+              {selectedOption === "monthly" ? "Monthly" : "Annually"}
             </span>
           </p>
           <p className="mt-2 text-xl font-medium text-gray-900">
@@ -76,7 +76,7 @@ const PriceCard = ({ selectedPlan, selectedOption, switchDuration }) => {
           style={{ backgroundColor: color }}
           className={`border border-[${color}] rounded-b-2xl p-4 flex flex-1 items-center justify-between`}
         >
-          <p>{selectedOption === "monthly" ? "Monthly" : "Annualy"} price</p>
+          <p>{selectedOption === "monthly" ? "Monthly" : "Annually"} price</p>
           <p className="text-lg font-bold text-gray-900 dark:text-white">
             {selectedOption === "monthly"
               ? selectedPlan.monthly_price

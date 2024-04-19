@@ -118,7 +118,6 @@ const PaymentHistoryTable = () => {
                 })}
               {payments &&
                 payments?.map(({ lines, hosted_invoice_url }, index) => {
-                  console.log(lines.data);
                   const isLast = index === payments?.length - 1;
                   const classes = isLast
                     ? "p-4"

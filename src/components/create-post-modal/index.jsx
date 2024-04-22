@@ -1002,7 +1002,7 @@ const CreatePostModal = ({
               >
                 <input {...getInputProps()} />
 
-                <div className="relative bg-white flex flex-1 h-full flex-row rounded-lg">
+                <div className="relative bg-white flex flex-1 flex-row rounded-lg h-[90vh]">
                   {isDragActive && (
                     <div className="absolute bg-blue-600 opacity-50 z-50 w-full h-full flex justify-center items-center">
                       <div className="border border-white border-dashed p-6 px-8 rounded-lg">
@@ -1013,7 +1013,7 @@ const CreatePostModal = ({
                     </div>
                   )}
                   <div
-                    className={`xl:flex flex-1 flex-col xl:w-5/12 ${
+                    className={`flex flex-1 flex-col xl:w-5/12 ${
                       !showPreview ? "" : "hidden"
                     } `}
                   >
@@ -1114,8 +1114,7 @@ const CreatePostModal = ({
                             fontSize: "0.6em",
                           }}
                         >
-                          {" "}
-                          Remember{" "}
+                          Remember
                         </div>
                         <div class="overflow-auto max-h-[72px]">
                           <ol class="list-decimal pl-5 text-xs">

@@ -7,18 +7,11 @@ import {
   IconButton,
   Button,
   Typography,
-  Tabs,
-  TabsHeader,
-  Tab,
-  TabsBody,
-  TabPanel,
 } from "@material-tailwind/react";
 import MySetttings from "./MySetttings";
-import MyTeam from "./MyTeam";
 import LostChangesDialog from "./LostChangesDialog";
 
 const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = React.useState("settings");
   const [openLostChangesDialog, setOpenLostChangesDialog] = useState(false);
   const [changesMade, setChangesMade] = useState(false);
   const [emails, setEmails] = useState([
@@ -44,7 +37,6 @@ const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
   };
 
   const closeDialog = () => {
-    // debugger;
     if (changesMade) {
       setOpenLostChangesDialog(true);
     } else {
@@ -52,29 +44,11 @@ const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
     }
   };
 
-  const data = [
-    {
-      label: "My Settings",
-      value: "settings",
-      desc: (
-        <MySetttings
-          emails={emails}
-          addEmail={addEmail}
-          deleteEmail={deleteEmail}
-        />
-      ),
-    },
-    {
-      label: "My Team",
-      value: "team",
-      desc: <MyTeam />,
-    },
-  ];
   return (
     <>
       <Dialog open={isOpen} onClose={closeDialog} size="lg">
         <DialogHeader className="justify-between my-2">
-          <Typography variant="h5">Planner notifications</Typography>
+          <Typography variant="h5">Settings</Typography>
           <IconButton
             color="blue-gray"
             size="sm"
@@ -101,33 +75,11 @@ const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
         <hr />
         <DialogBody>
           <div className=" mt-2 mb-2 px-2">
-            <Tabs value={activeTab}>
-              <TabsHeader
-                className="w-[30rem] rounded-none border-b border-blue-gray-10 bg-transparent p-0"
-                indicatorProps={{
-                  className:
-                    "bg-transparent border-b-2 border-gray-900 shadow-none rounded-none",
-                }}
-              >
-                {data.map(({ label, value }) => (
-                  <Tab
-                    key={value}
-                    value={value}
-                    onClick={() => setActiveTab(value)}
-                    className={activeTab === value ? "text-gray-900" : ""}
-                  >
-                    {label}
-                  </Tab>
-                ))}
-              </TabsHeader>
-              <TabsBody>
-                {data.map(({ value, desc }) => (
-                  <TabPanel key={value} value={value}>
-                    {desc}
-                  </TabPanel>
-                ))}
-              </TabsBody>
-            </Tabs>
+            <MySetttings
+              emails={emails}
+              addEmail={addEmail}
+              deleteEmail={deleteEmail}
+            />
           </div>
         </DialogBody>
         <hr />
@@ -139,10 +91,14 @@ const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
       </Dialog>
       <LostChangesDialog
         open={openLostChangesDialog}
-        onClose={() => setOpenLostChangesDialog(false)}
+        onClose={() => {
+          setOpenLostChangesDialog(false);
+          setChangesMade(false);
+        }}
         closeParentDialog={() => {
           onClose();
           setOpenLostChangesDialog(false);
+          setChangesMade(false);
         }}
       />
     </>

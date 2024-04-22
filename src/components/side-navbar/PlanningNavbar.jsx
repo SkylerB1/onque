@@ -14,7 +14,7 @@ import { CiCircleList, CiCalendarDate } from "react-icons/ci";
 export default function PlanningNavbar() {
   const { pathname } = useLocation();
   return (
-    <Card className="fixed top-20 left-0 h-[calc(100vh-2rem)] w-full max-w-[5rem] p-4  shadow-blue-gray-100/5 bg-[#F1F2F4]">
+    <Card className="fixed xl:top-[90px] left-0 h-[calc(100vh-2rem)] w-full max-w-[5rem] p-4  shadow-blue-gray-100/5 bg-[#F1F2F4] md:top-[74px] lg:top-[88px]">
       <List className="bg-[#F1F2F4] xl:block md:hidden">
         <Link
           to="/planner/calendar"
@@ -51,10 +51,10 @@ export default function PlanningNavbar() {
           </ListItem>
         </Link>
       </List>
-      <List className="bg-[#F1F2F4] xl:hidden md:block md:w-0 md:min-w-0 ">
+      <List className="bg-[#F1F2F4] xl:hidden md:block md:w-6 md:min-w-full ">
         <Link
           to="/planner/calendar"
-          className="flex items-center font-medium text-lg"
+          className="flex items-center font-medium text-lg w-12"
         >
           <ListItem
             className={` ${
@@ -70,7 +70,7 @@ export default function PlanningNavbar() {
         </Link>
         <Link
           to="/planner/history"
-          className={`flex items-center font-medium text-lg `}
+          className={`flex items-center font-medium text-lg w-12 `}
         >
           <ListItem
             className={` ${

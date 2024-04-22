@@ -105,7 +105,7 @@ const PostCalendar = (props) => {
 
   return (
     <>
-      <div className="mt-[88px]  mb-2">
+      <div className="md:mt-20  mb-2 xl:mt-24 lg:mt-24">
         <div>
           <button
             type="button"

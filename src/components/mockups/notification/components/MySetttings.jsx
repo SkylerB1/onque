@@ -12,9 +12,11 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 
 const MySetttings = ({ emails, addEmail, deleteEmail }) => {
   const [emailInput, setEmailInput] = useState("");
+  const [emailError, setEmailError] = useState("");
 
   const handleChange = (e) => {
     setEmailInput(e.target.value);
+    setEmailError("");
   };
 
   const handleAddEmail = () => {
@@ -23,7 +25,7 @@ const MySetttings = ({ emails, addEmail, deleteEmail }) => {
       setEmailInput(""); // Clear input after adding email
     } else {
       // Handle invalid email
-      alert("Please enter a valid email address");
+      setEmailError("Please enter a valid email address");
     }
   };
 
@@ -40,27 +42,43 @@ const MySetttings = ({ emails, addEmail, deleteEmail }) => {
   return (
     <div>
       <div className="header">
-        <Typography variant="h6" className="mb-4">
+        {/* <Typography variant="h6" className="mb-4">
           My Settings
-        </Typography>
+        </Typography> */}
         <Typography variant="subtitle" className="my-4">
-          Select how you want to receive notifications, you will only receive
-          notifications in the method in which you select
+          Your preferred method for receiving email notifications. You'll only
+          receive notifications via email.
         </Typography>
-        <div className="flex items-center gap-4 pt-2">
-          <Select label="Select Version" value={"On my email"}>
+        <div className="flex items-center gap-4 pt-2 ">
+          {/* <Select label="Select Version" value={"On my email"}>
             <Option>On my email</Option>
             <Option>On my mobile device</Option>
-          </Select>
-          <Input
-            id="emailInput"
-            type="email"
-            label="Email Address"
-            value={emailInput}
-            onChange={handleChange}
-          />
-          <Button onClick={handleAddEmail}>Add</Button>
+          </Select> */}
+          <div className="flex items-center gap-2">
+            <div>
+              <Input
+                id="emailInput"
+                type="email"
+                label="Email Address"
+                value={emailInput}
+                onChange={handleChange}
+                className="w-48"
+              />
+            </div>
+            <Button onClick={handleAddEmail}>Add</Button>
+          </div>
+
+          {/* Display email error message if it exists */}
         </div>
+        {emailError && (
+          <Typography
+            variant="caption"
+            color="red"
+            className="text-sm ml-2 mt-1"
+          >
+            {emailError}
+          </Typography>
+        )}
       </div>
       <div className="body mt-8">
         <table className="w-full min-w-max table-auto text-left">

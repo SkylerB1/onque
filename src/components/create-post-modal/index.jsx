@@ -5,9 +5,7 @@ import {
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import TextGeneratorModal from "../text-generator-modal";
-
 import VideoUploadModal from "../upload-modal/VideoUploadModal";
 import SocialPlatform from "../social-platform-selection/SocialPlatform";
 import GetFacebookComponent from "../mockups/facebook/GetFacebookComponent";
@@ -96,7 +94,7 @@ const CreatePostModal = ({
   const [showAlertModal, setAlertModal] = useState(false);
   const [alertData, setAlertData] = useState({
     header: "",
-    onAccept: function () {},
+    onAccept: function () { },
   });
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
@@ -192,7 +190,7 @@ const CreatePostModal = ({
   const handleView = (index) => {
     setViewMode(index);
   };
-  const handlePostFeed = (index) => {};
+  const handlePostFeed = (index) => { };
 
   const toggleAlertModal = () => {
     setAlertModal(!showAlertModal);
@@ -382,7 +380,8 @@ const CreatePostModal = ({
   };
 
   const handleDateChange = async (date) => {
-    setScheduledDate(dayjs(date));
+    date = dayjs(date).startOf('minute');
+    setScheduledDate(date);
   };
 
   const handleEdit = (index) => {
@@ -996,9 +995,8 @@ const CreatePostModal = ({
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
                 {...getRootProps()}
-                className={`${
-                  handlePointerEvent() ? "pointer-events-none" : ""
-                } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
+                className={`${handlePointerEvent() ? "pointer-events-none" : ""
+                  } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />
 
@@ -1042,11 +1040,9 @@ const CreatePostModal = ({
                               return (
                                 <span
                                   key={id}
-                                  className={`${
-                                    index > 0 ? "ml-2" : "ml-0"
-                                  } flex items-center ${
-                                    isDuplicating && "opacity-50"
-                                  }`}
+                                  className={`${index > 0 ? "ml-2" : "ml-0"
+                                    } flex items-center ${isDuplicating && "opacity-50"
+                                    }`}
                                 >
                                   <SocialPlatform
                                     id={item.id}
@@ -1063,10 +1059,12 @@ const CreatePostModal = ({
                             })}
                           </div>
 
-                          <SocialMediaConnection>
-                            <div className="ml-4 cursor-pointer">
-                              <Add width={20} height={15} fill={"#D3D3D3"} />
-                            </div>
+                          < SocialMediaConnection >
+                            {selectedPlaforms?.length !== 9 &&
+                              <div className="ml-4 cursor-pointer">
+                                <Add width={20} height={15} fill={"#D3D3D3"} />
+                              </div>
+                            }
                           </SocialMediaConnection>
                         </div>
 
@@ -1078,6 +1076,7 @@ const CreatePostModal = ({
                           timeSteps={{ hours: 1, minutes: 1, seconds: 5 }}
                           onChange={handleDateChange}
                           className={`${isDuplicating && "opacity-50"}`}
+                          disabled={loading}
                         />
                       </div>
                     </div>
@@ -1159,11 +1158,10 @@ const CreatePostModal = ({
                               <Button
                                 onClick={handleDuplicate}
                                 size="lg"
-                                className={`bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 ${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "cursor-pointer"
-                                }`}
+                                className={`bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 ${loading || errors.length > 0
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "cursor-pointer"
+                                  }`}
                               >
                                 {loading ? "Duplicating.." : "Duplicate"}
                               </Button>
@@ -1173,11 +1171,10 @@ const CreatePostModal = ({
                               <button
                                 onClick={handlePublish}
                                 disabled={loading || errors.length > 0}
-                                className={`bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded-r-none ${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : ""
-                                }`}
+                                className={`bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded-r-none ${loading || errors.length > 0
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
+                                  }`}
                               >
                                 {loading ? "Sharing.." : "Schedule Post"}
                               </button>
@@ -1258,7 +1255,7 @@ const CreatePostModal = ({
         />
         <TextGeneratorModal open={showAiModal} toggleModal={toggleAiModal} />
       </Dialog>
-    </LocalizationProvider>
+    </LocalizationProvider >
   );
 };
 

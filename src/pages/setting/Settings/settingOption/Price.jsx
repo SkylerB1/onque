@@ -7,9 +7,8 @@ import { ColorRing } from "react-loader-spinner";
 
 const Price = () => {
   const [subscription, setSubscription] = useState(null);
-  const subscriptionId = subscription?.subscriptionId || null;
-
   const [loading, setLoading] = useState(true);
+  const subscriptionId = subscription?.subscriptionId || null;
 
   const getSubscriptions = async () => {
     try {
@@ -25,10 +24,6 @@ const Price = () => {
   useEffect(() => {
     getSubscriptions();
   }, []);
-
-  useEffect(() => {
-    console.log(subscription);
-  }, [subscription]);
 
   if (loading)
     return (

@@ -30,9 +30,8 @@ const RenderFiles = ({
         return (
           <div
             key={index}
-            className={`relative border rounded-md w-20 h-20 flex items-center justify-center ${
-              index > 0 && "ml-3"
-            }`}
+            className={`relative border rounded-md w-20 h-20 flex items-center justify-center ${index > 0 && "ml-3"
+              }`}
           >
             {isContainVideo(file) ? (
               <>

@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
-import FacebookLogin from "@greatsumini/react-facebook-login";
-import { FaFacebookF } from "react-icons/fa";
 import ForgotPassword from "../modal";
-import { ToastContainer } from "react-toastify";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import {
   showSuccessMessage,
   showErrorMessage,
@@ -14,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { Link } from "react-router-dom";
 import { AppLogo, LOGIN_SIDE_IMG } from "../../../components/common/Images";
 import LoadingButton from "../../../components/button/LoadingButton";
-import { Input, Button } from "@material-tailwind/react";
+import { Input } from "@material-tailwind/react";
 import { useForm } from "react-hook-form";
 import Twitter from "../../../components/svg/Twitter";
 import FacebookFilled from "../../../components/svg/FacebookFilled";
@@ -22,8 +19,6 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../../redux/features/userSlice";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { useCookies } from "react-cookie";
-
-const twitterImg = "/assets/twitters.svg?react";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -225,8 +220,6 @@ const Login = () => {
               className="w-3/6 text-white py-36 px-12"
               style={{
                 backgroundColor: "#A7C7ED",
-                // boxShadow:
-                //   "rgba(0, 0, 0, 0.08) 20px 0px 21px -10px inset, rgb(8 8 8 / 29%) 13px 0px 21px -10px inset",
               }}
             >
               <div className="flex items-center justify-center mb-3">
@@ -249,6 +242,7 @@ const Login = () => {
             </div>
           </div>
         </main>
+
         <ForgotPassword
           open={open}
           Close={handleClose}

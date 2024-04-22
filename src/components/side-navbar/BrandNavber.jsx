@@ -194,6 +194,7 @@ const BrandNavber = () => {
         title={`Are you sure that you want to delete ${brandName}?`}
         handleDelete={handleDeleteClient}
         id={brandId}
+        brandName={brandName}
       />
     </div>
   );

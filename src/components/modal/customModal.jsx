@@ -1,5 +1,4 @@
 import React from "react";
-
 import {
   Button,
   Dialog,
@@ -9,7 +8,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-export default function CustomModal({ open, Close, handleDelete, id, title }) {
+export default function CustomModal({ open, Close, handleDelete, id, title, brandName = "" }) {
   return (
     <Dialog size="md" className="border-none" open={open} onClose={Close}>
       <DialogHeader className="flex justify-center font-medium text-xl">
@@ -17,7 +16,7 @@ export default function CustomModal({ open, Close, handleDelete, id, title }) {
       </DialogHeader>
       <DialogBody className="text-center text-black px-6">
         <Typography className="text-base">
-          If you continue you will delete this brand (Skyler Test Brand) from
+          If you continue you will delete this client ({brandName}) from
           your account with social networks connections
         </Typography>
       </DialogBody>
@@ -31,4 +30,4 @@ export default function CustomModal({ open, Close, handleDelete, id, title }) {
       </DialogFooter>
     </Dialog>
   );
-}
+};

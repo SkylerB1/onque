@@ -64,7 +64,7 @@ const TeamAccess = () => {
                     Struggling to connect? Get in touch with the Helpdesk.
                   </p>
                   <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
-                    <Link to="/setting/Settings?tab=price">GET PREMIUM</Link>
+                    <Link to="/setting/Settings/price">GET PREMIUM</Link>
                   </button>
                 </div>
               ) : (

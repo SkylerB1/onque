@@ -93,7 +93,7 @@ const ClientDetails = () => {
             <BrandNavber />
           </div>
           <div className="xl:w-5/6 pb-40 md:w-4/6">
-            <div className="bg-[#EBEBEB] mr-8 ml-8 mt-8 rounded-lg ">
+            <div className="bg-[#EBEBEB] mr-8 ml-8 mt-8 rounded-lg">
               {premium === true ? (
                 <div className="p-4 min-w-[360px]">
                   <div className="flex items-center justify-between">
@@ -120,7 +120,7 @@ const ClientDetails = () => {
                     Struggling to connect? Get in touch with the Helpdesk.
                   </p>
                   <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
-                    <Link to="/setting/Settings?tab=price">GET PREMIUM</Link>
+                    <Link to="/setting/Settings/price">GET PREMIUM</Link>
                   </button>
                 </div>
               ) : (

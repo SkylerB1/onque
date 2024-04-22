@@ -3,8 +3,6 @@ import Like from "../../../assets/facebook-like.svg?react";
 import Comment from "../../../assets/facebook-comment.svg?react";
 import Share from "../../../assets/facebook-share.svg?react";
 import FacebookPlay from "../../../assets/facebook-play.svg?react";
-// import AudioMuted from "../../../assets/audio-muted.svg?react";
-
 import React, {
   useCallback,
   useEffect,
@@ -36,7 +34,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
   );
 
   useEffect(() => {
-    if (files?.length > 1) {
+    if (files?.length > 0) {
       const mediaType = isContainImage(files[0]) ? "image" : "video";
       const filterFiles = files?.filter((item) => {
         const fileType = item.type || item.mimetype;
@@ -106,9 +104,8 @@ function Post({ files, captions, viewMode, screenName, date }) {
           return (
             <div
               key={index}
-              className={`${
-                index > 0 && "ml-[1px]"
-              } relative justify-center items-center flex flex-1 h-full`}
+              className={`${index > 0 && "ml-[1px]"
+                } relative justify-center items-center flex flex-1 h-full`}
             >
               {renderImageComponent(index)}
             </div>
@@ -134,15 +131,14 @@ function Post({ files, captions, viewMode, screenName, date }) {
         return (
           <div
             key={index}
-            className={`w-1/2 h-1/2 ${
-              index == 0
-                ? "pb-[1px]"
-                : index == 1
+            className={`w-1/2 h-1/2 ${index == 0
+              ? "pb-[1px]"
+              : index == 1
                 ? "pl-[1px] pb-[1px]"
                 : index == 3
-                ? "pl-[1px]"
-                : ""
-            }`}
+                  ? "pl-[1px]"
+                  : ""
+              }`}
           >
             {renderImageComponent(index)}
           </div>
@@ -172,9 +168,8 @@ function Post({ files, captions, viewMode, screenName, date }) {
           return (
             <div
               key={index}
-              className={`relative h-1/3 ${index < 5 ? "w-1/3" : ""} ${
-                index < 4 ? " pr-[1px]" : ""
-              } `}
+              className={`relative h-1/3 ${index < 5 ? "w-1/3" : ""} ${index < 4 ? " pr-[1px]" : ""
+                } `}
             >
               <>
                 {index < 5 && (
@@ -202,12 +197,13 @@ function Post({ files, captions, viewMode, screenName, date }) {
       return;
     }
   }, [filteredFiles]);
+
   return (
     <>
       <div className="flex flex-row justify-between items-center px-3 mt-10 mb-2">
         <div className="flex flex-row items-center">
           <div className="px-3 py-1  rounded-full bg-green-900">
-            <h1 className="text-white text-lg">Y</h1>
+            <h1 className="text-white text-lg">{screenName.charAt(0)}</h1>
           </div>
           <div className="flex flex-col ml-2 justify-between">
             <h1 className="text-sm font-bold leading-none">{screenName}</h1>
@@ -221,28 +217,29 @@ function Post({ files, captions, viewMode, screenName, date }) {
         </div>
         <HorizontalDots width={20} height={20} fill="#737373" />
       </div>
+
       {captions && (
         <p className="px-3 text-sm mb-2 whitespace-pre-line"> {captions} </p>
       )}
+
       {files?.length > 0 ? (
         <div
-          className={`relative ${
-            viewMode ? "h-[450px]" : "h-80"
-          } w-full flex flex-1 flex-wrap justify-center bg-white`}
+          className={`relative ${viewMode ? "h-[450px]" : "h-80"
+            } w-full flex flex-1 flex-wrap justify-center bg-white`}
         >
           {renderMedia()}
         </div>
       ) : (
         <div
-          className={`${
-            viewMode ? "h-[450px]" : "h-60"
-          } w-full flex items-center justify-center bg-black`}
+          className={`${viewMode ? "h-[450px]" : "h-60"
+            } w-full flex items-center justify-center bg-black`}
         >
           <p className="font-bold text-sm text-white">
-            Video/img not available
+            Video/Img not available
           </p>
         </div>
       )}
+
       <div className="border my-2" />
       <div className="flex-row flex justify-evenly items-center">
         <div className="flex flex-row items-center">
@@ -252,8 +249,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
           </p>
         </div>
         <div className="flex flex-row items-center">
-          <Comment width={15} height={15} fill="#65676B" />
-
+          <Comment width={16} height={15} fill="#65676B" />
           <p className="text-[#65676B] ml-2  text-sm font-bold font-['sans-serif','Arial','Helvetica']">
             Comment
           </p>
@@ -267,6 +263,6 @@ function Post({ files, captions, viewMode, screenName, date }) {
       </div>
     </>
   );
-}
+};
 
 export default Post;

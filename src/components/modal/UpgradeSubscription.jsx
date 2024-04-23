@@ -15,6 +15,7 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
     navigate("/setting/price");
     toggleModal()
   };
+
   return (
     <Dialog open={open} onClose={toggleModal}>
       <DialogBody>

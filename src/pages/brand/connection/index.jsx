@@ -43,9 +43,8 @@ const Connection = () => {
 
   const instagramLogin = async () => {
     try {
-      const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${
-        user?.id
-      }&brandId=${brandId}`;
+      const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${user?.id
+        }&brandId=${brandId}`;
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;
@@ -54,13 +53,13 @@ const Connection = () => {
         oauthUrl,
         "instagram",
         "menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=" +
-          width +
-          ", height=" +
-          height +
-          ", top=" +
-          top +
-          ", left=" +
-          left
+        width +
+        ", height=" +
+        height +
+        ", top=" +
+        top +
+        ", left=" +
+        left
       );
     } catch (err) {
       console.log(err);
@@ -111,7 +110,7 @@ const Connection = () => {
         setShowModal(false);
         toast.success(response?.data?.message);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const handleCloseModal = () => {

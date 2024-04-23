@@ -13,7 +13,7 @@ import {
 import { getSource } from "../../utils";
 
 function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
-  const src = useMemo(() => getSource(files[index]), [files]);
+  const src = getSource(files[index]);
   const editorRef = useRef();
 
   const handleFile = async () => {
@@ -62,6 +62,6 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
       </DialogFooter>
     </Dialog>
   );
-}
+};
 
 export default React.memo(ImgEditorModal);

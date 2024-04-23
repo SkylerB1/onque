@@ -27,6 +27,9 @@ import Home from "./pages";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import "./utils/localization/i18n";
+import ForgotPassword from "./pages/auth/fogot-password";
+import Error404 from "./pages/404";
+
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const router = createBrowserRouter([
@@ -37,6 +40,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />
   },
   {
     path: "/privacy-policy",
@@ -146,6 +153,10 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
+  {
+    path: '/404',
+    element: <Error404 />
+  }
 ]);
 const stripePromise = loadStripe(stripeKey);
 

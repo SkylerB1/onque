@@ -9,6 +9,6 @@ export const store = configureStore({
     connections: connectionSlice,
     user: userSlice,
     brands: brandsSlice,
-    roles:roleSlice
-  },
+    roles: roleSlice
+  }
 });

@@ -30,7 +30,7 @@ const ChangePlanModel = ({
   selectedOption,
   switchDuration,
 }) => {
-  const { key,bgClass, savingWithAnnualPlan, monthly_price, annualy_price } = listData;
+  const { key, bgClass, savingWithAnnualPlan, monthly_price, annualy_price } = listData;
   const isMonthly = selectedOption === "monthly" || false;
   const [openDiscount, setOpenDiscount] = useState(false);
   const [discount, setDiscount] = useState(initial);
@@ -156,7 +156,7 @@ const ChangePlanModel = ({
                 icon={<InfoIcon width={22} height={22} fill={"#2196f3"} />}
               >
                 <Typography className="text-sm text-[#3b82f6cc]">
-                  Your can save{" "}
+                  You can save{" "}
                   <strong className="font-bold">{`${savingWithAnnualPlan} GBP`}</strong>{" "}
                   with the annual plan
                 </Typography>

@@ -195,6 +195,7 @@ const BrandNavber = () => {
         body={`If you continue you will delete this brand (${brandName}) from your account with social networks connections`}
         handleDelete={handleDeleteClient}
         id={brandId}
+        brandName={brandName}
       />
     </div>
   );

@@ -99,9 +99,9 @@ export default function AddModal({ open, Close }) {
         open={openSubscriptionModal}
         toggleModal={toggleSubscriptionModal}
         body={
-          "Your current plan does not allow the management of more clents. In order to add other clients, you either need a PREMIUM account or upgrade subscription."
+          "Your current plan does not allow the management of more clients. In order to add other clients, you either need a PREMIUM account or upgrade subscription."
         }
       />
     </>
   );
-}
+};

@@ -8,7 +8,14 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-export default function CustomModal({ open, Close, handleDelete, id, title, body, brandName = "" }) {
+export default function CustomModal({
+  open,
+  Close,
+  handleDelete,
+  id,
+  title,
+  body,
+}) {
   return (
     <Dialog size="md" className="border-none" open={open} onClose={Close}>
       <DialogHeader className="flex justify-center font-medium text-xl">
@@ -16,10 +23,6 @@ export default function CustomModal({ open, Close, handleDelete, id, title, body
       </DialogHeader>
       <DialogBody className="text-center text-black px-6">
         <Typography className="text-base">{body}</Typography>
-        <Typography className="text-base">
-          If you continue you will delete this client ({brandName}) from
-          your account with social networks connections
-        </Typography>
       </DialogBody>
       <DialogFooter className="flex flex-row justify-center">
         <Button size="sm" onClick={() => handleDelete(id)}>

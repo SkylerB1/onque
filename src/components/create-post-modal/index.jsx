@@ -157,7 +157,7 @@ const CreatePostModal = ({
     },
   });
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.userBrandId;
+  const brandId = user?.brand?.id;
   const [dimensions, setDimensions] = useState({});
   const CREATE_POST_URL = API_URL + `/user/scheduler/posts?brandId=${brandId}`;
   const UPDATE_POST_URL =

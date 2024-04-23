@@ -49,24 +49,21 @@ const MySetttings = ({ emails, addEmail, deleteEmail }) => {
           Your preferred method for receiving email notifications. You'll only
           receive notifications via email.
         </Typography>
-        <div className="flex items-center gap-4 pt-2 ">
+        <div className="flex items-center gap-4 pt-2 justify-between ">
           {/* <Select label="Select Version" value={"On my email"}>
             <Option>On my email</Option>
             <Option>On my mobile device</Option>
           </Select> */}
-          <div className="flex items-center gap-2">
-            <div>
-              <Input
-                id="emailInput"
-                type="email"
-                label="Email Address"
-                value={emailInput}
-                onChange={handleChange}
-                className="w-48"
-              />
-            </div>
-            <Button onClick={handleAddEmail}>Add</Button>
-          </div>
+
+          <Input
+            id="emailInput"
+            type="email"
+            label="Email Address"
+            value={emailInput}
+            onChange={handleChange}
+          />
+
+          <Button onClick={handleAddEmail}>Add</Button>
 
           {/* Display email error message if it exists */}
         </div>
@@ -105,27 +102,29 @@ const MySetttings = ({ emails, addEmail, deleteEmail }) => {
             </tr>
           </thead>
           <tbody>
-            {emails.map((email, index) => {
-              const isLast = index === emails.length - 1;
-              const classes = isLast
-                ? "p-2"
-                : "p-2 border-b border-blue-gray-50";
-              return (
-                <tr key={index}>
-                  <td className={classes}>{email}</td>
-                  <td className={classes}>
-                    <Tooltip content="Delete">
-                      <IconButton
-                        variant="text"
-                        onClick={() => handleDelete(index)}
-                      >
-                        <TrashIcon className="h-6 w-6" color="black" />
-                      </IconButton>
-                    </Tooltip>
-                  </td>
-                </tr>
-              );
-            })}
+            {emails.length
+              ? emails?.map((email, index) => {
+                  const isLast = index === emails.length - 1;
+                  const classes = isLast
+                    ? "p-2"
+                    : "p-2 border-b border-blue-gray-50";
+                  return (
+                    <tr key={index}>
+                      <td className={classes}>{email}</td>
+                      <td className={classes}>
+                        <Tooltip content="Delete">
+                          <IconButton
+                            variant="text"
+                            onClick={() => handleDelete(index)}
+                          >
+                            <TrashIcon className="h-6 w-6" color="black" />
+                          </IconButton>
+                        </Tooltip>
+                      </td>
+                    </tr>
+                  );
+                })
+              : null}
           </tbody>
         </table>
       </div>

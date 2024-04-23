@@ -20,7 +20,9 @@ function InstagramPresets({
   const [openInstagramPrompt, setOpenInstagramPrompt] = useState(false);
 
   const toggleAccordion = () => {
-    setOpen(!open);
+    if (additionalPresets?.autoPublish) {
+      setOpen(!open);
+    }
   };
 
   const handleChange = (identifier, value) => {

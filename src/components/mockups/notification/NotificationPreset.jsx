@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NotificationBell from "../../../assets/NotificationBell";
 import Accordion from "../../accordion/Accordion";
 import { Button, Chip } from "@material-tailwind/react";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import EditNotificationDetailsDialog from "./components/EditNotificationDetailsDialog";
+import { useSelector } from "react-redux";
+import { axiosInstance } from "../../../utils/Interceptor";
 
 const NotificationPreset = () => {
   const [open, setOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [emails, setEmails] = useState([]);
+  const user = useSelector((state) => state.user.value);
 
   const handleModalOpen = (e) => {
     e.stopPropagation();
@@ -18,9 +22,29 @@ const NotificationPreset = () => {
     setModalOpen(false);
   };
 
+  async function getNotificationDetailsData() {
+    const brandId = user?.brand?.id;
+    const res = await axiosInstance.get(
+      `${import.meta.env.VITE_API_URL}/notification?brandId=${brandId}`
+    );
+
+    if (res && res.data && res.data.data) {
+      const newEmails = res.data.data.map((item) => item.email);
+      setEmails((prevEmails) => [...prevEmails, ...newEmails]);
+    }
+  }
+
   const toggleAccordion = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    if (open) {
+      getNotificationDetailsData();
+    } else {
+      setEmails([]);
+    }
+  }, [open]);
 
   return (
     <div className="my-2">
@@ -43,8 +67,9 @@ const NotificationPreset = () => {
         }
       >
         <div className="flex flex-row gap-5">
-          <Chip value="arison.s@appwrk.com" className="rounded-full" />
-          <Chip value="skylar.b@apprk.com" className="rounded-full" />
+          {emails.map((email, index) => (
+            <Chip key={index} value={email} className="rounded-full" />
+          ))}
         </div>
       </Accordion>
       <EditNotificationDetailsDialog

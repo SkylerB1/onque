@@ -62,7 +62,9 @@ function TikTokPresets({
     `/user/tiktok/creator-info?brandId=${brandId}&platform=${platform}`;
 
   const toggleAccordion = () => {
-    setOpen(!open);
+    if (additionalPresets?.autoPublish) {
+      setOpen(!open);
+    }
   };
 
   const generatePrivacyOptions = (options = []) => {

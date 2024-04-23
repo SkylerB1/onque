@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogHeader,
@@ -10,23 +10,55 @@ import {
 } from "@material-tailwind/react";
 import MySetttings from "./MySetttings";
 import LostChangesDialog from "./LostChangesDialog";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { axiosInstance } from "../../../../utils/Interceptor";
+import { toast } from "react-hot-toast";
 
 const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
   const [openLostChangesDialog, setOpenLostChangesDialog] = useState(false);
   const [changesMade, setChangesMade] = useState(false);
-  const [emails, setEmails] = useState([
-    "arison.s@appwrk.com",
-    "skylar.d@appwrk.com",
-  ]);
+  const [emails, setEmails] = useState([]);
+  const user = useSelector((state) => state.user.value);
 
-  const handleSave = () => {
-    // Perform save action or call API with updated data
-    alert(JSON.stringify(emails));
-    console.log("Saving changes...", emails);
-    onClose();
+  const handleSaveTest = async () => {
+    const brandId = user?.brand?.id;
+    try {
+      const response = await axiosInstance.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/notification/send-test-email?brandId=${brandId}`,
+        { recipient: emails }
+      );
+      if (response.status === 200) {
+        toast.success(`${response.data.message}`);
+        handleSave();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const addEmail = (email) => {
+  const handleSave = async () => {
+    const brandId = user?.brand?.id;
+    try {
+      const response = await axiosInstance.put(
+        `${
+          import.meta.env.VITE_API_URL
+        }/notification/notification-config?brandId=${brandId}`,
+        emails
+      );
+      if (response.status === 201) {
+        toast.success(`${response.data.data}`);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      onClose();
+    }
+  };
+
+  const addEmail = async (email) => {
     setEmails((prevEmails) => [...prevEmails, email]);
     setChangesMade(true);
   };
@@ -43,6 +75,32 @@ const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
       onClose();
     }
   };
+
+  useEffect(() => {
+    if (!isOpen) {
+      setEmails([]);
+    }
+  }, [isOpen]);
+
+  async function getNotificationDetailsData() {
+    const brandId = user?.brand?.id;
+    const res = await axiosInstance.get(
+      `${import.meta.env.VITE_API_URL}/notification?brandId=${brandId}`
+    );
+
+    if (res && res.data && res.data.data) {
+      const newEmails = res.data.data.map((item) => item.email);
+      setEmails((prevEmails) => [...prevEmails, ...newEmails]);
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) {
+      getNotificationDetailsData();
+    } else {
+      setEmails([]);
+    }
+  }, [isOpen]);
 
   return (
     <>
@@ -84,7 +142,9 @@ const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
         </DialogBody>
         <hr />
         <DialogFooter className="justify-between">
-          <Button variant="outlined">Save and test</Button>
+          <Button variant="outlined" onClick={handleSaveTest}>
+            Save and test
+          </Button>
 
           <Button onClick={handleSave}>Save</Button>
         </DialogFooter>

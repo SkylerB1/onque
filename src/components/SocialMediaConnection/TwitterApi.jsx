@@ -7,7 +7,7 @@ const TwitterApi = ({ icon, backgroundColor, label }) => {
   const handleTwitterLogin = () => {
     try {
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/twitter?userId=${user?.id
-        }&brandId=${user?.brand?.id}`;
+        }&brandId=${user?.userBrandId}`;
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;

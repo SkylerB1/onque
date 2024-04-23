@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Tabs,
   TabsHeader,
@@ -9,27 +9,34 @@ import {
 import Users from "./components/Users";
 import RoleAndPermisson from "./components/RolesAndPermission";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getRoles } from "../../redux/features/roleSlice";
 
+const data = [
+  {
+    label: "Users",
+    value: "users",
+    component: Users,
+  },
+  {
+    label: "Roles and permissions",
+    value: "rolepermisson",
+    component: RoleAndPermisson,
+  },
+];
 const UserManagement = () => {
   const { tab } = useParams();
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState(tab.toLowerCase());
-  const data = [
-    {
-      label: "Users",
-      value: "users",
-      desc: <Users />,
-    },
-    {
-      label: "Role and permission",
-      value: "rolepermisson",
-      desc: <RoleAndPermisson />,
-    },
-  ];
 
   useEffect(() => {
     navigate("/userManagement/" + activeTab);
   }, [activeTab]);
+
+  useEffect(() => {
+    dispatch(getRoles())
+  },[])
 
   return (
     <div className="p-4 sm:ml-64 mt-20">
@@ -56,9 +63,9 @@ const UserManagement = () => {
           </TabsHeader>
           <hr className="w-[90rem]" />
           <TabsBody>
-            {data.map(({ value, desc }) => (
-              <TabPanel key={value} value={value}>
-                {desc}
+            {data.map((item, index) => (
+              <TabPanel key={index} value={item.value}>
+                <item.component />
               </TabPanel>
             ))}
           </TabsBody>

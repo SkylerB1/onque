@@ -19,7 +19,7 @@ const Calendar = () => {
   const [events, setEvents] = useState([]);
   const { broadcastConnection } = useAppContext();
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand?.id;
+  const brandId = user?.userBrandId;
   const { connections, getConnections } = useConnections();
 
   const getPostData = async () => {

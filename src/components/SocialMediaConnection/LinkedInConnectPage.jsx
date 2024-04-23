@@ -25,13 +25,13 @@ const LinkedInConnectPage = ({
   }));
   const { broadcastConnection } = useAppContext();
   const user = useSelector((state) => state.user.value);
-  const URL = API_URL + `/auth/linkedin/pages?brandId=${user?.brand?.id}`;
+  const URL = API_URL + `/auth/linkedin/pages?brandId=${user?.userBrandId}`;
 
   const handleLinkedInLogin = async () => {
     try {
       const oauthUrl = `${
         import.meta.env.VITE_API_URL
-      }/auth/linkedin/page?userId=${user?.id}&brandId=${user?.brand?.id}`;
+      }/auth/linkedin/page?userId=${user?.id}&brandId=${user?.userBrandId}`;
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;

@@ -18,7 +18,7 @@ const FacebookApi = ({
   const user = useSelector((state) => state.user.value);
   const { broadcastConnection } = useAppContext();
   const GET_PAGES_URL =
-    API_URL + `/auth/facebook/pages?brandId=${user?.brand?.id}`;
+    API_URL + `/auth/facebook/pages?brandId=${user?.userBrandId}`;
   const header = useMemo(() => ({
     title: "Facebook Page",
     subTitle: "Select the page you want to connect with this client.",
@@ -29,7 +29,7 @@ const FacebookApi = ({
     try {
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/facebook?userId=${
         user?.id
-      }&brandId=${user?.brand?.id}`;
+      }&brandId=${user?.userBrandId}`;
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;

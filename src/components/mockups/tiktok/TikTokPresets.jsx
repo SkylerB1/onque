@@ -46,7 +46,7 @@ function TikTokPresets({
   const isContentOwnBrand = additionalPresets?.commercialContentOwnBrand;
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const brandId = user?.brand?.id;
+  const brandId = user?.userBrandId;
   const [privacyOptions, setPrivacyOptions] = useState([]);
   const [disabled, setDisabled] = useState();
   const [modalOpen, setModalOpen] = useState(false);

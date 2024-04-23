@@ -9,7 +9,7 @@ const useConnections = () => {
   const connections = useSelector((state) => state.connections.value);
   const isConnLoading = useSelector((state) => state.connections.loading);
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand?.id
+  const brandId = user?.userBrandId
   const connectionsUrl = useMemo(() => `${API_URL}/user/connections`);
   const dispatch = useDispatch();
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Button,
   Card,
@@ -14,32 +14,25 @@ import {
   DocumentDuplicateIcon,
 } from "@heroicons/react/24/solid";
 import AddRoleDialog from "./AddRoleDialog";
+import { useSelector } from "react-redux";
+import Loader from "../../../components/loader/Loader";
 
 const RolesAndPermission = () => {
-  // Define table headers
-  const tableHeaders = ["Role", "Description", "Users", ""];
-
-  // Define table rows
-  const tableRows = [
-    {
-      name: "Admin",
-      job: "Administrator",
-      users: 10,
-    },
-    {
-      name: "Moderator",
-      job: "Moderator",
-      users: 5,
-    },
-    {
-      name: "User",
-      job: "Regular User",
-      users: 100,
-    },
-  ];
-
+  const tableHeaders = ["Role", "Description", "Users", "Action"];
   const [addRoleDialogOpen, setAddRoleDialogOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const { value: roles, loading } = useSelector((state) => state.roles);
+  const rolesData = useMemo(
+    () =>
+      roles?.filter((item) => {
+        return item.name.toLowerCase().includes(search.toLowerCase());
+      }),
+    [search, roles]
+  );
 
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+  };
   return (
     <>
       <div className="mr-52">
@@ -47,7 +40,7 @@ const RolesAndPermission = () => {
           <CardBody>
             <div className="mb-4 mt-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
               <div className="w-full">
-                <Input label="Search" />
+                <Input label="Search" value={search} onChange={handleSearch} />
               </div>
               <div className="flex w-full shrink-0 gap-2 md:w-max">
                 <Button
@@ -60,96 +53,99 @@ const RolesAndPermission = () => {
                 </Button>
               </div>
             </div>
-            <table className="w-full min-w-max table-auto text-left">
-              <thead>
-                <tr>
-                  {tableHeaders.map((header, index) => (
-                    <th
-                      key={index}
-                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                    >
-                      <Typography
-                        variant="small"
-                        color="blue-gray"
-                        className="font-normal leading-none opacity-70"
+            {loading ? (
+              <Loader />
+            ) : (
+              <table className="w-full min-w-max table-auto text-left">
+                <thead>
+                  <tr>
+                    {tableHeaders.map((header, index) => (
+                      <th
+                        key={index}
+                        className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                       >
-                        {header}
-                      </Typography>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tableRows.map((row, index) => {
-                  const isLast = index === tableRows.length - 1;
-                  const classes = isLast
-                    ? "p-4"
-                    : "p-4 border-b border-blue-gray-50";
-                  return (
-                    <tr
-                      key={index}
-                      onClick={() => handleRowClick(row)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <td className={classes}>
-                        <div className="flex items-center gap-3">
-                          {/* <div
-                            class="border border-solid "
-                            style={{
-                              height: "16px",
-                              width: "16px",
-                              borderColor: "rgb(72, 76, 79)",
-                              background: "rgb(228, 237, 244)",
-                            }}
-                          ></div> */}
-                          <ShieldCheckIcon className="h-6 w-6" color="black" />
+                        <Typography
+                          variant="small"
+                          color="blue-gray"
+                          className="font-normal leading-none opacity-70"
+                        >
+                          {header}
+                        </Typography>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {rolesData?.map((row, index) => {
+                    const isLast = index === rolesData.length - 1;
+                    const classes = isLast
+                      ? "p-4"
+                      : "p-4 border-b border-blue-gray-50";
+                    return (
+                      <tr
+                        key={row.id}
+                        onClick={() => handleRowClick(row)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <td className={classes}>
                           <div className="flex items-center gap-3">
-                            <Typography
-                              variant="small"
-                              color="blue-gray"
-                              className="font-bold"
-                            >
-                              {row.name}
-                            </Typography>
-                          </div>
-                        </div>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {row.job}
-                        </Typography>
-                      </td>
-                      <td className={classes}>
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal"
-                        >
-                          {row.users}
-                        </Typography>
-                      </td>
-                      <td align={"right"} className={classes}>
-                        <Tooltip content="clone">
-                          <IconButton
-                            variant="text"
-                            onClick={(e) => handleTrashClick(e)}
-                          >
-                            <DocumentDuplicateIcon
+                            <ShieldCheckIcon
                               className="h-6 w-6"
                               color="black"
                             />
-                          </IconButton>
-                        </Tooltip>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                            <div className="flex items-center gap-3">
+                              <Typography
+                                variant="small"
+                                color="blue-gray"
+                                className="font-bold"
+                              >
+                                {row.name}
+                              </Typography>
+                            </div>
+                          </div>
+                        </td>
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {row.description}
+                          </Typography>
+                        </td>
+                        <td className={classes}>
+                          <Typography
+                            variant="small"
+                            color="blue-gray"
+                            className="font-normal"
+                          >
+                            {row.assignedUsersCount}
+                          </Typography>
+                        </td>
+                        <td className={classes}>
+                          <Tooltip content="clone">
+                            <IconButton
+                              variant="text"
+                              onClick={(e) => handleTrashClick(e)}
+                            >
+                              <DocumentDuplicateIcon
+                                className="h-6 w-6"
+                                color="black"
+                              />
+                            </IconButton>
+                          </Tooltip>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+            {rolesData?.length === 0 && (
+              <div className="text-center mb-0 pt-4">
+                we haven't found any roles matching your search filters
+              </div>
+            )}
           </CardBody>
         </Card>
       </div>

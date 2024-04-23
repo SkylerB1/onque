@@ -10,7 +10,7 @@ import SelectInput from "../../Input/SelectInput";
 
 function YoutubePresets({ setAdditionalPresets, additionalPresets }) {
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand?.id;
+  const brandId = user?.userBrandId;
   const CATEGORIES_URL =
     API_URL + "/auth/youtube/categories?brandId=" + brandId;
   const [categories, setCategories] = useState([]);

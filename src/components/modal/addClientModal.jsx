@@ -35,7 +35,7 @@ export default function AddModal({ open, Close }) {
       setLoading(true);
       const response = await axiosInstance.post(
         `${import.meta.env.VITE_API_URL}/brands/create`,
-        { data: formData }
+        formData
       );
       const brand = response?.data?.brand;
       setFormData({ brand_name: "" });
@@ -45,7 +45,7 @@ export default function AddModal({ open, Close }) {
       const user = useLocalStorage("user", "get");
       const data = { ...user, brand: brand };
       dispatch(setUser(data));
-      const brandId = user?.brand.id;
+      const brandId = user?.userBrandId;
       getConnections(brandId);
     } catch (error) {
       setLoading(false);

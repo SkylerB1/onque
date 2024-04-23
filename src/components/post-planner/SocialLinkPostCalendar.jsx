@@ -19,7 +19,7 @@ const initialHeader = {
 const SocialLinkPostCalendar = () => {
   const { getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand?.id;
+  const brandId = user?.userBrandId;
   const [selected, setSelected] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -119,7 +119,7 @@ const SocialLinkPostCalendar = () => {
 
   return (
     <>
-      <div className="mt-20 flex mb-2">
+      <div className="mt-[104px] flex mb-2">
         <div className="flex flex-1 items-start justify-between bg-white rounded-lg">
           <div>
             <div className="mt-10 ml-8 w-full text-[#4A5568]">

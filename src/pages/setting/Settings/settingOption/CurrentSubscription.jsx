@@ -3,17 +3,19 @@ import { Button } from "@material-tailwind/react";
 import { planLabel } from "../../../../utils";
 import { getDateFromUnix } from "../../../../utils/dateUtils";
 import CancelSubscription from "../../../../components/modal/CancelSubscription";
+import { useAppContext } from "../../../../context/AuthContext";
 
 const CurrentSubscription = ({ subscription, getSubscriptions }) => {
   const [openCancelModal, setCancelModal] = useState(false);
+  const { validations } = useAppContext();
 
   const toggleCancelModal = () => {
     setCancelModal(!openCancelModal);
   };
 
   const reloadSubscription = () => {
-    getSubscriptions()
-  }
+    getSubscriptions();
+  };
   return (
     <div className="flex flex-1 flex-wrap justify-evenly mb-14">
       <div
@@ -48,11 +50,11 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
         </strong>
         <div className="flex justify-between">
           <span className="text-sm">
-            Clients: {subscription.clients_count} of {subscription.max_clients}
+            Clients: {validations.clients_count} of {validations.max_clients}
           </span>
           <span className="text-sm">
-            Posts: {subscription.posts_count_monthly} of{" "}
-            {subscription.max_posts_monthly}
+            Posts: {validations.posts_count_monthly} of{" "}
+            {validations.max_posts_monthly}
           </span>
         </div>
       </div>

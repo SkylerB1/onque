@@ -159,7 +159,7 @@ const CreatePostModal = ({
     },
   });
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand?.id;
+  const brandId = user?.userBrandId;
   const [dimensions, setDimensions] = useState({});
   const CREATE_POST_URL = API_URL + `/user/scheduler/posts?brandId=${brandId}`;
   const UPDATE_POST_URL =
@@ -990,7 +990,7 @@ const CreatePostModal = ({
               <div
                 {...getRootProps()}
                 className={`${
-                  handlePointerEvent() ? "pointer-events-none" : ""
+                  handlePointerEvent() || loading ? "pointer-events-none" : ""
                 } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />

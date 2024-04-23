@@ -26,7 +26,7 @@ import PrivateRoute from "./PrivateRoute";
 import Home from "./pages";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
-
+import "./utils/localization/i18n";
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const router = createBrowserRouter([
@@ -127,7 +127,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/setting/Settings/:tab",
+    path: "/setting/:tab",
     element: (
       <PrivateRoute>
         <Header>

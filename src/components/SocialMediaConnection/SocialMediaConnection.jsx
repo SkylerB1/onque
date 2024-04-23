@@ -34,7 +34,7 @@ const SocialMediaConnection = ({ children }) => {
   const { broadcastConnection } = useAppContext();
 
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand?.id;
+  const brandId = user?.userBrandId;
 
   const instagramLogin = async () => {
     try {

@@ -23,10 +23,10 @@ const initialHeader = {
 };
 
 const Connection = () => {
-  const { broadcastConnection } = useAppContext();
+  const { broadcastConnection, subscription } = useAppContext();
   const { connections, getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.brand.id || "";
+  const brandId = user?.userBrandId || "";
   const [premium, setPremium] = useState(true);
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -39,6 +39,7 @@ const Connection = () => {
   const [platformName, setPlatformName] = useState();
   const [instagramAuth, setInstagramAuth] = useState(false);
   const [isConnectionError, setConnectionError] = useState(null);
+  const isSubscribed = Boolean(subscription) || false;
 
   const instagramLogin = async () => {
     try {
@@ -104,7 +105,7 @@ const Connection = () => {
       );
       if (response.status === 200) {
         const user = useLocalStorage("user", "get");
-        const brandId = user?.brand.id;
+        const brandId = user?.userBrandId;
         getConnections(brandId);
         setOpen(false);
         setShowModal(false);
@@ -126,7 +127,7 @@ const Connection = () => {
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
         const user = useLocalStorage("user", "get");
-        const brandId = user?.brand.id;
+        const brandId = user?.userBrandId;
         getConnections(brandId);
         removeSelected();
         handleCloseModal();
@@ -142,7 +143,7 @@ const Connection = () => {
       if (platform && error) {
         setConnectionError({ platform, error });
       } else {
-        const brandId = user?.brand.id;
+        const brandId = user?.userBrandId;
         getConnections(brandId);
       }
     };
@@ -186,9 +187,9 @@ const Connection = () => {
                   <p className="text-base text-[#5E5E5E] mt-2 mb-2">
                     Struggling to connect? Get in touch with the Helpdesk.
                   </p>
-                  <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
-                    <Link to="/setting/Settings?tab=price">GET PREMIUM</Link>
-                  </button>
+                  {!isSubscribed && <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
+                    <Link to="/setting/price">GET PREMIUM</Link>
+                  </button>}
                 </div>
               ) : (
                 ""

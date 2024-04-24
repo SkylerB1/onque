@@ -19,16 +19,21 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../../redux/features/userSlice";
 import { RiEyeFill, RiEyeOffFill } from "react-icons/ri";
 import { useCookies } from "react-cookie";
+import { getBrands } from "../../../redux/features/brandsSlice";
+import useConnections from "../../../components/customHooks/useConnections";
+import { useAppContext } from "../../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { getConnections } = useConnections();
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
-  const [cookies, setCookie] = useCookies(["access_token"])
+  const { getSubscriptions, getCounter } = useAppContext();
+  const [cookies, setCookie] = useCookies(["access_token"]);
   const [showPassword, setShowPassword] = useState(false);
-
   const user = localStorage.getItem("user");
   if (user) {
     return <Navigate to="/planner/calendar" />;
@@ -53,10 +58,21 @@ const Login = () => {
         data
       );
       if (response.status === 200) {
-        const { data } = response;
-        localStorage.setItem("user", JSON.stringify(data));
-        setCookie('access_token', data?.access_token)
-        dispatch(setUser(data));
+        const { data: userData } = response;
+        const { access_token } = userData;
+        localStorage.setItem("access_token", access_token);
+        setCookie("access_token", access_token);
+        dispatch(getBrands()).then((item) => {
+          const brand = item.payload.brands[0];
+          const userBrand = {
+            ...userData,
+            brand: brand,
+          };
+          dispatch(setUser(userBrand));
+          getConnections(brand.id);
+        });
+        getCounter()
+        getSubscriptions();
         setLoading(false);
         navigate("/planner/calendar");
         toast.success(`Welcome ${data.firstName}  ${data.lastName}`);
@@ -73,15 +89,20 @@ const Login = () => {
 
   const handleFacebookLogin = () => {
     try {
-      window.location.href = `${import.meta.env.VITE_API_URL}/auth/facebook/login`;
+      window.location.href = `${
+        import.meta.env.VITE_API_URL
+      }/auth/facebook/login`;
     } catch (err) {
       console.log(err);
     }
   };
+  };
 
   const handleTwitterLogin = () => {
     try {
-      window.location.href = `${import.meta.env.VITE_API_URL}/auth/twitter/login`;
+      window.location.href = `${
+        import.meta.env.VITE_API_URL
+      }/auth/twitter/login`;
     } catch (err) {
       console.log(err);
     }
@@ -191,7 +212,11 @@ const Login = () => {
                     >
                       <span className="flex items-center justify-between h-12 pl-3 pr-3 py-3 text-white cursor-pointer">
                         <p className="mr-2">Continue with Facebook</p>
-                        <FacebookFilled width={18} height={18} fill={"#ffffff"} />
+                        <FacebookFilled
+                          width={18}
+                          height={18}
+                          fill={"#ffffff"}
+                        />
                       </span>
                     </div>
                     <div

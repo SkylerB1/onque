@@ -12,7 +12,6 @@ export const getBrands = createAsyncThunk("brands", async () => {
     const response = await axiosInstance.get("/brands");
     return response.data;
   } catch (err) {
-    console.log(err);
     return err?.response?.data?.message;
   }
 });
@@ -23,11 +22,20 @@ export const brands = createSlice({
   reducers: {
     addBrand: (state, action) => {
       (state.value || []).push(action.payload);
-      state.loading = false;
     },
     removeBrand: (state, action) => {
-      state.value.filter((brand) => brand.id != action.payload);
-      state.loading = false;
+      state.value = state.value.filter((brand) => brand.id != action.payload);
+    },
+    addPlatformsByBrandId: (state, action) => {
+      const { id: brandId, data } = action.payload;
+      const brands = state.value;
+      const updatedBrands = brands.map((brand) => {
+        if (brand.id === brandId) {
+          return { ...brand, platforms: data };
+        }
+        return brand;
+      });
+      state.value = updatedBrands;
     },
   },
   extraReducers: (builder) => {
@@ -46,7 +54,12 @@ export const brands = createSlice({
   },
 });
 
-export const { initialiseBrands, brandsLoading, addBrand, removeBrand } =
-  brands.actions;
+export const {
+  initialiseBrands,
+  brandsLoading,
+  addBrand,
+  removeBrand,
+  addPlatformsByBrandId,
+} = brands.actions;
 
 export default brands.reducer;

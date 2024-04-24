@@ -26,7 +26,7 @@ const Connection = () => {
   const { broadcastConnection, subscription } = useAppContext();
   const { connections, getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.userBrandId || "";
+  const brandId = user?.brand?.id || "";
   const [premium, setPremium] = useState(true);
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -104,7 +104,7 @@ const Connection = () => {
       );
       if (response.status === 200) {
         const user = useLocalStorage("user", "get");
-        const brandId = user?.userBrandId;
+        const brandId = user?.brand?.id;
         getConnections(brandId);
         setOpen(false);
         setShowModal(false);
@@ -126,7 +126,7 @@ const Connection = () => {
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
         const user = useLocalStorage("user", "get");
-        const brandId = user?.userBrandId;
+        const brandId = user?.brand?.id;
         getConnections(brandId);
         removeSelected();
         handleCloseModal();
@@ -142,7 +142,7 @@ const Connection = () => {
       if (platform && error) {
         setConnectionError({ platform, error });
       } else {
-        const brandId = user?.userBrandId;
+        const brandId = user?.brand?.id;
         getConnections(brandId);
       }
     };

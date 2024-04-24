@@ -17,7 +17,7 @@ function GoogleBusinessApi({
   backgroundColor,
 }) {
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.userBrandId;
+  const brandId = user?.brand?.id;
   const { broadcastConnection } = useAppContext();
   const GET_LOCATIONS_URL =
     API_URL + `/auth/google_business/locations?brandId=${brandId}`;

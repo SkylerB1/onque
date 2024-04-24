@@ -23,7 +23,7 @@ export const API_URL = import.meta.env.VITE_API_URL;
 export const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
 
 export const user = useLocalStorage("user", "get");
-export const brandId = user?.userBrandId;
+export const brandId = user?.brand?.id;
 export const ConnectUrl = {
   facebook_page: API_URL + `/auth/facebook/connection?brandId=${brandId}`,
   instagram_account: API_URL + `/auth/instagram/connection?brandId=${brandId}`,

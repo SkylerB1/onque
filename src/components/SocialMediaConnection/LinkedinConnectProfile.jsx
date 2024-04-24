@@ -21,13 +21,13 @@ const LinkedInConnectProfile = ({
     icon: <LinkedIn width={30} height={30} />,
   }));
   const user = useSelector((state) => state.user.value);
-  const URL = API_URL + `/auth/linkedin/profile?brandId=${user?.userBrandId}`;
+  const URL = API_URL + `/auth/linkedin/profile?brandId=${user?.brand?.id}`;
 
   const handleLinkedInLogin = async () => {
     try {
       const oauthUrl = `${
         import.meta.env.VITE_API_URL
-      }/auth/linkedin/profile?userId=${user?.id}&brandId=${user?.userBrandId}`;
+      }/auth/linkedin/profile?userId=${user?.id}&brandId=${user?.brand?.id}`;
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;

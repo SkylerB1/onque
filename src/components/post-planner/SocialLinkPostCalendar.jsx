@@ -19,7 +19,7 @@ const initialHeader = {
 const SocialLinkPostCalendar = () => {
   const { getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.userBrandId;
+  const brandId = user?.brand?.id;
   const [selected, setSelected] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

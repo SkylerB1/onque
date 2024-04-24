@@ -1,65 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { Select, Option } from "@material-tailwind/react";
 import { ListItem, ListItemPrefix } from "@material-tailwind/react";
-import { FaNetworkWired, FaWifi } from "react-icons/fa";
-import { AiOutlinePlus, AiFillCloseCircle } from "react-icons/ai";
+import { FaNetworkWired } from "react-icons/fa";
 import { BsPersonBoundingBox, BsPersonCheckFill } from "react-icons/bs";
 import { MdAutoDelete } from "react-icons/md";
 import { axiosInstance } from "../../utils/Interceptor";
-import CustomMenu from "../common/customMenu";
 import { useDispatch, useSelector } from "react-redux";
-import CustomModal from "../modal/customModal";
 import { toast } from "react-hot-toast";
+import { removeBrand } from "../../redux/features/brandsSlice";
+import CustomModal from "../modal/customModal";
 import { setUser } from "../../redux/features/userSlice";
+import useConnections from "../customHooks/useConnections";
 
 const BrandNavber = () => {
   const { pathname } = useLocation();
-  const [clientData, setClientData] = useState([]);
-  const [selectedValue, setSelectedValue] = useState("");
   const url = pathname;
+  const { getConnections } = useConnections();
+  const { value: brands } = useSelector((state) => state.brands);
+  const [opens, setOpen] = useState(false);
   const user = useSelector((state) => state.user.value);
   const { id: brandId, brand_name: brandName } = user?.brand;
   const dispatch = useDispatch();
-  const [opens, setOpen] = useState(false);
-
-  const handleSelectChange = (event) => {
-    setSelectedValue(event);
-  };
-
-  const getFirstLetter = (name) => {
-    return name ? name.charAt(0).toUpperCase() : "";
-  };
-
-  const handleGetClients = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/brands`
-      );
-      let responseData = response?.data?.rows;
-      setClientData(responseData);
-      setSelectedValue(responseData[0].brand_name);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getUserBrand = async () => {
-    try {
-      const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/user/brand`
-      );
-      const { data } = response;
-      if (data) {
-        let user = localStorage.getItem("user");
-        user = JSON.parse(user);
-        const userBrand = { ...user, brand: data };
-        dispatch(setUser(userBrand));
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleDeleteClient = async (id) => {
     try {
@@ -68,17 +29,18 @@ const BrandNavber = () => {
       );
       if (response.status === 200) {
         setOpen(false);
-        getUserBrand();
+        const newBrand = brands[0]
+        const userData = { ...user };
+        userData.brand = newBrand;
+        dispatch(setUser(userData));
+        dispatch(removeBrand(id));
+        getConnections(newBrand.id);
         toast.success(response?.data?.message);
       }
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    handleGetClients();
-  }, []);
 
   return (
     <div>
@@ -176,7 +138,7 @@ const BrandNavber = () => {
             Team access
           </Link>
         </ListItem>
-        {clientData && clientData.length > 1 && (
+        {brands?.length > 1 && (
           <ListItem
             className=" w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
             onClick={() => setOpen(true)}

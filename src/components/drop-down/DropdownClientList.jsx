@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import useConnections from "../customHooks/useConnections";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/features/userSlice";
 import { useLocalStorage } from "../../utils/LocalStorage";
+
 import {
   Menu,
   MenuHandler,
@@ -33,20 +34,6 @@ const DropdownClientList = ({ setOpen }) => {
     dispatch(setUser(data));
     getConnections(item.id);
   };
-
-  // const handleGetClients = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await axiosInstance.get(
-  //       `${import.meta.env.VITE_API_URL}/brands`
-  //     );
-  //     setClientsData(response?.data?.rows);
-  //     setLoading(false);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setLoading(false);
-  //   }
-  // };
 
   return (
     <div className="relative inline-block text-left">
@@ -127,15 +114,12 @@ const DropdownClientList = ({ setOpen }) => {
                 )
                 ?.map((item, index) => (
                   <button
-                    key={index}
+                    key={item.id}
                     onClick={() => handleItemClick(item)}
                     className=" w-full my-2 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 "
                     role="menuitem"
                   >
-                    <div
-                      className="flex flex-1 items-center justify-start gap-3"
-                      key={index}
-                    >
+                    <div className="flex flex-1 items-center justify-start gap-3">
                       <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
                         <span className="font-normal text-gray-600 dark:text-gray-300">
                           {item?.brand_name.charAt(0)}
@@ -155,7 +139,7 @@ const DropdownClientList = ({ setOpen }) => {
                             const { platform } = item;
                             if (platform) {
                               const { coloredIcon } = SocialPlatforms[platform];
-                              return coloredIcon(13, 13);
+                              return <span key={item.id}>{coloredIcon(13, 13)}</span>;
                             }
                           })}
                         </div>

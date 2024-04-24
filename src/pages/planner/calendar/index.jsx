@@ -19,9 +19,9 @@ const Calendar = () => {
   const [events, setEvents] = useState([]);
   const { broadcastConnection } = useAppContext();
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.userBrandId;
+  const brandId = user?.brand?.id;
   const { connections, getConnections } = useConnections();
-
+  
   const getPostData = async () => {
     try {
       const response = await axiosInstance.get(

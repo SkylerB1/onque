@@ -20,7 +20,7 @@ const ClientDetails = () => {
   const isSubscribed = Boolean(subscription) || false;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-  const brandId = user?.userBrandId;
+  const brandId = user?.brand?.id;
   const [brandData, setBrandData] = useState({
     name: "",
     profile: "",

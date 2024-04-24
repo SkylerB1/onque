@@ -25,7 +25,6 @@ import { useAppContext } from "../../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
-
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const { getConnections } = useConnections();
@@ -71,7 +70,7 @@ const Login = () => {
           dispatch(setUser(userBrand));
           getConnections(brand.id);
         });
-        getCounter()
+        getCounter();
         getSubscriptions();
         setLoading(false);
         navigate("/planner/calendar");
@@ -95,7 +94,6 @@ const Login = () => {
     } catch (err) {
       console.log(err);
     }
-  };
   };
 
   const handleTwitterLogin = () => {
@@ -236,7 +234,7 @@ const Login = () => {
             <div
               className="w-3/6 text-white py-36 px-12"
               style={{
-                backgroundColor: "#A7C7ED"
+                backgroundColor: "#A7C7ED",
               }}
             >
               <div className="flex items-center justify-center mb-3">

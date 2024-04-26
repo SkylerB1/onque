@@ -988,7 +988,7 @@ const CreatePostModal = ({
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
                 {...getRootProps()}
-                className={`${handlePointerEvent() ? "pointer-events-none" : ""
+                className={`${handlePointerEvent() || loading ? "pointer-events-none" : ""
                   } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />

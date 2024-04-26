@@ -294,3 +294,24 @@ export const planLabel = {
   enterprise_plan_gbp: "Enterprise Plan - Monthly",
   enterprise_plan_gbp_yearly: "Enterprise Plan - Yearly",
 };
+
+export const getCommaSeparatedNames = (arr, indentifier) => {
+  const names = arr.map((item) => item[indentifier]);
+
+  if (arr.length <= 5) {
+    return names.join(", ");
+  } else {
+    const firstFiveNames = names.slice(0, 5);
+    const remainingCount = names.length - 5;
+
+    return `${firstFiveNames.join(", ")} and ${remainingCount} more`;
+  }
+};
+
+export const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};

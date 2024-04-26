@@ -9,12 +9,12 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-const Filters = ({ options, selectedOptions, onChange, title }) => {
+const Filters = ({ options, selectedOptions, onChange, title,identifier }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState(
     options.reduce((acc, option) => {
-      acc[option] = true; // By default, all checkboxes are checked
+      acc[option] = true;
       return acc;
     }, {})
   );
@@ -119,7 +119,7 @@ const Filters = ({ options, selectedOptions, onChange, title }) => {
               className="flex items-center w-full my-1 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 px-2 justify-between rounded-md hover:cursor-pointer "
             >
               <div>
-                <Typography>{option}</Typography>
+                <Typography>{option[identifier]}</Typography>
               </div>
               <Checkbox
                 ripple={false}

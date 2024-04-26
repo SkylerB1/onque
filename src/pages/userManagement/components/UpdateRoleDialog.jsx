@@ -11,7 +11,6 @@ import {
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const UpdateRoleDialog = ({ isOpen, onClose, brands, selectedBrands }) => {
-  console.log({ brands });
   const [selectedBrand, setSelectedBrand] = useState("");
 
   const handleBrandSelect = (brand) => {

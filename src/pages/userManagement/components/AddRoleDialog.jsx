@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogHeader,
@@ -12,12 +12,44 @@ import {
 } from "@material-tailwind/react";
 import Accordion from "../../../components/accordion/Accordion";
 import CustomSwitch from "../../../components/Input/CustomSwitch";
-
+import { axiosInstance } from "../../../utils/Interceptor";
+import LoadingButton from "../../../components/button/LoadingButton";
+import { useDispatch } from "react-redux";
+import { addRole } from "../../../redux/features/roleSlice";
+import toast from "react-hot-toast";
+const initial = {
+  name: "",
+  description: "",
+  viewPlanner: false,
+  fullAccessPlanner: false,
+  editBrand: false,
+  schedulePosts: false,
+  publishPosts: false,
+};
 const AddRoleDialog = ({ isOpen, onClose }) => {
   const [open, setOpen] = useState(true);
   const [openEditPermissions, setOpenEditPermissions] = useState(true);
   const [openManagementPermissions, setOpenManagementPermissions] =
     useState(true);
+  const [data, setData] = useState(initial);
+  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const isSubmitDisabled = useMemo(() => {
+    const {
+      name,
+      description,
+      viewPlanner,
+      fullAccessPlanner,
+      schedulePosts,
+      editBrand,
+    } = data;
+
+    return (
+      name === "" ||
+      description === "" ||
+      (!viewPlanner && !fullAccessPlanner && !schedulePosts && !editBrand)
+    );
+  }, [data]);
 
   const toggleAccordion = (type) => {
     if (type === "open") {
@@ -27,6 +59,26 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
     } else {
       setOpenManagementPermissions(!openManagementPermissions);
     }
+  };
+
+  const handleAddRole = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.post("/user/roles", data);
+
+      if (res.status === 200) {
+        dispatch(addRole(res.data));
+        setLoading(false);
+        onClose();
+      }
+    } catch (err) {
+      setLoading(false);
+      toast.error("Something went wrong")
+    }
+  };
+
+  const handleChange = (indentifier, value) => {
+    setData((prev) => ({ ...prev, [indentifier]: value }));
   };
 
   return (
@@ -60,12 +112,20 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
         <div className="overflow-y-auto max-h-[700px]">
           <div className="grid sm:grid-cols-2 gap-4 gap-x-10 mb-3">
             <div className="w-100">
-              <Input label="RoleName" />
+              <Input
+                label="RoleName"
+                value={data.name}
+                onChange={(e) => handleChange("name", e.target.value)}
+              />
             </div>
           </div>
           <div className="grid sm:grid-cols-2 gap-4 gap-x-10 mb-8">
             <div className="w-100 mt-4">
-              <Textarea label="Description" />
+              <Textarea
+                label="Description"
+                value={data.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+              />
             </div>
           </div>
           <div className="textarea my-4">
@@ -86,7 +146,11 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
                     >
                       View planner
                     </label>
-                    <CustomSwitch id="viewPlanner" />
+                    <CustomSwitch
+                      identifier="viewPlanner"
+                      checked={data.viewPlanner}
+                      onChange={handleChange}
+                    />
                   </label>
                   <Typography>
                     Allows you to view the entire publishing calendar as well as
@@ -115,7 +179,10 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
                       Planner
                     </label>
 
-                    <CustomSwitch id="planner" />
+                    <CustomSwitch
+                      identifier="fullAccessPlanner"
+                      onChange={handleChange}
+                    />
                   </label>
                   <Typography>
                     Gives full access to the planner (Calendar, history and
@@ -123,7 +190,7 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
                     posts and all associated functionality.
                   </Typography>
                 </div>
-                <div className="px-3">
+                {/* <div className="px-3">
                   <label
                     htmlFor="Schedule"
                     className="flex justify-between mb-2 cursor-pointer"
@@ -135,13 +202,16 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
                       Schedule and publish posts
                     </label>
 
-                    <CustomSwitch id="Schedule" />
+                    <CustomSwitch
+                      identifier="schedulePosts"
+                      onChange={handleChange}
+                    />
                   </label>
                   <Typography>
                     It allows you to schedule and publish posts without
                     approval. It also allows you to create and modify autolists.
                   </Typography>
-                </div>
+                </div> */}
               </div>
             </Accordion>
             <Accordion
@@ -162,7 +232,10 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
                       Brands
                     </label>
 
-                    <CustomSwitch id="Brands" />
+                    <CustomSwitch
+                      identifier="editBrand"
+                      onChange={handleChange}
+                    />
                   </label>
                   <Typography>
                     Gives full access to the brand configuration, including the
@@ -176,9 +249,15 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
         </div>
       </DialogBody>
       <DialogFooter>
-        <Button onClick={() => alert()} color="primary" variant="contained">
-          Save
-        </Button>
+        <LoadingButton
+          title="Save"
+          loading={loading}
+          className="w-32 h-10"
+          disabled={isSubmitDisabled}
+          onClick={handleAddRole}
+          color="primary"
+          variant="contained"
+        />
       </DialogFooter>
     </Dialog>
   );

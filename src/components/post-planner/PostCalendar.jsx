@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import CreatePostModal from "../create-post-modal";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -12,7 +12,7 @@ import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 
 const PostCalendar = (props) => {
-  const { getPostData, events } = props;
+  const { getPostData, events,role } = props;
   const [files, setFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [postData, setPostData] = useState(null);
@@ -20,6 +20,8 @@ const PostCalendar = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
   const { connections } = useConnections();
+  const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]); ;
+  
 
   const renderContentType = (type) => {
     if (type === "reels") {
@@ -97,14 +99,16 @@ const PostCalendar = (props) => {
 
   return (
     <>
-      <div className="mt-20  mb-2">
-        <button
-          type="button"
-          onClick={handleModal}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Create Post
-        </button>
+      <div className="my-2">
+        {fullAccess && (
+          <button
+            type="button"
+            onClick={handleModal}
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Create Post
+          </button>
+        )}
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="timeGridWeek"

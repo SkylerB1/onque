@@ -2,8 +2,8 @@ import axios from "axios";
 import jwt_decode from "jwt-decode";
 import dayjs from "dayjs";
 import { toast } from "react-hot-toast";
-import { Cookies } from 'react-cookie'
-const cookies = new Cookies()
+import { Cookies } from "react-cookie";
+const cookies = new Cookies();
 
 export const getToken = () => {
   if (typeof window != "undefined") {
@@ -20,24 +20,13 @@ export const getToken = () => {
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   headers: {
-    authorization: `Bearer ${getToken()}`,  
+    authorization: `Bearer ${getToken()}`,
   },
 });
 
 axiosInstance.interceptors.request.use(async (req) => {
-
-  let user = localStorage.getItem("user");
-  const accessToken = cookies.get('access_token')
-  
-  if (user && user.access_token) {
-
-    user = JSON.parse(user)
-    req.headers.Authorization = `Bearer ${user?.access_token}`;
-  } else {
-    req.headers.Authorization = `Bearer ${accessToken}`;
-
-  }
-
+  const accessToken = localStorage.getItem("access_token");
+  req.headers.Authorization = `Bearer ${accessToken}`;
 
   // const refreshToken = localStorage.getItem("refreshToken");
 

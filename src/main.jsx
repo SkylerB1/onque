@@ -26,6 +26,7 @@ import PrivateRoute from "./PrivateRoute";
 import Home from "./pages";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import "./utils/localization/i18n";
 import ForgotPassword from "./pages/auth/fogot-password";
 import Error404 from "./pages/404";
 
@@ -133,7 +134,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/setting/Settings/:tab",
+    path: "/setting/:tab",
     element: (
       <PrivateRoute>
         <Header>

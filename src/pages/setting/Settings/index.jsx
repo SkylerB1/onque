@@ -36,7 +36,7 @@ const Setting = () => {
   ];
 
   useEffect(() => {
-    navigate('/setting/Settings/'+activeTab);
+    navigate('/setting/'+activeTab);
   },[activeTab]);
 
 

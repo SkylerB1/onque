@@ -9,14 +9,14 @@ import {
 import { axiosInstance } from "../../utils/Interceptor";
 import { toast } from "react-hot-toast";
 import { useLocalStorage } from "../../utils/LocalStorage";
-import useConnections from "../customHooks/useConnections";
 import { setUser } from "../../redux/features/userSlice";
 import { useDispatch } from "react-redux";
 import UpgradeSubscription from "./UpgradeSubscription";
 import LoadingButton from "../button/LoadingButton";
+import { addBrand } from "../../redux/features/brandsSlice";
+import { initialiseConnections } from "../../redux/features/connectionSlice";
 
 export default function AddModal({ open, Close }) {
-  const { getConnections } = useConnections();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
@@ -35,7 +35,7 @@ export default function AddModal({ open, Close }) {
       setLoading(true);
       const response = await axiosInstance.post(
         `${import.meta.env.VITE_API_URL}/brands/create`,
-        { data: formData }
+        formData
       );
       const brand = response?.data?.brand;
       setFormData({ brand_name: "" });
@@ -45,8 +45,8 @@ export default function AddModal({ open, Close }) {
       const user = useLocalStorage("user", "get");
       const data = { ...user, brand: brand };
       dispatch(setUser(data));
-      const brandId = user?.brand.id;
-      getConnections(brandId);
+      dispatch(addBrand(brand));
+      dispatch(initialiseConnections([]));
     } catch (error) {
       setLoading(false);
       Close();

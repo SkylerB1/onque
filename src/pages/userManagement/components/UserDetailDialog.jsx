@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   Typography,
@@ -14,44 +14,60 @@ import CustomSwitch from "../../../components/Input/CustomSwitch";
 import Filters from "./filters";
 import UpdateRoleDialog from "./UpdateRoleDialog";
 import RoleUpdate from "./RoleUpdate";
+import { SocialPlatforms } from "../../../utils";
+import LoadingButton from "../../../components/button/LoadingButton";
+import { useSelector } from "react-redux";
 
-const UserDetailDialog = ({ isOpen, onClose, user }) => {
-  const tableHead = ["Brands", "Role", "Connection"];
-  const [selectedRoles, setSelectedRoles] = useState([]);
+const tableHead = ["Brands", "Role", "Connection"];
+
+const UserDetailDialog = ({
+  isOpen,
+  onClose,
+  selectedUser,
+  setSelectedUser,
+  brands,
+  handleSelectBrand,
+  emailDialogHandler,
+  isEditing,
+  updateCollaborator,
+}) => {
+  const isSubmitDisabled = useMemo(
+    () =>
+      selectedUser.brands.length === 0 ||
+      !selectedUser.brands.every(
+        (item) =>
+          item.brandRole?.roleId &&
+          item.brandRole?.roleId !== null &&
+          item.brandRole?.roleName &&
+          item.brandRole?.roleName !== null
+      ),
+    [selectedUser]
+  );
+
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-
-  const userDetails = [
-    {
-      brand: "It sector",
-      role: "Admin",
-      connections: [
-        { name: "Facebook", count: 1000 },
-        { name: "Twitter", count: 500 },
-      ],
-    },
-    {
-      brand: "ABC Corp",
-      role: "Admin",
-      connections: [
-        { name: "Facebook", count: 1000 },
-        { name: "Twitter", count: 500 },
-      ],
-    },
-    {
-      brand: "Brand1",
-      role: "Admin",
-      connections: [
-        { name: "Facebook", count: 1000 },
-        { name: "Twitter", count: 500 },
-      ],
-    },
-  ];
-  const brands = ["Brand1", "Brand2", "Brand3"];
+  const [openRoleMenu, setOpenRoleMenu] = useState(false);
 
   const handleBrandChange = (brands) => {
     setSelectedBrands(brands);
+  };
+
+  const handleRoleChange = (brand, role) => {
+    const { id: roleId, name: roleName } = role;
+    const user = { ...selectedUser };
+    const updatedBrands = user.brands.map((item) => {
+      if (item.id === brand.id) {
+        return {
+          ...item,
+          brandRole: { ...item.brandRole, roleId, roleName },
+        };
+      }
+      return item;
+    });
+    user.brands = updatedBrands;
+    setSelectedUser(user);
+    roleMenuHandler();
   };
 
   const handleSearch = (e) => {
@@ -62,27 +78,30 @@ const UserDetailDialog = ({ isOpen, onClose, user }) => {
     setDialogOpen(!dialogOpen);
   };
 
-  const filteredUserDetails = userDetails.filter((user) => {
-    if (
-      (selectedRoles.length === 0 || selectedRoles.includes(user.role)) &&
-      (selectedBrands.length === 0 || selectedBrands.includes(user.brand)) &&
-      (searchQuery === "" ||
-        user.connections.some((connection) =>
-          connection.name.toLowerCase().includes(searchQuery.toLowerCase())
-        ))
-    ) {
-      return true;
-    }
-    return false;
-  });
+  const roleMenuHandler = () => {
+    setOpenRoleMenu(!openRoleMenu);
+  };
 
   return (
     <>
       <Dialog size="lg" className="dialogIndex" open={isOpen} onClose={onClose}>
         <DialogHeader className="justify-between">
-          <Typography variant="h5" color="blue-gray">
-            {user && user.name}
-          </Typography>
+          <div className="flex flex-row items-center">
+            <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-md dark:bg-gray-600">
+              <span className="text-sm font-normal text-gray-600 dark:text-gray-300">
+                {selectedUser?.firstName?.charAt(0).toUpperCase() +
+                  selectedUser?.firstName?.charAt(1).toUpperCase()}
+              </span>
+            </div>
+            <div class="flex flex-col justify-center text-md ml-3">
+              <p class="text-base">
+                {selectedUser?.firstName + " " + selectedUser?.lastName}
+              </p>
+              <span class="text-tertiary text-sm text-[#7e878c]">
+                {selectedUser?.email}
+              </span>
+            </div>
+          </div>
           <IconButton
             color="blue-gray"
             size="sm"
@@ -134,14 +153,6 @@ const UserDetailDialog = ({ isOpen, onClose, user }) => {
                 onChange={handleBrandChange}
                 title={"Any Role"}
               />
-              {/* <Select
-                label="Any Role"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              >
-                <Option value="admin">Admin</Option>
-                <Option value="moderator">Moderator</Option>
-                <Option value="user">User</Option>
-              </Select> */}
             </div>
           </div>
           <table className="w-full min-w-max table-auto text-left">
@@ -164,67 +175,75 @@ const UserDetailDialog = ({ isOpen, onClose, user }) => {
               </tr>
             </thead>
             <tbody>
-              {filteredUserDetails.map((currentUser, index) => (
-                <tr key={index}>
-                  <td className="p-4 w-30">
-                    <div className="flex items-center gap-3">
-                      <CustomSwitch />
-                      <Avatar
-                        src={
-                          "https://docs.material-tailwind.com/img/logos/logo-google.svg"
-                        }
-                        alt={currentUser.brand}
-                        size="md"
-                        className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                      />
-                      <Typography variant="body" color="blue-gray">
-                        {currentUser.brand}
-                      </Typography>
-                    </div>
-                  </td>
-                  {/* <td className=" ">
-                    <div
-                      className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal text-left outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 disabled:cursor-not-allowed transition-all border text-sm px-3 py-1 rounded-[7px] border-blue-gray-200 items-center justify-between flex whitespace-nowrap"
-                      onClick={handleDialogToggle}
-                    >
-                      {currentUser.brand}
-                      <svg
-                        className="-mr-1 ml-2 mt-1 h-5 w-5"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M10 12a1 1 0 0 1-.707-.293L5.414 7.707a1 1 0 1 1 1.414-1.414L10 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-.707.293z"
+              {brands?.map((brand, index) => {
+                const isSelected = selectedUser?.brands?.find(
+                  (item) => item.id === brand.id
+                );
+                const roleName = isSelected?.brandRole?.roleName;
+                return (
+                  <tr key={index}>
+                    <td className="p-4 w-30">
+                      <div className="flex items-center gap-3">
+                        <CustomSwitch
+                          checked={Boolean(isSelected)}
+                          onChange={() =>
+                            handleSelectBrand(brand, Boolean(isSelected))
+                          }
                         />
-                      </svg>
-                    </div>
-                  </td> */}
-                  <td>
-                    <RoleUpdate
-                      roles={["HR", "manager", "content creator"]}
-                      title="Select Role"
-                    />
-                  </td>
-                  <td className="p-4">
-                    <div className="p-4">
-                      <Typography variant="body" color="blue-gray">
-                        {currentUser.connections
-                          .map((connection) => connection.name)
-                          .join(", ")}
-                      </Typography>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
+                          <span className="font-normal text-gray-600 dark:text-gray-300">
+                            {brand?.brand_name.charAt(0)}
+                          </span>
+                        </div>
+                        <Typography variant="body" color="blue-gray">
+                          {brand?.brand_name}
+                        </Typography>
+                      </div>
+                    </td>
+                    <td>
+                      <RoleUpdate
+                        open={openRoleMenu}
+                        handler={roleMenuHandler}
+                        brand={brand}
+                        selectedRole={roleName}
+                        handleRoleChange={handleRoleChange}
+                        isEnabled={Boolean(isSelected)}
+                      />
+                    </td>
+                    <td className="p-4">
+                      <div className=" flex flex-row justify-between">
+                        {Object.keys(SocialPlatforms).map((key) => {
+                          const { coloredIcon, nonColoredIcon } =
+                            SocialPlatforms[key];
+                          const isConnected = brand.platforms.some(
+                            (item) => item.platform === key
+                          );
+
+                          if (isConnected) {
+                            return coloredIcon(20, 20);
+                          }
+                          return nonColoredIcon(20, 20);
+                        })}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </Dialog.Body>
         <DialogFooter>
-          <Button variant="gradient" color="green">
-            <span>Save</span>
-          </Button>
+          <LoadingButton
+            disabled={isSubmitDisabled}
+            variant="gradient"
+            title="Save"
+            className="w-24"
+            onClick={() => {
+              isEditing
+                ? updateCollaborator()
+                : (onClose(), emailDialogHandler());
+            }}
+          />
         </DialogFooter>
       </Dialog>
       <UpdateRoleDialog

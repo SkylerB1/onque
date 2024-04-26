@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Dialog,
   DialogHeader,
@@ -8,22 +8,68 @@ import {
   Button,
   Input,
   Typography,
+  Alert,
 } from "@material-tailwind/react";
+import { validateEmail } from "../../../utils";
+import { axiosInstance } from "../../../utils/Interceptor";
+import InfoIcon from "../../../assets/InfoIcon";
 
-const AddUserDialog = ({ isOpen, onClose }) => {
+const AddUserDialog = ({
+  isOpen,
+  onClose,
+  collaborators,
+  setSelectedUser,
+  toggleUserDialog,
+}) => {
   const [email, setEmail] = useState("");
+  const isValidEmail = useMemo(() => Boolean(validateEmail(email)), [email]);
+  const [user, setUser] = useState({ isValid: false, message: "The e-mail field must be a valid email" });
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
+    const email = event.target.value;
+    if (isValidEmail) checkUser(email);
+    setEmail(email);
+  };
+
+  const handleClose = () => {
+    setEmail("");
+    onClose();
+  };
+
+  const checkUser = async (email) => {
+    try {
+      const res = await axiosInstance.get(`/user/isValid?email=${email}`);
+      if (res.status === 200) {
+        const existingCollaborator = collaborators?.some(
+          (item) => item.email === email
+        );
+        if (existingCollaborator) {
+          setUser({
+            isValid: false,
+            message:
+              "This user has already been added to your collaborators list",
+          });
+        } else {
+          setSelectedUser((prev) => ({ ...prev, ...res.data }));
+          setUser({ isValid: true, message: "" });
+        }
+      }
+    } catch (err) {
+      setUser({
+        isValid: false,
+        message:
+          "This e-mail address does not match any active user.",
+      });
+    }
   };
 
   const handleContinue = () => {
-    // Handle continue action, e.g., submit form
-    console.log("Email submitted:", email);
+    toggleUserDialog();
+    onClose();
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} maxWidth="xs">
+    <Dialog open={isOpen} onClose={handleClose} maxWidth="xs">
       <DialogHeader className="justify-between">
         <Typography variant="h5" color="blue-gray">
           Add User
@@ -32,7 +78,7 @@ const AddUserDialog = ({ isOpen, onClose }) => {
           color="blue-gray"
           size="sm"
           variant="text"
-          onClick={onClose}
+          onClick={handleClose}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -58,11 +104,25 @@ const AddUserDialog = ({ isOpen, onClose }) => {
           label="Email"
           placeholder="Enter email address"
           value={email}
+          error={!isValidEmail}
           onChange={handleEmailChange}
         />
+        {isValidEmail && !user.isValid && (
+          <Alert
+            className="bg-[#3b82f61a] flex items-center mt-4"
+            icon={<InfoIcon width={20} height={20} fill={"#2196f3"} />}
+          >
+            <span className="text-[#2196f3] text-sm">{user.message}</span>
+          </Alert>
+        )}
       </DialogBody>
       <DialogFooter>
-        <Button onClick={handleContinue} color="primary" variant="contained">
+        <Button
+          disabled={!user.isValid}
+          onClick={handleContinue}
+          color="primary"
+          variant="contained"
+        >
           Continue
         </Button>
       </DialogFooter>

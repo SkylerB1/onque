@@ -33,11 +33,11 @@ export default function Header({ children }) {
       >
         {/* <Link to="/analytics/social-graph-data/summary">   Analytics
         </Link>*/}
-        <div class="group relative flex justify-center">
+        <div className="group relative flex justify-center">
           <Link className="text-white hover:text-white p-2 px-3">
             Analytics
           </Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
+          <span className="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
             Coming Soon
           </span>
         </div>
@@ -81,11 +81,11 @@ export default function Header({ children }) {
         {/* <Link to="/smart-link" className="flex items-center">
           SmartLinks
         </Link> */}
-        <div class="group relative flex justify-center">
+        <div className="group relative flex justify-center">
           <Link className="text-white hover:text-white p-2 px-3">
             SmartLinks
           </Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
+          <span className="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
             Coming Soon
           </span>
         </div>
@@ -99,9 +99,9 @@ export default function Header({ children }) {
       {/* <Link to="/setting/Settings?tab=price" className="flex items-center">
           Pricing
         </Link> */}
-      {/* <div class="group relative flex justify-center">
+      {/* <div className="group relative flex justify-center">
           <Link>Pricing</Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">Coming Soon</span>
+          <span className="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">Coming Soon</span>
         </div> */}
       {/* </Typography> */}
     </ul>

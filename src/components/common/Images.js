@@ -26,12 +26,15 @@ import PaymentHistoryEmpty from "../../assets/payments-history-empty.png"
 import StarPng from "../../assets/star.png"
 import CrossSvg from "../../assets/cross.svg";
 import AddUserColored from "../../assets/add-user-colored.svg";
+import Planner from "../../assets/planner-claim.png";
+
 
 
 
 
 
 export {
+  Planner,
   AppLogo,
   LOGIN_SIDE_IMG,
   DownArrow,

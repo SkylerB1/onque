@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import SelectionModal from "../dialog/SelectDialog";
 import useConnections from "../customHooks/useConnections";
 import { API_URL, ConnectUrl } from "../../utils";
@@ -9,6 +9,9 @@ import { useLocalStorage } from "../../utils/LocalStorage";
 import InstagramAuthDialog from "../SocialMediaConnection/InstagramAuthDialog.jsx";
 import ErrorConnectionDialog from "../dialog/ErrorConnectionDialog.jsx";
 import { useAppContext } from "../../context/AuthContext.jsx";
+import { Alert, Typography } from "@material-tailwind/react";
+import InfoIcon from "../../assets/InfoIcon.jsx";
+import { Planner } from "../common/Images.js";
 
 const initialHeader = {
   title: "",
@@ -16,13 +19,12 @@ const initialHeader = {
   icon: null,
 };
 
-const SocialLinkPostCalendar = () => {
+const SocialLinkPostCalendar = ({ validations, role }) => {
   const { getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
   const [selected, setSelected] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
   const [showModal, setShowModal] = useState(false);
   const [modalHeader, setModalHeader] = useState(initialHeader);
   const [modalData, setModalData] = useState(null);
@@ -30,6 +32,10 @@ const SocialLinkPostCalendar = () => {
   const [instagramAuth, setInstagramAuth] = useState(false);
   const [isConnectionError, setConnectionError] = useState(null);
   const { broadcastConnection } = useAppContext();
+  const fullAccess = useMemo(
+    () => validations && (!role || role?.fullAccessPlanner),
+    [role, validations]
+  );
 
   const instagramLogin = async () => {
     try {
@@ -119,7 +125,7 @@ const SocialLinkPostCalendar = () => {
 
   return (
     <>
-      <div className="mt-[104px] flex mb-2">
+      <div className="flex my-2">
         <div className="flex flex-1 items-start justify-between bg-white rounded-lg">
           <div>
             <div className="mt-10 ml-8 w-full text-[#4A5568]">
@@ -134,35 +140,48 @@ const SocialLinkPostCalendar = () => {
             </div>
             <div className="flex flex-1 ml-8">
               <div className=" xl:w-2/6 md:w-full mb-10">
-                {socialMediaList.map((item, index) => {
-                  return (
-                    <div
-                      className="mt-6 cursor-pointer"
-                      onClick={() => handleMenuItemClick(item.key)}
-                      key={index}
+                <div className="mt-10">
+                  {!fullAccess && (
+                    <Alert
+                      className="bg-[#3b82f61a] flex items-center"
+                      icon={
+                        <InfoIcon width={30} height={30} fill={"#2196f3"} />
+                      }
                     >
-                      <item.component
-                        label={item.label}
-                        icon={item.icon()}
-                        backgroundColor={item.color}
-                        modalData={modalData}
-                        setModalData={setModalData}
-                        setLoading={setLoading}
-                        instagramDialogHandler={instagramDialogHandler}
-                        handleShowModal={handleShowModal}
-                        selected={selected}
-                      />
-                    </div>
-                  );
-                })}
+                      <Typography className="text-lg text-[#3b82f6cc]">
+                        You do not have permissions to add connections to this
+                        brand. Please contact the brand manager to connect a
+                        network.
+                      </Typography>
+                    </Alert>
+                  )}
+                </div>
+                {fullAccess &&
+                  socialMediaList.map((item, index) => {
+                    return (
+                      <div
+                        className="mt-6 cursor-pointer"
+                        onClick={() => handleMenuItemClick(item.key)}
+                        key={index}
+                      >
+                        <item.component
+                          label={item.label}
+                          icon={item.icon()}
+                          backgroundColor={item.color}
+                          modalData={modalData}
+                          setModalData={setModalData}
+                          setLoading={setLoading}
+                          instagramDialogHandler={instagramDialogHandler}
+                          handleShowModal={handleShowModal}
+                          selected={selected}
+                        />
+                      </div>
+                    );
+                  })}
               </div>
 
-              <div className="xl:w-4/6 lg:block md:hidden flex justify-center mb-18">
-                <img
-                  src="https://i.pinimg.com/564x/6d/0f/40/6d0f4000a162c6152bb30c7e8873fe1c.jpg"
-                  width={650}
-                  height={1000}
-                />
+              <div className="xl:w-4/6 lg:block md:hidden flex justify-center">
+                <img src={Planner} height="auto" />
               </div>
             </div>
           </div>

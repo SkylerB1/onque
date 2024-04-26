@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { ListItem, ListItemPrefix } from "@material-tailwind/react";
 import { FaNetworkWired } from "react-icons/fa";
@@ -11,10 +11,14 @@ import { removeBrand } from "../../redux/features/brandsSlice";
 import CustomModal from "../modal/customModal";
 import { setUser } from "../../redux/features/userSlice";
 import useConnections from "../customHooks/useConnections";
+import { useAppContext } from "../../context/AuthContext";
 
 const BrandNavber = () => {
   const { pathname } = useLocation();
   const url = pathname;
+  const { validations } = useAppContext();
+  const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const brandAccess = useMemo(() => validations && (!role || role?.editBrand), [role]);
   const { getConnections } = useConnections();
   const { value: brands } = useSelector((state) => state.brands);
   const [opens, setOpen] = useState(false);
@@ -29,7 +33,7 @@ const BrandNavber = () => {
       );
       if (response.status === 200) {
         setOpen(false);
-        const newBrand = brands[0]
+        const newBrand = brands[0];
         const userData = { ...user };
         userData.brand = newBrand;
         dispatch(setUser(userData));
@@ -109,7 +113,7 @@ const BrandNavber = () => {
             Connection
           </Link>
         </ListItem>
-        <ListItem
+        {brandAccess && <ListItem
           className={
             url === "/brand/name"
               ? "w-[260px] text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
@@ -122,8 +126,8 @@ const BrandNavber = () => {
           <Link className="w-full text-base" to={"/brand/name"}>
             Name and Picture
           </Link>
-        </ListItem>
-        <ListItem
+        </ListItem>}
+        {/* <ListItem
           // className="mt-8 mb-8"
           className={
             url === "/brand/team/access"
@@ -137,8 +141,8 @@ const BrandNavber = () => {
           <Link className="w-full text-base" to={"/brand/team/access"}>
             Team access
           </Link>
-        </ListItem>
-        {brands?.length > 1 && (
+        </ListItem> */}
+        {brands?.length > 1 && brandAccess && (
           <ListItem
             className=" w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
             onClick={() => setOpen(true)}

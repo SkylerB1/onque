@@ -190,7 +190,7 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
                     posts and all associated functionality.
                   </Typography>
                 </div>
-                <div className="px-3">
+                {/* <div className="px-3">
                   <label
                     htmlFor="Schedule"
                     className="flex justify-between mb-2 cursor-pointer"
@@ -211,7 +211,7 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
                     It allows you to schedule and publish posts without
                     approval. It also allows you to create and modify autolists.
                   </Typography>
-                </div>
+                </div> */}
               </div>
             </Accordion>
             <Accordion

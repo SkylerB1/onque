@@ -67,10 +67,10 @@ const Login = () => {
             ...userData,
             brand: brand,
           };
+          getCounter(brand.id);
           dispatch(setUser(userBrand));
           getConnections(brand.id);
         });
-        getCounter();
         getSubscriptions();
         setLoading(false);
         navigate("/planner/calendar");

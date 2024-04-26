@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AiOutlinePlus, AiFillCloseCircle } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { Input, Button } from "@material-tailwind/react";
@@ -13,10 +13,10 @@ import { useAppContext } from "../../../context/AuthContext";
 
 const ClientDetails = () => {
   const [premium, setPremium] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState("");
   const { getConnections } = useConnections();
-  const { subscription } = useAppContext();
+  const { subscription, validations } = useAppContext();
+  const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const brandAccess = useMemo(() => validations && (!role || role?.editBrand), [role]);
   const isSubscribed = Boolean(subscription) || false;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
@@ -43,22 +43,6 @@ const ClientDetails = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const getFirstLetter = (name) => {
-    return name ? name.charAt(0).toUpperCase() : "";
-  };
-
-  const handleSelectChange = (event) => {
-    setSelectedValue(event.target.value);
-  };
-
-  const handleOpen = () => {
-    // alert("test");
-    setIsOpen(true);
-  };
-  const handleClose = () => {
-    setIsOpen(false);
   };
 
   const handleGetClients = async () => {
@@ -118,9 +102,11 @@ const ClientDetails = () => {
                   <p className="text-base text-[#5E5E5E] mt-2 mb-2">
                     Struggling to connect? Get in touch with the Helpdesk.
                   </p>
-                  {!isSubscribed && <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
-                    <Link to="/setting/price">GET PREMIUM</Link>
-                  </button>}
+                  {!isSubscribed && (
+                    <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
+                      <Link to="/setting/price">GET PREMIUM</Link>
+                    </button>
+                  )}
                 </div>
               ) : (
                 ""
@@ -141,6 +127,7 @@ const ClientDetails = () => {
                             size="lg"
                             label="Client Name"
                             name="name"
+                            disabled={!brandAccess}
                             value={brandData.name}
                             onChange={handleBrandName}
                             className="focus:shadow-none"
@@ -152,6 +139,7 @@ const ClientDetails = () => {
                   <div className="mt-8 w-52">
                     <Button
                       type="submit"
+                      disabled={!brandAccess}
                       className="mt-6 bg-black text-white"
                       fullWidth
                     >

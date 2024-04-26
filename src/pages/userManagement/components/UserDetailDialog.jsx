@@ -36,7 +36,10 @@ const UserDetailDialog = ({
       selectedUser.brands.length === 0 ||
       !selectedUser.brands.every(
         (item) =>
-          item.user_brands.roleId !== null && item.user_brands.roleName !== null
+          item.brandRole?.roleId &&
+          item.brandRole?.roleId !== null &&
+          item.brandRole?.roleName &&
+          item.brandRole?.roleName !== null
       ),
     [selectedUser]
   );
@@ -57,7 +60,7 @@ const UserDetailDialog = ({
       if (item.id === brand.id) {
         return {
           ...item,
-          user_brands: { ...item.user_brands, roleId, roleName },
+          brandRole: { ...item.brandRole, roleId, roleName },
         };
       }
       return item;
@@ -176,7 +179,7 @@ const UserDetailDialog = ({
                 const isSelected = selectedUser?.brands?.find(
                   (item) => item.id === brand.id
                 );
-                const roleName = isSelected?.user_brands?.roleName;
+                const roleName = isSelected?.brandRole?.roleName;
                 return (
                   <tr key={index}>
                     <td className="p-4 w-30">

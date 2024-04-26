@@ -50,11 +50,11 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
         </strong>
         <div className="flex justify-between">
           <span className="text-sm">
-            Clients: {validations.clients_count} of {validations.max_clients}
+            Clients: {validations?.clients_count} of {validations?.max_clients}
           </span>
           <span className="text-sm">
-            Posts: {validations.posts_count_monthly} of{" "}
-            {validations.max_posts_monthly}
+            Posts: {validations?.posts_count_monthly} of{" "}
+            {validations?.max_posts_monthly}
           </span>
         </div>
       </div>

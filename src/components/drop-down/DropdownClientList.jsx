@@ -13,10 +13,12 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { SocialPlatforms } from "../../utils";
+import { useAppContext } from "../../context/AuthContext";
 
 const DropdownClientList = ({ setOpen }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { getConnections } = useConnections();
+  const { getCounter } = useAppContext();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const { value: brands, loading } = useSelector((state) => state.brands);
@@ -32,6 +34,7 @@ const DropdownClientList = ({ setOpen }) => {
     const user = useLocalStorage("user", "get");
     const data = { ...user, brand: item };
     dispatch(setUser(data));
+    getCounter(item.id);
     getConnections(item.id);
   };
 
@@ -112,7 +115,7 @@ const DropdownClientList = ({ setOpen }) => {
                     .toLowerCase()
                     .includes(searchTerm.toLowerCase())
                 )
-                ?.map((item, index) => (
+                ?.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => handleItemClick(item)}
@@ -136,10 +139,13 @@ const DropdownClientList = ({ setOpen }) => {
                             </span>
                           )}
                           {item.platforms.map((item) => {
+                            console.log(item)
                             const { platform } = item;
                             if (platform) {
                               const { coloredIcon } = SocialPlatforms[platform];
-                              return <span key={item.id}>{coloredIcon(13, 13)}</span>;
+                              return (
+                                <span key={item.id}>{coloredIcon(13, 13)}</span>
+                              );
                             }
                           })}
                         </div>

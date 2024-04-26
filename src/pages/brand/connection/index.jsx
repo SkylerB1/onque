@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { IoMdClose } from "react-icons/io";
 import { Link } from "react-router-dom";
@@ -23,7 +23,9 @@ const initialHeader = {
 };
 
 const Connection = () => {
-  const { broadcastConnection, subscription } = useAppContext();
+  const { broadcastConnection, subscription, validations } = useAppContext();
+  const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const brandAccess = useMemo(() => validations && (!role || role?.editBrand), [role]);
   const { connections, getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id || "";
@@ -43,8 +45,9 @@ const Connection = () => {
 
   const instagramLogin = async () => {
     try {
-      const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${user?.id
-        }&brandId=${brandId}`;
+      const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${
+        user?.id
+      }&brandId=${brandId}`;
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;
@@ -53,13 +56,13 @@ const Connection = () => {
         oauthUrl,
         "instagram",
         "menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=" +
-        width +
-        ", height=" +
-        height +
-        ", top=" +
-        top +
-        ", left=" +
-        left
+          width +
+          ", height=" +
+          height +
+          ", top=" +
+          top +
+          ", left=" +
+          left
       );
     } catch (err) {
       console.log(err);
@@ -110,7 +113,7 @@ const Connection = () => {
         setShowModal(false);
         toast.success(response?.data?.message);
       }
-    } catch (error) { }
+    } catch (error) {}
   };
 
   const handleCloseModal = () => {
@@ -186,9 +189,11 @@ const Connection = () => {
                   <p className="text-base text-[#5E5E5E] mt-2 mb-2">
                     Struggling to connect? Get in touch with the Helpdesk.
                   </p>
-                  {!isSubscribed && <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
-                    <Link to="/setting/price">GET PREMIUM</Link>
-                  </button>}
+                  {!isSubscribed && (
+                    <button className="bg-[#d7dfeb] hover:bg-[#d7dfeb] text-white font-semibold text-sm py-2 px-4 rounded">
+                      <Link to="/setting/price">GET PREMIUM</Link>
+                    </button>
+                  )}
                 </div>
               ) : (
                 ""
@@ -207,22 +212,30 @@ const Connection = () => {
                     key={index}
                   >
                     <div className="flex flex-1 flex-col min-w-[25rem]">
-                      <div className="flex flex-1 items-center justify-start">
+                      <div className="flex flex-1 items-center justify-start cursor-default">
                         {item.icon(item.color)}
                         <p className="ml-2 text-xl">{item.title}</p>
                       </div>
-                      <div className="mt-3 cursor-pointer">
+                      <div className={`mt-3 ${!brandAccess ? "cursor-not-allowed":"cursor-pointer"}`}>
                         {!conn ? (
-                          <item.component
-                            label={item.label}
-                            icon={item.icon()}
-                            backgroundColor={item.color}
-                            setModalData={setModalData}
-                            setLoading={setLoading}
-                            instagramDialogHandler={instagramDialogHandler}
-                            handleShowModal={handleShowModal}
-                            selected={selected}
-                          />
+                          <span
+                            className={`${
+                              !brandAccess
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }`}
+                          >
+                            <item.component
+                              label={item.label}
+                              icon={item.icon()}
+                              backgroundColor={item.color}
+                              setModalData={setModalData}
+                              setLoading={setLoading}
+                              instagramDialogHandler={instagramDialogHandler}
+                              handleShowModal={handleShowModal}
+                              selected={selected}
+                            />
+                          </span>
                         ) : (
                           <div className="flex flex-1 items-center justify-start border p-2 rounded-md border-blue-gray-400">
                             <div className="flex flex-1 items-center justify-start">
@@ -242,13 +255,15 @@ const Connection = () => {
                               </p>
                             </div>
                             <div className="mr-2 p-1 hover:bg-[#e9edf5] rounded-2xl">
-                              <IoMdClose
-                                onClick={() => {
-                                  setOpen(true);
-                                  setIds(conn.id);
-                                  setPlatformName(conn.platform);
-                                }}
-                              />
+                              {brandAccess && (
+                                <IoMdClose
+                                  onClick={() => {
+                                    setOpen(true);
+                                    setIds(conn.id);
+                                    setPlatformName(conn.platform);
+                                  }}
+                                />
+                              )}
                             </div>
                           </div>
                         )}

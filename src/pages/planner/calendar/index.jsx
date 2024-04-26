@@ -1,7 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import InstaSvg from "../../../assets/instagram.svg?react";
-import Facebook from "../../../assets/facebook-filled.svg?react";
-import Twitter from "../../../assets/twitter.svg?react";
 import PlanningNavbar from "../../../components/side-navbar/PlanningNavbar";
 import dayjs from "dayjs";
 import UTC from "dayjs/plugin/utc";
@@ -12,16 +9,24 @@ import PostCalendar from "../../../components/post-planner/PostCalendar";
 import { ColorRing } from "react-loader-spinner";
 import { useSelector } from "react-redux";
 import { useAppContext } from "../../../context/AuthContext";
+import NoAccessPermission from "./NoAccessPermission";
+import { Planner } from "../../../components/common/Images";
 
 dayjs.extend(UTC);
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
-  const { broadcastConnection } = useAppContext();
+  const { broadcastConnection, validations } = useAppContext();
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
   const { connections, getConnections } = useConnections();
-  
+  const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const viewAccess = useMemo(
+    () =>
+      validations && (!role || role?.viewPlanner || role?.fullAccessPlanner),
+    [role]
+  );
+
   const getPostData = async () => {
     try {
       const response = await axiosInstance.get(
@@ -95,14 +100,21 @@ const Calendar = () => {
 
   return (
     <>
-      <div className="p-4 sm:ml-64 bg-[#F1F2F4]">
+      <div className="p-4 pt-28 sm:ml-64 bg-[#F1F2F4]">
         {connections.length === 0 ? (
-          <SocialLinkPostCalendar getPostData={getPostData} />
-        ) : (
+          <SocialLinkPostCalendar validations={validations} role={role} />
+        ) : viewAccess ? (
           <PostCalendar
             connections={connections}
             getPostData={getPostData}
             events={events}
+            role={role}
+          />
+        ) : (
+          <NoAccessPermission
+            title={"Planner"}
+            body="Sorry, you don't have enough permissions to access this brand's Planner."
+            image={Planner}
           />
         )}
         <PlanningNavbar />

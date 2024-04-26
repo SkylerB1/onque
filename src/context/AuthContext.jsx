@@ -28,11 +28,13 @@ export function AppContextProvider({ children }) {
   const [loadingSub, setLoadingSub] = useState(true);
   const [cookies, setCookie] = useCookies(["access_token"]);
   const dispatch = useDispatch();
-  const getCounter = async () => {
+
+
+  const getCounter = async (brandId) => {
     try {
-      const res = await axiosInstance.get("/user/counter");
+      const res = await axiosInstance.get(`/user/counter?brandId=${brandId}`);
       setValidations(res.data);
-      setLoadingValidations(true);
+      setLoadingValidations(false);
     } catch (err) {
       setValidations({});
       setLoadingValidations(false);
@@ -55,7 +57,6 @@ export function AppContextProvider({ children }) {
     if (user) {
       user = JSON.parse(user);
       getSubscriptions();
-      getCounter();
       dispatch(getBrands()).then((item) => {
         const brand = item.payload.brands[0];
         if (!user?.brand) {
@@ -63,9 +64,11 @@ export function AppContextProvider({ children }) {
             ...user,
             brand: brand,
           };
+          getCounter(brand.id);
           dispatch(setUser(userBrand));
           getConnections(brand.id);
         } else {
+          getCounter(user.brand.id);
           dispatch(setUser(user));
           getConnections(user.brand.id);
         }

@@ -29,9 +29,14 @@ const initialUser = {
   brands: [],
   sendEmail: false,
 };
-const Users = () => {
+const Users = ({
+  collaborators,
+  setCollaborators,
+  loadingCollaborator: loading,
+  setLoadingCollaborator: setLoading,
+}) => {
   const { value: brands } = useSelector((state) => state.brands);
-  const [collaborators, setCollaborators] = useState();
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
@@ -40,10 +45,9 @@ const Users = () => {
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditing, setEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleRowClick = (data) => {
-    setEditing(true)
+    setEditing(true);
     setSelectedUser(data);
     setDialogOpen(true);
   };
@@ -101,17 +105,6 @@ const Users = () => {
     }
   };
 
-  const getCollaborators = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get("/user/collaborators");
-      setCollaborators(res.data);
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-    }
-  };
-
   const addCollaborator = async () => {
     try {
       setLoading(true);
@@ -128,9 +121,12 @@ const Users = () => {
   const updateCollaborator = async () => {
     try {
       setLoading(true);
-      await axiosInstance.put(`/user/collaborator/${selectedUser.id}`, selectedUser);
-      handleCloseUserDetailsDialog()
-      setEditing(false)
+      await axiosInstance.put(
+        `/user/collaborator/${selectedUser.id}`,
+        selectedUser
+      );
+      handleCloseUserDetailsDialog();
+      setEditing(false);
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -151,14 +147,6 @@ const Users = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getCollaborators();
-  }, []);
-
-  useEffect(() => {
-    console.log(selectedUser)
-  },[selectedUser])
 
   return (
     <div className="mr-52">

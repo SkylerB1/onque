@@ -13,6 +13,7 @@ import {
 import { validateEmail } from "../../../utils";
 import { axiosInstance } from "../../../utils/Interceptor";
 import InfoIcon from "../../../assets/InfoIcon";
+import { useSelector } from "react-redux";
 
 const AddUserDialog = ({
   isOpen,
@@ -22,12 +23,25 @@ const AddUserDialog = ({
   toggleUserDialog,
 }) => {
   const [email, setEmail] = useState("");
+  const userDetail = useSelector((state) => state.user.value);
   const isValidEmail = useMemo(() => Boolean(validateEmail(email)), [email]);
-  const [user, setUser] = useState({ isValid: false, message: "The e-mail field must be a valid email" });
+  const [user, setUser] = useState({
+    isValid: false,
+    message: "The e-mail field must be a valid email",
+  });
 
   const handleEmailChange = (event) => {
     const email = event.target.value;
-    if (isValidEmail) checkUser(email);
+    if (isValidEmail) {
+      if (email === userDetail.email) {
+        setUser({
+          isValid: false,
+          message: "You cannot add yourself as a collaborator.",
+        });
+      } else {
+        checkUser(email);
+      }
+    }
     setEmail(email);
   };
 
@@ -57,8 +71,7 @@ const AddUserDialog = ({
     } catch (err) {
       setUser({
         isValid: false,
-        message:
-          "This e-mail address does not match any active user.",
+        message: "This e-mail address does not match any active user.",
       });
     }
   };

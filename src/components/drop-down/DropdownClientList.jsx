@@ -139,7 +139,6 @@ const DropdownClientList = ({ setOpen }) => {
                             </span>
                           )}
                           {item.platforms.map((item) => {
-                            console.log(item)
                             const { platform } = item;
                             if (platform) {
                               const { coloredIcon } = SocialPlatforms[platform];

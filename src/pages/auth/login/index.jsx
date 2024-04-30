@@ -74,7 +74,6 @@ const Login = () => {
         getSubscriptions();
         setLoading(false);
         navigate("/planner/calendar");
-        toast.success(`Welcome ${data.firstName}  ${data.lastName}`);
       } else {
         const message = response.data.message;
         toast.success(message);

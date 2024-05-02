@@ -22,14 +22,17 @@ import StarterPlanPng from "../../assets/plan_starter_mini.png";
 import AdvancedPlanPng from "../../assets/plan_advanced_mini.png";
 import EnterpisePlanPng from "../../assets/plan_enterprise_mini.png";
 import IllustrationPremium from "../../assets/illustration_premium.png";
-import PaymentHistoryEmpty from "../../assets/payments-history-empty.png"
-import StarPng from "../../assets/star.png"
+import PaymentHistoryEmpty from "../../assets/payments-history-empty.png";
+import StarPng from "../../assets/star.png";
 import CrossSvg from "../../assets/cross.svg";
-
-
-
+import AddUserColored from "../../assets/add-user-colored.svg";
+import Planner from "../../assets/planner-claim.png";
+import DeleteModalError from "../../assets/delete-user-modal-error.svg";
+import ActivationEmail from "../../assets/add-user-activation.svg";
 
 export {
+  DeleteModalError,
+  Planner,
   AppLogo,
   LOGIN_SIDE_IMG,
   DownArrow,
@@ -55,4 +58,6 @@ export {
   IllustrationPremium,
   PaymentHistoryEmpty,
   CrossSvg,
+  AddUserColored,
+  ActivationEmail,
 };

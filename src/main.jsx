@@ -26,6 +26,7 @@ import PrivateRoute from "./PrivateRoute";
 import Home from "./pages";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
+import "./utils/localization/i18n";
 import ForgotPassword from "./pages/auth/fogot-password";
 import Error404 from "./pages/404";
 
@@ -42,7 +43,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/forgot-password",
-    element: <ForgotPassword />
+    element: <ForgotPassword />,
   },
   {
     path: "/privacy-policy",
@@ -56,10 +57,6 @@ const router = createBrowserRouter([
     path: "/linkedin",
     element: <LinkedInCallbackPage />,
   },
-  // {
-  //   path: "/setting/iIdentification",
-  //   element: <Identification />,
-  // },
   {
     path: "/planner/calendar",
     element: (
@@ -133,7 +130,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/setting/Settings/:tab",
+    path: "/setting/:tab",
     element: (
       <PrivateRoute>
         <Header>
@@ -153,9 +150,9 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/404',
-    element: <Error404 />
-  }
+    path: "/404",
+    element: <Error404 />,
+  },
 ]);
 const stripePromise = loadStripe(stripeKey);
 

@@ -1,47 +1,23 @@
-import React, { lazy, useEffect, useState } from "react";
+import React, { Suspense, lazy } from "react";
 import PaymentHistoryTable from "./Premium/PaymentHistoryTable";
-import { axiosInstance } from "../../../../utils/Interceptor";
 const CurrentSubscription = lazy(() => import("./CurrentSubscription"));
 const SubscriptionPlans = lazy(() => import("./SubscriptionPlans"));
 import { ColorRing } from "react-loader-spinner";
+import { useAppContext } from "../../../../context/AuthContext";
+import Loader from "../../../../components/loader/Loader";
 
 const Price = () => {
-  const [subscription, setSubscription] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    subscription,
+    getSubscriptions,
+    loadingSub: loading,
+  } = useAppContext();
   const subscriptionId = subscription?.subscriptionId || null;
 
-  const getSubscriptions = async () => {
-    try {
-      const res = await axiosInstance.get("/user/subscription");
-      setSubscription(res.data);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getSubscriptions();
-  }, []);
-
-  if (loading)
-    return (
-      <div className="flex justify-center">
-        <ColorRing
-          visible={true}
-          height="100"
-          width="100"
-          ariaLabel="color-ring-loading"
-          wrapperStyle={{}}
-          wrapperClass="color-ring-wrapper"
-          colors={["black"]}
-        />
-      </div>
-    );
+  if (loading) return <Loader />;
 
   return (
-    <>
+    <Suspense fallback={<Loader />}>
       {subscriptionId ? (
         <CurrentSubscription
           subscription={subscription}
@@ -52,7 +28,7 @@ const Price = () => {
       )}
 
       <PaymentHistoryTable />
-    </>
+    </Suspense>
   );
 };
 

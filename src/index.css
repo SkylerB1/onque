@@ -179,3 +179,14 @@ table thead {
 .bg_enterprise_plan {
   background-color: #ed94b6;
 }
+
+.gradient-button-solid {
+  color: #fff;
+  font-weight: 600;
+  background: linear-gradient(
+    92deg,
+    #589cbc -47.53%,
+    #ee5b91 -8.5%,
+    #f5ca32 134.01%
+  );
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Navbar,
   Typography,
@@ -12,33 +12,35 @@ import { Link } from "react-router-dom";
 import NavProfile from "../drop-down/navProfile";
 import { AppLogo } from "../common/Images";
 import DropdownClientList from "../drop-down/DropdownClientList";
-import { useDispatch, useSelector } from "react-redux";
-import useConnections from "../customHooks/useConnections";
 import AddModal from "../modal/addClientModal";
+import { useAppContext } from "../../context/AuthContext";
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
+import { TbDeviceDesktopAnalytics } from "react-icons/tb";
+import { FaLink } from "react-icons/fa6";
+import { CalendarDaysIcon, LinkIcon } from "@heroicons/react/24/solid";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { getConnections } = useConnections();
+  const { subscription } = useAppContext();
+  const isSubscribed = Boolean(subscription) || false;
   const [openNav, setOpenNav] = React.useState(false);
-  const user = useSelector((state) => state.user.value);
   const [opens, setOpen] = useState(false);
 
   const navList = (
-    <ul className="mb-4 mt-2 flex flex-col gap-1 md:flex-row md:mt-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+    <ul className="mb-4 mt-2 mr-40 flex flex-col gap-1 md:flex-row md:mt-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography
         as="li"
         variant="h6"
         color="blue-gray"
-        className={`p-1 font-bold  text-base rounded-lg hover:bg-[#fde8ef] hover:text-[#ec407a]`}
+        className={`font-bold text-base rounded-lg `}
       >
-        {/* <Link to="/analytics/social-graph-data/summary">   Analytics
-        </Link>*/}
         <div class="group relative flex justify-center">
-          <Link>Analytics</Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
+          <Link className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default">
+            <TbDeviceDesktopAnalytics className="w-5 h-5" />
+            Analytics
+          </Link>
+          <span class="absolute top-16 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
             Coming Soon
           </span>
         </div>
@@ -47,67 +49,45 @@ export default function Header({ children }) {
         as="li"
         variant="h6"
         color="blue-gray"
-        className={`p-1 font-bold  text-base rounded-lg hover:bg-[#fde8ef] hover:text-[#ec407a] ${
+        className={`font-bold text-base rounded-lg ${
           pathname === "/planner/calendar"
-            ? "text-black font-semibold bg-gray-200 rounded-md shadow-sm hover:bg-gray-200 hover:text-black"
+            ? "font-semibold bg-white bg-opacity-10 rounded-lg shadow-sm"
             : ""
         }`}
       >
-        <Link to="/planner/calendar" className="flex items-center">
+        <Link
+          to="/planner/calendar"
+          className="flex flex-col gap-1 p-2 px-3 items-center text-white hover:text-white"
+        >
+          <CalendarDaysIcon color="white" className="w-5 h-5" />
           Planning
         </Link>
       </Typography>
-      {/* <Typography
-        as="li"
-        variant="h6"
-        color="blue-gray"
-        className={`p-1 font-bold  text-base rounded-lg hover:bg-[#fde8ef] hover:text-[#ec407a] ${pathname === "/planner/history"
-          ? "text-black bg-gray-200 rounded-md shadow-sm hover:bg-gray-200 hover:text-black"
-          : ""
-          }`}
-      >
-        <Link to="/planner/history" className="flex items-center">
-          History
-        </Link>
-      </Typography> */}
+
       <Typography
         as="li"
         variant="h6"
         color="blue-gray"
-        className={`p-1 font-bold  text-base rounded-lg  hover:bg-[#fde8ef] hover:text-[#ec407a]`}
+        className={`font-bold  text-base rounded-lg`}
       >
-        {/* <Link to="/smart-link" className="flex items-center">
-          SmartLinks
-        </Link> */}
         <div class="group relative flex justify-center">
-          <Link>SmartLinks</Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
+          <Link className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default">
+            <FaLink className="w-5 h-5" />
+            SmartLinks
+          </Link>
+          <span class="absolute top-16 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
             Coming Soon
           </span>
         </div>
       </Typography>
-      {/* <Typography
-        as="li"
-        variant="h6"
-        color="blue-gray"
-        className={`p-1 font-bold  text-base rounded-lg hover:bg-[#fde8ef] hover:text-[#ec407a]`}
-      > */}
-      {/* <Link to="/setting/Settings?tab=price" className="flex items-center">
-          Pricing
-        </Link> */}
-      {/* <div class="group relative flex justify-center">
-          <Link>Pricing</Link>
-          <span class="absolute top-10 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">Coming Soon</span>
-        </div> */}
-      {/* </Typography> */}
     </ul>
   );
 
   return (
     <div className="flex min-h-screen z-50">
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar className="fixed top-0 z-50 h-max max-w-full rounded-none py-2 px-4 lg:px-8 lg:py-4">
-          <div className="flex items-center justify-between text-blue-gray-900">
+        <Navbar className="fixed top-0 z-50 h-max max-w-full rounded-none py-2 px-16 bg-black flex flex-row items-center ju">
+          <div className="flex flex-1 items-center justify-between text-blue-gray-900">
             <Typography
               as="a"
               to="#"
@@ -122,28 +102,23 @@ export default function Header({ children }) {
             </Typography>
             <div className="flex items-center gap-4">
               <div className="mr-4 hidden lg:block">{navList}</div>
-              <Button
-                variant="gradient"
-                size="sm"
-                className="hidden lg:inline-block"
-                onClick={() => navigate("/setting/Settings/price")}
-              >
-                <span>Buy Now</span>
-              </Button>
+              {!isSubscribed && (
+                <Button
+                  variant="gradient"
+                  size="sm"
+                  className="hidden lg:inline-block gradient-button-solid normal-case text-sm md:text-base mr-16"
+                  onClick={() => navigate("/setting/price")}
+                >
+                  Upgrade to Premium
+                </Button>
+              )}
               <div className="ml-8">
                 <DropdownClientList setOpen={setOpen} />
               </div>
               <div className="ml-8">
                 <NavProfile clientData={[]} setOpen={setOpen} />
               </div>
-              {/* <Typography
-              as="li"
-              variant="h6"
-              onClick={() => handlerLogOut()}
-              className={`p-1 mr-4 cursor-pointer py-1.5 font-medium rounded-md shadow-sm hover:bg-gray-200 hover:text-black`}
-            >
-              Logout
-            </Typography> */}
+
               <IconButton
                 variant="text"
                 className="ml-auto text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
@@ -157,20 +132,23 @@ export default function Header({ children }) {
                 )}
               </IconButton>
             </div>
-          </div>
-          <Collapse
-            open={openNav}
-            className="flex items-center justify-center mt-3"
-          >
-            {navList}
-            <Button
-              variant="gradient"
-              size="sm"
-              className="mb-2 h-5 w-max flex items-center ml-2"
+            <Collapse
+              open={openNav}
+              className="flex items-center justify-center mt-3 lg:hidden"
             >
-              <span>Buy Now</span>
-            </Button>
-          </Collapse>
+              {navList}
+              {!isSubscribed && (
+                <Button
+                  variant="gradient"
+                  size="sm"
+                  className="hidden lg:inline-block gradient-button-solid normal-case text-sm md:text-base mr-16"
+                  onClick={() => navigate("/setting/price")}
+                >
+                  Upgrade to Premium
+                </Button>
+              )}
+            </Collapse>
+          </div>
         </Navbar>
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           {children}
@@ -183,4 +161,4 @@ export default function Header({ children }) {
       />
     </div>
   );
-};
+}

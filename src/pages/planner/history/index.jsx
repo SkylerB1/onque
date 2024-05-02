@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
+;
+
+import React, { useEffect, useMemo, useState } from "react";
 import ToggleButton from "../../../components/button/ToggleButton";
 import PlanningNavbar from "../../../components/side-navbar/PlanningNavbar";
 import PostHistory from "../../../components/post-history/PostHistory";
-import axios from "axios";
-// import { useUserContext } from "../../context/userContext";
 import Datepicker from "react-tailwindcss-datepicker";
 import { axiosInstance } from "../../../utils/Interceptor";
 import { useSelector } from "react-redux";
+import { useAppContext } from "../../../context/AuthContext";
+import NoAccessPermission from "../calendar/NoAccessPermission";
 
 const History = () => {
+  const { validations } = useAppContext();
+  const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const viewAccess = useMemo(
+    () =>
+      validations && (!role || role?.viewPlanner || role?.fullAccessPlanner),
+    [role]
+  );
   const [selectedValues, setSelectedValues] = useState([]);
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +30,6 @@ const History = () => {
   });
 
   const handleValueChange = (newValue) => {
-    console.log("newValue:", newValue);
     setValue(newValue);
   };
 
@@ -40,12 +48,11 @@ const History = () => {
 
   const getPostData = async () => {
     try {
-      const platformParams =
-        selectedValues.length > 0
-          ? selectedValues
-              .map((value) => `platform=${value.toLowerCase()}`)
-              .join("&")
-          : "";
+
+      const platformParams = selectedValues.length > 0
+        ? selectedValues.map((value) => `platform=${value.toLowerCase()}`).join('&')
+        : '';
+
 
       const response = await axiosInstance.get(
         `${import.meta.env.VITE_API_URL}/user/getPostData/${
@@ -83,6 +90,21 @@ const History = () => {
   useEffect(() => {
     getPostData();
   }, [value]);
+
+  if (!viewAccess) {
+    return (
+      <div className="p-4 sm:ml-64">
+        <div className="flex flex-1 items-start justify-between mb-2 mt-20">
+          <NoAccessPermission
+            title={"Planner"}
+            body="Sorry, you don't have enough permissions to access this brand's
+          History."
+          />
+        </div>
+        <PlanningNavbar />
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 sm:ml-20 xl:ml-64">

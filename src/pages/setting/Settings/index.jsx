@@ -34,8 +34,9 @@ const Setting = () => {
   ];
 
   useEffect(() => {
-    navigate("/setting/Settings/" + activeTab);
-  }, [activeTab]);
+    navigate('/setting/'+activeTab);
+  },[activeTab]);
+
 
   return (
     <div className="p-4 xl:mx-72 mt-20 md:mx-32">

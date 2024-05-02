@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import CreatePostModal from "../create-post-modal";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -12,15 +12,13 @@ import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import {
   Card,
-  CardHeader,
   CardBody,
-  CardFooter,
-  Typography,
   Button,
 } from "@material-tailwind/react";
+import { IoMdAdd } from "react-icons/io";
 
 const PostCalendar = (props) => {
-  const { getPostData, events } = props;
+  const { getPostData, events, role } = props;
   const [files, setFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [postData, setPostData] = useState(null);
@@ -28,6 +26,7 @@ const PostCalendar = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
   const { connections } = useConnections();
+  const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
 
   const renderContentType = (type) => {
     if (type === "reels") {
@@ -105,16 +104,17 @@ const PostCalendar = (props) => {
 
   return (
     <>
-      <div className="md:mt-20  mb-2 xl:mt-24 lg:mt-24">
-        <div>
-          <button
-            type="button"
+      <div className="md:my-2 xl:mt-24 lg:mt-24">
+        {fullAccess && (
+          <Button
+            size="sm"
             onClick={handleModal}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-3 text-center inline-flex items-center mr-4 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
           >
+            <IoMdAdd className="w-5 h-5 mr-1" />
             Create Post
-          </button>
-        </div>
+          </Button>
+        )}
         <Card className="mt-2">
           <CardBody>
             <FullCalendar
@@ -146,8 +146,7 @@ const PostCalendar = (props) => {
                   selectData(info);
                 }
               }}
-              // className={'xl:{height:'745px'}, md:{}'}
-              height="745px"
+              height="76vh"
             />
 
             {openModal && (

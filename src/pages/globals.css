@@ -22,11 +22,14 @@
   }
 }
 
-body{
+body {
   background-color: #efefef;
 }
 
-.AccordionBody>div {
+.AccordionBody > div {
   overflow: visible;
 }
 
+.text-tertiary {
+  color: #7e878c !important;
+}

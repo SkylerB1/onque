@@ -24,7 +24,7 @@ export default function PlanningNavbar() {
             className={`w-[200px] ${
               pathname === "/planner/calendar"
                 ? "text-black bg-[#E5E7EB] w-[200px] rounded-md shadow-sm hover:bg-[#E5E7EB] hover:text-black"
-                : ""
+                : "text-black"
             }`}
           >
             <ListItemPrefix>
@@ -41,7 +41,7 @@ export default function PlanningNavbar() {
             className={`w-[200px] ${
               pathname === "/planner/history"
                 ? "text-black bg-[#E5E7EB] w-[200px] rounded-md shadow-sm hover:bg-[#E5E7EB] hover:text-black"
-                : ""
+                : "text-black"
             }`}
           >
             <ListItemPrefix>

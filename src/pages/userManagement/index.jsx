@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Tabs,
   TabsHeader,
@@ -9,27 +9,49 @@ import {
 import Users from "./components/Users";
 import RoleAndPermisson from "./components/RolesAndPermission";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getRoles } from "../../redux/features/roleSlice";
+import { axiosInstance } from "../../utils/Interceptor";
 
+const data = [
+  {
+    label: "Users",
+    value: "users",
+    component: Users,
+  },
+  {
+    label: "Roles and permissions",
+    value: "rolepermisson",
+    component: RoleAndPermisson,
+  },
+];
 const UserManagement = () => {
   const { tab } = useParams();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [collaborators, setCollaborators] = useState();
+  const [loadingCollaborator, setLoadingCollaborator] = useState(false);
   const [activeTab, setActiveTab] = React.useState(tab.toLowerCase());
-  const data = [
-    {
-      label: "Users",
-      value: "users",
-      desc: <Users />,
-    },
-    {
-      label: "Role and permission",
-      value: "rolepermisson",
-      desc: <RoleAndPermisson />,
-    },
-  ];
 
   useEffect(() => {
     navigate("/userManagement/" + activeTab);
   }, [activeTab]);
+
+  const getCollaborators = async () => {
+    try {
+      setLoadingCollaborator(true);
+      const res = await axiosInstance.get("/user/collaborators");
+      setCollaborators(res.data);
+      setLoadingCollaborator(false);
+    } catch (err) {
+      setLoadingCollaborator(false);
+    }
+  };
+
+  useEffect(() => {
+    getCollaborators();
+    dispatch(getRoles());
+  }, []);
 
   return (
     <div className="xl:ml-64 xl:mt-20 xl:block  xl:p-4 md:block md:ml-20 md:p-2 md:mt-20 sm:ml-20  ">
@@ -56,9 +78,14 @@ const UserManagement = () => {
           </TabsHeader>
           <hr className="w-[90rem]" />
           <TabsBody>
-            {data.map(({ value, desc }) => (
-              <TabPanel key={value} value={value}>
-                {desc}
+            {data.map((item, index) => (
+              <TabPanel key={index} value={item.value}>
+                <item.component
+                  collaborators={collaborators}
+                  setCollaborators={setCollaborators}
+                  loadingCollaborator={loadingCollaborator}
+                  setLoadingCollaborator={setLoadingCollaborator}
+                />
               </TabPanel>
             ))}
           </TabsBody>

@@ -11,6 +11,7 @@ import RoleAndPermisson from "./components/RolesAndPermission";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getRoles } from "../../redux/features/roleSlice";
+import { axiosInstance } from "../../utils/Interceptor";
 
 const data = [
   {
@@ -26,17 +27,31 @@ const data = [
 ];
 const UserManagement = () => {
   const { tab } = useParams();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [collaborators, setCollaborators] = useState();
+  const [loadingCollaborator, setLoadingCollaborator] = useState(false);
   const [activeTab, setActiveTab] = React.useState(tab.toLowerCase());
 
   useEffect(() => {
     navigate("/userManagement/" + activeTab);
   }, [activeTab]);
 
+  const getCollaborators = async () => {
+    try {
+      setLoadingCollaborator(true);
+      const res = await axiosInstance.get("/user/collaborators");
+      setCollaborators(res.data);
+      setLoadingCollaborator(false);
+    } catch (err) {
+      setLoadingCollaborator(false);
+    }
+  };
+
   useEffect(() => {
-    dispatch(getRoles())
-  },[])
+    getCollaborators();
+    dispatch(getRoles());
+  }, []);
 
   return (
     <div className="p-4 sm:ml-64 mt-20">
@@ -65,7 +80,12 @@ const UserManagement = () => {
           <TabsBody>
             {data.map((item, index) => (
               <TabPanel key={index} value={item.value}>
-                <item.component />
+                <item.component
+                  collaborators={collaborators}
+                  setCollaborators={setCollaborators}
+                  loadingCollaborator={loadingCollaborator}
+                  setLoadingCollaborator={setLoadingCollaborator}
+                />
               </TabPanel>
             ))}
           </TabsBody>

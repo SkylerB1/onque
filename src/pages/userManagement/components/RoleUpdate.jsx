@@ -7,6 +7,7 @@ import {
   MenuItem,
   MenuList,
   Spinner,
+  Tooltip,
 } from "@material-tailwind/react";
 import { ShieldCheckIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
@@ -44,26 +45,45 @@ const RoleUpdate = ({ brand, selectedRole, handleRoleChange, isEnabled }) => {
       placement="bottom"
     >
       <MenuHandler>
-        <div
-          className={`w-[14rem] rounded-md bg-white cursor-pointer h-10 ${
-            isEnabled ? "" : "pointer-events-none"
-          }`}
-        >
-          <div className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal text-left outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 disabled:cursor-not-allowed transition-all border text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 items-center justify-between flex whitespace-nowrap">
-            {selectedRole ?? "Select a role"}
-            <svg
-              className="-mr-1 ml-2 mt-1 h-5 w-5"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 12a1 1 0 0 1-.707-.293L5.414 7.707a1 1 0 1 1 1.414-1.414L10 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-.707.293z"
-              />
-            </svg>
+        {isEnabled ? (
+          <div className={`w-[14rem] rounded-md bg-white cursor-pointer h-10`}>
+            <div className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal text-left outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 disabled:cursor-not-allowed transition-all border text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 items-center justify-between flex whitespace-nowrap">
+              {selectedRole ?? "Select a role"}
+              <svg
+                className="-mr-1 ml-2 mt-1 h-5 w-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 12a1 1 0 0 1-.707-.293L5.414 7.707a1 1 0 1 1 1.414-1.414L10 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-.707.293z"
+                />
+              </svg>
+            </div>
           </div>
-        </div>
+        ) : (
+          <Tooltip content="Please select the brand first">
+            <div
+              className={`w-[14rem] rounded-md bg-white cursor-pointer h-10 pointer-events-auto`}
+            >
+              <div className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal text-left outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 disabled:cursor-not-allowed transition-all border text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 items-center justify-between flex whitespace-nowrap">
+                {selectedRole ?? "Select a role"}
+                <svg
+                  className="-mr-1 ml-2 mt-1 h-5 w-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 12a1 1 0 0 1-.707-.293L5.414 7.707a1 1 0 1 1 1.414-1.414L10 9.586l3.293-3.293a1 1 0 1 1 1.414 1.414l-5 5a1 1 0 0 1-.707.293z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </Tooltip>
+        )}
       </MenuHandler>
       <MenuList className="w-80 max-h-[70vh]">
         {!roles?.loading && (

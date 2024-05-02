@@ -24,8 +24,20 @@ export const roles = createSlice({
     addRole: (state, action) => {
       (state.value || []).push(action.payload);
     },
+    updateRole: (state, action) => {
+      const { role } = action.payload;
+
+      const updatedRole = state.value.map((item) => {
+        if (item.id === role.id) {
+          return role;
+        }
+        return item;
+      });
+
+      state.value = updatedRole;
+    },
     removeRole: (state, action) => {
-      state.value.filter((item) => item.id != action.payload);
+      state.value = state.value.filter((item) => item.id != action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -44,6 +56,6 @@ export const roles = createSlice({
   },
 });
 
-export const { addRole, removeRole } = roles.actions;
+export const { addRole, updateRole, removeRole } = roles.actions;
 
 export default roles.reducer;

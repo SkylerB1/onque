@@ -2,7 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { ListItem, ListItemPrefix } from "@material-tailwind/react";
 import { FaNetworkWired } from "react-icons/fa";
-import { BsPersonBoundingBox, BsPersonCheckFill } from "react-icons/bs";
+import { BsPersonBoundingBox } from "react-icons/bs";
 import { MdAutoDelete } from "react-icons/md";
 import { axiosInstance } from "../../utils/Interceptor";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,9 +18,16 @@ const BrandNavber = () => {
   const url = pathname;
   const { validations } = useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
-  const brandAccess = useMemo(() => validations && (!role || role?.editBrand), [role]);
+  const brandAccess = useMemo(
+    () => validations && (!role || role?.editBrand),
+    [role]
+  );
   const { getConnections } = useConnections();
   const { value: brands } = useSelector((state) => state.brands);
+  const canDeleteBrand = useMemo(
+    () => brands.filter((item) => item.brandRole?.role === null).length > 1,
+    [brands]
+  );
   const [opens, setOpen] = useState(false);
   const user = useSelector((state) => state.user.value);
   const { id: brandId, brand_name: brandName } = user?.brand;
@@ -49,57 +56,7 @@ const BrandNavber = () => {
   return (
     <div>
       <div className="ml-2">
-        {/* <>
-          <div className="flex flex-1 items-center justify-between mt-8 mr-8">
-            <p>
-              <span className="text-black text-lg">Client</span>
-              <span className="ml-2 text-sm text-gray-400">1 of 1</span>
-            </p>
-            <button className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-1 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
-              <span className="flex flex-1 items-center justify-center">
-                <AiOutlinePlus className="mr-3" />
-                ADD
-              </span>
-            </button>
-          </div>
-          <div className="w-64 mt-6 mr-2 focus:outline-none hover:outline-none">
-            <Select
-              value={selectedValue}
-              defaultValue={clientDatas && clientDatas[0]?.brand_name}
-              onChange={handleSelectChange}
-              className="p-4 focus:outline-none hover:outline-none"
-            >
-              {clientDatas.map((client, index) => (
-                <Option key={index} value={client.brand_name}>
-                  <div className="flex flex-1 items-center gap-1">
-                    <div className="avatar-initial bg-blue-gray-200 px-2 py-1 rounded-full flex items-center justify-center">
-                      {getFirstLetter(client.brand_name)}
-                    </div>
-                    {client.brand_name}{" "}
-                  </div>
-                </Option>
-              ))}
-            </Select>
-
-            <CustomMenu clientDatas={clientDatas} />
-
-            <select class="py-3 px-4 pe-9 block w-full sm:w-16  md:w-32 lg:w-64  border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600">
-              {clientDatas?.map((client, index) => (
-                <option key={index}>{client.brand_name} </option>
-              ))}
-            </select>
-          </div>
-          <button
-            className="text-gray-900 bg-white border-gray-300  hover:bg-gray-100 rounded-lg text-xs px-5 py-1 mt-2"
-            onClick={handleOpen}
-          >
-            VIEW AS TABLE
-          </button>
-
-          <hr className="mt-5 mr-8 h-px bg-gray-200 border-0 dark:bg-gray-300"></hr>
-        </> */}
         <ListItem
-          // className="mt-8"
           className={
             url === "/brand/connection"
               ? "w-[260px] text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
@@ -113,36 +70,23 @@ const BrandNavber = () => {
             Connection
           </Link>
         </ListItem>
-        {brandAccess && <ListItem
-          className={
-            url === "/brand/name"
-              ? "w-[260px] text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
-              : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
-          }
-        >
-          <ListItemPrefix>
-            <BsPersonBoundingBox className="h-5 w-5" />
-          </ListItemPrefix>
-          <Link className="w-full text-base" to={"/brand/name"}>
-            Name and Picture
-          </Link>
-        </ListItem>}
-        {/* <ListItem
-          // className="mt-8 mb-8"
-          className={
-            url === "/brand/team/access"
-              ? " w-[260px] hover:w-[260px] mt-8 mb-8 text-black bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
-              : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
-          }
-        >
-          <ListItemPrefix>
-            <BsPersonCheckFill className="h-5 w-5" />
-          </ListItemPrefix>
-          <Link className="w-full text-base" to={"/brand/team/access"}>
-            Team access
-          </Link>
-        </ListItem> */}
-        {brands?.length > 1 && brandAccess && (
+        {brandAccess && (
+          <ListItem
+            className={
+              url === "/brand/name"
+                ? "w-[260px] text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
+                : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
+            }
+          >
+            <ListItemPrefix>
+              <BsPersonBoundingBox className="h-5 w-5" />
+            </ListItemPrefix>
+            <Link className="w-full text-base" to={"/brand/name"}>
+              Name and Picture
+            </Link>
+          </ListItem>
+        )}
+        {canDeleteBrand && brandAccess && (
           <ListItem
             className=" w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
             onClick={() => setOpen(true)}

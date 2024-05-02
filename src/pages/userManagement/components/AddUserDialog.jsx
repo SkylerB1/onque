@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   Dialog,
   DialogHeader,
@@ -13,6 +13,7 @@ import {
 import { validateEmail } from "../../../utils";
 import { axiosInstance } from "../../../utils/Interceptor";
 import InfoIcon from "../../../assets/InfoIcon";
+import { useSelector } from "react-redux";
 
 const AddUserDialog = ({
   isOpen,
@@ -22,12 +23,26 @@ const AddUserDialog = ({
   toggleUserDialog,
 }) => {
   const [email, setEmail] = useState("");
+  const userDetail = useSelector((state) => state.user.value);
   const isValidEmail = useMemo(() => Boolean(validateEmail(email)), [email]);
-  const [user, setUser] = useState({ isValid: false, message: "The e-mail field must be a valid email" });
+  const [user, setUser] = useState({
+    isValid: false,
+    showMessage: true,
+    message: "The e-mail field must be a valid email",
+  });
 
   const handleEmailChange = (event) => {
     const email = event.target.value;
-    if (isValidEmail) checkUser(email);
+    if (isValidEmail) {
+      if (email === userDetail.email) {
+        setUser({
+          isValid: false,
+          message: "You cannot add yourself as a collaborator.",
+        });
+      } else {
+        checkUser(email);
+      }
+    }
     setEmail(email);
   };
 
@@ -44,22 +59,33 @@ const AddUserDialog = ({
           (item) => item.email === email
         );
         if (existingCollaborator) {
-          setUser({
+          setUser((prev) => ({
+            ...prev,
             isValid: false,
+            showMessage: true,
             message:
               "This user has already been added to your collaborators list",
-          });
+          }));
         } else {
-          setSelectedUser((prev) => ({ ...prev, ...res.data }));
-          setUser({ isValid: true, message: "" });
+          setSelectedUser((prev) => ({ ...prev, ...res.data, isActive: true }));
+          setUser((prev) => ({
+            ...prev,
+            showMessage: false,
+            isValid: true,
+            message: "",
+          }));
         }
       }
     } catch (err) {
-      setUser({
-        isValid: false,
-        message:
-          "This e-mail address does not match any active user.",
-      });
+      if (err?.response?.status === 404) {
+        setUser({
+          isValid: true,
+          showMessage: true,
+          message:
+            "This e-mail address does not match any active user. You will be able to send them a personalized email to join!",
+        });
+        setSelectedUser((prev) => ({ ...prev, email }));
+      }
     }
   };
 
@@ -100,14 +126,14 @@ const AddUserDialog = ({
       <DialogBody>
         <Input
           fullWidth
-          autoFocus
+          autoFocus={true}
           label="Email"
           placeholder="Enter email address"
           value={email}
           error={!isValidEmail}
           onChange={handleEmailChange}
         />
-        {isValidEmail && !user.isValid && (
+        {isValidEmail && user?.showMessage && (
           <Alert
             className="bg-[#3b82f61a] flex items-center mt-4"
             icon={<InfoIcon width={20} height={20} fill={"#2196f3"} />}
@@ -118,6 +144,7 @@ const AddUserDialog = ({
       </DialogBody>
       <DialogFooter>
         <Button
+          type="submit"
           disabled={!user.isValid}
           onClick={handleContinue}
           color="primary"

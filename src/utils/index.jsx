@@ -18,6 +18,7 @@ import YotubeShorts from "../components/svg/YotubeShorts";
 import Youtube from "../components/svg/Youtube";
 import YoutubeVideo from "../components/svg/YoutubeVideo";
 import { useLocalStorage } from "./LocalStorage";
+import toast, { Toaster } from "react-hot-toast";
 
 export const API_URL = import.meta.env.VITE_API_URL;
 export const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
@@ -294,6 +295,40 @@ export const planLabel = {
   enterprise_plan_gbp: "Enterprise Plan - Monthly",
   enterprise_plan_gbp_yearly: "Enterprise Plan - Yearly",
 };
+export const getCurrentPlan = (plan) => {
+  let currentPlan, planDuration;
+  switch (plan) {
+    case "starter_plan_gbp":
+      currentPlan = "starter";
+      planDuration = "monthly";
+      break;
+    case "starter_plan_gbp_yearly":
+      currentPlan = "starter";
+      planDuration = "yearly";
+      break;
+    case "advanced_plan_gbp":
+      currentPlan = "advanced";
+      planDuration = "monthly";
+      break;
+    case "advanced_plan_gbp_yearly":
+      currentPlan = "advanced";
+      planDuration = "yearly";
+      break;
+    case "enterprise_plan_gbp":
+      currentPlan = "enterprise";
+      planDuration = "monthly";
+      break;
+    case "enterprise_plan_gbp_yearly":
+      currentPlan = "enterprise";
+      planDuration = "yearly";
+      break;
+    default:
+      currentPlan = "";
+      planDuration = "";
+    // code block
+  }
+  return { currentPlan, planDuration };
+};
 
 export const getCommaSeparatedNames = (arr, indentifier) => {
   const names = arr.map((item) => item[indentifier]);
@@ -315,3 +350,14 @@ export const validateEmail = (email) => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
 };
+
+export function capitalizeFirstLetter(string) {
+  if (!string) return "";
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+export function toastrSuccess(message) {
+  toast.success(message, { duration: 4000, position: "top-right" });
+}
+export function toastrError(message) {
+  toast.error(message, { duration: 4000, position: "top-right" });
+}

@@ -17,18 +17,20 @@ const Price = () => {
   if (loading) return <Loader />;
 
   return (
-    <Suspense fallback={<Loader />}>
-      {subscriptionId ? (
-        <CurrentSubscription
-          subscription={subscription}
-          getSubscriptions={getSubscriptions}
-        />
-      ) : (
-        <SubscriptionPlans />
-      )}
+    <>
+      <Suspense fallback={<Loader />}>
+        {subscriptionId ? (
+          <CurrentSubscription
+            subscription={subscription}
+            getSubscriptions={getSubscriptions}
+          />
+        ) : (
+          <SubscriptionPlans />
+        )}
 
-      <PaymentHistoryTable />
-    </Suspense>
+        <PaymentHistoryTable />
+      </Suspense>
+    </>
   );
 };
 

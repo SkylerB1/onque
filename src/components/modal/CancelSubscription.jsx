@@ -8,8 +8,17 @@ import React, { useMemo, useState } from "react";
 import Cross from "../../assets/Cross";
 import { axiosInstance } from "../../utils/Interceptor";
 import LoadingButton from "../button/LoadingButton";
+import { getDateFromUnix } from "../../utils/dateUtils";
+import { toastrSuccess, toastrError } from "../../utils/index";
+import toast, { Toaster } from "react-hot-toast";
 
-const CancelSubscription = ({ open, toggleModal, reloadSubscription }) => {
+const CancelSubscription = ({
+  open,
+  close,
+  toggleModal,
+  reloadSubscription,
+  subscription,
+}) => {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const isDisabled = useMemo(() => text.length < 10, [text]);
@@ -20,12 +29,17 @@ const CancelSubscription = ({ open, toggleModal, reloadSubscription }) => {
       const res = await axiosInstance.post("/user/subscription/cancel", {
         comments: text,
       });
+
       if (res.status === 200) {
         toggleModal();
         reloadSubscription();
+        toastrSuccess(message);
       }
       setLoading(false);
+      close(false);
     } catch (err) {
+      let message = err?.response?.data?.message;
+      toastrError(message);
       setLoading(false);
     }
   };
@@ -33,6 +47,7 @@ const CancelSubscription = ({ open, toggleModal, reloadSubscription }) => {
   return (
     <Dialog open={open} onClose={toggleModal}>
       <DialogBody className="max-h-[700px] overflow-auto">
+        <Toaster />
         <div className="p-8">
           <div className="flex justify-center mb-6">
             <Cross width={100} height={100} fill="red" />
@@ -44,7 +59,8 @@ const CancelSubscription = ({ open, toggleModal, reloadSubscription }) => {
             <div class="text-base">
               <p class="mb-0 text-black">
                 Are you sure you want to cancel the current subscription? You
-                can enjoy all its benefits until 02/05/2024, then your plan will
+                can enjoy all its benefits until{" "}
+                {getDateFromUnix(subscription.end_date)}, then your plan will
                 become Free.
               </p>
             </div>
@@ -64,7 +80,9 @@ const CancelSubscription = ({ open, toggleModal, reloadSubscription }) => {
         </div>
       </DialogBody>
       <DialogFooter className="flex flex-row justify-between">
-        <Button variant="outlined" onClick={toggleModal}>Cancel</Button>
+        <Button variant="outlined" onClick={toggleModal}>
+          Cancel
+        </Button>
         <LoadingButton
           title={"Cancel plan"}
           loading={loading}

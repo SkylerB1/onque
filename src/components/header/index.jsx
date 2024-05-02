@@ -14,11 +14,13 @@ import { AppLogo } from "../common/Images";
 import DropdownClientList from "../drop-down/DropdownClientList";
 import AddModal from "../modal/addClientModal";
 import { useAppContext } from "../../context/AuthContext";
+import { ChangePlanModel } from "../modal/ChangePlanModel/Index";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { subscription } = useAppContext();
+  const { subscription, openChangePlanModel, setOpenChangePlanModel } =
+    useAppContext();
   const isSubscribed = Boolean(subscription) || false;
   const [openNav, setOpenNav] = React.useState(false);
   const [opens, setOpen] = useState(false);
@@ -206,6 +208,10 @@ export default function Header({ children }) {
         Close={() => setOpen(false)}
         title={`Add Client`}
       />
+      <ChangePlanModel
+        openChangePlanModel={openChangePlanModel}
+        setOpenChangePlanModel={setOpenChangePlanModel}
+      />
     </div>
   );
-};
+}

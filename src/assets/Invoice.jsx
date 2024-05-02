@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const InvoiceSvg = ({width,height,fill="#000000"}) => {
+const InvoiceSvg = ({ width, height, fill = "#000000" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +12,7 @@ const InvoiceSvg = ({width,height,fill="#000000"}) => {
       y="0"
       viewBox="0 0 512 512"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path
@@ -28,6 +28,6 @@ const InvoiceSvg = ({width,height,fill="#000000"}) => {
       </g>
     </svg>
   );
-}
+};
 
-export default InvoiceSvg
+export default InvoiceSvg;

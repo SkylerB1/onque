@@ -14,6 +14,7 @@ import { AppLogo } from "../common/Images";
 import DropdownClientList from "../drop-down/DropdownClientList";
 import AddModal from "../modal/addClientModal";
 import { useAppContext } from "../../context/AuthContext";
+import { ChangePlanModel } from "../modal/ChangePlanModel/Index";
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { FaLink } from "react-icons/fa6";
@@ -22,7 +23,8 @@ import { CalendarDaysIcon, LinkIcon } from "@heroicons/react/24/solid";
 export default function Header({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { subscription } = useAppContext();
+  const { subscription, openChangePlanModel, setOpenChangePlanModel } =
+    useAppContext();
   const isSubscribed = Boolean(subscription) || false;
   const [openNav, setOpenNav] = React.useState(false);
   const [opens, setOpen] = useState(false);
@@ -158,6 +160,10 @@ export default function Header({ children }) {
         open={opens}
         Close={() => setOpen(false)}
         title={`Add Client`}
+      />
+      <ChangePlanModel
+        openChangePlanModel={openChangePlanModel}
+        setOpenChangePlanModel={setOpenChangePlanModel}
       />
     </div>
   );

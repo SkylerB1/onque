@@ -29,6 +29,7 @@ export function AppContextProvider({ children }) {
   const [cookies, setCookie] = useCookies(["access_token"]);
   const dispatch = useDispatch();
 
+  const [openChangePlanModel, setOpenChangePlanModel] = React.useState(false);
 
   const getCounter = async (brandId) => {
     try {
@@ -44,6 +45,7 @@ export function AppContextProvider({ children }) {
   const getSubscriptions = async () => {
     try {
       const res = await axiosInstance.get("/user/subscription");
+
       setSubscription(res.data);
       setLoadingSub(false);
     } catch (err) {
@@ -85,6 +87,8 @@ export function AppContextProvider({ children }) {
     subscription,
     loadingSub,
     loadingValidations,
+    openChangePlanModel,
+    setOpenChangePlanModel,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

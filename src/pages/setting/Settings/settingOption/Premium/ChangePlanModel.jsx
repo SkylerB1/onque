@@ -30,7 +30,8 @@ const ChangePlanModel = ({
   selectedOption,
   switchDuration,
 }) => {
-  const { key, bgClass, savingWithAnnualPlan, monthly_price, annualy_price } = listData;
+  const { key, bgClass, savingWithAnnualPlan, monthly_price, annualy_price } =
+    listData;
   const isMonthly = selectedOption === "monthly" || false;
   const [openDiscount, setOpenDiscount] = useState(false);
   const [discount, setDiscount] = useState(initial);

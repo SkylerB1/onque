@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Dropdown from "../drop-down/Dropdown";
 import RenderFiles from "./RenderFiles";
 import GbusinessPresets from "../mockups/google-business/GbusinessPresets";
@@ -17,6 +17,7 @@ import {
 import { useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
 import { Textarea } from "@material-tailwind/react";
+import NotificationPreset from "../mockups/notification/NotificationPreset";
 
 const ModalInput = ({
   selectedPreview,
@@ -39,8 +40,26 @@ const ModalInput = ({
   additionalPresets,
   setAdditionalPresets,
   isDuplicating,
+  brandId,
 }) => {
   const user = useSelector((state) => state.user.value);
+  const [showNotificationPreset, setShowNotificationPreset] = useState(false);
+
+  useEffect(() => {
+    selectedPlaforms.forEach((item) => {
+      const { platform } = item;
+      if (platform == InstagramPlatform || platform == TikTokPlatform) {
+        if (
+          !additionalPresets.Instagram?.autoPublish ||
+          !additionalPresets.TikTokPlatform?.autoPublish
+        ) {
+          setShowNotificationPreset(!showNotificationPreset);
+        }
+      } else {
+        setShowNotificationPreset(false);
+      }
+    });
+  }, [additionalPresets, selectedPlaforms]);
 
   const uploadimgOptions = useMemo(
     () => [
@@ -217,6 +236,7 @@ const ModalInput = ({
                 platform={platform}
                 additionalPresets={additionalPresets[platform]}
                 setAdditionalPresets={setAdditionalPresets}
+                brandId={brandId}
               />
             );
           }
@@ -230,6 +250,7 @@ const ModalInput = ({
             );
           }
         })}
+        {!showNotificationPreset && <NotificationPreset />}
       </div>
     </div>
   );

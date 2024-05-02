@@ -9,7 +9,7 @@ import {
   Input,
   Avatar,
 } from "@material-tailwind/react";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ClockIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import CustomSwitch from "../../../components/Input/CustomSwitch";
 import Filters from "./filters";
 import UpdateRoleDialog from "./UpdateRoleDialog";
@@ -48,6 +48,8 @@ const UserDetailDialog = ({
   const [searchQuery, setSearchQuery] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [openRoleMenu, setOpenRoleMenu] = useState(false);
+  const FirstLetter = selectedUser?.firstName?.charAt(0).toUpperCase();
+  const SecondLetter = selectedUser?.firstName?.charAt(1).toUpperCase();
 
   const handleBrandChange = (brands) => {
     setSelectedBrands(brands);
@@ -87,12 +89,16 @@ const UserDetailDialog = ({
       <Dialog size="lg" className="dialogIndex" open={isOpen} onClose={onClose}>
         <DialogHeader className="justify-between">
           <div className="flex flex-row items-center">
-            <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-md dark:bg-gray-600">
-              <span className="text-sm font-normal text-gray-600 dark:text-gray-300">
-                {selectedUser?.firstName?.charAt(0).toUpperCase() +
-                  selectedUser?.firstName?.charAt(1).toUpperCase()}
+            <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-md ">
+              <span className="text-sm font-normal  dark:text-gray-300">
+                {FirstLetter && SecondLetter ? (
+                  FirstLetter + SecondLetter
+                ) : (
+                  <ClockIcon color="grey" className="w-6 h-6" />
+                )}
               </span>
             </div>
+
             <div class="flex flex-col justify-center text-md ml-3">
               <p class="text-base">
                 {selectedUser?.firstName + " " + selectedUser?.lastName}
@@ -127,14 +133,14 @@ const UserDetailDialog = ({
         </DialogHeader>
         <Dialog.Body>
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-            <div className="w-full">
+            <div className="w-2/5">
               <Input
                 label="Search"
                 icon={<MagnifyingGlassIcon className="h-5 w-5" />}
                 onChange={handleSearch}
               />
             </div>
-            <div className="flex w-full shrink-0 gap-2 md:w-max">
+            <div className="flex w-full gap-2 md:w-5/6">
               <Filters
                 options={brands}
                 selectedOptions={selectedBrands}

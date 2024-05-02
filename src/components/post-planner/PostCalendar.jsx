@@ -10,9 +10,15 @@ import InstaReel from "../../assets/InstaReel";
 import Grid from "../../assets/Grid";
 import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
+import {
+  Card,
+  CardBody,
+  Button,
+} from "@material-tailwind/react";
+import { IoMdAdd } from "react-icons/io";
 
 const PostCalendar = (props) => {
-  const { getPostData, events,role } = props;
+  const { getPostData, events, role } = props;
   const [files, setFiles] = useState([]);
   const [caption, setCaption] = useState("");
   const [postData, setPostData] = useState(null);
@@ -20,8 +26,7 @@ const PostCalendar = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
   const { connections } = useConnections();
-  const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]); ;
-  
+  const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
 
   const renderContentType = (type) => {
     if (type === "reels") {
@@ -99,66 +104,72 @@ const PostCalendar = (props) => {
 
   return (
     <>
-      <div className="my-2">
+      <div className="md:my-2 xl:mt-24 lg:mt-24">
         {fullAccess && (
-          <button
-            type="button"
+          <Button
+            size="sm"
             onClick={handleModal}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
           >
+            <IoMdAdd className="w-5 h-5 mr-1" />
             Create Post
-          </button>
+          </Button>
         )}
-        <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-          initialView="timeGridWeek"
-          firstDay={1}
-          weekends={true}
-          allDaySlot={false}
-          events={events}
-          nowIndicator={true}
-          eventContent={renderEventContent}
-          eventMinHeight={80}
-          eventBackgroundColor="transparent"
-          eventBorderColor="transparent"
-          eventTextColor="#000000"
-          eventMouseEnter={(e) => {
-            const x = e.el;
-            x.parentNode.style.zIndex = 999;
-          }}
-          eventMouseLeave={(e) => {
-            const x = e.el;
-            x.parentNode.style.zIndex = 1;
-          }}
-          eventClick={function (info) {
-            updatePostData(info);
-          }}
-          dateClick={function (info) {
-            if (info.date >= new Date()) {
-              selectData(info);
-            }
-          }}
-        />
+        <Card className="mt-2">
+          <CardBody>
+            <FullCalendar
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              initialView="timeGridWeek"
+              firstDay={1}
+              weekends={true}
+              allDaySlot={false}
+              events={events}
+              nowIndicator={true}
+              eventContent={renderEventContent}
+              eventMinHeight={80}
+              eventBackgroundColor="transparent"
+              eventBorderColor="transparent"
+              eventTextColor="#000000"
+              eventMouseEnter={(e) => {
+                const x = e.el;
+                x.parentNode.style.zIndex = 999;
+              }}
+              eventMouseLeave={(e) => {
+                const x = e.el;
+                x.parentNode.style.zIndex = 1;
+              }}
+              eventClick={function (info) {
+                updatePostData(info);
+              }}
+              dateClick={function (info) {
+                if (info.date >= new Date()) {
+                  selectData(info);
+                }
+              }}
+              height="76vh"
+            />
 
-        {openModal && (
-          <CreatePostModal
-            openModal={openModal}
-            isEdit={isEdit}
-            setIsEdit={setIsEdit}
-            setModal={setModal}
-            handleModal={handleModal}
-            connections={connections}
-            postData={postData}
-            clearPostData={clearPostData}
-            files={files}
-            setFiles={setFiles}
-            setCaption={setCaption}
-            caption={caption}
-            getPostData={getPostData}
-            scheduledDate={scheduledDate}
-            setScheduledDate={setScheduledDate}
-          />
-        )}
+            {openModal && (
+              <CreatePostModal
+                openModal={openModal}
+                isEdit={isEdit}
+                setIsEdit={setIsEdit}
+                setModal={setModal}
+                handleModal={handleModal}
+                connections={connections}
+                postData={postData}
+                clearPostData={clearPostData}
+                files={files}
+                setFiles={setFiles}
+                setCaption={setCaption}
+                caption={caption}
+                getPostData={getPostData}
+                scheduledDate={scheduledDate}
+                setScheduledDate={setScheduledDate}
+              />
+            )}
+          </CardBody>
+        </Card>
       </div>
     </>
   );

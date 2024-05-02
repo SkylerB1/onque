@@ -51,7 +51,6 @@ const SocialPlatform = ({
       const newPlatforms = selectedPlaforms.filter(
         (item) => item.platform != platform
       );
-      
       if (newPlatforms.length > 0) {
         if (selectedPreview.platform === platform) {
           setSelectedPreview(newPlatforms[0]);

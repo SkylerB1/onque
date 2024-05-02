@@ -43,7 +43,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/forgot-password",
-    element: <ForgotPassword />
+    element: <ForgotPassword />,
   },
   {
     path: "/privacy-policy",
@@ -57,10 +57,6 @@ const router = createBrowserRouter([
     path: "/linkedin",
     element: <LinkedInCallbackPage />,
   },
-  // {
-  //   path: "/setting/iIdentification",
-  //   element: <Identification />,
-  // },
   {
     path: "/planner/calendar",
     element: (
@@ -154,9 +150,9 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: '/404',
-    element: <Error404 />
-  }
+    path: "/404",
+    element: <Error404 />,
+  },
 ]);
 const stripePromise = loadStripe(stripeKey);
 

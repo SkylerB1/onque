@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Card,
@@ -11,16 +11,42 @@ import {
 import {
   PlusIcon,
   ShieldCheckIcon,
-  DocumentDuplicateIcon,
+  TrashIcon,
+  PencilSquareIcon,
 } from "@heroicons/react/24/solid";
 import AddRoleDialog from "./AddRoleDialog";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Loader from "../../../components/loader/Loader";
-
-const RolesAndPermission = () => {
+import { axiosInstance } from "../../../utils/Interceptor";
+import { removeRole } from "../../../redux/features/roleSlice";
+import toast from "react-hot-toast";
+import AlertDialog from "../../../components/dialog/AlertDialog";
+import { DeleteModalError } from "../../../components/common/Images";
+const initial = {
+  name: "",
+  description: "",
+  viewPlanner: false,
+  fullAccessPlanner: false,
+  editBrand: false,
+  schedulePosts: false,
+  publishPosts: false,
+};
+const initialAlert = {
+  open: false,
+  title: "",
+  description: "",
+  alertImgSrc: "",
+  loading: false,
+  btnTitle: "Ok",
+  onSubmit: () => {},
+};
+const RolesAndPermission = ({ collaborators }) => {
   const tableHeaders = ["Role", "Description", "Users", "Action"];
+  const [isEditing, setIsEditing] = useState(false);
+  const [alertDialog, setAlertDialog] = useState(initialAlert);
   const [addRoleDialogOpen, setAddRoleDialogOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [data, setData] = useState(initial);
   const { value: roles, loading } = useSelector((state) => state.roles);
   const rolesData = useMemo(
     () =>
@@ -29,16 +55,89 @@ const RolesAndPermission = () => {
       }),
     [search, roles]
   );
+  const dispatch = useDispatch();
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
   };
+
+  const toggleEditing = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleCloseAddRoleDialog = () => {
+    if (isEditing) {
+      setIsEditing(false);
+    }
+    setData(initial);
+    setAddRoleDialogOpen(false);
+  };
+
+  const handleEditRole = (e, role) => {
+    e.stopPropagation();
+    toggleEditing();
+    setData(role);
+    setAddRoleDialogOpen(true);
+  };
+
+  const checkIsRoleAssigned = (roleId) => {
+    return collaborators.some((item) =>
+      item.brands.some((brand) => {
+        return brand.brandRole.roleId === roleId;
+      })
+    );
+  };
+
+  const handleCloseAlert = () => {
+    setAlertDialog(initialAlert);
+  };
+
+  const checkDeleteRole = (e, roleId, roleName = "") => {
+    e.stopPropagation();
+    const res = checkIsRoleAssigned(roleId);
+    if (res) {
+      setAlertDialog((prev) => ({
+        ...prev,
+        open: true,
+        title: `The ${roleName} can't be deleted`,
+        description:
+          "This role is currently in use, in order to delete it assign a different role to the users that have it assigned to them.",
+        alertImgSrc: DeleteModalError,
+        btnTitle: "Understood",
+        onSubmit: handleCloseAlert,
+      }));
+    } else {
+      setAlertDialog((prev) => ({
+        ...prev,
+        open: true,
+        title: `Are you sure you want to delete the "${roleName}" role?`,
+        description:
+          "The role and all its settings will be deleted and no longer available for assignment to users.",
+        alertImgSrc: DeleteModalError,
+        btnTitle: "Delete",
+        onSubmit: () => handleDeleteRole(roleId),
+      }));
+    }
+  };
+
+  const handleDeleteRole = async (roleId) => {
+    try {
+      setAlertDialog((prev) => ({ ...prev, loading: true }));
+      await axiosInstance.delete(`/user/roles/${roleId}`);
+      dispatch(removeRole(roleId));
+      setAlertDialog((prev) => ({ ...prev, open: false, loading: false }));
+    } catch (err) {
+      setAlertDialog((prev) => ({ ...prev, loading: false }));
+      toast.error("Something went wrong");
+    }
+  };
+
   return (
     <>
-      <div className="mr-52">
+      <div className="xl:mr-52 md:mr-0 sm:mr-0">
         <Card>
           <CardBody>
-            <div className="mb-4 mt-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+            <div className="mb-4 mt-4 flex flex-col gap-2 justify-between md:flex-row md:items-center">
               <div className="w-full">
                 <Input label="Search" value={search} onChange={handleSearch} />
               </div>
@@ -63,6 +162,7 @@ const RolesAndPermission = () => {
                       <th
                         key={index}
                         className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                        colSpan={2}
                       >
                         <Typography
                           variant="small"
@@ -84,10 +184,10 @@ const RolesAndPermission = () => {
                     return (
                       <tr
                         key={row.id}
-                        onClick={() => handleRowClick(row)}
+                        onClick={(e) => handleEditRole(e, row)}
                         style={{ cursor: "pointer" }}
                       >
-                        <td className={classes}>
+                        <td className={classes} colSpan={2}>
                           <div className="flex items-center gap-3">
                             <ShieldCheckIcon
                               className="h-6 w-6"
@@ -104,7 +204,7 @@ const RolesAndPermission = () => {
                             </div>
                           </div>
                         </td>
-                        <td className={classes}>
+                        <td className={classes} colSpan={2}>
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -113,7 +213,7 @@ const RolesAndPermission = () => {
                             {row.description}
                           </Typography>
                         </td>
-                        <td className={classes}>
+                        <td className={classes} colSpan={2}>
                           <Typography
                             variant="small"
                             color="blue-gray"
@@ -122,16 +222,26 @@ const RolesAndPermission = () => {
                             {row.assignedUsersCount}
                           </Typography>
                         </td>
-                        <td className={classes}>
-                          <Tooltip content="clone">
+                        <td className={classes} colSpan={2}>
+                          <Tooltip content="edit">
                             <IconButton
                               variant="text"
-                              onClick={(e) => handleTrashClick(e)}
+                              onClick={(e) => handleEditRole(e, row)}
                             >
-                              <DocumentDuplicateIcon
+                              <PencilSquareIcon
                                 className="h-6 w-6"
                                 color="black"
                               />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip content="delete">
+                            <IconButton
+                              variant="text"
+                              onClick={(e) =>
+                                checkDeleteRole(e, row.id, row.name)
+                              }
+                            >
+                              <TrashIcon className="h-6 w-6" color="black" />
                             </IconButton>
                           </Tooltip>
                         </td>
@@ -151,7 +261,21 @@ const RolesAndPermission = () => {
       </div>
       <AddRoleDialog
         isOpen={addRoleDialogOpen}
-        onClose={() => setAddRoleDialogOpen(false)}
+        data={data}
+        roles={roles}
+        setData={setData}
+        isEditing={isEditing}
+        toggleEditing={toggleEditing}
+        onClose={handleCloseAddRoleDialog}
+      />
+      <AlertDialog
+        open={alertDialog.open}
+        title={alertDialog.title}
+        description={alertDialog.description}
+        alertImgSrc={alertDialog.alertImgSrc}
+        loading={alertDialog.loading}
+        btnTitle={alertDialog.btnTitle}
+        onSubmit={alertDialog.onSubmit}
       />
     </>
   );

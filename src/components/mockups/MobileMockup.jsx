@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 function MobileMockup({ children }) {
   return (
@@ -12,6 +12,6 @@ function MobileMockup({ children }) {
       </div>
     </div>
   );
-};
+}
 
 export default MobileMockup;

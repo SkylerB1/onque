@@ -62,6 +62,17 @@ import Dropzone from "react-dropzone";
 import { useLocalStorage } from "../../utils/LocalStorage.js";
 import UpgradeSubscription from "../modal/UpgradeSubscription.jsx";
 
+const schdulePostBtnLabel = [
+  {
+    label: "Schedule",
+    description: "Save and publish at a later time",
+  },
+  {
+    label: "Publish Now",
+    description: "Publish with current date and time",
+  },
+];
+
 const CreatePostModal = ({
   openModal,
   setModal,
@@ -94,11 +105,14 @@ const CreatePostModal = ({
   const [showAlertModal, setAlertModal] = useState(false);
   const [alertData, setAlertData] = useState({
     header: "",
-    onAccept: function () { },
+    onAccept: function () {},
   });
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
+  const [submitButton, setSubmitButton] = useState("Schedule");
+  const [showPreview, setShowPreview] = useState(false);
+
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
       OFFER: {
@@ -180,6 +194,10 @@ const CreatePostModal = ({
     }),
     [selectedPreview]
   );
+  const showDatePicker = useMemo(
+    () => submitButton !== "Publish Now",
+    [submitButton]
+  );
 
   const handlePlatformPreview = (platform) => {
     setSelectedPreview(platform);
@@ -187,7 +205,7 @@ const CreatePostModal = ({
   const handleView = (index) => {
     setViewMode(index);
   };
-  const handlePostFeed = (index) => { };
+  const handlePostFeed = (index) => {};
 
   const toggleAlertModal = () => {
     setAlertModal(!showAlertModal);
@@ -334,8 +352,8 @@ const CreatePostModal = ({
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
       })),
-      caption: caption,
-      scheduledDate: scheduledDate,
+      caption,
+      scheduledDate,
       files: media,
     };
     if (isEdit && postData) {
@@ -377,7 +395,7 @@ const CreatePostModal = ({
   };
 
   const handleDateChange = async (date) => {
-    date = dayjs(date).startOf('minute');
+    date = dayjs(date).startOf("minute");
     setScheduledDate(date);
   };
 
@@ -394,6 +412,13 @@ const CreatePostModal = ({
   const removeimg = (i) => {
     setFiles(files.filter((item, index) => index !== i));
     setErrors((prev) => prev.filter((item) => item.id !== i));
+  };
+
+  const handleSubmitButton = (value) => {
+    if (value === "Publish Now") {
+      setScheduledDate(dayjs());
+    }
+    setSubmitButton(value);
   };
 
   const handlePreview = useCallback(() => {
@@ -478,7 +503,8 @@ const CreatePostModal = ({
     setErrors([]);
     const canPublish =
       dayjs(scheduledDate).isAfter(dayjs()) ||
-      dayjs(scheduledDate).isSame(dayjs());
+      dayjs(scheduledDate).isSame(dayjs()) ||
+      submitButton === "Publish Now";
     const hasImages = files.some((item) => isContainImage(item));
     const hasVideos = files.some((item) => isContainVideo(item));
     const videosCount = files?.filter((item) => isContainVideo(item)).length;
@@ -964,11 +990,16 @@ const CreatePostModal = ({
     additionalPresets,
     files,
     isDuplicating,
+    submitButton
   ]);
 
   const handlePointerEvent = useCallback(() => {
     return isEdit === "Published" ? true : false;
   }, [isEdit]);
+
+  const togglePreview = () => {
+    setShowPreview(!showPreview);
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -988,12 +1019,13 @@ const CreatePostModal = ({
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
                 {...getRootProps()}
-                className={`${handlePointerEvent() || loading ? "pointer-events-none" : ""
-                  } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
+                className={`${
+                  handlePointerEvent() || loading ? "pointer-events-none" : ""
+                } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />
 
-                <div className="relative bg-white flex flex-1 h-full flex-row rounded-lg">
+                <div className="relative bg-white flex flex-1 flex-row rounded-lg h-[90vh]">
                   {isDragActive && (
                     <div className="absolute bg-blue-600 opacity-50 z-50 w-full h-full flex justify-center items-center">
                       <div className="border border-white border-dashed p-6 px-8 rounded-lg">
@@ -1003,12 +1035,23 @@ const CreatePostModal = ({
                       </div>
                     </div>
                   )}
-                  <div className="flex flex-1 flex-col ">
+                  <div
+                    className={`flex flex-1 flex-col xl:w-5/12 ${
+                      !showPreview ? "" : "hidden"
+                    } `}
+                  >
                     <div className="p-2">
-                      <div>
+                      <div className="flex justify-between">
                         <h1 className="text-xl text-black">
                           {isEdit ? "Edit Post" : "Create Post"}
                         </h1>
+                        <Button
+                          className={`xl:rounded-full text-center flex items-center h-6 2xl:hidden rounded-lg justify-center `}
+                          size="sm"
+                          onClick={togglePreview}
+                        >
+                          Show Preview
+                        </Button>
                       </div>
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
@@ -1022,9 +1065,11 @@ const CreatePostModal = ({
                               return (
                                 <span
                                   key={id}
-                                  className={`${index > 0 ? "ml-2" : "ml-0"
-                                    } flex items-center ${isDuplicating && "opacity-50"
-                                    }`}
+                                  className={`${
+                                    index > 0 ? "ml-2" : "ml-0"
+                                  } flex items-center ${
+                                    isDuplicating && "opacity-50"
+                                  }`}
                                 >
                                   <SocialPlatform
                                     id={item.id}
@@ -1041,25 +1086,25 @@ const CreatePostModal = ({
                             })}
                           </div>
 
-                          < SocialMediaConnection >
-                            {selectedPlaforms?.length !== 9 &&
+                          <SocialMediaConnection>
+                            {selectedPlaforms?.length !== 9 && (
                               <div className="ml-4 cursor-pointer">
                                 <Add width={20} height={15} fill={"#D3D3D3"} />
                               </div>
-                            }
+                            )}
                           </SocialMediaConnection>
                         </div>
 
-                        <DesktopDateTimePicker
-                          defaultValue={
-                            scheduledDate ? dayjs(scheduledDate) : dayjs()
-                          }
-                          disablePast
-                          timeSteps={{ hours: 1, minutes: 1, seconds: 5 }}
-                          onChange={handleDateChange}
-                          className={`${isDuplicating && "opacity-50"}`}
-                          disabled={loading}
-                        />
+                        {showDatePicker && (
+                          <DesktopDateTimePicker
+                            value={scheduledDate}
+                            disablePast
+                            timeSteps={{ hours: 1, minutes: 1, seconds: 5 }}
+                            onChange={handleDateChange}
+                            className={`${isDuplicating && "opacity-50"}`}
+                            disabled={loading}
+                          />
+                        )}
                       </div>
                     </div>
                     <ModalInput
@@ -1084,6 +1129,7 @@ const CreatePostModal = ({
                       additionalPresets={additionalPresets}
                       setAdditionalPresets={setAdditionalPresets}
                       isDuplicating={isDuplicating}
+                      brandId={brandId}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">
@@ -1094,8 +1140,7 @@ const CreatePostModal = ({
                             fontSize: "0.6em",
                           }}
                         >
-                          {" "}
-                          Remember{" "}
+                          Remember
                         </div>
                         <div class="overflow-auto max-h-[72px]">
                           <ol class="list-decimal pl-5 text-xs">
@@ -1118,8 +1163,8 @@ const CreatePostModal = ({
                         <div>
                           <Button
                             variant="filled"
-                            size="lg"
-                            className="bg-transparent hover:bg-blue-700 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+                            size="sm"
+                            className="bg-[#f5f5f5] text-black text-xs font-medium shadow-none normal-case hover:shadow-none"
                             onClick={handleClose}
                           >
                             Cancel
@@ -1139,30 +1184,33 @@ const CreatePostModal = ({
                             <div className="flex flex-row">
                               <Button
                                 onClick={handleDuplicate}
-                                size="lg"
-                                className={`bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 ${loading || errors.length > 0
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : "cursor-pointer"
-                                  }`}
+                                size="md"
+                                className={`${
+                                  loading || errors.length > 0
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                }`}
                               >
                                 {loading ? "Duplicating.." : "Duplicate"}
                               </Button>
                             </div>
                           ) : (
                             <div className="flex flex-row">
-                              <button
+                              <Button
+                                size="md"
                                 onClick={handlePublish}
                                 disabled={loading || errors.length > 0}
-                                className={`bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 ml-2 rounded-r-none ${loading || errors.length > 0
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : ""
-                                  }`}
+                                className={`rounded-r-none normal-case text-xs ${
+                                  loading || errors.length > 0
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : ""
+                                }`}
                               >
-                                {loading ? "Sharing.." : "Schedule Post"}
-                              </button>
+                                {loading ? "Please wait" : submitButton}
+                              </Button>
                               <Menu>
                                 <MenuHandler>
-                                  <button className="bg-blue-600 hover:bg-blue-500 py-2 px-3 rounded-l-none ml-[1px]">
+                                  <button className="bg-black py-2 px-3 rounded-l-none ml-[1px]">
                                     <DownArrow
                                       width={18}
                                       height={18}
@@ -1170,13 +1218,27 @@ const CreatePostModal = ({
                                     />
                                   </button>
                                 </MenuHandler>
-                                <MenuList>
-                                  <MenuItem>
-                                    <Typography>Schedule Post</Typography>
-                                  </MenuItem>
-                                  <MenuItem>
-                                    <Typography>Publish Now</Typography>
-                                  </MenuItem>
+                                <MenuList className="px-0">
+                                  {schdulePostBtnLabel.map((item) => {
+                                    const { label, description } = item;
+                                    return (
+                                      <MenuItem
+                                        className="rounded-none"
+                                        onClick={() =>
+                                          handleSubmitButton(label)
+                                        }
+                                      >
+                                        <div>
+                                          <div className="font-bold uppercase mb-1 text-black">
+                                            {label}
+                                          </div>
+                                          <div className="text-xs text-muted">
+                                            {description}
+                                          </div>
+                                        </div>
+                                      </MenuItem>
+                                    );
+                                  })}
                                 </MenuList>
                               </Menu>
                             </div>
@@ -1186,7 +1248,9 @@ const CreatePostModal = ({
                     </div>
                   </div>
                   <div
-                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 hidden rounded-lg justify-center items-center`}
+                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${
+                      showPreview ? "" : "hidden"
+                    } rounded-lg justify-center items-center`}
                   >
                     <PostPreview
                       selectedPlaforms={selectedPlaforms}
@@ -1196,6 +1260,7 @@ const CreatePostModal = ({
                       handlePlatformPreview={handlePlatformPreview}
                       handlePreview={handlePreview}
                       handleView={handleView}
+                      togglePreview={togglePreview}
                     />
                   </div>
                 </div>
@@ -1234,7 +1299,7 @@ const CreatePostModal = ({
         />
         <TextGeneratorModal open={showAiModal} toggleModal={toggleAiModal} />
       </Dialog>
-    </LocalizationProvider >
+    </LocalizationProvider>
   );
 };
 

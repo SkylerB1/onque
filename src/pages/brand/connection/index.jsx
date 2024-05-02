@@ -159,13 +159,13 @@ const Connection = () => {
     <div className="p-2 sm:ml-10 ">
       <div className="">
         <div className="min-h-[50rem] mt-24 flex mb-2 bg-white rounded-lg shadow-2xl">
-          <div className="w-1/6 border-r-2 ml-8">
+          <div className="xl:w-1/6 xl:border-r-2 xl:ml-8 md:w-2/6 md:ml-2 ">
             <BrandNavber />
           </div>
-          <div className="w-5/6 pb-40">
-            <div className="bg-[#EBEBEB] mr-8 ml-8 mt-8 rounded-lg">
+          <div className="xl:w-5/6 pb-40 md:w-4/6">
+            <div className="bg-[#EBEBEB] mr-8 ml-8 mt-8 rounded-lg ">
               {premium === true ? (
-                <div className="p-4">
+                <div className="p-4 min-w-full">
                   <div className="flex items-center justify-between">
                     <p className="text-xl font-semibold text-[#5E5E5E]">
                       Onboarding a client to OnQue.

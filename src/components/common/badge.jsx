@@ -13,6 +13,7 @@ export function Badges({ platformIconsToShow, status }) {
     <div className='flex flex-1 gap-2'>
       {platformIconsToShow.map((platformIconsToShow, index) =>
         <Badge
+          color='green'
           content={status === "Published" ? <FaCheck className="h-3 w-3 text-white" strokeWidth={0.5} /> : <BsExclamation className="h-3 w-3 text-white" strokeWidth={0.5} />}
           className={statusClasses[status]}
           key={index}

@@ -31,7 +31,7 @@ const Login = () => {
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
   const { getSubscriptions, getCounter } = useAppContext();
-  const [cookies, setCookie] = useCookies(["access_token"]);
+  const [cookies, setCookie] = useCookies(["access_token"]);;
   const [showPassword, setShowPassword] = useState(false);
   const user = localStorage.getItem("user");
   if (user) {
@@ -74,7 +74,6 @@ const Login = () => {
         getSubscriptions();
         setLoading(false);
         navigate("/planner/calendar");
-        toast.success(`Welcome ${data.firstName}  ${data.lastName}`);
       } else {
         const message = response.data.message;
         toast.success(message);

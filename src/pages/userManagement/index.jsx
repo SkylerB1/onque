@@ -11,6 +11,7 @@ import RoleAndPermisson from "./components/RolesAndPermission";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getRoles } from "../../redux/features/roleSlice";
+import { axiosInstance } from "../../utils/Interceptor";
 
 const data = [
   {
@@ -26,20 +27,34 @@ const data = [
 ];
 const UserManagement = () => {
   const { tab } = useParams();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [collaborators, setCollaborators] = useState();
+  const [loadingCollaborator, setLoadingCollaborator] = useState(false);
   const [activeTab, setActiveTab] = React.useState(tab.toLowerCase());
 
   useEffect(() => {
     navigate("/userManagement/" + activeTab);
   }, [activeTab]);
 
+  const getCollaborators = async () => {
+    try {
+      setLoadingCollaborator(true);
+      const res = await axiosInstance.get("/user/collaborators");
+      setCollaborators(res.data);
+      setLoadingCollaborator(false);
+    } catch (err) {
+      setLoadingCollaborator(false);
+    }
+  };
+
   useEffect(() => {
-    dispatch(getRoles())
-  },[])
+    getCollaborators();
+    dispatch(getRoles());
+  }, []);
 
   return (
-    <div className="p-4 sm:ml-64 mt-20">
+    <div className="xl:ml-64 xl:mt-20 xl:block  xl:p-4 md:block md:ml-20 md:p-2 md:mt-20 sm:ml-20  ">
       <div className=" mt-2 mb-2">
         <div className="mt-5 mb-5 text-2xl font-light">Users management</div>
         <Tabs value={activeTab}>
@@ -65,7 +80,12 @@ const UserManagement = () => {
           <TabsBody>
             {data.map((item, index) => (
               <TabPanel key={index} value={item.value}>
-                <item.component />
+                <item.component
+                  collaborators={collaborators}
+                  setCollaborators={setCollaborators}
+                  loadingCollaborator={loadingCollaborator}
+                  setLoadingCollaborator={setLoadingCollaborator}
+                />
               </TabPanel>
             ))}
           </TabsBody>

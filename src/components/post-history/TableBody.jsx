@@ -35,9 +35,7 @@ const TableBody = ({ events }) => {
             <td className="px-6 py-4 text-base text-gray-800 whitespace-nowrap">
               {event.platform}
             </td>
-            <td className="px-6 py-4 text-base text-gray-800 whitespace-nowrap">
-              
-            </td>
+            <td className="px-6 py-4 text-base text-gray-800 whitespace-nowrap"></td>
             <td className="px-6 py-4 text-base font-medium text-right whitespace-nowrap">
               <button
                 className="text-green-500 hover:text-green-700 bg-blue-gray-50 pr-4 pl-4 rounded-xl shadow-md"

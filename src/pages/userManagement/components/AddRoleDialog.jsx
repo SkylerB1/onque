@@ -15,25 +15,28 @@ import CustomSwitch from "../../../components/Input/CustomSwitch";
 import { axiosInstance } from "../../../utils/Interceptor";
 import LoadingButton from "../../../components/button/LoadingButton";
 import { useDispatch } from "react-redux";
-import { addRole } from "../../../redux/features/roleSlice";
+import { addRole, updateRole } from "../../../redux/features/roleSlice";
 import toast from "react-hot-toast";
-const initial = {
-  name: "",
-  description: "",
-  viewPlanner: false,
-  fullAccessPlanner: false,
-  editBrand: false,
-  schedulePosts: false,
-  publishPosts: false,
-};
-const AddRoleDialog = ({ isOpen, onClose }) => {
+
+const AddRoleDialog = ({
+  isOpen,
+  onClose,
+  data,
+  setData,
+  isEditing,
+  toggleEditing,
+  roles,
+}) => {
   const [open, setOpen] = useState(true);
   const [openEditPermissions, setOpenEditPermissions] = useState(true);
   const [openManagementPermissions, setOpenManagementPermissions] =
     useState(true);
-  const [data, setData] = useState(initial);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const isNameAlreadyExist = useMemo(
+    () => !isEditing && roles?.some((item) => item.name === data.name),
+    [roles, data, isEditing]
+  );
   const isSubmitDisabled = useMemo(() => {
     const {
       name,
@@ -69,11 +72,28 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
       if (res.status === 200) {
         dispatch(addRole(res.data));
         setLoading(false);
+        toggleEditing();
         onClose();
       }
     } catch (err) {
       setLoading(false);
-      toast.error("Something went wrong")
+      toast.error("Something went wrong");
+    }
+  };
+
+  const handleEditRole = async () => {
+    try {
+      setLoading(true);
+      const res = await axiosInstance.put(`/user/roles/${data?.id}`, data);
+
+      if (res.status === 200) {
+        dispatch(updateRole({ role: res.data }));
+        setLoading(false);
+        onClose();
+      }
+    } catch (err) {
+      setLoading(false);
+      toast.error("Something went wrong");
     }
   };
 
@@ -82,9 +102,11 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
   };
 
   return (
-    <Dialog open={isOpen} onClose={onClose} size="lg" className="max-h-">
+    <Dialog open={isOpen} onClose={onClose} size="md">
       <DialogHeader className="justify-between my-2">
-        <Typography variant="h5">Add Role</Typography>
+        <Typography variant="h5">
+          {isEditing ? "Update Role" : "Add Role"}
+        </Typography>
         <IconButton
           color="blue-gray"
           size="sm"
@@ -109,14 +131,36 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
         </IconButton>
       </DialogHeader>
       <DialogBody>
-        <div className="overflow-y-auto max-h-[700px]">
+        <div className="overflow-y-auto xl:max-h-[700px] sm:max-h-[500px]">
           <div className="grid sm:grid-cols-2 gap-4 gap-x-10 mb-3">
             <div className="w-100">
               <Input
                 label="RoleName"
                 value={data.name}
+                error={isNameAlreadyExist}
                 onChange={(e) => handleChange("name", e.target.value)}
               />
+              {isNameAlreadyExist && (
+                <Typography
+                  variant="small"
+                  color="red"
+                  className="ml-2 mt-1 text-xs flex items-center gap-1 font-normal"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="-mt-px h-4 w-4"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 01.67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 11-.671-1.34l.041-.022zM12 9a.75.75 0 100-1.5.75.75 0 000 1.5z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  There is already a role with this name
+                </Typography>
+              )}
             </div>
           </div>
           <div className="grid sm:grid-cols-2 gap-4 gap-x-10 mb-8">
@@ -181,6 +225,7 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
 
                     <CustomSwitch
                       identifier="fullAccessPlanner"
+                      checked={data.fullAccessPlanner}
                       onChange={handleChange}
                     />
                   </label>
@@ -234,6 +279,7 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
 
                     <CustomSwitch
                       identifier="editBrand"
+                      checked={data.editBrand}
                       onChange={handleChange}
                     />
                   </label>
@@ -253,8 +299,8 @@ const AddRoleDialog = ({ isOpen, onClose }) => {
           title="Save"
           loading={loading}
           className="w-32 h-10"
-          disabled={isSubmitDisabled}
-          onClick={handleAddRole}
+          disabled={isSubmitDisabled || isNameAlreadyExist}
+          onClick={isEditing ? handleEditRole : handleAddRole}
           color="primary"
           variant="contained"
         />

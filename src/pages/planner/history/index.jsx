@@ -1,3 +1,5 @@
+;
+
 import React, { useEffect, useMemo, useState } from "react";
 import ToggleButton from "../../../components/button/ToggleButton";
 import PlanningNavbar from "../../../components/side-navbar/PlanningNavbar";
@@ -16,7 +18,6 @@ const History = () => {
       validations && (!role || role?.viewPlanner || role?.fullAccessPlanner),
     [role]
   );
-  console.log(viewAccess);
   const [selectedValues, setSelectedValues] = useState([]);
   const [events, setEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,6 +48,12 @@ const History = () => {
 
   const getPostData = async () => {
     try {
+
+      const platformParams = selectedValues.length > 0
+        ? selectedValues.map((value) => `platform=${value.toLowerCase()}`).join('&')
+        : '';
+
+
       const response = await axiosInstance.get(
         `${import.meta.env.VITE_API_URL}/user/getPostData/${
           brand?.id
@@ -100,7 +107,7 @@ const History = () => {
   }
 
   return (
-    <div className="p-4 sm:ml-64">
+    <div className="p-4 sm:ml-20 xl:ml-64">
       <div className="flex flex-1 items-start justify-between mb-2 mt-20">
         <p className="text-lg ml-2">History</p>
         <div className="w-96">

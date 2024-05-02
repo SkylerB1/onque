@@ -3,22 +3,26 @@ import { Button } from "@material-tailwind/react";
 import { planLabel } from "../../../../utils";
 import { getDateFromUnix } from "../../../../utils/dateUtils";
 import CancelSubscription from "../../../../components/modal/CancelSubscription";
+import ResumeSubscription from "../../../../components/modal/ResumeSubscription";
 import { useAppContext } from "../../../../context/AuthContext";
 import { capitalizeFirstLetter } from "../../../../utils/index";
 const CurrentSubscription = ({ subscription, getSubscriptions }) => {
   const [openCancelModal, setCancelModal] = useState(false);
+  const [openResumeModal, setResumeModal] = useState(false);
   const { validations, openChangePlanModel, setOpenChangePlanModel } =
     useAppContext();
 
   const toggleCancelModal = () => {
     setCancelModal(!openCancelModal);
   };
+  const toggleResumeModal = () => {
+    setResumeModal(!openResumeModal);
+  };
 
   const reloadSubscription = () => {
     getSubscriptions();
   };
   useEffect(() => {
-    console.log(subscription);
     reloadSubscription();
   }, []);
   const handleChangePlan = () => {
@@ -55,7 +59,7 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
                       <>
                         <Button
                           variant="text"
-                          onClick={toggleCancelModal}
+                          onClick={toggleResumeModal}
                           className="ml-2 text-white text-xs py-1 px-2 normal-case"
                         >
                           Resume Plan
@@ -117,6 +121,13 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
           open={openCancelModal}
           close={setCancelModal}
           toggleModal={toggleCancelModal}
+          reloadSubscription={reloadSubscription}
+          subscription={subscription}
+        />
+        <ResumeSubscription
+          open={openResumeModal}
+          close={setResumeModal}
+          toggleModal={toggleResumeModal}
           reloadSubscription={reloadSubscription}
           subscription={subscription}
         />

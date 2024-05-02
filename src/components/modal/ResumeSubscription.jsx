@@ -6,13 +6,14 @@ import {
 } from "@material-tailwind/react";
 import React, { useMemo, useState } from "react";
 import Cross from "../../assets/Cross";
+import AcceptIcon from "../../assets/AcceptIcon";
 import { axiosInstance } from "../../utils/Interceptor";
 import LoadingButton from "../button/LoadingButton";
 import { getDateFromUnix } from "../../utils/dateUtils";
 import { toastrSuccess, toastrError } from "../../utils/index";
 import toast, { Toaster } from "react-hot-toast";
 
-const CancelSubscription = ({
+const ResumeSubscription = ({
   open,
   close,
   toggleModal,
@@ -23,12 +24,12 @@ const CancelSubscription = ({
   const [loading, setLoading] = useState(false);
   const isDisabled = useMemo(() => text.length < 10, [text]);
 
-  const handleCancelSubscription = async () => {
+  const handleResumeSubscription = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/user/subscription/cancel", {
-        comments: text,
-      });
+      const res = await axiosInstance.post(
+        "/payments/resume-canceled-subscription"
+      );
 
       let response = res?.data;
       if (response.status === true) {
@@ -43,7 +44,6 @@ const CancelSubscription = ({
     } catch (err) {
       let message = err?.response?.data?.message;
       message && toastrError(message);
-      toggleModal();
       setLoading(false);
     }
   };
@@ -54,31 +54,16 @@ const CancelSubscription = ({
         <Toaster />
         <div className="p-8">
           <div className="flex justify-center mb-6">
-            <Cross width={100} height={100} fill="red" />
+            <AcceptIcon width={100} height={100} />
           </div>
           <div class="text-center flex items-center flex-col">
-            <p class="mb-6 text-2xl text-black">
-              Uh-oh! It looks like you're about to unsubscribe...
-            </p>
+            <p class="mb-6 text-2xl text-black">Resume Subscription</p>
             <div class="text-base">
               <p class="mb-0 text-black">
-                Are you sure you want to cancel the current subscription? You
-                can enjoy all its benefits until{" "}
-                {getDateFromUnix(subscription.end_date)}, then your plan will
-                become Free.
+                Are you certain you wish to reinstate the subscription that was
+                previously canceled? Upon doing so, your benefits will be
+                restored.
               </p>
-            </div>
-
-            <textarea
-              name="message"
-              className="w-full border border-black mt-10 rounded-lg p-6"
-              placeholder="Can you tell us the reason to cancel your subscription? Your feedback will help us to improve our product"
-              rows="3"
-              onChange={(e) => setText(e.target.value)}
-              style={{ height: "150px" }}
-            />
-            <div className="w-full text-xs flex justify-start pl-7">
-              Enter at least 10 characters to cancel your current subscription.
             </div>
           </div>
         </div>
@@ -88,15 +73,14 @@ const CancelSubscription = ({
           Cancel
         </Button>
         <LoadingButton
-          title={"Cancel plan"}
+          title={"Resume plan"}
           loading={loading}
-          disabled={isDisabled}
           className="w-36 h-10"
-          onClick={handleCancelSubscription}
+          onClick={handleResumeSubscription}
         />
       </DialogFooter>
     </Dialog>
   );
 };
 
-export default CancelSubscription;
+export default ResumeSubscription;

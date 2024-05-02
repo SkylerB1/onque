@@ -10,8 +10,10 @@ import LoadingButton from "../../button/LoadingButton";
 
 import PricingPlansCard from "./PricingPlansCard";
 import { axiosInstance } from "../../../utils/Interceptor";
-import { lookupKeys } from "../../../utils";
+import { lookupKeys, toastrSuccess, toastrError } from "../../../utils";
 import { useAppContext } from "../../../context/AuthContext";
+
+import toast, { Toaster } from "react-hot-toast";
 
 export function ChangePlanModel({
   openChangePlanModel,
@@ -38,7 +40,8 @@ export function ChangePlanModel({
       );
 
       if (response.status === 200) {
-        console.log(response.data);
+        console.log(response.data, response.data.message);
+        toastrSuccess(response.data.message);
         handleClose();
         setTimeout(async () => {
           await getSubscriptions();
@@ -47,9 +50,10 @@ export function ChangePlanModel({
       setLoading(false);
     } catch (err) {
       console.log(err);
+      let message = err?.response?.data?.message;
+      message && toastrError(message);
       setLoading(false);
     }
-    alert("Form has been submitted!");
   };
 
   return (

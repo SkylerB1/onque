@@ -56,42 +56,45 @@ const BrandNavber = () => {
   return (
     <div>
       <div className="ml-2 mr-2">
-        <ListItem
-          className={
-            url === "/brand/connection"
-              ? "w-full text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a] "
-              : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
-          }
+        <Link
+          className="w-full text-base text-black hover:text-black"
+          to={"/brand/connection"}
         >
-          <ListItemPrefix>
-            <FaNetworkWired className="h-5 w-5" />
-          </ListItemPrefix>
-          <Link
-            className="w-full text-base text-black"
-            to={"/brand/connection"}
-          >
-            Connection
-          </Link>
-        </ListItem>
-        {brandAccess && (
           <ListItem
             className={
-              url === "/brand/name"
-                ? "w-full text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
-                : " w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
+              url === "/brand/connection"
+                ? "w-full text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a] "
+                : "w-full mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
             }
           >
             <ListItemPrefix>
-              <BsPersonBoundingBox className="h-5 w-5" />
+              <FaNetworkWired className="h-5 w-5" />
             </ListItemPrefix>
-            <Link className="w-full text-base text-black" to={"/brand/name"}>
-              Name and Picture
-            </Link>
+            Connection
           </ListItem>
+        </Link>
+        {brandAccess && (
+          <Link
+            className="w-full text-base text-black hover:text-black"
+            to={"/brand/name"}
+          >
+            <ListItem
+              className={
+                url === "/brand/name"
+                  ? "w-full text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a]"
+                  : " w-full mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
+              }
+            >
+              <ListItemPrefix>
+                <BsPersonBoundingBox className="h-5 w-5" />
+              </ListItemPrefix>
+              Name and Picture
+            </ListItem>
+          </Link>
         )}
         {canDeleteBrand && brandAccess && (
           <ListItem
-            className=" w-[260px] mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
+            className=" w-full mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
             onClick={() => setOpen(true)}
           >
             <ListItemPrefix>

@@ -155,7 +155,6 @@ export default function Header({ children }) {
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           {children}
         </main>
-        <div class="text-center">App version is 1.0</div>
       </div>
 
       <AddModal

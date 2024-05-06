@@ -72,7 +72,6 @@ const AddRoleDialog = ({
       if (res.status === 200) {
         dispatch(addRole(res.data));
         setLoading(false);
-        toggleEditing();
         onClose();
       }
     } catch (err) {

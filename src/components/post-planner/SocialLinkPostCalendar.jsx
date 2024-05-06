@@ -125,7 +125,7 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
 
   return (
     <>
-      <div className="flex my-2">
+      <div className="flex mt-24">
         <div className="flex flex-1 items-start justify-between bg-white rounded-lg">
           <div>
             <div className="mt-10 ml-8 w-full text-[#4A5568]">
@@ -139,7 +139,7 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
               </div>
             </div>
             <div className="flex flex-1 ml-8">
-              <div className=" xl:w-2/6 md:w-full mb-10">
+              <div className=" xl:w-2/6 md:w-full mb-8">
                 <div className="mt-10">
                   {!fullAccess && (
                     <Alert
@@ -160,7 +160,7 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
                   socialMediaList.map((item, index) => {
                     return (
                       <div
-                        className="mt-6 cursor-pointer"
+                        className="mt-5 cursor-pointer"
                         onClick={() => handleMenuItemClick(item.key)}
                         key={index}
                       >

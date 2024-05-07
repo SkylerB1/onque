@@ -291,8 +291,6 @@ const CreatePostModal = ({
   };
 
   const handleClose = () => {
-    setFiles([]);
-    setCaption("");
     setModal(false);
     setIsEdit(null);
     clearPostData();
@@ -383,6 +381,16 @@ const CreatePostModal = ({
       toast.error("Error deleting post");
     }
   };
+
+  const handleCloseAlert = () => {
+     const data = {
+       header: "Your changes will be lost, are you sure?",
+       onAccept: handleClose,
+     };
+
+     setAlertData(data);
+     toggleAlertModal();
+  }
 
   const handleDeleteAlert = () => {
     const data = {
@@ -990,7 +998,7 @@ const CreatePostModal = ({
     additionalPresets,
     files,
     isDuplicating,
-    submitButton
+    submitButton,
   ]);
 
   const handlePointerEvent = useCallback(() => {
@@ -1165,7 +1173,7 @@ const CreatePostModal = ({
                             variant="filled"
                             size="sm"
                             className="bg-[#f5f5f5] text-black text-xs font-medium shadow-none normal-case hover:shadow-none"
-                            onClick={handleClose}
+                            onClick={handleCloseAlert}
                           >
                             Cancel
                           </Button>

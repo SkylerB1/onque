@@ -105,6 +105,7 @@ const PricingPlansCard = ({
 
   const switchDuration = (option) => {
     setSelectedOption(option);
+    setSelectedPlanPeriod(option);
   };
   const handleOptionChange = (selectedPlan) => {
     let selectedPlanName = selectedPlan.key;

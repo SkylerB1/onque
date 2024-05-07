@@ -26,7 +26,7 @@ const CancelSubscription = ({
   const handleCancelSubscription = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/user/subscription/cancel", {
+      const res = await axiosInstance.post("/payments/subscription/cancel", {
         comments: text,
       });
 

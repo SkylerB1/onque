@@ -295,6 +295,12 @@ export const planLabel = {
   enterprise_plan_gbp: "Enterprise Plan - Monthly",
   enterprise_plan_gbp_yearly: "Enterprise Plan - Yearly",
 };
+export const paymentFailedStatuses = [
+  "past_due",
+  "unpaid",
+  "incomplete",
+  "incomplete_expired",
+];
 export const getCurrentPlan = (plan) => {
   let currentPlan, planDuration;
   switch (plan) {

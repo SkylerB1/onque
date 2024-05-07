@@ -5,7 +5,11 @@ import { getDateFromUnix } from "../../../../utils/dateUtils";
 import CancelSubscription from "../../../../components/modal/CancelSubscription";
 import ResumeSubscription from "../../../../components/modal/ResumeSubscription";
 import { useAppContext } from "../../../../context/AuthContext";
-import { capitalizeFirstLetter } from "../../../../utils/index";
+import {
+  capitalizeFirstLetter,
+  paymentFailedStatuses,
+} from "../../../../utils/index";
+
 const CurrentSubscription = ({ subscription, getSubscriptions }) => {
   const [openCancelModal, setCancelModal] = useState(false);
   const [openResumeModal, setResumeModal] = useState(false);
@@ -43,13 +47,17 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
               </span>
             </div>
             <div>
-              <Button
-                variant="outlined"
-                className="text-white text-xs py-1 px-2 gradient-button-dark normal-case"
-                onClick={handleChangePlan}
-              >
-                Change plan
-              </Button>
+              {subscription?.status &&
+                (subscription.status == "trialing" ||
+                  subscription.status == "active") && (
+                  <Button
+                    variant="outlined"
+                    className="text-white text-xs py-1 px-2 gradient-button-dark normal-case"
+                    onClick={handleChangePlan}
+                  >
+                    Change plan
+                  </Button>
+                )}
 
               {subscription?.status &&
                 (subscription.status == "trialing" ||
@@ -102,13 +110,15 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
             <span className="text-black text-base">
               {subscription.cancel_at_period_end == true ? (
                 <>No Next payment</>
+              ) : paymentFailedStatuses.includes(subscription.status) ? (
+                <>Payment Date</>
               ) : (
-                <>Next payment</>
+                <>Next Payment Date</>
               )}
             </span>
             <span className="text-black text-base">
               {subscription.cancel_at_period_end == false &&
-                getDateFromUnix(subscription.billing_cycle_anchor)}
+                getDateFromUnix(subscription.next_payment_attempt)}
             </span>
           </div>
           <div className="flex justify-end">

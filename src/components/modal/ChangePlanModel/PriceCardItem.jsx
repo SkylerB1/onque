@@ -33,16 +33,16 @@ const PriceCardItem = ({
 
             <p className="text-center text-3xl font-bold text-gray-900 dark:text-white">
               from{" "}
-              {setSelectedOption === "monthly"
+              {selectedPlanPeriod === "monthly"
                 ? selectedPlan.monthly_price
                 : selectedPlan.annualy_price}
               GBP{" "}
               <span className="text-xl font-medium text-gray-900">
-                {setSelectedOption === "monthly" ? "Monthly" : "Annually"}
+                {selectedPlanPeriod === "monthly" ? "Monthly" : "Annually"}
               </span>
             </p>
             <p className="text-center mt-2 text-xl font-medium text-gray-900">
-              with {setSelectedOption === "monthly" ? "monthly" : "annualy"}{" "}
+              with {selectedPlanPeriod === "monthly" ? "monthly" : "annualy"}{" "}
               payment
             </p>
           </div>
@@ -72,10 +72,10 @@ const PriceCardItem = ({
             className={`border border-[${color}] rounded-b-2xl p-4 flex flex-1 items-center justify-between`}
           >
             <p>
-              {setSelectedOption === "monthly" ? "Monthly" : "Annually"} price
+              {selectedPlanPeriod === "monthly" ? "Monthly" : "Annually"} price
             </p>
             <p className="text-lg font-bold text-gray-900 dark:text-white">
-              {setSelectedOption === "monthly"
+              {selectedPlanPeriod === "monthly"
                 ? selectedPlan.monthly_price
                 : selectedPlan.annualy_price}
               GBP

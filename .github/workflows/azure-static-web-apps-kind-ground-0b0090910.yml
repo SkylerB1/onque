@@ -33,9 +33,9 @@ jobs:
           output_location: "dist" # Built app content directory - optional
         env:
           VITE_ORIGIN_URL: "https://onqueapp.com"
-          VITE_API_URL: "https://onque-api.azurewebsites.net/api"
+          VITE_API_URL: "https://api.onqueapp.com/api"
           VITE_CALLBACK_URL: "https://onqueapp.com/brands/connect"
-          VITE_POST_IMG_BASE_PATH: "https://onque-api.azurewebsites.net/assets/"
+          VITE_POST_IMG_BASE_PATH: "https://api.onqueapp.com/assets/"
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:

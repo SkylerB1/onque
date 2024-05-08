@@ -9,10 +9,12 @@ import {
 import Account from "./settingOption/Account";
 import Access from "./settingOption/Access";
 import Price from "./settingOption/Price";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 
 const Setting = () => {
   const { tab } = useParams();
+  // Use useLocation hook to access the current URL location
+  const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState(tab.toLowerCase());
   const data = [
@@ -34,10 +36,23 @@ const Setting = () => {
   ];
 
   useEffect(() => {
-    navigate('/setting/'+activeTab);
-  },[activeTab]);
+    // navigate("/setting/" + activeTab);
+    console.log(activeTab);
+  }, [activeTab]);
 
+  useEffect(() => {
+    // Extract the slug from the pathname of the location object
+    const slug = location.pathname.split("/").pop();
 
+    // Do something with the slug (e.g., log it)
+    console.log("Slug changed:", slug, activeTab);
+    setActiveTab(slug);
+  }, [location]); // Trigger effect when location changes
+
+  const handleTabChanged = (value) => {
+    setActiveTab(value);
+    navigate("/setting/" + value);
+  };
   return (
     <div className="p-4 xl:mx-72 mt-20 md:mx-32">
       <div className=" mt-2 mb-2">
@@ -54,7 +69,7 @@ const Setting = () => {
               <Tab
                 key={value}
                 value={value}
-                onClick={() => setActiveTab(value)}
+                onClick={() => handleTabChanged(value)}
                 className={activeTab === value ? "text-gray-900" : ""}
               >
                 {label}

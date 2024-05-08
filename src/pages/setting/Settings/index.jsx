@@ -17,6 +17,7 @@ const Setting = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = React.useState(tab.toLowerCase());
+  const [tabsKey, setTabsKey] = React.useState(1);
   const data = [
     {
       label: "Account",
@@ -36,28 +37,25 @@ const Setting = () => {
   ];
 
   useEffect(() => {
-    // navigate("/setting/" + activeTab);
+    navigate("/setting/" + activeTab);
     console.log(activeTab);
   }, [activeTab]);
 
   useEffect(() => {
     // Extract the slug from the pathname of the location object
     const slug = location.pathname.split("/").pop();
-
     // Do something with the slug (e.g., log it)
-    console.log("Slug changed:", slug, activeTab);
-    setActiveTab(slug);
+    if (slug != activeTab && slug !== undefined) {
+      setActiveTab(slug);
+    }
+    setTabsKey(Math.random());
   }, [location]); // Trigger effect when location changes
 
-  const handleTabChanged = (value) => {
-    setActiveTab(value);
-    navigate("/setting/" + value);
-  };
   return (
     <div className="p-4 xl:mx-72 mt-20 md:mx-32">
       <div className=" mt-2 mb-2">
         <div className="mt-5 mb-5 text-2xl font-light">Setting</div>
-        <Tabs value={activeTab}>
+        <Tabs value={activeTab} key={tabsKey}>
           <TabsHeader
             className="w-[30rem] rounded-none border-b border-blue-gray-10 bg-transparent p-0"
             indicatorProps={{
@@ -69,7 +67,7 @@ const Setting = () => {
               <Tab
                 key={value}
                 value={value}
-                onClick={() => handleTabChanged(value)}
+                onClick={() => setActiveTab(value)}
                 className={activeTab === value ? "text-gray-900" : ""}
               >
                 {label}

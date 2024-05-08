@@ -18,6 +18,8 @@ import LoadingButton from "../../../../../components/button/LoadingButton";
 import toast from "react-hot-toast";
 import InfoIcon from "../../../../../assets/InfoIcon";
 import { lookupKeys } from "../../../../../utils";
+import { Toaster } from "react-hot-toast";
+import { toastrSuccess, toastrError } from "../../../../../utils/index";
 const initial = {
   code: "",
   isValid: false,
@@ -60,7 +62,7 @@ const ChangePlanModel = ({
         isValid: false,
         label: err?.response?.data?.message || "Invalid code",
       });
-      toast.error(err?.response?.data?.message || "Invalid code");
+      toastrError(err?.response?.data?.message || "Invalid code");
       setLoading(false);
     }
   };
@@ -87,6 +89,7 @@ const ChangePlanModel = ({
   return (
     <Dialog size="xs" open={open} handler={handler}>
       <DialogBody>
+        <Toaster />
         <div>
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center">
@@ -187,6 +190,7 @@ const ChangePlanModel = ({
                 />
               </div>
             )}
+
             <div className="flex flex-row justify-end">
               <Button
                 variant="text"

@@ -16,7 +16,10 @@ const ClientDetails = () => {
   const { getConnections } = useConnections();
   const { subscription, validations } = useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
-  const brandAccess = useMemo(() => validations && (!role || role?.editBrand), [role]);
+  const brandAccess = useMemo(
+    () => validations && (!role || role?.editBrand),
+    [role]
+  );
   const isSubscribed = Boolean(subscription) || false;
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
@@ -39,7 +42,7 @@ const ClientDetails = () => {
         { data: brandData }
       );
       handleGetClients();
-      toast.success("Client name updated seccessfully");
+      toast.success("Client name updated successfully");
     } catch (error) {
       console.log(error);
     }

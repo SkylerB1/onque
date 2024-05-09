@@ -4,7 +4,6 @@ import {
   Typography,
   Button,
   IconButton,
-  Card,
   Collapse,
 } from "@material-tailwind/react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -18,7 +17,7 @@ import { ChangePlanModel } from "../modal/ChangePlanModel/Index";
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { FaLink } from "react-icons/fa6";
-import { CalendarDaysIcon, LinkIcon } from "@heroicons/react/24/solid";
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
@@ -108,7 +107,7 @@ export default function Header({ children }) {
                 <Button
                   variant="gradient"
                   size="sm"
-                  className="hidden lg:inline-block gradient-button-solid normal-case text-sm md:text-base mr-16"
+                  className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-base mr-16"
                   onClick={() => navigate("/setting/price")}
                 >
                   Upgrade to Premium

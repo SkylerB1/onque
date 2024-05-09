@@ -10,11 +10,7 @@ import InstaReel from "../../assets/InstaReel";
 import Grid from "../../assets/Grid";
 import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
-import {
-  Card,
-  CardBody,
-  Button,
-} from "@material-tailwind/react";
+import { Card, CardBody, Button } from "@material-tailwind/react";
 import { IoMdAdd } from "react-icons/io";
 
 const PostCalendar = (props) => {
@@ -99,7 +95,9 @@ const PostCalendar = (props) => {
 
   const clearPostData = () => {
     setPostData(null);
+    setCaption("");
     setFiles([]);
+    setIsEdit(false);
   };
 
   return (

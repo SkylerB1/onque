@@ -91,7 +91,7 @@ const CreatePostModal = ({
   setFiles,
 }) => {
   const isDuplicating = useMemo(
-    () => isEdit === "Published" ?? false,
+    () => isEdit === "Published" || false,
     [isEdit]
   );
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
@@ -383,14 +383,14 @@ const CreatePostModal = ({
   };
 
   const handleCloseAlert = () => {
-     const data = {
-       header: "Your changes will be lost, are you sure?",
-       onAccept: handleClose,
-     };
+    const data = {
+      header: "Your changes will be lost, are you sure?",
+      onAccept: handleClose,
+    };
 
-     setAlertData(data);
-     toggleAlertModal();
-  }
+    setAlertData(data);
+    toggleAlertModal();
+  };
 
   const handleDeleteAlert = () => {
     const data = {

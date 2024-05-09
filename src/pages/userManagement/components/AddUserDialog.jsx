@@ -93,6 +93,11 @@ const AddUserDialog = ({
     toggleUserDialog();
     onClose();
   };
+  useEffect(() => {
+    if (isOpen == false) {
+      setEmail("");
+    }
+  }, [isOpen]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} maxWidth="xs">

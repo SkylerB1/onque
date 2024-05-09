@@ -49,7 +49,7 @@ const AddRoleDialog = ({
 
     return (
       name === "" ||
-      description === "" ||
+      // description === "" ||
       (!viewPlanner && !fullAccessPlanner && !schedulePosts && !editBrand)
     );
   }, [data]);

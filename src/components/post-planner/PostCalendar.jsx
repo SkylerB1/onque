@@ -46,7 +46,7 @@ const PostCalendar = (props) => {
     setPostData(data);
     setCaption(title);
     setFiles((prev) => [...prev, ...files]);
-    setScheduledDate(postdate);
+    setScheduledDate(dayjs(postdate));
     handleModal();
   };
 

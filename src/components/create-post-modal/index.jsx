@@ -112,7 +112,6 @@ const CreatePostModal = ({
   const [editIndex, setEditIndex] = useState(0);
   const [submitButton, setSubmitButton] = useState("Schedule");
   const [showPreview, setShowPreview] = useState(false);
-
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
       OFFER: {

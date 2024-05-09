@@ -204,7 +204,7 @@ function TwitterMobile({ files, captions, viewMode, screenName }) {
           </div>
         </div>
 
-        <div className="flex w-full flex-col justify-between ml-2  ">
+        <div className="flex w-full flex-col justify-between ml-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <h1 className="text-sm font-bold leading-none drop-shadow-xl shadow-black text-black">
@@ -219,8 +219,12 @@ function TwitterMobile({ files, captions, viewMode, screenName }) {
             )}
           </div>
 
-          <p className=" text-sm mt-1 whitespace-pre-line">{captions}</p>
-
+          <p className=" text-sm my-1 whitespace-pre-line h-14 overflow-hidden">
+            {captions}
+          </p>
+          {captions?.length > 94 && (
+            <span className="text-sm text-blue-600">Show more</span>
+          )}
           <div
             className={`relative w-full h-full ${
               viewMode ? "max-h-[400px]" : "max-h-[250px]"

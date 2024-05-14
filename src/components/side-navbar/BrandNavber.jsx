@@ -110,7 +110,7 @@ const BrandNavber = () => {
         title={`Are you sure that you want to delete ${brandName}?`}
         body={`If you continue you will delete this brand (${brandName}) from your account with social networks connections`}
         handleDelete={handleDeleteClient}
-        id={brandId}
+        data={brandId}
         brandName={brandName}
       />
     </div>

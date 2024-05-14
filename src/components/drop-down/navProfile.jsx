@@ -33,7 +33,7 @@ const NavProfile = ({ clientData, setOpen }) => {
     setIsDropdownOpen(false);
   };
   const handlerLogOut = () => {
-    localStorage.removeItem("user");
+    localStorage.clear();
     removeCookie("access_token");
     navigate("/login");
     const message = "User logout successfully";

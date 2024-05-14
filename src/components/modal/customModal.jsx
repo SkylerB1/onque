@@ -12,7 +12,7 @@ export default function CustomModal({
   open,
   Close,
   handleDelete,
-  id,
+  data,
   title,
   body,
 }) {
@@ -25,7 +25,7 @@ export default function CustomModal({
         <Typography className="text-base">{body}</Typography>
       </DialogBody>
       <DialogFooter className="flex flex-row justify-center">
-        <Button size="sm" onClick={() => handleDelete(id)}>
+        <Button size="sm" onClick={() => handleDelete(data)}>
           ACCEPT
         </Button>
         <Button size="sm" variant="outlined" className="ml-2" onClick={Close}>

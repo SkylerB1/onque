@@ -440,3 +440,8 @@ export function toastrSuccess(message) {
 export function toastrError(message) {
   toast.error(message, { duration: 4000, position: "bottom-center" });
 }
+
+export function toFixedNumber(value) {
+  if (!value) return "";
+  return value.toFixed(2);
+}

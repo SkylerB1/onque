@@ -4,6 +4,7 @@ import { planLabel } from "../../../../utils";
 import { getDateFromUnix } from "../../../../utils/dateUtils";
 import CancelSubscription from "../../../../components/modal/CancelSubscription";
 import ResumeSubscription from "../../../../components/modal/ResumeSubscription";
+
 import { useAppContext } from "../../../../context/AuthContext";
 import {
   capitalizeFirstLetter,
@@ -159,6 +160,7 @@ const CurrentSubscription = ({
           reloadSubscription={reloadSubscription}
           subscription={subscription}
         />
+
         <ResumeSubscription
           open={openResumeModal}
           close={setResumeModal}

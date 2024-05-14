@@ -30,7 +30,6 @@ export function AppContextProvider({ children }) {
   const dispatch = useDispatch();
 
   const [openChangePlanModel, setOpenChangePlanModel] = React.useState(false);
-
   const getCounter = async (brandId) => {
     try {
       const res = await axiosInstance.get(`/user/counter?brandId=${brandId}`);

@@ -22,8 +22,12 @@ import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 export default function Header({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { subscription, openChangePlanModel, setOpenChangePlanModel } =
-    useAppContext();
+  const {
+    subscription,
+    getSubscriptions,
+    openChangePlanModel,
+    setOpenChangePlanModel,
+  } = useAppContext();
   const isSubscribed = Boolean(subscription) || false;
   const [openNav, setOpenNav] = React.useState(false);
   const [opens, setOpen] = useState(false);

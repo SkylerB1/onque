@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Dialog,
@@ -12,7 +12,7 @@ import PricingPlansCard from "./PricingPlansCard";
 import { axiosInstance } from "../../../utils/Interceptor";
 import { lookupKeys, toastrSuccess, toastrError } from "../../../utils";
 import { useAppContext } from "../../../context/AuthContext";
-
+import { plansList, findPlan } from "../../../utils/index";
 import toast, { Toaster } from "react-hot-toast";
 
 export function ChangePlanModel({
@@ -26,6 +26,7 @@ export function ChangePlanModel({
 
   const [selectedPlanName, setSelectedPlanName] = useState(null);
   const [selectedPlanPeriod, setSelectedPlanPeriod] = useState(null);
+  const [selectedPlanPrice, setSelectedPlanPrice] = useState(null);
 
   const handleSubmit = async () => {
     try {
@@ -55,6 +56,18 @@ export function ChangePlanModel({
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (!selectedPlanName) return;
+    let plan = findPlan(selectedPlanName);
+    if (plan) {
+      let planPrice =
+        selectedPlanPeriod?.toLocaleLowerCase() ==
+        plan.period?.toLocaleLowerCase()
+          ? plan.monthly_price
+          : plan.annualy_price;
+      setSelectedPlanPrice(planPrice);
+    }
+  }, [selectedPlanName, selectedPlanPeriod]);
 
   return (
     <>
@@ -70,7 +83,12 @@ export function ChangePlanModel({
           />
         </DialogBody>
         <hr />
+
         <DialogFooter>
+          <div className="text-black-800 mx-4 justify-start ml-auto flex items-center">
+            <span>Final Price</span>:{" "}
+            <span className="font-bold">{selectedPlanPrice} GBP</span>
+          </div>
           <LoadingButton
             loading={loading}
             title={"Continue"}

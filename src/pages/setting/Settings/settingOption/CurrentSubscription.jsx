@@ -9,8 +9,14 @@ import {
   capitalizeFirstLetter,
   paymentFailedStatuses,
 } from "../../../../utils/index";
-
-const CurrentSubscription = ({ subscription, getSubscriptions }) => {
+import LoadingButton from "../../../../components/button/LoadingButton";
+const CurrentSubscription = ({
+  subscription,
+  getSubscriptions,
+  handleResumeSubscription,
+  loadingReactivate,
+  setLoadingReactivate,
+}) => {
   const [openCancelModal, setCancelModal] = useState(false);
   const [openResumeModal, setResumeModal] = useState(false);
   const { validations, openChangePlanModel, setOpenChangePlanModel } =
@@ -42,12 +48,24 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
           <div className="flex flex-1 flex-row justify-between">
             <div className="flex items-center">
               <span className="pr-2 text-white text-sm">Current plan</span>
-              <span className="font-bold text-[10px] text-[#1e2326] v-chip bg-[#52c79f] rounded-xl h-4">
-                {capitalizeFirstLetter(subscription?.status)}
-              </span>
+
+              {subscription.cancel_at_period_end == true ? (
+                <>
+                  <span className="font-bold text-[10px] text-[#1e2326] v-chip bg-yellow-600 rounded-xl h-4">
+                    Cancelled
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="font-bold text-[10px] text-[#1e2326] v-chip bg-[#52c79f] rounded-xl h-4">
+                    {capitalizeFirstLetter(subscription?.status)}
+                  </span>
+                </>
+              )}
             </div>
             <div>
               {subscription?.status &&
+                subscription.cancel_at_period_end != true &&
                 (subscription.status == "trialing" ||
                   subscription.status == "active") && (
                   <Button
@@ -65,13 +83,19 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
                   <>
                     {subscription.cancel_at_period_end == true ? (
                       <>
-                        <Button
+                        {/* <Button
                           variant="text"
                           onClick={toggleResumeModal}
                           className="ml-2 text-white text-xs py-1 px-2 normal-case"
                         >
-                          Resume Plan
-                        </Button>
+                          Reactivate Plan
+                        </Button> */}
+                        <LoadingButton
+                          title={"Reactivate Plan"}
+                          loading={loadingReactivate}
+                          className="normal-case ml-5 w-30 whitespace-nowrap"
+                          onClick={handleResumeSubscription}
+                        />
                       </>
                     ) : (
                       <>
@@ -109,7 +133,7 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
           <div className="gap-3 flex justify-between flex-grow-0 items-center mb-10">
             <span className="text-black text-base">
               {subscription.cancel_at_period_end == true ? (
-                <>No Next payment</>
+                <>Expiration</>
               ) : paymentFailedStatuses.includes(subscription.status) ? (
                 <>Payment Date</>
               ) : (
@@ -117,8 +141,9 @@ const CurrentSubscription = ({ subscription, getSubscriptions }) => {
               )}
             </span>
             <span className="text-black text-base">
-              {subscription.cancel_at_period_end == false &&
-                getDateFromUnix(subscription.next_payment_attempt)}
+              {subscription.cancel_at_period_end == false
+                ? getDateFromUnix(subscription.next_payment_attempt)
+                : getDateFromUnix(subscription.end_date)}
             </span>
           </div>
           <div className="flex justify-end">

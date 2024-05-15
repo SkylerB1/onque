@@ -1,12 +1,9 @@
-import React, { useState, useEffect, Suspense, lazy } from "react";
+import React, { useState, useEffect } from "react";
 import PaymentHistoryTable from "./Premium/PaymentHistoryTable";
-const CurrentSubscription = lazy(() => import("./CurrentSubscription"));
-const SubscriptionPlans = lazy(() => import("./SubscriptionPlans"));
-import { ColorRing } from "react-loader-spinner";
 import { useAppContext } from "../../../../context/AuthContext";
 import Loader from "../../../../components/loader/Loader";
-import { Alert } from "@material-tailwind/react";
-import { Button } from "@material-tailwind/react";
+import SubscriptionPlans from "./SubscriptionPlans";
+import CurrentSubscription from "./CurrentSubscription";
 import LoadingButton from "../../../../components/button/LoadingButton";
 import { toastrSuccess, toastrError } from "../../../../utils/index";
 import { axiosInstance } from "../../../../utils/Interceptor";
@@ -95,7 +92,6 @@ const Price = () => {
           </div>
         </>
       )}
-      <Suspense fallback={<Loader />}>
         {subscriptionId ? (
           <CurrentSubscription
             subscription={subscription}
@@ -108,8 +104,7 @@ const Price = () => {
           <SubscriptionPlans />
         )}
 
-        <PaymentHistoryTable />
-      </Suspense>
+      <PaymentHistoryTable />
     </>
   );
 };

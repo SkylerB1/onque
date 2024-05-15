@@ -84,6 +84,7 @@ const UserManagement = () => {
                   collaborators={collaborators}
                   setCollaborators={setCollaborators}
                   loadingCollaborator={loadingCollaborator}
+                  getCollaborators={getCollaborators}
                   setLoadingCollaborator={setLoadingCollaborator}
                 />
               </TabPanel>

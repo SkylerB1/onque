@@ -9,6 +9,7 @@ import {
   Input,
   Typography,
   Alert,
+  Spinner,
 } from "@material-tailwind/react";
 import { validateEmail } from "../../../utils";
 import { axiosInstance } from "../../../utils/Interceptor";
@@ -22,8 +23,10 @@ const AddUserDialog = ({
   setSelectedUser,
   toggleUserDialog,
 }) => {
+  console.log({ collaborators });
   const [email, setEmail] = useState("");
   const userDetail = useSelector((state) => state.user.value);
+  const [loading, setLoading] = useState(false);
   const isValidEmail = useMemo(() => Boolean(validateEmail(email)), [email]);
   const [user, setUser] = useState({
     isValid: false,
@@ -53,6 +56,7 @@ const AddUserDialog = ({
 
   const checkUser = async (email) => {
     try {
+      setLoading(true);
       const res = await axiosInstance.get(`/user/isValid?email=${email}`);
       if (res.status === 200) {
         const existingCollaborator = collaborators?.some(
@@ -75,6 +79,7 @@ const AddUserDialog = ({
             message: "",
           }));
         }
+        setLoading(false);
       }
     } catch (err) {
       if (err?.response?.status === 404) {
@@ -86,6 +91,7 @@ const AddUserDialog = ({
         });
         setSelectedUser((prev) => ({ ...prev, email }));
       }
+      setLoading(false);
     }
   };
 
@@ -138,7 +144,12 @@ const AddUserDialog = ({
           error={!isValidEmail}
           onChange={handleEmailChange}
         />
-        {isValidEmail && user?.showMessage && (
+        {loading && (
+          <div className="flex flex-row justify-center mt-2">
+            <Spinner className="w-10 h-10"/>
+          </div>
+        )}
+        {!loading && isValidEmail && user?.showMessage && (
           <Alert
             className="bg-[#3b82f61a] flex items-center mt-4"
             icon={<InfoIcon width={20} height={20} fill={"#2196f3"} />}
@@ -150,7 +161,7 @@ const AddUserDialog = ({
       <DialogFooter>
         <Button
           type="submit"
-          disabled={!user.isValid}
+          disabled={!user.isValid || loading}
           onClick={handleContinue}
           color="primary"
           variant="contained"

@@ -19,10 +19,8 @@ import toast, { Toaster } from "react-hot-toast";
 
 const ChangePlanStep2 = ({
   open,
-  close,
   toggleModal,
   subscription,
-  reloadSubscription,
   invoiceData,
   selectedPlanName,
   selectedPlanPeriod,
@@ -30,38 +28,7 @@ const ChangePlanStep2 = ({
   selectedPlanDetails,
   handleSubmit,
   loading,
-  setLoading,
 }) => {
-  const [text, setText] = useState("");
-
-  const isDisabled = useMemo(() => text.length < 10, [text]);
-
-  let stripeCurrentPlanPrice = 0;
-  const handleCancelSubscription = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.post("/payments/subscription/cancel", {
-        comments: text,
-      });
-
-      let response = res?.data;
-      if (response.status === true) {
-        toastrSuccess(response?.message);
-      } else {
-        toastrError(response?.message);
-      }
-      toggleModal();
-      reloadSubscription();
-      setLoading(false);
-      close(false);
-    } catch (err) {
-      let message = err?.response?.data?.message;
-      message && toastrError(message);
-      toggleModal();
-      setLoading(false);
-    }
-  };
-
   return (
     <Dialog size="sm" open={open} onClose={toggleModal}>
       <DialogBody className="max-h-[700px] overflow-auto">
@@ -96,50 +63,69 @@ const ChangePlanStep2 = ({
             <hr className="mb-5" />
             {subscription?.status == "active" && (
               <>
-                {invoiceData &&
-                  invoiceData?.invoiceDetailsObject?.map((value, key) => {
-                    // if (key == invoiceData.invoiceDetailsObject.length - 1) {
-                    //   return null;
-                    // }
-                    return (
+                {invoiceData && (
+                  <>
+                    {invoiceData?.isPlanUpgrade == false ? (
                       <>
-                        <div className="flex justify-between mb-4">
-                          <div className="flex-2 pr-4">
-                            <p className="text-gray-600 mb-2">
-                              {value.description}:
-                            </p>
-                          </div>
-                          <div className="flex-2 pl-4">
-                            <p className="font-bold">{value.amount} GBP</p>
-                          </div>
-                        </div>
+                        You are downgrading the Plan. It will be effective in
+                        next billing cycle.{" "}
                       </>
-                    );
-                  })}
-                <div className="flex justify-between mb-4">
-                  <div className="flex-2 pr-4">
-                    <p className="text-gray-600 mb-2">Subtotal</p>
-                  </div>
-                  <div className="flex-2 pl-4">
-                    <p className="font-bold">
-                      {/* {invoiceData?.subtotal}
-                  <br />
-                  {selectedPlanPrice} */}
-                      <br />
-                      {toFixedNumber(invoiceData?.subtotal)} GBP
-                    </p>
-                  </div>
-                </div>
-                <div className="flex justify-between mb-4">
-                  <div className="flex-2 pr-4">
-                    <p className="text-gray-600 mb-2">Total</p>
-                  </div>
-                  <div className="flex-2 pl-4">
-                    <p className="font-bold">
-                      {toFixedNumber(invoiceData?.total)} GBP
-                    </p>
-                  </div>
-                </div>
+                    ) : (
+                      <>
+                        {invoiceData?.invoiceDetailsObject?.map(
+                          (value, key) => {
+                            // if (key == invoiceData.invoiceDetailsObject.length - 1) {
+                            //   return null;
+                            // }
+                            return (
+                              <>
+                                <div className="flex justify-between mb-4">
+                                  <div className="flex-2 pr-4">
+                                    <p className="text-gray-600 mb-2">
+                                      {value.description}:
+                                    </p>
+                                  </div>
+                                  <div className="flex-2 pl-4">
+                                    <p className="font-bold">
+                                      {value.amount} GBP
+                                    </p>
+                                  </div>
+                                </div>
+                              </>
+                            );
+                          }
+                        )}
+                      </>
+                    )}
+                  </>
+                )}
+                {invoiceData?.isPlanUpgrade === true && (
+                  <>
+                    {/* Subtotal Section */}
+                    <div className="flex justify-between mb-4">
+                      <div className="flex-2 pr-4">
+                        <p className="text-gray-600 mb-2">Subtotal</p>
+                      </div>
+                      <div className="flex-2 pl-4">
+                        <p className="font-bold">
+                          <br />
+                          {toFixedNumber(invoiceData?.subtotal)} GBP
+                        </p>
+                      </div>
+                    </div>
+                    {/* Total section */}
+                    <div className="flex justify-between mb-4">
+                      <div className="flex-2 pr-4">
+                        <p className="text-gray-600 mb-2">Total</p>
+                      </div>
+                      <div className="flex-2 pl-4">
+                        <p className="font-bold">
+                          {toFixedNumber(invoiceData?.total)} GBP
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
             {subscription?.status == "trialing" && (

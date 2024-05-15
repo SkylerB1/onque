@@ -16,7 +16,8 @@ const CurrentSubscription = ({
   getSubscriptions,
   handleResumeSubscription,
   loadingReactivate,
-  setLoadingReactivate,
+  handleKeepCurrentPlan,
+  loadingKeepCurrentPlan,
 }) => {
   const [openCancelModal, setCancelModal] = useState(false);
   const [openResumeModal, setResumeModal] = useState(false);
@@ -82,31 +83,37 @@ const CurrentSubscription = ({
                 (subscription.status == "trialing" ||
                   subscription.status == "active") && (
                   <>
-                    {subscription.cancel_at_period_end == true ? (
+                    {subscription?.subscriptionScheduledId != null ? (
                       <>
-                        {/* <Button
-                          variant="text"
-                          onClick={toggleResumeModal}
-                          className="ml-2 text-white text-xs py-1 px-2 normal-case"
-                        >
-                          Reactivate Plan
-                        </Button> */}
                         <LoadingButton
                           title={"Reactivate Plan"}
-                          loading={loadingReactivate}
+                          loading={loadingKeepCurrentPlan}
                           className="normal-case ml-5 w-30 whitespace-nowrap"
-                          onClick={handleResumeSubscription}
+                          onClick={handleKeepCurrentPlan}
                         />
                       </>
                     ) : (
                       <>
-                        <Button
-                          variant="text"
-                          onClick={toggleCancelModal}
-                          className="ml-2 text-white text-xs py-1 px-2 normal-case"
-                        >
-                          Cancel Plan
-                        </Button>
+                        {subscription.cancel_at_period_end == true ? (
+                          <>
+                            <LoadingButton
+                              title={"Reactivate Plan"}
+                              loading={loadingReactivate}
+                              className="normal-case ml-5 w-30 whitespace-nowrap"
+                              onClick={handleResumeSubscription}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              variant="text"
+                              onClick={toggleCancelModal}
+                              className="ml-2 text-white text-xs py-1 px-2 normal-case"
+                            >
+                              Cancel Plan
+                            </Button>
+                          </>
+                        )}
                       </>
                     )}
                   </>
@@ -133,23 +140,40 @@ const CurrentSubscription = ({
         >
           <div className="gap-3 flex justify-between flex-grow-0 items-center mb-10">
             <span className="text-black text-base">
-              {subscription.cancel_at_period_end == true ? (
-                <>Expiration</>
-              ) : paymentFailedStatuses.includes(subscription.status) ? (
-                <>Payment Date</>
+              {subscription?.subscriptionScheduledId != null ? (
+                <>New Plan Active At</>
               ) : (
-                <>Next Payment Date</>
+                <>
+                  {subscription.cancel_at_period_end == true ? (
+                    <>Expiration</>
+                  ) : paymentFailedStatuses.includes(subscription.status) ? (
+                    <>Payment Date</>
+                  ) : (
+                    <>Next Payment Date</>
+                  )}
+                </>
               )}
             </span>
             <span className="text-black text-base">
-              {subscription.cancel_at_period_end == false
-                ? getDateFromUnix(subscription.next_payment_attempt)
-                : getDateFromUnix(subscription.end_date)}
+              {subscription?.subscriptionScheduledId != null ? (
+                <>{getDateFromUnix(subscription.scheduleActivationDate)}</>
+              ) : (
+                <>
+                  {subscription.cancel_at_period_end == false
+                    ? getDateFromUnix(subscription.next_payment_attempt)
+                    : getDateFromUnix(subscription.end_date)}
+                </>
+              )}
             </span>
           </div>
           <div className="flex justify-end">
             <strong className="text-black text-3xl leading-none font-bold">
-              {subscription.plan.price} GBP
+              {subscription?.subscriptionScheduledId != null ? (
+                <>{subscription.scheduledPlanInfo.price}</>
+              ) : (
+                <>{subscription.plan.price}</>
+              )}{" "}
+              GBP
             </strong>
           </div>
         </div>

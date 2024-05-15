@@ -52,7 +52,7 @@ export function ChangePlanModel({
       );
 
       if (response.status === 200) {
-        console.log(response);
+        console.log(response.data.data);
         setUpcomingInvoiceData(response.data.data);
         handleClose();
         setChangePlanStep2Modal(true);
@@ -60,7 +60,7 @@ export function ChangePlanModel({
       setLoading(false);
     } catch (err) {
       console.log(err);
-      let message = err?.response?.data?.message;
+      let message = err?.response?.data?.msg;
       message && toastrError(message);
       setLoading(false);
     }
@@ -113,6 +113,7 @@ export function ChangePlanModel({
       <Dialog size="xl" open={openChangePlanModel} handler={handleOpen}>
         <DialogHeader>Change Plan</DialogHeader>
         <hr />
+        <Toaster />
         <DialogBody className="p-0">
           <PricingPlansCard
             selectedPlanName={selectedPlanName}

@@ -179,7 +179,12 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection } = useAppContext();
+  const { broadcastConnection, validations } = useAppContext();
+  const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const editAccess = useMemo(
+    () => validations && (!role || role?.fullAccessPlanner),
+    [role]
+  );
   const platformComponentMap = useMemo(
     () => ({
       [FacebookPagePlatform]: GetFacebookComponent,
@@ -1178,7 +1183,7 @@ const CreatePostModal = ({
                           </Button>
                         </div>
                         <div className="flex flex-row justify-end items-center">
-                          {isEdit && (
+                          {isEdit && editAccess && (
                             <IconButton
                               onClick={handleDeleteAlert}
                               variant="outlined"
@@ -1187,7 +1192,7 @@ const CreatePostModal = ({
                             </IconButton>
                           )}
 
-                          {isDuplicating ? (
+                          {editAccess &&( isDuplicating ? (
                             <div className="flex flex-row">
                               <Button
                                 onClick={handleDuplicate}
@@ -1249,7 +1254,7 @@ const CreatePostModal = ({
                                 </MenuList>
                               </Menu>
                             </div>
-                          )}
+                          ))}
                         </div>
                       </div>
                     </div>

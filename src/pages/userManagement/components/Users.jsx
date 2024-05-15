@@ -14,7 +14,7 @@ import {
   PaperAirplaneIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-import { Suspense, lazy, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddUserDialog from "./AddUserDialog";
 import Filters from "./filters";
 import DeletePromptDialog from "./DeletePromptDialog";
@@ -28,7 +28,7 @@ import {
   AddUserColored,
 } from "../../../components/common/Images";
 import toast from "react-hot-toast";
-const UserDetailDialog = lazy(() => import("./UserDetailDialog"));
+import UserDetailDialog from "./UserDetailDialog";
 
 const TABLE_HEAD = ["Users", "Brands", "Action"];
 const initialUserData = {
@@ -63,6 +63,7 @@ const Users = ({
   setCollaborators,
   loadingCollaborator: loading,
   setLoadingCollaborator: setLoading,
+  getCollaborators,
 }) => {
   const { value: brands } = useSelector((state) => state.brands);
 
@@ -195,17 +196,6 @@ const Users = ({
     }
   };
 
-  const getCollaborators = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get("/user/collaborators");
-      setCollaborators(res.data);
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-    }
-  };
-
   const addCollaborator = async (data) => {
     try {
       setLoading(true);
@@ -228,12 +218,7 @@ const Users = ({
       );
       handleCloseUserDetailsDialog();
       setEditing(false);
-      await axiosInstance.put(
-        `/user/collaborator/${selectedUser.id}`,
-        selectedUser
-      );
-      handleCloseUserDetailsDialog();
-      setEditing(false);
+      getCollaborators();
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -274,14 +259,6 @@ const Users = ({
     setSelectedUser((prev) => ({ ...prev, ...user, resendInvite: true }));
     emailDialogHandler(closeEmailDialog, sendInvitation);
   };
-
-  useEffect(() => {
-    getCollaborators();
-  }, []);
-
-  useEffect(() => {
-    console.log(selectedUser);
-  }, [selectedUser]);
 
   return (
     <div className="xl:mr-52 md:mr-0 sm:mr-0">
@@ -407,19 +384,17 @@ const Users = ({
           )}
         </CardBody>
       </Card>
-      <Suspense fallback={<Loader />}>
-        <UserDetailDialog
-          isOpen={dialogOpen}
-          onClose={handleCloseUserDetailsDialog}
-          isEditing={isEditing}
-          brands={brands}
-          handleSelectBrand={handleSelectBrand}
-          selectedUser={selectedUser}
-          setSelectedUser={setSelectedUser}
-          emailDialogHandler={emailDialogHandler}
-          updateCollaborator={updateCollaborator}
-        />
-      </Suspense>
+      <UserDetailDialog
+        isOpen={dialogOpen}
+        onClose={handleCloseUserDetailsDialog}
+        isEditing={isEditing}
+        brands={brands}
+        handleSelectBrand={handleSelectBrand}
+        selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
+        emailDialogHandler={emailDialogHandler}
+        updateCollaborator={updateCollaborator}
+      />
       <AddUserDialog
         isOpen={userDialogOpen}
         collaborators={collaborators}

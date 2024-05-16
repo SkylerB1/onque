@@ -88,7 +88,7 @@ const PostCalendar = (props) => {
   };
 
   const selectData = (info) => {
-    const date = info.date;
+    const date = dayjs(info.date);
     setScheduledDate(date);
     setModal(true);
   };

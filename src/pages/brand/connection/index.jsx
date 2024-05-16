@@ -114,7 +114,7 @@ const Connection = () => {
           `brand.${brandId}.planner.networks`,
           "get"
         );
-        const newSavedPlatforms = savedPlatforms.filter(
+        const newSavedPlatforms = savedPlatforms?.filter(
           (item) => item.platform !== platform
         );
 

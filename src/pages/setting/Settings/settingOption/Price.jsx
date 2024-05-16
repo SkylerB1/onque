@@ -78,7 +78,7 @@ const Price = () => {
 
   return (
     <>
-      {subscription.subscriptionScheduledId != null ? (
+      {subscription?.subscriptionScheduledId != null ? (
         <>
           <div
             role="alert"
@@ -161,19 +161,19 @@ const Price = () => {
           )}
         </>
       )}
-        {subscriptionId ? (
-          <CurrentSubscription
-            subscription={subscription}
-            getSubscriptions={getSubscriptions}
-            handleResumeSubscription={handleResumeSubscription}
-            loadingReactivate={loadingReactivate}
-            setLoadingReactivate={setLoadingReactivate}
-            handleKeepCurrentPlan={handleKeepCurrentPlan}
-            loadingKeepCurrentPlan={loadingKeepCurrentPlan}
-          />
-        ) : (
-          <SubscriptionPlans />
-        )}
+      {subscriptionId ? (
+        <CurrentSubscription
+          subscription={subscription}
+          getSubscriptions={getSubscriptions}
+          handleResumeSubscription={handleResumeSubscription}
+          loadingReactivate={loadingReactivate}
+          setLoadingReactivate={setLoadingReactivate}
+          handleKeepCurrentPlan={handleKeepCurrentPlan}
+          loadingKeepCurrentPlan={loadingKeepCurrentPlan}
+        />
+      ) : (
+        <SubscriptionPlans />
+      )}
 
       <PaymentHistoryTable />
     </>

@@ -125,10 +125,6 @@ export function ChangePlanModel({
         <hr />
 
         <DialogFooter>
-          {/* <div className="text-black-800 mx-4 justify-start ml-auto flex items-center">
-            <span>Final Price</span>:{" "}
-            <span className="font-bold">{selectedPlanPrice} GBP</span>
-          </div> */}
           <LoadingButton
             loading={loading}
             title={"Continue"}

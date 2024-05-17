@@ -82,7 +82,7 @@ const PricingPlansCard = ({
           <div>
             {/* Duration Buttons */}
             <div className="flex flex-1 items-end justify-end mb-14">
-              <ButtonGroup variant="outlined">
+              {/* <ButtonGroup variant="outlined">
                 <Button
                   onClick={() => switchDuration("monthly")}
                   className={
@@ -99,7 +99,7 @@ const PricingPlansCard = ({
                 >
                   Annual
                 </Button>
-              </ButtonGroup>
+              </ButtonGroup> */}
             </div>
             {/* Plans Listing */}
             <div className=" ">

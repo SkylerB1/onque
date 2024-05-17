@@ -73,7 +73,7 @@ const SubscriptionPlans = () => {
     ],
     []
   );
-  const [selectedOption, setSelectedOption] = useState("yearly");
+  const [selectedOption, setSelectedOption] = useState("monthly");
 
   const switchDuration = (option) => {
     setSelectedOption(option);
@@ -82,7 +82,7 @@ const SubscriptionPlans = () => {
   return (
     <div>
       <div className="flex flex-1 items-end justify-end mb-14">
-        <ButtonGroup variant="outlined">
+        {/* <ButtonGroup variant="outlined">
           <Button
             onClick={() => switchDuration("monthly")}
             className={
@@ -97,7 +97,7 @@ const SubscriptionPlans = () => {
           >
             Annual
           </Button>
-        </ButtonGroup>
+        </ButtonGroup> */}
       </div>
       <div className="flex flex-1 items-center justify-between overflow-auto xs:overflow-scroll gap-4">
         {selectedPlanList.map((item, index) => (

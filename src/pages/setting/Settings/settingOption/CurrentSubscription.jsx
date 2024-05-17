@@ -68,8 +68,7 @@ const CurrentSubscription = ({
             <div>
               {subscription?.status &&
                 subscription.cancel_at_period_end != true &&
-                (subscription.status == "trialing" ||
-                  subscription.status == "active") && (
+                subscription.status == "active" && (
                   <Button
                     variant="outlined"
                     className="text-white text-xs py-1 px-2 gradient-button-dark normal-case"

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../utils/Interceptor";
 
 const initialState = {
-  value: null,
+  value: [],
   loading: false,
   error: "",
 };

@@ -35,6 +35,7 @@ const Connection = () => {
   const [premium, setPremium] = useState(true);
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingDeleteConnection, setLoadingDeleteConnection] = useState(false);
   const [selected, setSelected] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalHeader, setModalHeader] = useState(initialHeader);
@@ -105,6 +106,7 @@ const Connection = () => {
 
   const handleDelete = async (data) => {
     try {
+      setLoadingDeleteConnection(true);
       const { id, platform } = data;
       const response = await axiosInstance.delete(
         `${import.meta.env.VITE_API_URL}/user/logout/socialMedia/${id}`
@@ -127,9 +129,13 @@ const Connection = () => {
         setSelectedConnection(null);
         setOpen(false);
         setShowModal(false);
+        setLoadingDeleteConnection(false);
+
         toast.success(response?.data?.message);
       }
-    } catch (error) {}
+    } catch (error) {
+      setLoadingDeleteConnection(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -308,6 +314,7 @@ const Connection = () => {
       <CustomModal
         open={opens}
         Close={() => setOpen(false)}
+        loading={loadingDeleteConnection}
         title={`Are you sure that you want to disconnect ${platformName}?`}
         handleDelete={handleDelete}
         data={selectedConnection}

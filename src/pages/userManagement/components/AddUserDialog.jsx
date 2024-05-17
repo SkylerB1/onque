@@ -15,42 +15,52 @@ import { validateEmail } from "../../../utils";
 import { axiosInstance } from "../../../utils/Interceptor";
 import InfoIcon from "../../../assets/InfoIcon";
 import { useSelector } from "react-redux";
-
+const initialUser = {
+  isValid: false,
+  showMessage: true,
+  message: "The e-mail field must be a valid email",
+};
 const AddUserDialog = ({
   isOpen,
   onClose,
   collaborators,
   setSelectedUser,
   toggleUserDialog,
+  clearSelectedUser,
 }) => {
-  console.log({ collaborators });
   const [email, setEmail] = useState("");
   const userDetail = useSelector((state) => state.user.value);
   const [loading, setLoading] = useState(false);
   const isValidEmail = useMemo(() => Boolean(validateEmail(email)), [email]);
-  const [user, setUser] = useState({
-    isValid: false,
-    showMessage: true,
-    message: "The e-mail field must be a valid email",
-  });
+  const [user, setUser] = useState(initialUser);
 
   const handleEmailChange = (event) => {
+    console.log({ isValidEmail });
     const email = event.target.value;
     if (isValidEmail) {
       if (email === userDetail.email) {
         setUser({
           isValid: false,
+          showMessage: true,
           message: "You cannot add yourself as a collaborator.",
         });
       } else {
         checkUser(email);
       }
+    } else {
+      setUser({
+        isValid: false,
+        showMessage: true,
+        message: "Please enter a valid email.",
+      });
     }
     setEmail(email);
   };
 
   const handleClose = () => {
     setEmail("");
+    setUser(initialUser);
+    clearSelectedUser();
     onClose();
   };
 
@@ -99,11 +109,16 @@ const AddUserDialog = ({
     toggleUserDialog();
     onClose();
   };
+
   useEffect(() => {
     if (isOpen == false) {
       setEmail("");
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} maxWidth="xs">
@@ -146,7 +161,7 @@ const AddUserDialog = ({
         />
         {loading && (
           <div className="flex flex-row justify-center mt-2">
-            <Spinner className="w-10 h-10"/>
+            <Spinner className="w-10 h-10" />
           </div>
         )}
         {!loading && isValidEmail && user?.showMessage && (

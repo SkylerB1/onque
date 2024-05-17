@@ -65,7 +65,7 @@ const Users = ({
   setLoadingCollaborator: setLoading,
   getCollaborators,
 }) => {
-  const { value: brands } = useSelector((state) => state.brands);
+  const { value: brands = [] } = useSelector((state) => state.brands);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
@@ -260,6 +260,10 @@ const Users = ({
     emailDialogHandler(closeEmailDialog, sendInvitation);
   };
 
+  const clearSelectedUser = () => {
+    setSelectedUser(initialUserData)
+  }
+
   return (
     <div className="xl:mr-52 md:mr-0 sm:mr-0">
       <Card>
@@ -400,6 +404,7 @@ const Users = ({
         collaborators={collaborators}
         toggleUserDialog={toggleUserDetailsDialog}
         setSelectedUser={setSelectedUser}
+        clearSelectedUser={clearSelectedUser}
         onClose={() => setUserDialogOpen(false)}
       />
       <DeletePromptDialog

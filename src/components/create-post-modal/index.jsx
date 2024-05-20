@@ -1192,69 +1192,70 @@ const CreatePostModal = ({
                             </IconButton>
                           )}
 
-                          {editAccess &&( isDuplicating ? (
-                            <div className="flex flex-row">
-                              <Button
-                                onClick={handleDuplicate}
-                                size="md"
-                                className={`${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "cursor-pointer"
-                                }`}
-                              >
-                                {loading ? "Duplicating.." : "Duplicate"}
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex flex-row">
-                              <Button
-                                size="md"
-                                onClick={handlePublish}
-                                disabled={loading || errors.length > 0}
-                                className={`rounded-r-none normal-case text-xs ${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : ""
-                                }`}
-                              >
-                                {loading ? "Please wait" : submitButton}
-                              </Button>
-                              <Menu>
-                                <MenuHandler>
-                                  <button className="bg-black py-2 px-3 rounded-l-none ml-[1px]">
-                                    <DownArrow
-                                      width={18}
-                                      height={18}
-                                      fill="#ffffff"
-                                    />
-                                  </button>
-                                </MenuHandler>
-                                <MenuList className="px-0">
-                                  {schdulePostBtnLabel.map((item) => {
-                                    const { label, description } = item;
-                                    return (
-                                      <MenuItem
-                                        className="rounded-none"
-                                        onClick={() =>
-                                          handleSubmitButton(label)
-                                        }
-                                      >
-                                        <div>
-                                          <div className="font-bold uppercase mb-1 text-black">
-                                            {label}
+                          {editAccess &&
+                            (isDuplicating ? (
+                              <div className="flex flex-row">
+                                <Button
+                                  onClick={handleDuplicate}
+                                  size="md"
+                                  className={`${
+                                    loading || errors.length > 0
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : "cursor-pointer"
+                                  }`}
+                                >
+                                  {loading ? "Duplicating.." : "Duplicate"}
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="flex flex-row">
+                                <Button
+                                  size="md"
+                                  onClick={handlePublish}
+                                  disabled={loading || errors.length > 0}
+                                  className={`rounded-r-none normal-case text-xs ${
+                                    loading || errors.length > 0
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : ""
+                                  }`}
+                                >
+                                  {loading ? "Please wait" : submitButton}
+                                </Button>
+                                <Menu>
+                                  <MenuHandler>
+                                    <button className="bg-black py-2 px-3 rounded-l-none ml-[1px]">
+                                      <DownArrow
+                                        width={18}
+                                        height={18}
+                                        fill="#ffffff"
+                                      />
+                                    </button>
+                                  </MenuHandler>
+                                  <MenuList className="px-0">
+                                    {schdulePostBtnLabel.map((item) => {
+                                      const { label, description } = item;
+                                      return (
+                                        <MenuItem
+                                          className="rounded-none"
+                                          onClick={() =>
+                                            handleSubmitButton(label)
+                                          }
+                                        >
+                                          <div>
+                                            <div className="font-bold uppercase mb-1 text-black">
+                                              {label}
+                                            </div>
+                                            <div className="text-xs text-muted">
+                                              {description}
+                                            </div>
                                           </div>
-                                          <div className="text-xs text-muted">
-                                            {description}
-                                          </div>
-                                        </div>
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </MenuList>
-                              </Menu>
-                            </div>
-                          ))}
+                                        </MenuItem>
+                                      );
+                                    })}
+                                  </MenuList>
+                                </Menu>
+                              </div>
+                            ))}
                         </div>
                       </div>
                     </div>

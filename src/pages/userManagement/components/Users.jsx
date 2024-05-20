@@ -20,7 +20,11 @@ import Filters from "./filters";
 import DeletePromptDialog from "./DeletePromptDialog";
 import { axiosInstance } from "../../../utils/Interceptor";
 import Loader from "../../../components/loader/Loader";
-import { getCommaSeparatedNames } from "../../../utils";
+import {
+  getCommaSeparatedNames,
+  toastrError,
+  toastrSuccess,
+} from "../../../utils";
 import { useSelector } from "react-redux";
 import EmailNotificationDialog from "./EmailNotificationDialog";
 import {
@@ -29,6 +33,9 @@ import {
 } from "../../../components/common/Images";
 import toast from "react-hot-toast";
 import UserDetailDialog from "./UserDetailDialog";
+import AlertDialog from "../../../components/dialog/AlertDialog";
+import GoPremiumDialog from "../../../components/dialog/GoPremiumDialog";
+import { useAppContext } from "../../../context/AuthContext";
 
 const TABLE_HEAD = ["Users", "Brands", "Action"];
 const initialUserData = {
@@ -65,6 +72,8 @@ const Users = ({
   setLoadingCollaborator: setLoading,
   getCollaborators,
 }) => {
+  const { subscription } = useAppContext();
+  const isSubscribed = Boolean(subscription) || false;
   const { value: brands = [] } = useSelector((state) => state.brands);
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -75,6 +84,7 @@ const Users = ({
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditing, setEditing] = useState(false);
+  const [openGoPremiumDialog, setOpenGoPremiumDialog] = useState(false);
 
   const handleRowClick = (data) => {
     setEditing(true);
@@ -261,8 +271,21 @@ const Users = ({
   };
 
   const clearSelectedUser = () => {
-    setSelectedUser(initialUserData)
-  }
+    setSelectedUser(initialUserData);
+  };
+  const openAddUserDialog = () => {
+    // check user has taken the subscription or not
+    if (isSubscribed == true) {
+      setUserDialogOpen(true);
+    } else {
+      // open the go premmium dialog
+      setOpenGoPremiumDialog(true);
+    }
+  };
+
+  const handleCloseGoPremiumDialog = () => {
+    setOpenGoPremiumDialog(false);
+  };
 
   return (
     <div className="xl:mr-52 md:mr-0 sm:mr-0">
@@ -286,7 +309,7 @@ const Users = ({
               <Button
                 className="flex items-center gap-3"
                 size="sm"
-                onClick={() => setUserDialogOpen(true)}
+                onClick={openAddUserDialog}
               >
                 <PlusIcon strokeWidth={2} className="h-5 w-4" />
                 Add User
@@ -398,6 +421,10 @@ const Users = ({
         setSelectedUser={setSelectedUser}
         emailDialogHandler={emailDialogHandler}
         updateCollaborator={updateCollaborator}
+      />
+      <GoPremiumDialog
+        isOpen={openGoPremiumDialog}
+        handleClose={handleCloseGoPremiumDialog}
       />
       <AddUserDialog
         isOpen={userDialogOpen}

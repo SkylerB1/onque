@@ -8,6 +8,7 @@ import {
   Button,
   Input,
   Avatar,
+  DialogBody,
 } from "@material-tailwind/react";
 import { ClockIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import CustomSwitch from "../../../components/Input/CustomSwitch";
@@ -131,7 +132,7 @@ const UserDetailDialog = ({
             </svg>
           </IconButton>
         </DialogHeader>
-        <Dialog.Body>
+        <DialogBody>
           <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
             <div className="w-2/5">
               <Input
@@ -161,83 +162,85 @@ const UserDetailDialog = ({
               />
             </div>
           </div>
-          <table className="w-full min-w-max table-auto text-left">
-            <thead>
-              <tr>
-                {tableHead.map((item, index) => (
-                  <th
-                    className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                    key={index}
-                  >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
+          <div className="max-h-96 overflow-auto">
+            <table className="w-full min-w-max table-auto text-left">
+              <thead className="sticky top-0 z-10">
+                <tr>
+                  {tableHead.map((item, index) => (
+                    <th
+                      className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                      key={index}
                     >
-                      {item}
-                    </Typography>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {brands?.map((brand, index) => {
-                const isSelected = selectedUser?.brands?.find(
-                  (item) => item.id === brand.id
-                );
-                const roleName = isSelected?.brandRole?.roleName;
-                return (
-                  <tr key={index}>
-                    <td className="p-4 w-30">
-                      <div className="flex items-center gap-3">
-                        <CustomSwitch
-                          checked={Boolean(isSelected)}
-                          onChange={() =>
-                            handleSelectBrand(brand, Boolean(isSelected))
-                          }
-                        />
-                        <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
-                          <span className="font-normal text-gray-600 dark:text-gray-300">
-                            {brand?.brand_name.charAt(0)}
-                          </span>
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {item}
+                      </Typography>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {brands?.map((brand, index) => {
+                  const isSelected = selectedUser?.brands?.find(
+                    (item) => item.id === brand.id
+                  );
+                  const roleName = isSelected?.brandRole?.roleName;
+                  return (
+                    <tr key={index}>
+                      <td className="p-4 w-30">
+                        <div className="flex items-center gap-3">
+                          <CustomSwitch
+                            checked={Boolean(isSelected)}
+                            onChange={() =>
+                              handleSelectBrand(brand, Boolean(isSelected))
+                            }
+                          />
+                          <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
+                            <span className="font-normal text-gray-600 dark:text-gray-300">
+                              {brand?.brand_name.charAt(0)}
+                            </span>
+                          </div>
+                          <Typography variant="body" color="blue-gray">
+                            {brand?.brand_name}
+                          </Typography>
                         </div>
-                        <Typography variant="body" color="blue-gray">
-                          {brand?.brand_name}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td>
-                      <RoleUpdate
-                        open={openRoleMenu}
-                        handler={roleMenuHandler}
-                        brand={brand}
-                        selectedRole={roleName}
-                        handleRoleChange={handleRoleChange}
-                        isEnabled={Boolean(isSelected)}
-                      />
-                    </td>
-                    <td className="p-4">
-                      <div className=" flex flex-row justify-between">
-                        {Object.keys(SocialPlatforms).map((key) => {
-                          const { coloredIcon, nonColoredIcon } =
-                            SocialPlatforms[key];
-                          const isConnected = brand.platforms.some(
-                            (item) => item.platform === key
-                          );
+                      </td>
+                      <td>
+                        <RoleUpdate
+                          open={openRoleMenu}
+                          handler={roleMenuHandler}
+                          brand={brand}
+                          selectedRole={roleName}
+                          handleRoleChange={handleRoleChange}
+                          isEnabled={Boolean(isSelected)}
+                        />
+                      </td>
+                      <td className="p-4">
+                        <div className=" flex flex-row justify-between">
+                          {Object.keys(SocialPlatforms).map((key) => {
+                            const { coloredIcon, nonColoredIcon } =
+                              SocialPlatforms[key];
+                            const isConnected = brand.platforms.some(
+                              (item) => item.platform === key
+                            );
 
-                          if (isConnected) {
-                            return coloredIcon(20, 20);
-                          }
-                          return nonColoredIcon(20, 20);
-                        })}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </Dialog.Body>
+                            if (isConnected) {
+                              return coloredIcon(20, 20);
+                            }
+                            return nonColoredIcon(20, 20);
+                          })}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </DialogBody>
         <DialogFooter>
           <LoadingButton
             disabled={isSubmitDisabled}

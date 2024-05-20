@@ -16,13 +16,15 @@ import LoadingButton from "../button/LoadingButton";
 import { addBrand } from "../../redux/features/brandsSlice";
 import { initialiseConnections } from "../../redux/features/connectionSlice";
 
+const initial = {
+  brand_name: "",
+};
+
 export default function AddModal({ open, Close }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
-  const [formData, setFormData] = useState({
-    brand_name: "",
-  });
+  const [formData, setFormData] = useState(initial);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,6 +64,11 @@ export default function AddModal({ open, Close }) {
     setOpenSubscriptionModal(!openSubscriptionModal);
   };
 
+  const handleClose = () => {
+    setFormData(initial);
+    Close()
+  }
+
   return (
     <>
       <Dialog className="border-none" open={open} onClose={Close}>
@@ -90,7 +97,12 @@ export default function AddModal({ open, Close }) {
             size="sm"
             onClick={handleSubmit}
           />
-          <Button size="sm" variant="outlined" onClick={Close} className="ml-2">
+          <Button
+            size="sm"
+            variant="outlined"
+            onClick={handleClose}
+            className="ml-2"
+          >
             CANCEL
           </Button>
         </DialogFooter>

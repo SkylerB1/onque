@@ -185,6 +185,10 @@ const CreatePostModal = ({
     () => validations && (!role || role?.fullAccessPlanner),
     [role]
   );
+  const brandAccess = useMemo(
+    () => validations && (!role || role?.editBrand),
+    [role]
+  );
   const platformComponentMap = useMemo(
     () => ({
       [FacebookPagePlatform]: GetFacebookComponent,
@@ -1098,13 +1102,13 @@ const CreatePostModal = ({
                             })}
                           </div>
 
-                          <SocialMediaConnection>
+                          {brandAccess && <SocialMediaConnection>
                             {selectedPlaforms?.length !== 9 && (
                               <div className="ml-4 cursor-pointer">
                                 <Add width={20} height={15} fill={"#D3D3D3"} />
                               </div>
                             )}
-                          </SocialMediaConnection>
+                          </SocialMediaConnection>}
                         </div>
 
                         {showDatePicker && (

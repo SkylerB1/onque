@@ -209,12 +209,20 @@ const Users = ({
   const addCollaborator = async (data) => {
     try {
       setLoading(true);
-      await axiosInstance.post("/user/collaborators", data);
-      setCollaborators((prev) => [data, ...prev]);
-      setSelectedUser(initialUserData);
-      setEmailDialog(intialEmailDialogData);
+      let result = await axiosInstance.post("/user/collaborators", data);
+      console.log(result);
+      if (result.status == 200) {
+        let message = result.data.message;
+        setCollaborators((prev) => [data, ...prev]);
+        setSelectedUser(initialUserData);
+        setEmailDialog(intialEmailDialogData);
+        toastrSuccess(message);
+      } else {
+      }
+
       setLoading(false);
     } catch (err) {
+      console.log(err);
       setLoading(false);
     }
   };
@@ -222,6 +230,7 @@ const Users = ({
   const updateCollaborator = async () => {
     try {
       setLoading(true);
+
       await axiosInstance.put(
         `/user/collaborator/${selectedUser.id}`,
         selectedUser

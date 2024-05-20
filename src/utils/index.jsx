@@ -290,7 +290,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 170,
       period: "Monthly",
       priceBody: [
-        "Up to 15 clients",
+        "Up to 10 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
         "Client review access",
@@ -322,7 +322,7 @@ export const plansList = () => {
     {
       key: "enterprise",
       icon: EnterpisePlanPng,
-      title: "Entrepreneur Plan",
+      title: "Enterprise Plan",
       color: "#ED94B6",
       bgClass: "bg_enterprise_plan",
       monthly_price: 225,

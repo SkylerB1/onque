@@ -72,11 +72,12 @@ const ChangePlanStep2 = ({
                       </>
                     ) : (
                       <>
+                        <h3 className="font-weight-700 mb-5">
+                          Upcoming Invoice Details :
+                        </h3>
+                        <hr className="mb-5" />
                         {invoiceData?.invoiceDetailsObject?.map(
                           (value, key) => {
-                            // if (key == invoiceData.invoiceDetailsObject.length - 1) {
-                            //   return null;
-                            // }
                             return (
                               <>
                                 <div className="flex justify-between mb-4">

@@ -31,7 +31,7 @@ const Login = () => {
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
   const { getSubscriptions, getCounter } = useAppContext();
-  const [cookies, setCookie] = useCookies(["access_token"]);;
+  const [cookies, setCookie] = useCookies(["access_token"]);
   const [showPassword, setShowPassword] = useState(false);
   const user = localStorage.getItem("user");
   if (user) {

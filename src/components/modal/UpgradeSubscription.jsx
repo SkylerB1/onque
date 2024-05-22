@@ -13,7 +13,7 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
 
   const redirectToPlans = () => {
     navigate("/setting/price");
-    toggleModal()
+    toggleModal();
   };
 
   return (
@@ -41,6 +41,9 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
           onClick={redirectToPlans}
         >
           Get Premium
+        </Button>{" "}
+        <Button className="ml-2" onClick={toggleModal}>
+          Close
         </Button>
       </DialogFooter>
     </Dialog>

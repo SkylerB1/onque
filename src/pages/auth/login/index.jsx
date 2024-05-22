@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import ForgotPassword from "../modal";
@@ -22,8 +22,11 @@ import { useCookies } from "react-cookie";
 import { getBrands } from "../../../redux/features/brandsSlice";
 import useConnections from "../../../components/customHooks/useConnections";
 import { useAppContext } from "../../../context/AuthContext";
+import { useParams } from "react-router-dom";
+import { axiosInstance } from "../../../utils/Interceptor";
 
 const Login = () => {
+  const { token } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,39 +60,65 @@ const Login = () => {
         data
       );
       if (response.status === 200) {
-        const { data: userData } = response;
-        const { access_token } = userData;
-        localStorage.setItem("access_token", access_token);
-        setCookie("access_token", access_token);
-        dispatch(getBrands()).then((item) => {
-          const brand = item.payload.brands[0];
-          const userBrand = {
-            ...userData,
-            brand: brand,
-          };
-          getCounter(brand.id);
-          dispatch(setUser(userBrand));
-          getConnections(brand.id);
-        });
-        getSubscriptions();
-        setLoading(false);
-        navigate("/planner/calendar");
+        await handlePostLogin(response);
       } else {
         const message = response.data.message;
-        toast.success(message);
+        toast.error(message);
       }
     } catch (error) {
       setLoading(false);
       const message = error.response.data.message || "An error occurred.";
-      toast.success(message);
+      toast.error(message);
     }
   };
 
-  const handleFacebookLogin = () => {
+  const handlePostLogin = async (response) => {
+    const { data: userData } = response;
+    const { access_token } = userData;
+    localStorage.setItem("access_token", access_token);
+    setCookie("access_token", access_token);
+    dispatch(getBrands()).then((item) => {
+      const brand = item.payload.brands[0];
+      const userBrand = {
+        ...userData,
+        brand: brand,
+      };
+      getCounter(brand.id);
+      dispatch(setUser(userBrand));
+      getConnections(brand.id);
+    });
+    getSubscriptions();
+    setLoading(false);
+    navigate("/planner/calendar");
+  };
+  const refreshToken = async (token) => {
     try {
-      window.location.href = `${
-        import.meta.env.VITE_API_URL
-      }/auth/facebook/login`;
+      if (token == undefined) {
+        return false;
+      }
+      localStorage.setItem("access_token", token);
+      setCookie("access_token", token);
+
+      const response = await axiosInstance.post(
+        `${import.meta.env.VITE_API_URL}/user/refresh-token`
+      );
+
+      if (response.status === 200) {
+        await handlePostLogin(response);
+      } else {
+        const message = response.data.message;
+        toast.error(message);
+      }
+    } catch (error) {
+      // console.log(error);
+      const message = error.response.data.message || "An error occurred.";
+      toast.error(message);
+    }
+  };
+  const handleFacebookLogin = async () => {
+    try {
+      let redirectUrl = `${import.meta.env.VITE_API_URL}/auth/facebook/login`;
+      window.location.href = redirectUrl;
     } catch (err) {
       console.log(err);
     }
@@ -104,6 +133,12 @@ const Login = () => {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    if (token != "") {
+      refreshToken(token);
+    }
+  }, [token]);
 
   return (
     <>

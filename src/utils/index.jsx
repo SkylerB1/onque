@@ -268,6 +268,7 @@ export const SocialPlatforms = {
   Google_Business: {
     mediaOptions: GoogleBusinessOptions,
     mediaType: "POST",
+    tooltipSuffix: "",
     coloredIcon: (width, height) => (
       <GoogleBusiness fill="#0077B5" width={width} height={height} />
     ),

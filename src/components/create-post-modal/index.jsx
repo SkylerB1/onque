@@ -980,6 +980,98 @@ const CreatePostModal = ({
             },
           ]);
         }
+        if (item.mediaType === "POST") {
+          const { button, buttonLink } = additionalPresets.Google_Business.POST;
+
+          if (
+            (button !== "" && buttonLink === "") ||
+            (button === "" && buttonLink !== "")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please set a button and button link for Google Business Profile.",
+              },
+            ]);
+          }
+        }
+
+        if (item.mediaType === "OFFER") {
+          const { title, startDate, endDate } =
+            additionalPresets.Google_Business.OFFER;
+          if (title === "" || startDate === "" || endDate === "") {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please add the required presets for Google Business Profile.",
+              },
+            ]);
+          }
+        }
+
+        if (item.mediaType === "EVENT") {
+          const {
+            title,
+            startDate,
+            endDate,
+            button,
+            buttonLink,
+            startTime,
+            endTime,
+          } = additionalPresets.Google_Business.EVENT;
+          if (title === "" || startDate === "" || endDate === "") {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please add the required presets for Google Business Profile.",
+              },
+            ]);
+          }
+
+          if (
+            (button !== "" && buttonLink === "") ||
+            (button === "" && buttonLink !== "")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please set a button and button link for Google Business Profile.",
+              },
+            ]);
+          }
+
+          if (
+            (startTime !== "" && endTime === "") ||
+            (startTime === "" && endTime !== "")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please set a start and end time for Google Business Profile.",
+              },
+            ]);
+          }
+        }
       }
       if (platform.includes(LinkedInPlatform)) {
         if (noFileSelected && noContent) {
@@ -1102,13 +1194,19 @@ const CreatePostModal = ({
                             })}
                           </div>
 
-                          {brandAccess && <SocialMediaConnection>
-                            {selectedPlaforms?.length !== 9 && (
-                              <div className="ml-4 cursor-pointer">
-                                <Add width={20} height={15} fill={"#D3D3D3"} />
-                              </div>
-                            )}
-                          </SocialMediaConnection>}
+                          {brandAccess && (
+                            <SocialMediaConnection>
+                              {selectedPlaforms?.length !== 9 && (
+                                <div className="ml-4 cursor-pointer">
+                                  <Add
+                                    width={20}
+                                    height={15}
+                                    fill={"#D3D3D3"}
+                                  />
+                                </div>
+                              )}
+                            </SocialMediaConnection>
+                          )}
                         </div>
 
                         {showDatePicker && (

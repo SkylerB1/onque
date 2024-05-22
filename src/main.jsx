@@ -35,7 +35,7 @@ const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const router = createBrowserRouter([
   {
-    path: "/login",
+    path: "/login/:token?",
     element: <Login />,
   },
   {

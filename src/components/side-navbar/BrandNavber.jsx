@@ -88,7 +88,7 @@ const BrandNavber = () => {
               <ListItemPrefix>
                 <BsPersonBoundingBox className="h-5 w-5" />
               </ListItemPrefix>
-              Name and Picture
+              Name
             </ListItem>
           </Link>
         )}

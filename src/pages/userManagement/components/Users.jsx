@@ -106,7 +106,9 @@ const Users = ({
   };
 
   const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+    let searchQuery = e.target.value;
+    setSearchQuery(searchQuery);
+    getCollaborators(searchQuery);
   };
 
   const handleTrashClick = (e, user) => {
@@ -302,7 +304,11 @@ const Users = ({
         <CardBody>
           <div className="mb-4 mt-4 flex flex-col justify-between gap-2 md:flex-row md:items-center">
             <div className="w-full">
-              <Input label="Search" />
+              <Input
+                label="Search"
+                onChange={handleSearch}
+                value={searchQuery}
+              />
             </div>
 
             <div className="flex w-full shrink-0 gap-2 md:w-max">

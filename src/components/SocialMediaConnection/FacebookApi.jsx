@@ -30,6 +30,7 @@ const FacebookApi = ({
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/facebook?userId=${
         user?.id
       }&brandId=${user?.brand?.id}`;
+
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;

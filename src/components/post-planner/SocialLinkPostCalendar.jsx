@@ -100,6 +100,7 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
       const URL = ConnectUrl[selected];
 
       const response = await axiosInstance.post(URL, data);
+
       if (response.status === 200) {
         getConnections(brandId);
         removeSelected();

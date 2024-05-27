@@ -34,6 +34,8 @@ export function AppContextProvider({ children }) {
   const dispatch = useDispatch();
 
   const [openChangePlanModel, setOpenChangePlanModel] = React.useState(false);
+  const [dropdownClientListKey, setDropdownClientListKey] = React.useState(0);
+
   const getCounter = async (brandId) => {
     try {
       const res = await axiosInstance.get(`/user/counter?brandId=${brandId}`);
@@ -103,6 +105,8 @@ export function AppContextProvider({ children }) {
     setOpenChangePlanModel,
     userInfo,
     getUserInfo,
+    dropdownClientListKey,
+    setDropdownClientListKey,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

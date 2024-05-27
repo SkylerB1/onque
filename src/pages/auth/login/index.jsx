@@ -24,12 +24,18 @@ import useConnections from "../../../components/customHooks/useConnections";
 import { useAppContext } from "../../../context/AuthContext";
 import { useParams } from "react-router-dom";
 import { axiosInstance } from "../../../utils/Interceptor";
+import { toastrError, toastrSuccess } from "../../../utils";
+import InputEmailForSocialMeadia from "../modal/inputEmailForSocialMeadia";
 
 const Login = () => {
-  const { token } = useParams();
+  const { socialMedia, token } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [openInputEmailForSML, setOpenInputEmailForSML] = useState(false);
+  const [loadingInputEmailForSM, setLoadingInputEmailForSM] = useState(false);
+
   const { getConnections } = useConnections();
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
@@ -50,6 +56,13 @@ const Login = () => {
   };
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleInputEmailSMLClose = () => {
+    setOpenInputEmailForSML(false);
+  };
+  const handleInputEmailSMLOpen = () => {
+    setOpenInputEmailForSML(true);
   };
 
   const handleLogin = async (data) => {
@@ -91,6 +104,7 @@ const Login = () => {
     setLoading(false);
     navigate("/planner/calendar");
   };
+  // Ths function is used to refresh the token when facebook login callback come
   const refreshToken = async (token) => {
     try {
       if (token == undefined) {
@@ -133,10 +147,77 @@ const Login = () => {
       console.log(err);
     }
   };
+  const handleTwitterCallback = async () => {
+    try {
+      const axiosInstance = axios.create({
+        baseURL: import.meta.env.VITE_API_URL,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const response = await axiosInstance.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/user/validate-token-for-login-with-twitter`
+      );
+      if (response.status == 200) {
+        await handlePostLogin(response);
+      } else {
+        // open the email input popup
+        handleInputEmailSMLOpen();
+      }
+    } catch (error) {
+      // console.log(error);
+      const message = error.response.data.message || "An error occurred.";
+      toastrError(message);
+      navigate("/login");
+    }
+  };
+  const onSubmitEmailFortwitterLogin = async (data) => {
+    try {
+      setLoadingInputEmailForSM(true);
+      const axiosInstance = axios.create({
+        baseURL: import.meta.env.VITE_API_URL,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const response = await axiosInstance.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/user/save-email-for-login-with-twitter`,
+        data
+      );
+      // reset();
+      // console.log(response);
 
+      if (response.status === 200) {
+        setLoadingInputEmailForSM(false);
+        handleInputEmailSMLClose();
+        toastrSuccess(response?.data?.message);
+        setTimeout(async () => {
+          await handlePostLogin(response);
+        }, 1500);
+      } else {
+        const message = response.data.message;
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      // reset();
+      setLoadingInputEmailForSM(false);
+      handleInputEmailSMLClose();
+      const message = error.response.data.message || "An error occurred.";
+      toastrError(message);
+      navigate("/login");
+    }
+  };
   useEffect(() => {
-    if (token != "") {
+    if (token != "" && socialMedia == "fb") {
       refreshToken(token);
+    }
+    if (token != "" && socialMedia == "x") {
+      handleTwitterCallback(token);
     }
   }, [token]);
 
@@ -297,6 +378,13 @@ const Login = () => {
           Close={handleClose}
           showSuccessMessage={showSuccessMessage}
           showErrorMessage={showErrorMessage}
+        />
+
+        <InputEmailForSocialMeadia
+          open={openInputEmailForSML}
+          Close={handleInputEmailSMLClose}
+          onSubmit={onSubmitEmailFortwitterLogin}
+          loading={loadingInputEmailForSM}
         />
       </div>
     </>

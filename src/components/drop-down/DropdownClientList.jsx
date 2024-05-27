@@ -25,6 +25,8 @@ const DropdownClientList = ({ setOpen }) => {
   const brandName = user?.brand?.brand_name || "Loading...";
   const [searchTerm, setSearchTerm] = useState("");
 
+  // console.log(brands);
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };

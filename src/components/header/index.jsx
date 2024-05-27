@@ -27,6 +27,7 @@ export default function Header({ children }) {
     getSubscriptions,
     openChangePlanModel,
     setOpenChangePlanModel,
+    dropdownClientListKey,
   } = useAppContext();
   const isSubscribed = Boolean(subscription) || false;
   const [openNav, setOpenNav] = React.useState(false);
@@ -105,6 +106,7 @@ export default function Header({ children }) {
                 height={80}
               />
             </Typography>
+            {/* Header section */}
             <div className="flex items-center gap-4">
               <div className="mr-4 hidden lg:block">{navList}</div>
               {!isSubscribed && (
@@ -118,7 +120,11 @@ export default function Header({ children }) {
                 </Button>
               )}
               <div className="ml-8">
-                <DropdownClientList setOpen={setOpen} />
+                {/* Client List */}
+                <DropdownClientList
+                  setOpen={setOpen}
+                  key={dropdownClientListKey}
+                />
               </div>
               <div className="ml-8">
                 <NavProfile clientData={[]} setOpen={setOpen} />

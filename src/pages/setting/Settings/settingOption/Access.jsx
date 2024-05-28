@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { Input, Button, Typography } from "@material-tailwind/react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const Access = () => {
+  const user = useSelector((state) => state.user.value);
+
   const [formData, setFormData] = useState({
-    email: "",
+    email: user?.email,
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);

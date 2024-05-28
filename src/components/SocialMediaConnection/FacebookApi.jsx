@@ -30,6 +30,7 @@ const FacebookApi = ({
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/facebook?userId=${
         user?.id
       }&brandId=${user?.brand?.id}`;
+      console.log(oauthUrl);
 
       const width = 450;
       const height = 730;
@@ -56,6 +57,7 @@ const FacebookApi = ({
     try {
       setLoading(true);
       handleShowModal(header);
+
       const response = await axiosInstance.get(GET_PAGES_URL);
       if (response.status === 200) {
         const dataWithProfile = response.data.map((item) => {

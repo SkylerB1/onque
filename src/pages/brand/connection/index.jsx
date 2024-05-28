@@ -6,7 +6,7 @@ import { axiosInstance } from "../../../utils/Interceptor";
 import BrandNavber from "../../../components/side-navbar/BrandNavber";
 import { socialMediaList } from "../../../components/common/index";
 import SelectionModal from "../../../components/dialog/SelectDialog";
-import { ConnectUrl } from "../../../utils";
+import { ConnectUrl, ConnectUrlFn } from "../../../utils";
 import useConnections from "../../../components/customHooks/useConnections";
 import { toast } from "react-hot-toast";
 import { useLocalStorage } from "../../../utils/LocalStorage";
@@ -86,7 +86,7 @@ const Connection = () => {
     setModalHeader(header);
     setShowModal(true);
   };
-
+  // This function is called when clicked on on social media when wants to connect
   const handleMenuItemClick = (item) => {
     setSelected(item);
     handleClose();
@@ -147,8 +147,9 @@ const Connection = () => {
   const handleSelected = async (data) => {
     try {
       setLoading(true);
-
-      const URL = ConnectUrl[selected];
+      // const URL = ConnectUrl[selected];
+      const URL = ConnectUrlFn(selected, brandId);
+      console.log(selected, URL, data);
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
         getConnections(brandId);

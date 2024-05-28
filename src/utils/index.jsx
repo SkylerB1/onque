@@ -29,7 +29,9 @@ export const API_URL = import.meta.env.VITE_API_URL;
 export const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
 
 export const user = useLocalStorage("user", "get");
+console.log(user, " is at 32 ");
 export const brandId = user?.brand?.id;
+
 export const ConnectUrl = {
   facebook_page: API_URL + `/auth/facebook/connection?brandId=${brandId}`,
   instagram_account: API_URL + `/auth/instagram/connection?brandId=${brandId}`,
@@ -40,6 +42,20 @@ export const ConnectUrl = {
   google_business: API_URL + `/auth/google_business/connect?brandId=${brandId}`,
 };
 
+export const ConnectUrlFn = (pageName, brandId) => {
+  let ConnectUrl = {
+    facebook_page: API_URL + `/auth/facebook/connection?brandId=${brandId}`,
+    instagram_account:
+      API_URL + `/auth/instagram/connection?brandId=${brandId}`,
+    linkedin_page:
+      API_URL + `/auth/linkedin/connection?type=page&brandId=${brandId}`,
+    linkedin_profile:
+      API_URL + `/auth/linkedin/connection?type=profile?brandId=${brandId}`,
+    google_business:
+      API_URL + `/auth/google_business/connect?brandId=${brandId}`,
+  };
+  return ConnectUrl[pageName];
+};
 export const getSource = (file) => {
   if (file) {
     if (file instanceof File || file instanceof Blob) {

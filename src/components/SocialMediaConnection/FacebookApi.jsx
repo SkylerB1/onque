@@ -16,6 +16,7 @@ const FacebookApi = ({
   selected,
 }) => {
   const user = useSelector((state) => state.user.value);
+
   const { broadcastConnection } = useAppContext();
   const GET_PAGES_URL =
     API_URL + `/auth/facebook/pages?brandId=${user?.brand?.id}`;

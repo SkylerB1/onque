@@ -31,7 +31,7 @@ const FacebookApi = ({
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/facebook?userId=${
         user?.id
       }&brandId=${user?.brand?.id}`;
-      console.log(oauthUrl);
+      // console.log(oauthUrl);
 
       const width = 450;
       const height = 730;

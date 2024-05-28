@@ -96,7 +96,7 @@ const Login = () => {
         ...userData,
         brand: brand,
       };
-      console.log(brand);
+      // console.log(brand);
       getCounter(brand.id);
       dispatch(setUser(userBrand));
       getConnections(brand.id);

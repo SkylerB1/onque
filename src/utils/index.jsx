@@ -29,7 +29,7 @@ export const API_URL = import.meta.env.VITE_API_URL;
 export const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
 
 export const user = useLocalStorage("user", "get");
-console.log(user, " is at 32 ");
+
 export const brandId = user?.brand?.id;
 
 export const ConnectUrl = {

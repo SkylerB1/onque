@@ -14,6 +14,7 @@ import {
 } from "@material-tailwind/react";
 import { SocialPlatforms } from "../../utils";
 import { useAppContext } from "../../context/AuthContext";
+import { abbreviateString } from "../../utils/commonUtils";
 
 const DropdownClientList = ({ setOpen }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,8 +61,11 @@ const DropdownClientList = ({ setOpen }) => {
                       {brandName.charAt(0)}
                     </span>
                   </div>
-                  <span className="text-white  whitespace-nowrap">
-                    {brandName}
+                  <span
+                    className="text-white  whitespace-nowrap"
+                    title={brandName}
+                  >
+                    {abbreviateString(brandName)}
                   </span>
                   <svg
                     className="-mr-1 ml-2 mt-1 h-5 w-5"

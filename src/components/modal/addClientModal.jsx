@@ -16,6 +16,7 @@ import UpgradeSubscription from "./UpgradeSubscription";
 import LoadingButton from "../button/LoadingButton";
 import { addBrand } from "../../redux/features/brandsSlice";
 import { initialiseConnections } from "../../redux/features/connectionSlice";
+import { toastrError } from "../../utils";
 
 const initial = {
   brand_name: "",
@@ -56,6 +57,9 @@ export default function AddModal({ open, Close }) {
       if (error?.response?.status === 403) {
         setOpenSubscriptionModal(true);
       }
+      console.log(error);
+      let errorMessage = error?.response?.data?.msg || "Something went wrong!";
+      toastrError(errorMessage);
 
       console.log(error);
     }

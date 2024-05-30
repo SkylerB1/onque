@@ -30,7 +30,7 @@ const Setting = () => {
       desc: <Access />,
     },
     {
-      label: "Plans and billing",
+      label: "Plans and Billing",
       value: "price",
       desc: <Price />,
     },

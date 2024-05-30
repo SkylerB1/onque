@@ -4,7 +4,6 @@ import {
   Typography,
   Button,
   IconButton,
-  Card,
   Collapse,
 } from "@material-tailwind/react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -18,13 +17,18 @@ import { ChangePlanModel } from "../modal/ChangePlanModel/Index";
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { FaLink } from "react-icons/fa6";
-import { CalendarDaysIcon, LinkIcon } from "@heroicons/react/24/solid";
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { subscription, openChangePlanModel, setOpenChangePlanModel } =
-    useAppContext();
+  const {
+    subscription,
+    getSubscriptions,
+    openChangePlanModel,
+    setOpenChangePlanModel,
+    dropdownClientListKey,
+  } = useAppContext();
   const isSubscribed = Boolean(subscription) || false;
   const [openNav, setOpenNav] = React.useState(false);
   const [opens, setOpen] = useState(false);
@@ -102,20 +106,25 @@ export default function Header({ children }) {
                 height={80}
               />
             </Typography>
+            {/* Header section */}
             <div className="flex items-center gap-4">
               <div className="mr-4 hidden lg:block">{navList}</div>
               {!isSubscribed && (
                 <Button
                   variant="gradient"
                   size="sm"
-                  className="hidden lg:inline-block gradient-button-solid normal-case text-sm md:text-base mr-16"
+                  className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-base mr-16"
                   onClick={() => navigate("/setting/price")}
                 >
                   Upgrade to Premium
                 </Button>
               )}
               <div className="ml-8">
-                <DropdownClientList setOpen={setOpen} />
+                {/* Client List */}
+                <DropdownClientList
+                  setOpen={setOpen}
+                  key={dropdownClientListKey}
+                />
               </div>
               <div className="ml-8">
                 <NavProfile clientData={[]} setOpen={setOpen} />

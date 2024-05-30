@@ -24,6 +24,7 @@ const PaymentHistoryTable = () => {
     try {
       setLoading(true);
       const res = await axiosInstance.get("/user/payments");
+      // console.log(res.data);
       setPayments(res.data);
       setLoading(false);
     } catch (err) {
@@ -116,7 +117,7 @@ const PaymentHistoryTable = () => {
                     );
                   }
                 })}
-              {payments &&
+              {/* {payments &&
                 payments?.map(({ lines, hosted_invoice_url }, index) => {
                   const isLast = index === payments?.length - 1;
                   const classes = isLast
@@ -154,7 +155,7 @@ const PaymentHistoryTable = () => {
                       </tr>
                     );
                   }
-                })}
+                })} */}
             </tbody>
           </table>
         ) : payments?.length === 0 ? (

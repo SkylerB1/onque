@@ -29,17 +29,22 @@ import { Elements } from "@stripe/react-stripe-js";
 import "./utils/localization/i18n";
 import ForgotPassword from "./pages/auth/fogot-password";
 import Error404 from "./pages/404";
+import NewPassword from "./pages/auth/NewPassword";
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const router = createBrowserRouter([
   {
-    path: "/login",
+    path: "/login/:socialMedia?/:token?",
     element: <Login />,
   },
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/new-password",
+    element: <NewPassword />,
   },
   {
     path: "/forgot-password",

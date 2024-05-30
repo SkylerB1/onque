@@ -30,7 +30,7 @@ const Setting = () => {
       desc: <Access />,
     },
     {
-      label: "Plans and billing",
+      label: "Plans and Billing",
       value: "price",
       desc: <Price />,
     },
@@ -54,7 +54,7 @@ const Setting = () => {
   return (
     <div className="p-4 xl:mx-72 mt-20 md:mx-32">
       <div className=" mt-2 mb-2">
-        <div className="mt-5 mb-5 text-2xl font-light">Setting</div>
+        <div className="mt-5 mb-5 text-2xl font-light">Settings</div>
         <Tabs value={activeTab} key={tabsKey}>
           <TabsHeader
             className="w-[30rem] rounded-none border-b border-blue-gray-10 bg-transparent p-0"

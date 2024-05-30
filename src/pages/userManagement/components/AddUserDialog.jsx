@@ -9,50 +9,64 @@ import {
   Input,
   Typography,
   Alert,
+  Spinner,
 } from "@material-tailwind/react";
 import { validateEmail } from "../../../utils";
 import { axiosInstance } from "../../../utils/Interceptor";
 import InfoIcon from "../../../assets/InfoIcon";
 import { useSelector } from "react-redux";
-
+const initialUser = {
+  isValid: false,
+  showMessage: true,
+  message: "The e-mail field must be a valid email",
+};
 const AddUserDialog = ({
   isOpen,
   onClose,
   collaborators,
   setSelectedUser,
   toggleUserDialog,
+  clearSelectedUser,
 }) => {
   const [email, setEmail] = useState("");
   const userDetail = useSelector((state) => state.user.value);
+  const [loading, setLoading] = useState(false);
   const isValidEmail = useMemo(() => Boolean(validateEmail(email)), [email]);
-  const [user, setUser] = useState({
-    isValid: false,
-    showMessage: true,
-    message: "The e-mail field must be a valid email",
-  });
+  const [user, setUser] = useState(initialUser);
 
   const handleEmailChange = (event) => {
+    console.log({ isValidEmail });
     const email = event.target.value;
     if (isValidEmail) {
       if (email === userDetail.email) {
         setUser({
           isValid: false,
+          showMessage: true,
           message: "You cannot add yourself as a collaborator.",
         });
       } else {
         checkUser(email);
       }
+    } else {
+      setUser({
+        isValid: false,
+        showMessage: true,
+        message: "Please enter a valid email.",
+      });
     }
     setEmail(email);
   };
 
   const handleClose = () => {
     setEmail("");
+    setUser(initialUser);
+    clearSelectedUser();
     onClose();
   };
 
   const checkUser = async (email) => {
     try {
+      setLoading(true);
       const res = await axiosInstance.get(`/user/isValid?email=${email}`);
       if (res.status === 200) {
         const existingCollaborator = collaborators?.some(
@@ -75,6 +89,7 @@ const AddUserDialog = ({
             message: "",
           }));
         }
+        setLoading(false);
       }
     } catch (err) {
       if (err?.response?.status === 404) {
@@ -86,6 +101,7 @@ const AddUserDialog = ({
         });
         setSelectedUser((prev) => ({ ...prev, email }));
       }
+      setLoading(false);
     }
   };
 
@@ -93,11 +109,16 @@ const AddUserDialog = ({
     toggleUserDialog();
     onClose();
   };
+
   useEffect(() => {
     if (isOpen == false) {
       setEmail("");
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    console.log(user);
+  }, [user]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} maxWidth="xs">
@@ -138,7 +159,12 @@ const AddUserDialog = ({
           error={!isValidEmail}
           onChange={handleEmailChange}
         />
-        {isValidEmail && user?.showMessage && (
+        {loading && (
+          <div className="flex flex-row justify-center mt-2">
+            <Spinner className="w-10 h-10" />
+          </div>
+        )}
+        {!loading && isValidEmail && user?.showMessage && (
           <Alert
             className="bg-[#3b82f61a] flex items-center mt-4"
             icon={<InfoIcon width={20} height={20} fill={"#2196f3"} />}
@@ -150,7 +176,7 @@ const AddUserDialog = ({
       <DialogFooter>
         <Button
           type="submit"
-          disabled={!user.isValid}
+          disabled={!user.isValid || loading}
           onClick={handleContinue}
           color="primary"
           variant="contained"

@@ -126,7 +126,7 @@ const ChangePlanModel = ({
                   }}
                   onClick={() => switchDuration("monthly")}
                 />
-                <div className="my-2">
+                {/* <div className="my-2">
                   <Radio
                     name="plan"
                     checked={!isMonthly}
@@ -150,11 +150,11 @@ const ChangePlanModel = ({
                     }}
                     onClick={() => switchDuration("yearly")}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
 
-            {isMonthly ? (
+            {/* {isMonthly ? (
               <Alert
                 className="bg-[#3b82f61a] flex items-center my-2"
                 icon={<InfoIcon width={22} height={22} fill={"#2196f3"} />}
@@ -189,7 +189,7 @@ const ChangePlanModel = ({
                   src={StarPng}
                 />
               </div>
-            )}
+            )} */}
 
             <div className="flex flex-row justify-end">
               <Button

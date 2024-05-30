@@ -35,12 +35,17 @@ const UserManagement = () => {
 
   useEffect(() => {
     navigate("/userManagement/" + activeTab);
+    if (activeTab == "users") {
+      getCollaborators();
+    }
   }, [activeTab]);
 
-  const getCollaborators = async () => {
+  const getCollaborators = async (searchQuery = "") => {
     try {
       setLoadingCollaborator(true);
-      const res = await axiosInstance.get("/user/collaborators");
+      const res = await axiosInstance.get(
+        `/user/collaborators?searchQuery=${searchQuery}`
+      );
       setCollaborators(res.data);
       setLoadingCollaborator(false);
     } catch (err) {
@@ -84,6 +89,7 @@ const UserManagement = () => {
                   collaborators={collaborators}
                   setCollaborators={setCollaborators}
                   loadingCollaborator={loadingCollaborator}
+                  getCollaborators={getCollaborators}
                   setLoadingCollaborator={setLoadingCollaborator}
                 />
               </TabPanel>

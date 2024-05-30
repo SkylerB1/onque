@@ -45,20 +45,27 @@ const ModalInput = ({
   const user = useSelector((state) => state.user.value);
   const [showNotificationPreset, setShowNotificationPreset] = useState(false);
 
+  const handleNotificationPresets = () => {
+    const isSelected = selectedPlaforms.some(
+      (item) =>
+        item.platform === InstagramPlatform ||
+        item.platform.includes(TikTokPlatform)
+    );
+
+    const isManualPublish =
+      !additionalPresets.Instagram.autoPublish ||
+      !additionalPresets.TikTok_Personal.autoPublish ||
+      !additionalPresets.TikTok_Business.autoPublish;
+
+    if (isSelected && isManualPublish) {
+      setShowNotificationPreset(true);
+    } else {
+      setShowNotificationPreset(false);
+    }
+  };
+
   useEffect(() => {
-    selectedPlaforms.forEach((item) => {
-      const { platform } = item;
-      if (platform == InstagramPlatform || platform == TikTokPlatform) {
-        if (
-          !additionalPresets.Instagram?.autoPublish ||
-          !additionalPresets.TikTokPlatform?.autoPublish
-        ) {
-          setShowNotificationPreset(!showNotificationPreset);
-        }
-      } else {
-        setShowNotificationPreset(false);
-      }
-    });
+    handleNotificationPresets();
   }, [additionalPresets, selectedPlaforms]);
 
   const uploadimgOptions = useMemo(
@@ -250,7 +257,7 @@ const ModalInput = ({
             );
           }
         })}
-        {!showNotificationPreset && <NotificationPreset />}
+        {showNotificationPreset && <NotificationPreset />}
       </div>
     </div>
   );

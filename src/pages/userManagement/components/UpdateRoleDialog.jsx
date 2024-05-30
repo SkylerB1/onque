@@ -11,12 +11,6 @@ import {
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 const UpdateRoleDialog = ({ isOpen, onClose, brands, selectedBrands }) => {
-  const [selectedBrand, setSelectedBrand] = useState("");
-
-  const handleBrandSelect = (brand) => {
-    setSelectedBrand(brand);
-  };
-
   const isBrandSelected = (brand) => {
     return selectedBrands.includes(brand);
   };
@@ -60,14 +54,13 @@ const UpdateRoleDialog = ({ isOpen, onClose, brands, selectedBrands }) => {
           </div>
           <div className="black p">Roles</div>
           <div className="grid gap-4 py-4">
-            {brands.map((brand) => (
+            {brands?.map((brand) => (
               <Button
                 variant="outlined"
                 key={brand}
                 className={`border ${
                   isBrandSelected(brand) ? "border-blue-500" : "border-gray-300"
                 } p-3 flex items-center justify-between`}
-                onClick={() => handleBrandSelect(brand)}
               >
                 {brand}
                 {isBrandSelected(brand) ? (

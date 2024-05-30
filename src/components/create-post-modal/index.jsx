@@ -112,7 +112,6 @@ const CreatePostModal = ({
   const [editIndex, setEditIndex] = useState(0);
   const [submitButton, setSubmitButton] = useState("Schedule");
   const [showPreview, setShowPreview] = useState(false);
-
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
       OFFER: {
@@ -180,7 +179,16 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection } = useAppContext();
+  const { broadcastConnection, validations } = useAppContext();
+  const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const editAccess = useMemo(
+    () => validations && (!role || role?.fullAccessPlanner),
+    [role]
+  );
+  const brandAccess = useMemo(
+    () => validations && (!role || role?.editBrand),
+    [role]
+  );
   const platformComponentMap = useMemo(
     () => ({
       [FacebookPagePlatform]: GetFacebookComponent,
@@ -972,6 +980,98 @@ const CreatePostModal = ({
             },
           ]);
         }
+        if (item.mediaType === "POST") {
+          const { button, buttonLink } = additionalPresets.Google_Business.POST;
+
+          if (
+            (button !== "" && buttonLink === "") ||
+            (button === "" && buttonLink !== "")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please set a button and button link for Google Business Profile.",
+              },
+            ]);
+          }
+        }
+
+        if (item.mediaType === "OFFER") {
+          const { title, startDate, endDate } =
+            additionalPresets.Google_Business.OFFER;
+          if (title === "" || startDate === "" || endDate === "") {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please add the required presets for Google Business Profile.",
+              },
+            ]);
+          }
+        }
+
+        if (item.mediaType === "EVENT") {
+          const {
+            title,
+            startDate,
+            endDate,
+            button,
+            buttonLink,
+            startTime,
+            endTime,
+          } = additionalPresets.Google_Business.EVENT;
+          if (title === "" || startDate === "" || endDate === "") {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please add the required presets for Google Business Profile.",
+              },
+            ]);
+          }
+
+          if (
+            (button !== "" && buttonLink === "") ||
+            (button === "" && buttonLink !== "")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please set a button and button link for Google Business Profile.",
+              },
+            ]);
+          }
+
+          if (
+            (startTime !== "" && endTime === "") ||
+            (startTime === "" && endTime !== "")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - Please set a start and end time for Google Business Profile.",
+              },
+            ]);
+          }
+        }
       }
       if (platform.includes(LinkedInPlatform)) {
         if (noFileSelected && noContent) {
@@ -1094,13 +1194,19 @@ const CreatePostModal = ({
                             })}
                           </div>
 
-                          <SocialMediaConnection>
-                            {selectedPlaforms?.length !== 9 && (
-                              <div className="ml-4 cursor-pointer">
-                                <Add width={20} height={15} fill={"#D3D3D3"} />
-                              </div>
-                            )}
-                          </SocialMediaConnection>
+                          {brandAccess && (
+                            <SocialMediaConnection>
+                              {selectedPlaforms?.length !== 9 && (
+                                <div className="ml-4 cursor-pointer">
+                                  <Add
+                                    width={20}
+                                    height={15}
+                                    fill={"#D3D3D3"}
+                                  />
+                                </div>
+                              )}
+                            </SocialMediaConnection>
+                          )}
                         </div>
 
                         {showDatePicker && (
@@ -1179,7 +1285,7 @@ const CreatePostModal = ({
                           </Button>
                         </div>
                         <div className="flex flex-row justify-end items-center">
-                          {isEdit && (
+                          {isEdit && editAccess && (
                             <IconButton
                               onClick={handleDeleteAlert}
                               variant="outlined"
@@ -1188,69 +1294,70 @@ const CreatePostModal = ({
                             </IconButton>
                           )}
 
-                          {isDuplicating ? (
-                            <div className="flex flex-row">
-                              <Button
-                                onClick={handleDuplicate}
-                                size="md"
-                                className={`${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "cursor-pointer"
-                                }`}
-                              >
-                                {loading ? "Duplicating.." : "Duplicate"}
-                              </Button>
-                            </div>
-                          ) : (
-                            <div className="flex flex-row">
-                              <Button
-                                size="md"
-                                onClick={handlePublish}
-                                disabled={loading || errors.length > 0}
-                                className={`rounded-r-none normal-case text-xs ${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : ""
-                                }`}
-                              >
-                                {loading ? "Please wait" : submitButton}
-                              </Button>
-                              <Menu>
-                                <MenuHandler>
-                                  <button className="bg-black py-2 px-3 rounded-l-none ml-[1px]">
-                                    <DownArrow
-                                      width={18}
-                                      height={18}
-                                      fill="#ffffff"
-                                    />
-                                  </button>
-                                </MenuHandler>
-                                <MenuList className="px-0">
-                                  {schdulePostBtnLabel.map((item) => {
-                                    const { label, description } = item;
-                                    return (
-                                      <MenuItem
-                                        className="rounded-none"
-                                        onClick={() =>
-                                          handleSubmitButton(label)
-                                        }
-                                      >
-                                        <div>
-                                          <div className="font-bold uppercase mb-1 text-black">
-                                            {label}
+                          {editAccess &&
+                            (isDuplicating ? (
+                              <div className="flex flex-row">
+                                <Button
+                                  onClick={handleDuplicate}
+                                  size="md"
+                                  className={`${
+                                    loading || errors.length > 0
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : "cursor-pointer"
+                                  }`}
+                                >
+                                  {loading ? "Duplicating.." : "Duplicate"}
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="flex flex-row">
+                                <Button
+                                  size="md"
+                                  onClick={handlePublish}
+                                  disabled={loading || errors.length > 0}
+                                  className={`rounded-r-none normal-case text-xs ${
+                                    loading || errors.length > 0
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : ""
+                                  }`}
+                                >
+                                  {loading ? "Please wait" : submitButton}
+                                </Button>
+                                <Menu>
+                                  <MenuHandler>
+                                    <button className="bg-black py-2 px-3 rounded-l-none ml-[1px]">
+                                      <DownArrow
+                                        width={18}
+                                        height={18}
+                                        fill="#ffffff"
+                                      />
+                                    </button>
+                                  </MenuHandler>
+                                  <MenuList className="px-0">
+                                    {schdulePostBtnLabel.map((item) => {
+                                      const { label, description } = item;
+                                      return (
+                                        <MenuItem
+                                          className="rounded-none"
+                                          onClick={() =>
+                                            handleSubmitButton(label)
+                                          }
+                                        >
+                                          <div>
+                                            <div className="font-bold uppercase mb-1 text-black">
+                                              {label}
+                                            </div>
+                                            <div className="text-xs text-muted">
+                                              {description}
+                                            </div>
                                           </div>
-                                          <div className="text-xs text-muted">
-                                            {description}
-                                          </div>
-                                        </div>
-                                      </MenuItem>
-                                    );
-                                  })}
-                                </MenuList>
-                              </Menu>
-                            </div>
-                          )}
+                                        </MenuItem>
+                                      );
+                                    })}
+                                  </MenuList>
+                                </Menu>
+                              </div>
+                            ))}
                         </div>
                       </div>
                     </div>

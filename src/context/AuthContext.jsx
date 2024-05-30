@@ -26,10 +26,15 @@ export function AppContextProvider({ children }) {
   const [loadingValidations, setLoadingValidations] = useState(true);
   const [subscription, setSubscription] = useState(null);
   const [loadingSub, setLoadingSub] = useState(true);
+
+  const [userInfo, setUserInfo] = useState(null);
+  const [loadingUserInfo, setLoadingUserInfo] = useState(false);
+
   const [cookies, setCookie] = useCookies(["access_token"]);
   const dispatch = useDispatch();
 
   const [openChangePlanModel, setOpenChangePlanModel] = React.useState(false);
+  const [dropdownClientListKey, setDropdownClientListKey] = React.useState(0);
 
   const getCounter = async (brandId) => {
     try {
@@ -53,12 +58,21 @@ export function AppContextProvider({ children }) {
       setLoadingSub(false);
     }
   };
+  const getUserInfo = async () => {
+    try {
+      const res = await axiosInstance.get("/user/user-info");
+      setUserInfo(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     let user = localStorage.getItem("user");
     if (user) {
       user = JSON.parse(user);
       getSubscriptions();
+      getUserInfo();
       dispatch(getBrands()).then((item) => {
         const brand = item.payload.brands[0];
         if (!user?.brand) {
@@ -89,6 +103,10 @@ export function AppContextProvider({ children }) {
     loadingValidations,
     openChangePlanModel,
     setOpenChangePlanModel,
+    userInfo,
+    getUserInfo,
+    dropdownClientListKey,
+    setDropdownClientListKey,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

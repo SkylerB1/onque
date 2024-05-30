@@ -1,92 +1,18 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ButtonGroup, Button } from "@material-tailwind/react";
 
-import {
-  AdvancedPlanPng,
-  EnterpisePlanPng,
-  StarterPlanPng,
-} from "../../common/Images";
 import PriceCardItems from "./PriceCardItems";
 import PriceCardItem from "./PriceCardItem";
 import { useAppContext } from "../../../context/AuthContext";
-import { getCurrentPlan } from "../../../utils/index";
+import { getCurrentPlan, plansList } from "../../../utils/index";
+
 const PricingPlansCard = ({
   selectedPlanName,
   setSelectedPlanName,
   selectedPlanPeriod,
   setSelectedPlanPeriod,
 }) => {
-  const selectedPlanList = useMemo(
-    () => [
-      {
-        key: "starter",
-        icon: StarterPlanPng,
-        title: "Starter Plan",
-        color: "#95C1D5",
-        bgClass: "bg_starter_plan",
-        monthly_price: 85,
-        annualy_price: 850,
-        savingWithAnnualPlan: 170,
-        period: "Monthly",
-        priceBody: [
-          "Up to 15 clients",
-          "Management of all your clients’ social media accounts.",
-          "Team member access",
-          "Client review access",
-          "OQ-Links",
-          "AI Caption assistant",
-        ],
-        recommended: false,
-        isMonthlyPlanSelected: false,
-        isYearlyPlanSelected: false,
-      },
-      {
-        key: "advanced",
-        icon: AdvancedPlanPng,
-        title: "Advanced Plan",
-        color: "#F9DC77",
-        bgClass: "bg_advance_plan",
-        monthly_price: 145,
-        annualy_price: 1450,
-        savingWithAnnualPlan: 290,
-        period: "Monthly",
-        priceBody: [
-          "Up to 30 clients",
-          "Management of all your clients’ social media accounts.",
-          "Team member access",
-          "Client review access",
-          "OQ-Links",
-          "AI Caption assistant",
-        ],
-        recommended: true,
-        isMonthlyPlanSelected: false,
-        isYearlyPlanSelected: false,
-      },
-      {
-        key: "enterprise",
-        icon: EnterpisePlanPng,
-        title: "Entrepreneur Plan",
-        color: "#ED94B6",
-        bgClass: "bg_enterprise_plan",
-        monthly_price: 225,
-        annualy_price: 2250,
-        savingWithAnnualPlan: 450,
-        period: "Monthly",
-        priceBody: [
-          "Up to 50 clients",
-          "Management of all your clients’ social media accounts.",
-          "Team member access",
-          "Client review access",
-          "OQ-Links",
-          "AI Caption assistant",
-        ],
-        recommended: false,
-        isMonthlyPlanSelected: false,
-        isYearlyPlanSelected: false,
-      },
-    ],
-    []
-  );
+  const selectedPlanList = useMemo(() => plansList(), []);
   const [isPlanSelected, setIsPlanselected] = useState(false);
   const {
     subscription,
@@ -156,7 +82,7 @@ const PricingPlansCard = ({
           <div>
             {/* Duration Buttons */}
             <div className="flex flex-1 items-end justify-end mb-14">
-              <ButtonGroup variant="outlined">
+              {/* <ButtonGroup variant="outlined">
                 <Button
                   onClick={() => switchDuration("monthly")}
                   className={
@@ -173,7 +99,7 @@ const PricingPlansCard = ({
                 >
                   Annual
                 </Button>
-              </ButtonGroup>
+              </ButtonGroup> */}
             </div>
             {/* Plans Listing */}
             <div className=" ">

@@ -7,6 +7,7 @@ const LoadingButton = ({
   fullWidth = true,
   onClick,
   className = "",
+  variant = "",
   ...props
 }) => {
   return (
@@ -14,10 +15,7 @@ const LoadingButton = ({
       type="submit"
       fullWidth={fullWidth}
       onClick={onClick}
-      className={
-        `flex justify-center items-center ` +
-        className
-      }
+      className={`flex justify-center items-center ` + className}
       {...props}
     >
       {loading ? <Spinner /> : <span>{title}</span>}

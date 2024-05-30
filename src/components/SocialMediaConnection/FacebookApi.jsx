@@ -16,6 +16,7 @@ const FacebookApi = ({
   selected,
 }) => {
   const user = useSelector((state) => state.user.value);
+
   const { broadcastConnection } = useAppContext();
   const GET_PAGES_URL =
     API_URL + `/auth/facebook/pages?brandId=${user?.brand?.id}`;
@@ -30,6 +31,8 @@ const FacebookApi = ({
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/facebook?userId=${
         user?.id
       }&brandId=${user?.brand?.id}`;
+      // console.log(oauthUrl);
+
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;
@@ -55,6 +58,7 @@ const FacebookApi = ({
     try {
       setLoading(true);
       handleShowModal(header);
+
       const response = await axiosInstance.get(GET_PAGES_URL);
       if (response.status === 200) {
         const dataWithProfile = response.data.map((item) => {

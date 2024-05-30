@@ -33,7 +33,7 @@ const NavProfile = ({ clientData, setOpen }) => {
     setIsDropdownOpen(false);
   };
   const handlerLogOut = () => {
-    localStorage.removeItem("user");
+    localStorage.clear();
     removeCookie("access_token");
     navigate("/login");
     const message = "User logout successfully";
@@ -130,7 +130,7 @@ const NavProfile = ({ clientData, setOpen }) => {
                 Connection
               </li>
             </Link>
-            <Link
+            {/* <Link
               to="/setting/price"
               className={` py-2 hover:bg-[#fde8ef] pl-8  block px-4 ${
                 pathname === "/setting/price" ? "bg-[#fde8ef]" : ""
@@ -145,7 +145,7 @@ const NavProfile = ({ clientData, setOpen }) => {
                 <FaDollarSign className="text-lg" />
                 Billing
               </li>
-            </Link>
+            </Link> */}
             <Link
               to="/setting/account"
               onClick={closeDropdown}

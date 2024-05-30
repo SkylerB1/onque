@@ -14,13 +14,17 @@ import {
   PaperAirplaneIcon,
   ClockIcon,
 } from "@heroicons/react/24/outline";
-import { Suspense, lazy, useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddUserDialog from "./AddUserDialog";
 import Filters from "./filters";
 import DeletePromptDialog from "./DeletePromptDialog";
 import { axiosInstance } from "../../../utils/Interceptor";
 import Loader from "../../../components/loader/Loader";
-import { getCommaSeparatedNames } from "../../../utils";
+import {
+  getCommaSeparatedNames,
+  toastrError,
+  toastrSuccess,
+} from "../../../utils";
 import { useSelector } from "react-redux";
 import EmailNotificationDialog from "./EmailNotificationDialog";
 import {
@@ -28,7 +32,10 @@ import {
   AddUserColored,
 } from "../../../components/common/Images";
 import toast from "react-hot-toast";
-const UserDetailDialog = lazy(() => import("./UserDetailDialog"));
+import UserDetailDialog from "./UserDetailDialog";
+import AlertDialog from "../../../components/dialog/AlertDialog";
+import GoPremiumDialog from "../../../components/dialog/GoPremiumDialog";
+import { useAppContext } from "../../../context/AuthContext";
 
 const TABLE_HEAD = ["Users", "Brands", "Action"];
 const initialUserData = {
@@ -63,8 +70,11 @@ const Users = ({
   setCollaborators,
   loadingCollaborator: loading,
   setLoadingCollaborator: setLoading,
+  getCollaborators,
 }) => {
-  const { value: brands } = useSelector((state) => state.brands);
+  const { subscription } = useAppContext();
+  const isSubscribed = Boolean(subscription) || false;
+  const { value: brands = [] } = useSelector((state) => state.brands);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
@@ -74,6 +84,7 @@ const Users = ({
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isEditing, setEditing] = useState(false);
+  const [openGoPremiumDialog, setOpenGoPremiumDialog] = useState(false);
 
   const handleRowClick = (data) => {
     setEditing(true);
@@ -95,7 +106,9 @@ const Users = ({
   };
 
   const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
+    let searchQuery = e.target.value;
+    setSearchQuery(searchQuery);
+    getCollaborators(searchQuery);
   };
 
   const handleTrashClick = (e, user) => {
@@ -195,26 +208,23 @@ const Users = ({
     }
   };
 
-  const getCollaborators = async () => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get("/user/collaborators");
-      setCollaborators(res.data);
-      setLoading(false);
-    } catch (err) {
-      setLoading(false);
-    }
-  };
-
   const addCollaborator = async (data) => {
     try {
       setLoading(true);
-      await axiosInstance.post("/user/collaborators", data);
-      setCollaborators((prev) => [data, ...prev]);
-      setSelectedUser(initialUserData);
-      setEmailDialog(intialEmailDialogData);
+      let result = await axiosInstance.post("/user/collaborators", data);
+      console.log(result);
+      if (result.status == 200) {
+        let message = result.data.message;
+        setCollaborators((prev) => [data, ...prev]);
+        setSelectedUser(initialUserData);
+        setEmailDialog(intialEmailDialogData);
+        toastrSuccess(message);
+      } else {
+      }
+
       setLoading(false);
     } catch (err) {
+      console.log(err);
       setLoading(false);
     }
   };
@@ -222,18 +232,14 @@ const Users = ({
   const updateCollaborator = async () => {
     try {
       setLoading(true);
+
       await axiosInstance.put(
         `/user/collaborator/${selectedUser.id}`,
         selectedUser
       );
       handleCloseUserDetailsDialog();
       setEditing(false);
-      await axiosInstance.put(
-        `/user/collaborator/${selectedUser.id}`,
-        selectedUser
-      );
-      handleCloseUserDetailsDialog();
-      setEditing(false);
+      getCollaborators();
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -275,13 +281,22 @@ const Users = ({
     emailDialogHandler(closeEmailDialog, sendInvitation);
   };
 
-  useEffect(() => {
-    getCollaborators();
-  }, []);
+  const clearSelectedUser = () => {
+    setSelectedUser(initialUserData);
+  };
+  const openAddUserDialog = () => {
+    // check user has taken the subscription or not
+    if (isSubscribed == true) {
+      setUserDialogOpen(true);
+    } else {
+      // open the go premmium dialog
+      setOpenGoPremiumDialog(true);
+    }
+  };
 
-  useEffect(() => {
-    console.log(selectedUser);
-  }, [selectedUser]);
+  const handleCloseGoPremiumDialog = () => {
+    setOpenGoPremiumDialog(false);
+  };
 
   return (
     <div className="xl:mr-52 md:mr-0 sm:mr-0">
@@ -289,7 +304,11 @@ const Users = ({
         <CardBody>
           <div className="mb-4 mt-4 flex flex-col justify-between gap-2 md:flex-row md:items-center">
             <div className="w-full">
-              <Input label="Search" />
+              <Input
+                label="Search"
+                onChange={handleSearch}
+                value={searchQuery}
+              />
             </div>
 
             <div className="flex w-full shrink-0 gap-2 md:w-max">
@@ -305,7 +324,7 @@ const Users = ({
               <Button
                 className="flex items-center gap-3"
                 size="sm"
-                onClick={() => setUserDialogOpen(true)}
+                onClick={openAddUserDialog}
               >
                 <PlusIcon strokeWidth={2} className="h-5 w-4" />
                 Add User
@@ -407,24 +426,27 @@ const Users = ({
           )}
         </CardBody>
       </Card>
-      <Suspense fallback={<Loader />}>
-        <UserDetailDialog
-          isOpen={dialogOpen}
-          onClose={handleCloseUserDetailsDialog}
-          isEditing={isEditing}
-          brands={brands}
-          handleSelectBrand={handleSelectBrand}
-          selectedUser={selectedUser}
-          setSelectedUser={setSelectedUser}
-          emailDialogHandler={emailDialogHandler}
-          updateCollaborator={updateCollaborator}
-        />
-      </Suspense>
+      <UserDetailDialog
+        isOpen={dialogOpen}
+        onClose={handleCloseUserDetailsDialog}
+        isEditing={isEditing}
+        brands={brands}
+        handleSelectBrand={handleSelectBrand}
+        selectedUser={selectedUser}
+        setSelectedUser={setSelectedUser}
+        emailDialogHandler={emailDialogHandler}
+        updateCollaborator={updateCollaborator}
+      />
+      <GoPremiumDialog
+        isOpen={openGoPremiumDialog}
+        handleClose={handleCloseGoPremiumDialog}
+      />
       <AddUserDialog
         isOpen={userDialogOpen}
         collaborators={collaborators}
         toggleUserDialog={toggleUserDetailsDialog}
         setSelectedUser={setSelectedUser}
+        clearSelectedUser={clearSelectedUser}
         onClose={() => setUserDialogOpen(false)}
       />
       <DeletePromptDialog

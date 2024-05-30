@@ -21,7 +21,13 @@ import { axiosInstance } from "../../../utils/Interceptor";
 import { removeRole } from "../../../redux/features/roleSlice";
 import toast from "react-hot-toast";
 import AlertDialog from "../../../components/dialog/AlertDialog";
-import { DeleteModalError } from "../../../components/common/Images";
+import {
+  AdvancedPlanPng,
+  DeleteModalError,
+  EnterpisePlanPng,
+} from "../../../components/common/Images";
+import { useAppContext } from "../../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 const initial = {
   name: "",
   description: "",
@@ -40,7 +46,11 @@ const initialAlert = {
   btnTitle: "Ok",
   onSubmit: () => {},
 };
+
 const RolesAndPermission = ({ collaborators }) => {
+  const navigate = useNavigate();
+  const { subscription } = useAppContext();
+  const isSubscribed = Boolean(subscription) || false;
   const tableHeaders = ["Role", "Description", "Users", "Action"];
   const [isEditing, setIsEditing] = useState(false);
   const [alertDialog, setAlertDialog] = useState(initialAlert);
@@ -137,124 +147,162 @@ const RolesAndPermission = ({ collaborators }) => {
       <div className="xl:mr-52 md:mr-0 sm:mr-0">
         <Card>
           <CardBody>
-            <div className="mb-4 mt-4 flex flex-col gap-2 justify-between md:flex-row md:items-center">
-              <div className="w-full">
-                <Input label="Search" value={search} onChange={handleSearch} />
-              </div>
-              <div className="flex w-full shrink-0 gap-2 md:w-max">
-                <Button
-                  className="flex items-center gap-3"
-                  size="sm"
-                  onClick={() => setAddRoleDialogOpen(true)}
-                >
-                  <PlusIcon strokeWidth={2} className="h-5 w-4" />
-                  Add Role
-                </Button>
-              </div>
-            </div>
-            {loading ? (
-              <Loader />
-            ) : (
-              <table className="w-full min-w-max table-auto text-left">
-                <thead>
-                  <tr>
-                    {tableHeaders.map((header, index) => (
-                      <th
-                        key={index}
-                        className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                        colSpan={2}
+            {isSubscribed == true ? (
+              <>
+                <div>
+                  <div className="mb-4 mt-4 flex flex-col gap-2 justify-between md:flex-row md:items-center">
+                    <div className="w-full">
+                      <Input
+                        label="Search"
+                        value={search}
+                        onChange={handleSearch}
+                      />
+                    </div>
+                    <div className="flex w-full shrink-0 gap-2 md:w-max">
+                      <Button
+                        className="flex items-center gap-3"
+                        size="sm"
+                        onClick={() => setAddRoleDialogOpen(true)}
                       >
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-normal leading-none opacity-70"
-                        >
-                          {header}
-                        </Typography>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rolesData?.map((row, index) => {
-                    const isLast = index === rolesData.length - 1;
-                    const classes = isLast
-                      ? "p-4"
-                      : "p-4 border-b border-blue-gray-50";
-                    return (
-                      <tr
-                        key={row.id}
-                        onClick={(e) => handleEditRole(e, row)}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <td className={classes} colSpan={2}>
-                          <div className="flex items-center gap-3">
-                            <ShieldCheckIcon
-                              className="h-6 w-6"
-                              color="black"
-                            />
-                            <div className="flex items-center gap-3">
+                        <PlusIcon strokeWidth={2} className="h-5 w-4" />
+                        Add Role
+                      </Button>
+                    </div>
+                  </div>
+                  {loading ? (
+                    <Loader />
+                  ) : (
+                    <table className="w-full min-w-max table-auto text-left">
+                      <thead>
+                        <tr>
+                          {tableHeaders.map((header, index) => (
+                            <th
+                              key={index}
+                              className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                              colSpan={2}
+                            >
                               <Typography
                                 variant="small"
                                 color="blue-gray"
-                                className="font-bold"
+                                className="font-normal leading-none opacity-70"
                               >
-                                {row.name}
+                                {header}
                               </Typography>
-                            </div>
-                          </div>
-                        </td>
-                        <td className={classes} colSpan={2}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {row.description}
-                          </Typography>
-                        </td>
-                        <td className={classes} colSpan={2}>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal"
-                          >
-                            {row.assignedUsersCount}
-                          </Typography>
-                        </td>
-                        <td className={classes} colSpan={2}>
-                          <Tooltip content="edit">
-                            <IconButton
-                              variant="text"
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rolesData?.map((row, index) => {
+                          const isLast = index === rolesData.length - 1;
+                          const classes = isLast
+                            ? "p-4"
+                            : "p-4 border-b border-blue-gray-50";
+                          return (
+                            <tr
+                              key={row.id}
                               onClick={(e) => handleEditRole(e, row)}
+                              style={{ cursor: "pointer" }}
                             >
-                              <PencilSquareIcon
-                                className="h-6 w-6"
-                                color="black"
-                              />
-                            </IconButton>
-                          </Tooltip>
-                          <Tooltip content="delete">
-                            <IconButton
-                              variant="text"
-                              onClick={(e) =>
-                                checkDeleteRole(e, row.id, row.name)
-                              }
-                            >
-                              <TrashIcon className="h-6 w-6" color="black" />
-                            </IconButton>
-                          </Tooltip>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            )}
-            {rolesData?.length === 0 && (
-              <div className="text-center mb-0 pt-4">
-                we haven't found any roles matching your search filters
-              </div>
+                              <td className={classes} colSpan={2}>
+                                <div className="flex items-center gap-3">
+                                  <ShieldCheckIcon
+                                    className="h-6 w-6"
+                                    color="black"
+                                  />
+                                  <div className="flex items-center gap-3">
+                                    <Typography
+                                      variant="small"
+                                      color="blue-gray"
+                                      className="font-bold"
+                                    >
+                                      {row.name}
+                                    </Typography>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className={classes} colSpan={2}>
+                                <Typography
+                                  variant="small"
+                                  color="blue-gray"
+                                  className="font-normal"
+                                >
+                                  {row.description}
+                                </Typography>
+                              </td>
+                              <td className={classes} colSpan={2}>
+                                <Typography
+                                  variant="small"
+                                  color="blue-gray"
+                                  className="font-normal"
+                                >
+                                  {row.assignedUsersCount}
+                                </Typography>
+                              </td>
+                              <td className={classes} colSpan={2}>
+                                <Tooltip content="edit">
+                                  <IconButton
+                                    variant="text"
+                                    onClick={(e) => handleEditRole(e, row)}
+                                  >
+                                    <PencilSquareIcon
+                                      className="h-6 w-6"
+                                      color="black"
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip content="delete">
+                                  <IconButton
+                                    variant="text"
+                                    onClick={(e) =>
+                                      checkDeleteRole(e, row.id, row.name)
+                                    }
+                                  >
+                                    <TrashIcon
+                                      className="h-6 w-6"
+                                      color="black"
+                                    />
+                                  </IconButton>
+                                </Tooltip>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  )}
+                  {rolesData?.length === 0 && (
+                    <div className="text-center mb-0 pt-4">
+                      we haven't found any roles matching your search filters
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-center">
+                  <img
+                    src={EnterpisePlanPng}
+                    className="w-auto h-auto mx-auto"
+                  />
+                  <h3 className="mb-5">Get ADVANCED</h3>
+                  <p className="mb-5">
+                    Managing user roles requires an Advanced or Superior plan.
+                    Upgrade your subscription to be able to use this
+                    functionality.
+                  </p>
+                  {!isSubscribed && (
+                    <Button
+                      variant="gradient"
+                      size="sm"
+                      className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-base "
+                      onClick={() => navigate("/setting/price")}
+                    >
+                      Upgrade to Premium
+                    </Button>
+                  )}
+                </div>
+              </>
             )}
           </CardBody>
         </Card>

@@ -9,6 +9,11 @@ import {
   ReelsSvg,
   StorySvg,
 } from "../components/common/Images";
+import {
+  AdvancedPlanPng,
+  EnterpisePlanPng,
+  StarterPlanPng,
+} from "../components/common/Images";
 import FacebookFilled from "../components/svg/FacebookFilled";
 import Instagram from "../components/svg/Instagram";
 import LinkedIn from "../components/svg/LinkedIn";
@@ -24,7 +29,9 @@ export const API_URL = import.meta.env.VITE_API_URL;
 export const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
 
 export const user = useLocalStorage("user", "get");
+
 export const brandId = user?.brand?.id;
+
 export const ConnectUrl = {
   facebook_page: API_URL + `/auth/facebook/connection?brandId=${brandId}`,
   instagram_account: API_URL + `/auth/instagram/connection?brandId=${brandId}`,
@@ -35,6 +42,20 @@ export const ConnectUrl = {
   google_business: API_URL + `/auth/google_business/connect?brandId=${brandId}`,
 };
 
+export const ConnectUrlFn = (pageName, brandId) => {
+  let ConnectUrl = {
+    facebook_page: API_URL + `/auth/facebook/connection?brandId=${brandId}`,
+    instagram_account:
+      API_URL + `/auth/instagram/connection?brandId=${brandId}`,
+    linkedin_page:
+      API_URL + `/auth/linkedin/connection?type=page&brandId=${brandId}`,
+    linkedin_profile:
+      API_URL + `/auth/linkedin/connection?type=profile?brandId=${brandId}`,
+    google_business:
+      API_URL + `/auth/google_business/connect?brandId=${brandId}`,
+  };
+  return ConnectUrl[pageName];
+};
 export const getSource = (file) => {
   if (file) {
     if (file instanceof File || file instanceof Blob) {
@@ -263,6 +284,7 @@ export const SocialPlatforms = {
   Google_Business: {
     mediaOptions: GoogleBusinessOptions,
     mediaType: "POST",
+    tooltipSuffix: "",
     coloredIcon: (width, height) => (
       <GoogleBusiness fill="#0077B5" width={width} height={height} />
     ),
@@ -272,6 +294,74 @@ export const SocialPlatforms = {
   },
 };
 
+export const plansList = () => {
+  return [
+    {
+      key: "starter",
+      icon: StarterPlanPng,
+      title: "Starter Plan",
+      color: "#95C1D5",
+      bgClass: "bg_starter_plan",
+      monthly_price: 85,
+      annualy_price: 850,
+      savingWithAnnualPlan: 170,
+      period: "Monthly",
+      priceBody: [
+        "Up to 10 clients",
+        "Management of all your clients’ social media accounts.",
+        "Team member access",
+        "Client review access",
+        "OQ-Links",
+        "AI Caption assistant",
+      ],
+      recommended: false,
+    },
+    {
+      key: "advanced",
+      icon: AdvancedPlanPng,
+      title: "Advanced Plan",
+      color: "#F9DC77",
+      bgClass: "bg_advance_plan",
+      monthly_price: 145,
+      annualy_price: 1450,
+      savingWithAnnualPlan: 290,
+      period: "Monthly",
+      priceBody: [
+        "Up to 30 clients",
+        "Management of all your clients’ social media accounts.",
+        "Team member access",
+        "Client review access",
+        "OQ-Links",
+        "AI Caption assistant",
+      ],
+      recommended: true,
+    },
+    {
+      key: "enterprise",
+      icon: EnterpisePlanPng,
+      title: "Enterprise Plan",
+      color: "#ED94B6",
+      bgClass: "bg_enterprise_plan",
+      monthly_price: 225,
+      annualy_price: 2250,
+      savingWithAnnualPlan: 450,
+      period: "Monthly",
+      priceBody: [
+        "Up to 50 clients",
+        "Management of all your clients’ social media accounts.",
+        "Team member access",
+        "Client review access",
+        "OQ-Links",
+        "AI Caption assistant",
+      ],
+      recommended: false,
+    },
+  ];
+};
+
+export const findPlan = (key) => {
+  return plansList().find((item) => item.key == key);
+};
 export const lookupKeys = {
   starter: {
     monthly: "starter_plan_gbp",
@@ -362,8 +452,13 @@ export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 export function toastrSuccess(message) {
-  toast.success(message, { duration: 4000, position: "top-right" });
+  toast.success(message, { duration: 4000, position: "bottom-center" });
 }
 export function toastrError(message) {
-  toast.error(message, { duration: 4000, position: "top-right" });
+  toast.error(message, { duration: 4000, position: "bottom-center" });
+}
+
+export function toFixedNumber(value) {
+  if (!value) return "";
+  return value.toFixed(2);
 }

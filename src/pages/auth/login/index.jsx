@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import ForgotPassword from "../modal";
@@ -22,16 +22,25 @@ import { useCookies } from "react-cookie";
 import { getBrands } from "../../../redux/features/brandsSlice";
 import useConnections from "../../../components/customHooks/useConnections";
 import { useAppContext } from "../../../context/AuthContext";
+import { useParams } from "react-router-dom";
+import { axiosInstance } from "../../../utils/Interceptor";
+import { toastrError, toastrSuccess } from "../../../utils";
+import InputEmailForSocialMeadia from "../modal/inputEmailForSocialMeadia";
 
 const Login = () => {
+  const { socialMedia, token } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [openInputEmailForSML, setOpenInputEmailForSML] = useState(false);
+  const [loadingInputEmailForSM, setLoadingInputEmailForSM] = useState(false);
+
   const { getConnections } = useConnections();
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
   const { getSubscriptions, getCounter } = useAppContext();
-  const [cookies, setCookie] = useCookies(["access_token"]);;
+  const [cookies, setCookie] = useCookies(["access_token"]);
   const [showPassword, setShowPassword] = useState(false);
   const user = localStorage.getItem("user");
   if (user) {
@@ -49,6 +58,13 @@ const Login = () => {
     setOpen(false);
   };
 
+  const handleInputEmailSMLClose = () => {
+    setOpenInputEmailForSML(false);
+  };
+  const handleInputEmailSMLOpen = () => {
+    setOpenInputEmailForSML(true);
+  };
+
   const handleLogin = async (data) => {
     try {
       setLoading(true);
@@ -57,39 +73,67 @@ const Login = () => {
         data
       );
       if (response.status === 200) {
-        const { data: userData } = response;
-        const { access_token } = userData;
-        localStorage.setItem("access_token", access_token);
-        setCookie("access_token", access_token);
-        dispatch(getBrands()).then((item) => {
-          const brand = item.payload.brands[0];
-          const userBrand = {
-            ...userData,
-            brand: brand,
-          };
-          getCounter(brand.id);
-          dispatch(setUser(userBrand));
-          getConnections(brand.id);
-        });
-        getSubscriptions();
-        setLoading(false);
-        navigate("/planner/calendar");
+        await handlePostLogin(response);
       } else {
         const message = response.data.message;
-        toast.success(message);
+        toast.error(message);
       }
     } catch (error) {
       setLoading(false);
       const message = error.response.data.message || "An error occurred.";
-      toast.success(message);
+      toast.error(message);
     }
   };
 
-  const handleFacebookLogin = () => {
+  const handlePostLogin = async (response) => {
+    const { data: userData } = response;
+    const { access_token } = userData;
+    localStorage.setItem("access_token", access_token);
+    setCookie("access_token", access_token);
+    dispatch(getBrands()).then((item) => {
+      const brand = item.payload.brands[0];
+      const userBrand = {
+        ...userData,
+        brand: brand,
+      };
+      // console.log(brand);
+      getCounter(brand.id);
+      dispatch(setUser(userBrand));
+      getConnections(brand.id);
+    });
+    getSubscriptions();
+    setLoading(false);
+    navigate("/planner/calendar");
+  };
+  // Ths function is used to refresh the token when facebook login callback come
+  const refreshToken = async (token) => {
     try {
-      window.location.href = `${
-        import.meta.env.VITE_API_URL
-      }/auth/facebook/login`;
+      if (token == undefined) {
+        return false;
+      }
+      localStorage.setItem("access_token", token);
+      setCookie("access_token", token);
+
+      const response = await axiosInstance.post(
+        `${import.meta.env.VITE_API_URL}/user/refresh-token`
+      );
+
+      if (response.status === 200) {
+        await handlePostLogin(response);
+      } else {
+        const message = response.data.message;
+        toast.error(message);
+      }
+    } catch (error) {
+      // console.log(error);
+      const message = error.response.data.message || "An error occurred.";
+      toast.error(message);
+    }
+  };
+  const handleFacebookLogin = async () => {
+    try {
+      let redirectUrl = `${import.meta.env.VITE_API_URL}/auth/facebook/login`;
+      window.location.href = redirectUrl;
     } catch (err) {
       console.log(err);
     }
@@ -104,6 +148,79 @@ const Login = () => {
       console.log(err);
     }
   };
+  const handleTwitterCallback = async () => {
+    try {
+      const axiosInstance = axios.create({
+        baseURL: import.meta.env.VITE_API_URL,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const response = await axiosInstance.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/user/validate-token-for-login-with-twitter`
+      );
+      if (response.status == 200) {
+        await handlePostLogin(response);
+      } else {
+        // open the email input popup
+        handleInputEmailSMLOpen();
+      }
+    } catch (error) {
+      // console.log(error);
+      const message = error.response.data.message || "An error occurred.";
+      toastrError(message);
+      navigate("/login");
+    }
+  };
+  const onSubmitEmailFortwitterLogin = async (data) => {
+    try {
+      setLoadingInputEmailForSM(true);
+      const axiosInstance = axios.create({
+        baseURL: import.meta.env.VITE_API_URL,
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
+      const response = await axiosInstance.post(
+        `${
+          import.meta.env.VITE_API_URL
+        }/user/save-email-for-login-with-twitter`,
+        data
+      );
+      // reset();
+      // console.log(response);
+
+      if (response.status === 200) {
+        setLoadingInputEmailForSM(false);
+        handleInputEmailSMLClose();
+        toastrSuccess(response?.data?.message);
+        setTimeout(async () => {
+          await handlePostLogin(response);
+        }, 1500);
+      } else {
+        const message = response.data.message;
+        toast.error(message);
+      }
+    } catch (error) {
+      console.log(error);
+      // reset();
+      setLoadingInputEmailForSM(false);
+      handleInputEmailSMLClose();
+      const message = error.response.data.message || "An error occurred.";
+      toastrError(message);
+      navigate("/login");
+    }
+  };
+  useEffect(() => {
+    if (token != "" && socialMedia == "fb") {
+      refreshToken(token);
+    }
+    if (token != "" && socialMedia == "x") {
+      handleTwitterCallback(token);
+    }
+  }, [token]);
 
   return (
     <>
@@ -262,6 +379,13 @@ const Login = () => {
           Close={handleClose}
           showSuccessMessage={showSuccessMessage}
           showErrorMessage={showErrorMessage}
+        />
+
+        <InputEmailForSocialMeadia
+          open={openInputEmailForSML}
+          Close={handleInputEmailSMLClose}
+          onSubmit={onSubmitEmailFortwitterLogin}
+          loading={loadingInputEmailForSM}
         />
       </div>
     </>

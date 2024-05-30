@@ -21,7 +21,7 @@ const SubscriptionPlans = () => {
         savingWithAnnualPlan: 170,
         period: "Monthly",
         priceBody: [
-          "Up to 15 clients",
+          "Up to 10 clients",
           "Management of all your clients’ social media accounts.",
           "Team member access",
           "Client review access",
@@ -53,7 +53,7 @@ const SubscriptionPlans = () => {
       {
         key: "enterprise",
         icon: EnterpisePlanPng,
-        title: "Entrepreneur Plan",
+        title: "Enterprise Plan",
         color: "#ED94B6",
         bgClass: "bg_enterprise_plan",
         monthly_price: 225,
@@ -73,7 +73,7 @@ const SubscriptionPlans = () => {
     ],
     []
   );
-  const [selectedOption, setSelectedOption] = useState("yearly");
+  const [selectedOption, setSelectedOption] = useState("monthly");
 
   const switchDuration = (option) => {
     setSelectedOption(option);
@@ -82,7 +82,7 @@ const SubscriptionPlans = () => {
   return (
     <div>
       <div className="flex flex-1 items-end justify-end mb-14">
-        <ButtonGroup variant="outlined">
+        {/* <ButtonGroup variant="outlined">
           <Button
             onClick={() => switchDuration("monthly")}
             className={
@@ -97,7 +97,7 @@ const SubscriptionPlans = () => {
           >
             Annual
           </Button>
-        </ButtonGroup>
+        </ButtonGroup> */}
       </div>
       <div className="flex flex-1 items-center justify-between overflow-auto xs:overflow-scroll gap-4">
         {selectedPlanList.map((item, index) => (

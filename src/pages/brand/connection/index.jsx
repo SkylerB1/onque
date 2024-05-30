@@ -6,7 +6,7 @@ import { axiosInstance } from "../../../utils/Interceptor";
 import BrandNavber from "../../../components/side-navbar/BrandNavber";
 import { socialMediaList } from "../../../components/common/index";
 import SelectionModal from "../../../components/dialog/SelectDialog";
-import { ConnectUrl } from "../../../utils";
+import { ConnectUrl, ConnectUrlFn } from "../../../utils";
 import useConnections from "../../../components/customHooks/useConnections";
 import { toast } from "react-hot-toast";
 import { useLocalStorage } from "../../../utils/LocalStorage";
@@ -25,19 +25,23 @@ const initialHeader = {
 const Connection = () => {
   const { broadcastConnection, subscription, validations } = useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
-  const brandAccess = useMemo(() => validations && (!role || role?.editBrand), [role]);
+  const brandAccess = useMemo(
+    () => validations && (!role || role?.editBrand),
+    [role]
+  );
   const { connections, getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id || "";
   const [premium, setPremium] = useState(true);
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingDeleteConnection, setLoadingDeleteConnection] = useState(false);
   const [selected, setSelected] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [modalHeader, setModalHeader] = useState(initialHeader);
   const [anchorEl, setAnchorEl] = useState(null);
   const [opens, setOpen] = useState(false);
-  const [ids, setIds] = useState();
+  const [selectedConnection, setSelectedConnection] = useState(null);
   const [platformName, setPlatformName] = useState();
   const [instagramAuth, setInstagramAuth] = useState(false);
   const [isConnectionError, setConnectionError] = useState(null);
@@ -82,7 +86,7 @@ const Connection = () => {
     setModalHeader(header);
     setShowModal(true);
   };
-
+  // This function is called when clicked on on social media when wants to connect
   const handleMenuItemClick = (item) => {
     setSelected(item);
     handleClose();
@@ -100,20 +104,38 @@ const Connection = () => {
     setConnectionError(null);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (data) => {
     try {
+      setLoadingDeleteConnection(true);
+      const { id, platform } = data;
       const response = await axiosInstance.delete(
         `${import.meta.env.VITE_API_URL}/user/logout/socialMedia/${id}`
       );
       if (response.status === 200) {
-        const user = useLocalStorage("user", "get");
-        const brandId = user?.brand?.id;
+        const savedPlatforms = useLocalStorage(
+          `brand.${brandId}.planner.networks`,
+          "get"
+        );
+        const newSavedPlatforms = savedPlatforms?.filter(
+          (item) => item.platform !== platform
+        );
+
+        useLocalStorage(
+          `brand.${brandId}.planner.networks`,
+          "add",
+          JSON.stringify(newSavedPlatforms)
+        );
         getConnections(brandId);
+        setSelectedConnection(null);
         setOpen(false);
         setShowModal(false);
+        setLoadingDeleteConnection(false);
+
         toast.success(response?.data?.message);
       }
-    } catch (error) {}
+    } catch (error) {
+      setLoadingDeleteConnection(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -125,11 +147,11 @@ const Connection = () => {
   const handleSelected = async (data) => {
     try {
       setLoading(true);
-      const URL = ConnectUrl[selected];
+      // const URL = ConnectUrl[selected];
+      const URL = ConnectUrlFn(selected, brandId);
+      console.log(selected, URL, data);
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
-        const user = useLocalStorage("user", "get");
-        const brandId = user?.brand?.id;
         getConnections(brandId);
         removeSelected();
         handleCloseModal();
@@ -216,7 +238,11 @@ const Connection = () => {
                         {item.icon(item.color)}
                         <p className="ml-2 text-xl">{item.title}</p>
                       </div>
-                      <div className={`mt-3 ${!brandAccess ? "cursor-not-allowed":"cursor-pointer"}`}>
+                      <div
+                        className={`mt-3 ${
+                          !brandAccess ? "cursor-not-allowed" : "cursor-pointer"
+                        }`}
+                      >
                         {!conn ? (
                           <span
                             className={`${
@@ -259,7 +285,7 @@ const Connection = () => {
                                 <IoMdClose
                                   onClick={() => {
                                     setOpen(true);
-                                    setIds(conn.id);
+                                    setSelectedConnection(conn);
                                     setPlatformName(conn.platform);
                                   }}
                                 />
@@ -290,9 +316,10 @@ const Connection = () => {
       <CustomModal
         open={opens}
         Close={() => setOpen(false)}
+        loading={loadingDeleteConnection}
         title={`Are you sure that you want to disconnect ${platformName}?`}
         handleDelete={handleDelete}
-        id={ids}
+        data={selectedConnection}
       />
 
       <InstagramAuthDialog

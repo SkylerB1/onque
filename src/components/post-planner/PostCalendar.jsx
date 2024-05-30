@@ -10,11 +10,7 @@ import InstaReel from "../../assets/InstaReel";
 import Grid from "../../assets/Grid";
 import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
-import {
-  Card,
-  CardBody,
-  Button,
-} from "@material-tailwind/react";
+import { Card, CardBody, Button } from "@material-tailwind/react";
 import { IoMdAdd } from "react-icons/io";
 
 const PostCalendar = (props) => {
@@ -50,7 +46,7 @@ const PostCalendar = (props) => {
     setPostData(data);
     setCaption(title);
     setFiles((prev) => [...prev, ...files]);
-    setScheduledDate(postdate);
+    setScheduledDate(dayjs(postdate));
     handleModal();
   };
 
@@ -92,14 +88,16 @@ const PostCalendar = (props) => {
   };
 
   const selectData = (info) => {
-    const date = info.date;
+    const date = dayjs(info.date);
     setScheduledDate(date);
     setModal(true);
   };
 
   const clearPostData = () => {
     setPostData(null);
+    setCaption("");
     setFiles([]);
+    setIsEdit(false);
   };
 
   return (

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {
   Button,
   Dialog,
+  DialogHeader,
   DialogBody,
   DialogFooter,
   Input,
@@ -15,14 +16,17 @@ import UpgradeSubscription from "./UpgradeSubscription";
 import LoadingButton from "../button/LoadingButton";
 import { addBrand } from "../../redux/features/brandsSlice";
 import { initialiseConnections } from "../../redux/features/connectionSlice";
+import { toastrError } from "../../utils";
+
+const initial = {
+  brand_name: "",
+};
 
 export default function AddModal({ open, Close }) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
-  const [formData, setFormData] = useState({
-    brand_name: "",
-  });
+  const [formData, setFormData] = useState(initial);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +57,9 @@ export default function AddModal({ open, Close }) {
       if (error?.response?.status === 403) {
         setOpenSubscriptionModal(true);
       }
+      console.log(error);
+      let errorMessage = error?.response?.data?.msg || "Something went wrong!";
+      toastrError(errorMessage);
 
       console.log(error);
     }
@@ -62,9 +69,16 @@ export default function AddModal({ open, Close }) {
     setOpenSubscriptionModal(!openSubscriptionModal);
   };
 
+  const handleClose = () => {
+    setFormData(initial);
+    Close();
+  };
+
   return (
     <>
       <Dialog className="border-none" open={open} onClose={Close}>
+        <DialogHeader className="">Add Client</DialogHeader>
+        <hr />
         <DialogBody>
           <div className="mt-4 mb-6 flex flex-1 gap-4 justify-center items-center">
             <div className="w-72">
@@ -82,6 +96,7 @@ export default function AddModal({ open, Close }) {
             </div>
           </div>
         </DialogBody>
+        <hr />
         <DialogFooter className="flex flex-row justify-center">
           <LoadingButton
             loading={loading}
@@ -90,7 +105,12 @@ export default function AddModal({ open, Close }) {
             size="sm"
             onClick={handleSubmit}
           />
-          <Button size="sm" variant="outlined" onClick={Close} className="ml-2">
+          <Button
+            size="sm"
+            variant="outlined"
+            onClick={handleClose}
+            className="ml-2"
+          >
             CANCEL
           </Button>
         </DialogFooter>
@@ -104,4 +124,4 @@ export default function AddModal({ open, Close }) {
       />
     </>
   );
-};
+}

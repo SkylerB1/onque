@@ -1,0 +1,14 @@
+export const abbreviateString = (str) => {
+  // Ensure the string is at least 12 characters long
+  if (str.length <= 12) {
+    return str; // Return the original string if it's too short to abbreviate
+  }
+
+  // Get the first 6 characters
+  const firstPart = str.slice(0, 6);
+  // Get the last 6 characters
+  const lastPart = str.slice(-6);
+
+  // Combine the parts with three dots in between
+  return `${firstPart}...${lastPart}`;
+};

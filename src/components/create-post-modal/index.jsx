@@ -61,6 +61,10 @@ import toast from "react-hot-toast";
 import Dropzone from "react-dropzone";
 import { useLocalStorage } from "../../utils/LocalStorage.js";
 import UpgradeSubscription from "../modal/UpgradeSubscription.jsx";
+import {
+  socialPlateFormCharactersLength,
+  socialPlateFormVideosLength,
+} from "../../utils/commonUtils.js";
 
 const schdulePostBtnLabel = [
   {
@@ -89,6 +93,8 @@ const CreatePostModal = ({
   clearPostData,
   files,
   setFiles,
+  videoDurations,
+  setVideoDurations,
 }) => {
   const isDuplicating = useMemo(
     () => isEdit === "Published" || false,
@@ -185,6 +191,8 @@ const CreatePostModal = ({
     () => validations && (!role || role?.fullAccessPlanner),
     [role]
   );
+  let pateformPostCharactersLength = socialPlateFormCharactersLength;
+  let pateformPostVideosLength = socialPlateFormVideosLength;
   const brandAccess = useMemo(
     () => validations && (!role || role?.editBrand),
     [role]
@@ -425,6 +433,44 @@ const CreatePostModal = ({
     setFiles((prevFiles) => [...prevFiles, ...file]);
   };
 
+  const onDrop = useCallback((acceptedFiles) => {
+    setFiles(acceptedFiles);
+    setDurations([]);
+  }, []);
+
+  // Setting the  video duration on change in files
+  useEffect(() => {
+    const videoElements = [];
+
+    const updateDuration = (index, duration) => {
+      setVideoDurations((prevDurations) => {
+        const newDurations = [...prevDurations];
+        newDurations[index] = duration;
+        console.log(duration);
+        return newDurations;
+      });
+    };
+
+    files.forEach((file, index) => {
+      const fileURL = URL.createObjectURL(file);
+      const video = document.createElement("video");
+
+      video.onloadedmetadata = () => {
+        updateDuration(index, video.duration);
+        URL.revokeObjectURL(fileURL);
+      };
+
+      video.src = fileURL;
+      videoElements.push(video);
+    });
+
+    return () => {
+      videoElements.forEach((video) => {
+        video.src = "";
+      });
+    };
+  }, [files]);
+
   const removeimg = (i) => {
     setFiles(files.filter((item, index) => index !== i));
     setErrors((prev) => prev.filter((item) => item.id !== i));
@@ -466,7 +512,6 @@ const CreatePostModal = ({
     selectedPreview,
     viewMode,
     caption,
-    files,
     files,
     additionalPresets,
     connections,
@@ -515,6 +560,7 @@ const CreatePostModal = ({
     }
   }, [connections, postData]);
 
+  // if any thing change . validate and show error if
   useEffect(() => {
     setErrors([]);
     const canPublish =
@@ -557,6 +603,22 @@ const CreatePostModal = ({
               error: "Instagram - Add at least 1 image or video.",
             },
           ]);
+        }
+        if (videosCount > 0) {
+          const isAnyVideoLengthExceed = videoDurations.some(
+            (videoDuration) =>
+              videoDuration > pateformPostVideosLength.instagram
+          );
+          if (isAnyVideoLengthExceed) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error: `Instagram - Maximum video length is ${pateformPostVideosLength.instagram} seconds`,
+              },
+            ]);
+          }
         }
         if (dimensions?.size > 8000000 && dimensions?.type.includes("image")) {
           setErrors((prev) => [
@@ -675,6 +737,17 @@ const CreatePostModal = ({
             },
           ]);
         }
+
+        if (caption.length > pateformPostCharactersLength.facebook) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions.id,
+              platform: "facebook",
+              error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
+            },
+          ]);
+        }
         if (hasImages && hasVideos) {
           setErrors((prev) => [
             ...prev,
@@ -699,6 +772,17 @@ const CreatePostModal = ({
             },
           ]);
         }
+        if (caption.length > pateformPostCharactersLength.twitter) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions.id,
+              platform: "twitter",
+              error: `Twitter - Maximum characters limit is ${pateformPostCharactersLength.twitter}`,
+            },
+          ]);
+        }
+
         if (videosCount > 1) {
           setErrors((prev) => [
             ...prev,
@@ -708,6 +792,22 @@ const CreatePostModal = ({
               error: "Twitter - Max videos allowed 1.",
             },
           ]);
+        }
+
+        if (videosCount > 0) {
+          const isAnyVideoLengthExceed = videoDurations.some(
+            (videoDuration) => videoDuration > pateformPostVideosLength.twitter
+          );
+          if (isAnyVideoLengthExceed) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "twitter",
+                error: `Twitter - Maximum video length is ${pateformPostVideosLength.twitter} seconds`,
+              },
+            ]);
+          }
         }
         if ((hasImages && hasVideos) || videosCount > 1) {
           setErrors((prev) => [
@@ -770,6 +870,16 @@ const CreatePostModal = ({
             },
           ]);
         }
+        if (caption.length > pateformPostCharactersLength.youtube) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions.id,
+              platform: "youtube",
+              error: `Youtube - Maximum characters limit is ${pateformPostCharactersLength.youtube}`,
+            },
+          ]);
+        }
         if (videosCount > 1) {
           setErrors((prev) => [
             ...prev,
@@ -825,6 +935,31 @@ const CreatePostModal = ({
               type: "",
               platform: "tiktok",
               error: "TikTok - Add at least 1 video.",
+            },
+          ]);
+        }
+        if (videosCount > 0) {
+          const isAnyVideoLengthExceed = videoDurations.some(
+            (videoDuration) => videoDuration > pateformPostVideosLength.tiktok
+          );
+          if (isAnyVideoLengthExceed) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "tiktok",
+                error: `TikTok - Maximum video length is ${pateformPostVideosLength.tiktok} seconds`,
+              },
+            ]);
+          }
+        }
+        if (caption.length > pateformPostCharactersLength.tiktok) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions.id,
+              platform: "tiktok",
+              error: `TikTok - Maximum characters limit is ${pateformPostCharactersLength.tiktok}`,
             },
           ]);
         }
@@ -942,6 +1077,18 @@ const CreatePostModal = ({
               platform: "google_business",
               error:
                 "Google Business - Add at least 1 character or 1 media file.",
+            },
+          ]);
+        }
+        if (
+          caption.length > pateformPostCharactersLength.googleBusinessProfile
+        ) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions.id,
+              platform: "google_business",
+              error: `Google Business - Maximum characters limit is ${pateformPostCharactersLength.googleBusinessProfile}`,
             },
           ]);
         }
@@ -1081,6 +1228,16 @@ const CreatePostModal = ({
               id: dimensions.id,
               platform: "linkedin",
               error: "LinkedIn - Add at least 1 character or 1 media file.",
+            },
+          ]);
+        }
+        if (caption.length > pateformPostCharactersLength.linkedIn) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions.id,
+              platform: "linkedin",
+              error: `LinkedIn - Maximum characters limit is ${pateformPostCharactersLength.linkedIn}`,
             },
           ]);
         }

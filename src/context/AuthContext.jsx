@@ -13,7 +13,9 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../redux/features/userSlice";
 import useConnections from "../components/customHooks/useConnections";
 
-const AppContext = createContext();
+const AppContext = createContext({
+  subscription: null,
+});
 
 export function useAppContext() {
   return useContext(AppContext);

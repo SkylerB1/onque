@@ -294,6 +294,7 @@ export const SocialPlatforms = {
   },
 };
 
+// Get the plans list
 export const plansList = () => {
   return [
     {

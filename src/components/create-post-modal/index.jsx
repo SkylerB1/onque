@@ -438,6 +438,10 @@ const CreatePostModal = ({
     setDurations([]);
   }, []);
 
+  const isBlob = (file) => {
+    return file instanceof Blob;
+  };
+
   // Setting the  video duration on change in files
   useEffect(() => {
     const videoElements = [];
@@ -446,12 +450,17 @@ const CreatePostModal = ({
       setVideoDurations((prevDurations) => {
         const newDurations = [...prevDurations];
         newDurations[index] = duration;
-        console.log(duration);
+
         return newDurations;
       });
     };
 
     files.forEach((file, index) => {
+      if (!isBlob(file)) {
+        updateDuration(index, 0);
+        return false;
+      }
+      console.log(files);
       const fileURL = URL.createObjectURL(file);
       const video = document.createElement("video");
 
@@ -465,9 +474,11 @@ const CreatePostModal = ({
     });
 
     return () => {
-      videoElements.forEach((video) => {
-        video.src = "";
-      });
+      (videoElements &&
+        videoElements.forEach((video) => {
+          video.src = "";
+        })) ||
+        [];
     };
   }, [files]);
 

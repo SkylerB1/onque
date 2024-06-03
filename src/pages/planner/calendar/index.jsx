@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { useAppContext } from "../../../context/AuthContext";
 import NoAccessPermission from "./NoAccessPermission";
 import { Planner } from "../../../components/common/Images";
+import { abbreviateString } from "../../../utils/commonUtils";
 
 dayjs.extend(UTC);
 

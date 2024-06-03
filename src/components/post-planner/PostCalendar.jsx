@@ -12,6 +12,7 @@ import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import { Card, CardBody, Button } from "@material-tailwind/react";
 import { IoMdAdd } from "react-icons/io";
+import { abbreviateString } from "../../utils/commonUtils";
 
 const PostCalendar = (props) => {
   const { getPostData, events, role } = props;
@@ -41,7 +42,7 @@ const PostCalendar = (props) => {
       caption: title,
       id: rowId,
       files: files,
-      platforms: platform,
+      platforms: JSON.parse(platform),
     };
 
     setPostData(data);
@@ -69,7 +70,7 @@ const PostCalendar = (props) => {
 
     return (
       <Event
-        caption={eventInfo.event._def.title}
+        caption={abbreviateString(eventInfo.event._def.title)}
         status={status}
         dataData={dateStr}
         eventTime={eventInfo.timeText}

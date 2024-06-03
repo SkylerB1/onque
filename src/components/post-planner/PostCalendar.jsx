@@ -16,6 +16,7 @@ import { IoMdAdd } from "react-icons/io";
 const PostCalendar = (props) => {
   const { getPostData, events, role } = props;
   const [files, setFiles] = useState([]);
+  const [videoDurations, setVideoDurations] = useState([]);
   const [caption, setCaption] = useState("");
   const [postData, setPostData] = useState(null);
   const [scheduledDate, setScheduledDate] = useState(dayjs());
@@ -159,6 +160,8 @@ const PostCalendar = (props) => {
                 clearPostData={clearPostData}
                 files={files}
                 setFiles={setFiles}
+                videoDurations={videoDurations}
+                setVideoDurations={setVideoDurations}
                 setCaption={setCaption}
                 caption={caption}
                 getPostData={getPostData}

@@ -12,3 +12,21 @@ export const abbreviateString = (str) => {
   // Combine the parts with three dots in between
   return `${firstPart}...${lastPart}`;
 };
+
+// Social Plateform characters length
+export const socialPlateFormCharactersLength = {
+  twitter: 280,
+  facebook: 16192,
+  instagram: 2200,
+  linkedIn: 3000,
+  youtube: 5000,
+  googleBusinessProfile: 1500,
+  tiktok: 2000,
+};
+
+// Social Plateform characters length
+export const socialPlateFormVideosLength = {
+  twitter: 140,
+  instagram: 900,
+  tiktok: 600,
+};

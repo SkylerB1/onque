@@ -604,6 +604,16 @@ const CreatePostModal = ({
             },
           ]);
         }
+        if (caption.length > pateformPostCharactersLength.instagram) {
+          setErrors((prev) => [
+            ...prev,
+            {
+              id: dimensions.id,
+              platform: "instagram",
+              error: `Instagram - Maximum characters limit is ${pateformPostCharactersLength.instagram}`,
+            },
+          ]);
+        }
         if (videosCount > 0) {
           const isAnyVideoLengthExceed = videoDurations.some(
             (videoDuration) =>

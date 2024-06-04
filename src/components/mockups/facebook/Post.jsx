@@ -104,8 +104,9 @@ function Post({ files, captions, viewMode, screenName, date }) {
           return (
             <div
               key={index}
-              className={`${index > 0 && "ml-[1px]"
-                } relative justify-center items-center flex flex-1 h-full`}
+              className={`${
+                index > 0 && "ml-[1px]"
+              } relative justify-center items-center flex flex-1 h-full`}
             >
               {renderImageComponent(index)}
             </div>
@@ -131,14 +132,15 @@ function Post({ files, captions, viewMode, screenName, date }) {
         return (
           <div
             key={index}
-            className={`w-1/2 h-1/2 ${index == 0
-              ? "pb-[1px]"
-              : index == 1
+            className={`w-1/2 h-1/2 ${
+              index == 0
+                ? "pb-[1px]"
+                : index == 1
                 ? "pl-[1px] pb-[1px]"
                 : index == 3
-                  ? "pl-[1px]"
-                  : ""
-              }`}
+                ? "pl-[1px]"
+                : ""
+            }`}
           >
             {renderImageComponent(index)}
           </div>
@@ -168,8 +170,9 @@ function Post({ files, captions, viewMode, screenName, date }) {
           return (
             <div
               key={index}
-              className={`relative h-1/3 ${index < 5 ? "w-1/3" : ""} ${index < 4 ? " pr-[1px]" : ""
-                } `}
+              className={`relative h-1/3 ${index < 5 ? "w-1/3" : ""} ${
+                index < 4 ? " pr-[1px]" : ""
+              } `}
             >
               <>
                 {index < 5 && (
@@ -198,6 +201,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
     }
   }, [filteredFiles]);
 
+  // return <>Testing</>;
   return (
     <>
       <div className="flex flex-row justify-between items-center px-3 mt-10 mb-2">
@@ -224,15 +228,17 @@ function Post({ files, captions, viewMode, screenName, date }) {
 
       {files?.length > 0 ? (
         <div
-          className={`relative ${viewMode ? "h-[450px]" : "h-80"
-            } w-full flex flex-1 flex-wrap justify-center bg-white`}
+          className={`relative ${
+            viewMode ? "h-[450px]" : "h-80"
+          } w-full flex flex-1 flex-wrap justify-center bg-white`}
         >
           {renderMedia()}
         </div>
       ) : (
         <div
-          className={`${viewMode ? "h-[450px]" : "h-60"
-            } w-full flex items-center justify-center bg-black`}
+          className={`${
+            viewMode ? "h-[450px]" : "h-60"
+          } w-full flex items-center justify-center bg-black`}
         >
           <p className="font-bold text-sm text-white">
             Video/Img not available
@@ -263,6 +269,6 @@ function Post({ files, captions, viewMode, screenName, date }) {
       </div>
     </>
   );
-};
+}
 
 export default Post;

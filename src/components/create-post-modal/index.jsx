@@ -62,6 +62,7 @@ import Dropzone from "react-dropzone";
 import { useLocalStorage } from "../../utils/LocalStorage.js";
 import UpgradeSubscription from "../modal/UpgradeSubscription.jsx";
 import {
+  shortenText,
   socialPlateFormCharactersLength,
   socialPlateFormVideosLength,
 } from "../../utils/commonUtils.js";
@@ -497,6 +498,8 @@ const CreatePostModal = ({
   const handlePreview = useCallback(() => {
     if (selectedPreview) {
       const { platform = "", mediaType = "" } = selectedPreview;
+      // console.log(selectedPreview);
+
       const Component = platformComponentMap[platform];
       const presets = additionalPresets[platform];
       const date = dayjs(scheduledDate).format("DD MMM");
@@ -505,7 +508,7 @@ const CreatePostModal = ({
         return Component({
           files,
           viewMode,
-          caption,
+          caption: shortenText(caption, true),
           connections,
           date,
           data: presets,

@@ -15,6 +15,7 @@ function GetFacebookComponent({
   const { screenName = "" } = connections.find(
     (item) => item.platform === FacebookPagePlatform
   );
+
   if (mediaType == "POST") {
     return (
       <Post

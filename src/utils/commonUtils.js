@@ -30,3 +30,16 @@ export const socialPlateFormVideosLength = {
   instagram: 900,
   tiktok: 600,
 };
+
+// Function to test string
+export const isJSON = (text) => {
+  if (typeof text !== "string") {
+    return false;
+  }
+  try {
+    JSON.parse(text);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};

@@ -12,7 +12,7 @@ import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import { Card, CardBody, Button } from "@material-tailwind/react";
 import { IoMdAdd } from "react-icons/io";
-import { abbreviateString } from "../../utils/commonUtils";
+import { abbreviateString, isJSON } from "../../utils/commonUtils";
 
 const PostCalendar = (props) => {
   const { getPostData, events, role } = props;
@@ -37,12 +37,12 @@ const PostCalendar = (props) => {
   const updatePostData = async (eventInfo) => {
     const { title = "", extendedProps = {} } = eventInfo.event._def;
     const { rowId, files, platform, postdate } = extendedProps;
-
+    console.log(typeof platform, platform);
     const data = {
       caption: title,
       id: rowId,
       files: files,
-      platforms: JSON.parse(platform),
+      platforms: isJSON(platform) ? JSON.parse(platform) : platform,
     };
 
     setPostData(data);

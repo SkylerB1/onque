@@ -16,7 +16,7 @@ const PostPreview = ({
   togglePreview,
 }) => {
   return (
-    <div className="bg-gray-100 w-[620px] h-full flex flex-col rounded-r-md items-center relative">
+    <div className="bg-gray-100 w-[620px] h-full flex flex-col rounded-r-md items-center relative pointer-events-auto">
       <Button
         className="absolute rounded-full flex justify-center items-center h-6 top-3 right-3 2xl:hidden"
         onClick={togglePreview}
@@ -32,8 +32,9 @@ const PostPreview = ({
             <div
               key={index}
               onClick={() => handlePlatformPreview(item)}
-              className={` rounded-xl px-3 py-1 ${index > 0 && "ml-1"} ${isSelected && "bg-[#D3D3D3]"
-                }  rounded cursor-pointer hover:bg-gray-100`}
+              className={` rounded-xl px-3 py-1 ${index > 0 && "ml-1"} ${
+                isSelected && "bg-[#D3D3D3]"
+              }  rounded cursor-pointer hover:bg-gray-100`}
             >
               {isSelected ? coloredIcon(22, 22) : nonColoredIcon(22, 22)}
             </div>

@@ -13,6 +13,13 @@ export const abbreviateString = (str) => {
   return `${firstPart}...${lastPart}`;
 };
 
+export function shortenText(text, seeMore = false, length = 150) {
+  if (text?.length > length) {
+    return text.substring(0, length) + " ..." + (seeMore ? "See More" : "");
+  }
+  return text;
+}
+
 // Social Plateform characters length
 export const socialPlateFormCharactersLength = {
   twitter: 280,

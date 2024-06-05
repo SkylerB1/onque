@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { axiosInstance, getToken } from "../../utils/Interceptor";
-import { API_URL } from "../../utils";
+import { API_URL, toastrError } from "../../utils";
 import { LinkedInPages, SelectBrandPage } from "../common/commonString";
 import LinkedIn from "../svg/LinkedIn";
 import { useSelector } from "react-redux";
@@ -74,6 +74,9 @@ const LinkedInConnectPage = ({
         setLoading(false);
       }
     } catch (err) {
+      let message = err?.message || "Something went wrong!";
+      toastrError(message);
+      setLoading(false);
       console.log(err);
     }
   };
@@ -96,9 +99,7 @@ const LinkedInConnectPage = ({
       <span className="me-8 py-3 text-base text-white">
         <p className="font-bold">{label}</p>
       </span>
-      <span className="h-12 text-xl py-3 text-stone-600">
-        {icon}
-      </span>
+      <span className="h-12 text-xl py-3 text-stone-600">{icon}</span>
     </div>
   );
 };

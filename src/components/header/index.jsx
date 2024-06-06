@@ -18,10 +18,13 @@ import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { FaLink } from "react-icons/fa6";
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
+import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies();
+
   const {
     subscription,
     getSubscriptions,
@@ -33,6 +36,13 @@ export default function Header({ children }) {
   const [openNav, setOpenNav] = React.useState(false);
   const [opens, setOpen] = useState(false);
 
+  const user = useSelector((state) => state.user.value);
+
+  if (user == null) {
+    localStorage.clear();
+    removeCookie("access_token");
+    navigate("/login");
+  }
   const navList = (
     <ul className="mb-4 mt-2 mr-40 flex flex-col gap-1 md:flex-row md:mt-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       <Typography

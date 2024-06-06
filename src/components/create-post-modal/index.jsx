@@ -65,7 +65,7 @@ import {
   shortenText,
   socialPlateFormCharactersLength,
   socialPlateFormVideosLength,
-} from "../../utils/commonUtils.js";
+} from "../../utils/commonUtils.jsx";
 
 const schdulePostBtnLabel = [
   {

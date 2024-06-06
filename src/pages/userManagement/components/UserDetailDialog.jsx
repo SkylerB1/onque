@@ -133,7 +133,8 @@ const UserDetailDialog = ({
           </IconButton>
         </DialogHeader>
         <DialogBody>
-          <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
+          {/* Filter Conatiner */}
+          {/* <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
             <div className="w-2/5">
               <Input
                 label="Search"
@@ -141,6 +142,7 @@ const UserDetailDialog = ({
                 onChange={handleSearch}
               />
             </div>
+
             <div className="flex w-full gap-2 md:w-5/6">
               <Filters
                 options={brands}
@@ -161,7 +163,7 @@ const UserDetailDialog = ({
                 title={"Any Role"}
               />
             </div>
-          </div>
+          </div> */}
           <div className="max-h-96 overflow-auto">
             <table className="w-full min-w-max table-auto text-left">
               <thead className="sticky top-0 z-10">

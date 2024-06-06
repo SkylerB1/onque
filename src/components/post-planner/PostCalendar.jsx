@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import CreatePostModal from "../create-post-modal";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -12,7 +12,11 @@ import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import { Card, CardBody, Button } from "@material-tailwind/react";
 import { IoMdAdd } from "react-icons/io";
-import { abbreviateString, isJSON } from "../../utils/commonUtils";
+import {
+  abbreviateString,
+  getTextForRoleInfo,
+  isJSON,
+} from "../../utils/commonUtils";
 
 const PostCalendar = (props) => {
   const { getPostData, events, role } = props;
@@ -23,6 +27,8 @@ const PostCalendar = (props) => {
   const [scheduledDate, setScheduledDate] = useState(dayjs());
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
+  const [textForRoleInfo, setTextForRoleInfo] = useState(null);
+
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
 
@@ -37,7 +43,6 @@ const PostCalendar = (props) => {
   const updatePostData = async (eventInfo) => {
     const { title = "", extendedProps = {} } = eventInfo.event._def;
     const { rowId, files, platform, postdate } = extendedProps;
-    console.log(typeof platform, platform);
     const data = {
       caption: title,
       id: rowId,
@@ -102,9 +107,49 @@ const PostCalendar = (props) => {
     setIsEdit(false);
   };
 
+  useEffect(() => {
+    let textForRoleInfo = getTextForRoleInfo(role);
+
+    setTextForRoleInfo(textForRoleInfo);
+  }, [role]);
   return (
     <>
       <div className="md:my-2 xl:mt-24 lg:mt-24">
+        {/* Role Info Section */}
+        {textForRoleInfo != null && (
+          <>
+            <div
+              id="alert-additional-content-1"
+              className="p-4 mb-4 mt-8 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+              role="alert"
+            >
+              <div className="flex items-center">
+                <svg
+                  className="flex-shrink-0 w-4 h-4 me-2"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                </svg>
+                <span className="sr-only">Info</span>
+                <h3 className="text-lg font-medium">
+                  {textForRoleInfo.map((value) => value.title + " , ")}
+                </h3>
+              </div>
+              <div className="mt-2 mb-4 text-sm">
+                {textForRoleInfo.map((value, index) => (
+                  <React.Fragment key={index}>
+                    {value.description}
+                    <br />
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+        {/* Role Info Section End Here */}
         {fullAccess && (
           <Button
             size="sm"

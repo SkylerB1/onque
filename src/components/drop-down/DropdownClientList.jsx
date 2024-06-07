@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
+import { IoDiamondSharp } from "react-icons/io5";
 import useConnections from "../customHooks/useConnections";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../redux/features/userSlice";
 import { useLocalStorage } from "../../utils/LocalStorage";
+import { Link } from "react-router-dom";
 
 import {
   Menu,
@@ -15,20 +17,34 @@ import {
 import { SocialPlatforms } from "../../utils";
 import { useAppContext } from "../../context/AuthContext";
 import { abbreviateString } from "../../utils/commonUtils";
+import InfoIcon from "../svg/infoIcon";
+import Close from "../svg/Close";
+import useUserInfo from "../customHooks/useUserInfo";
 
-const DropdownClientList = ({ setOpen }) => {
+const DropdownClientList = ({ setOpen, isSubscribed }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { getConnections } = useConnections();
   const { getCounter } = useAppContext();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+  const [userInfo, setUserInfo] = useState(user);
+  const { getUserRefreshedData } = useUserInfo();
+
+  const { clients_count, max_clients } = useSelector(
+    (state) => state.user.value
+  );
   const { value: brands, loading } = useSelector((state) => state.brands);
   const brandName = user?.brand?.brand_name || "Loading...";
   const [searchTerm, setSearchTerm] = useState("");
 
-  // console.log(brands);
-
   const toggleDropdown = () => {
+    if (isOpen == false) {
+      getUserRefreshedData().then((response) => {
+        if (response) {
+          setUserInfo(response);
+        }
+      });
+    }
     setIsOpen(!isOpen);
   };
 
@@ -97,18 +113,93 @@ const DropdownClientList = ({ setOpen }) => {
               className="mx-4 my-5 p-3 w-80 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
             />
           )}
+          {!isSubscribed && (
+            <>
+              <div
+                id="alert-4"
+                class="flex items-center p-4 mb-4 text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+                role="alert"
+              >
+                <InfoIcon />
+                <span className="sr-only">Info</span>
+                <div className="ms-3 text-sm font-medium">
+                  You need an upgraded plan to add more brands to your account.
+                  <Link
+                    to="/setting/price"
+                    className="font-semibold underline hover:no-underline"
+                  >
+                    Upgrade
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
+          {isSubscribed && userInfo?.clients_count < userInfo?.max_clients ? (
+            <>
+              <div
+                id="alert-1"
+                class="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+                role="alert"
+              >
+                <InfoIcon />
+                <span class="sr-only">Info</span>
+                <div className="ms-3 text-sm font-medium">
+                  You have {clients_count} brands out {max_clients}.
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              {isSubscribed && (
+                <>
+                  <div
+                    id="alert-2"
+                    className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                    role="alert"
+                  >
+                    <InfoIcon />
+                    <span className="sr-only">Info</span>
+                    <div className="ms-3 text-sm font-medium">
+                      You have reached the maximum numbers of brand limit. To
+                      create the more brand
+                      <Link
+                        to="/setting/price"
+                        className="font-semibold underline hover:no-underline"
+                      >
+                        {" "}
+                        Upgrade
+                      </Link>
+                      .
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          )}
+
           <button
             onClick={() => setOpen(true)}
             className=" w-full text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200"
             role="menuitem"
           >
-            <div className="flex flex-1 items-center justify-start gap-3">
-              <div className="border border-black rounded-lg p-1">
-                <GoPlus className="w-7 h-7" />
+            <div className="flex flex-1 items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className=" border border-black rounded-lg p-1">
+                  <GoPlus className="w-7 h-7" />
+                </div>
+                <div className="">Add Client</div>
               </div>
-              <div>Add Client</div>
+              {(!isSubscribed ||
+                userInfo?.clients_count > userInfo?.max_clients) && (
+                <>
+                  <div className="">
+                    <IoDiamondSharp className="w-5 h-5 rounded" />
+                  </div>
+                </>
+              )}
             </div>
           </button>
+
           {loading ? (
             <div className="justifyCenter py-4">
               <Spinner />

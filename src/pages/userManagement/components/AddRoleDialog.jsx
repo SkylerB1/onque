@@ -37,6 +37,7 @@ const AddRoleDialog = ({
     () => !isEditing && roles?.some((item) => item.name === data.name),
     [roles, data, isEditing]
   );
+  const descriptionMaxLength = 500;
   const isSubmitDisabled = useMemo(() => {
     const {
       name,
@@ -50,6 +51,7 @@ const AddRoleDialog = ({
     return (
       name === "" ||
       // description === "" ||
+      description.length > descriptionMaxLength ||
       (!viewPlanner && !fullAccessPlanner && !schedulePosts && !editBrand)
     );
   }, [data]);
@@ -169,6 +171,13 @@ const AddRoleDialog = ({
                 value={data.description}
                 onChange={(e) => handleChange("description", e.target.value)}
               />
+              {data?.description?.length > descriptionMaxLength && (
+                <>
+                  <p className="mt-2 text-sm text-red-600">
+                    {"Only 500 characters are allowed !"}
+                  </p>
+                </>
+              )}
             </div>
           </div>
           <div className="textarea my-4">

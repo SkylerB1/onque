@@ -178,6 +178,7 @@ const CreatePostModal = ({
   });
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
+  // console.log(brandId, " is at create post model index at 183");
   const [dimensions, setDimensions] = useState({});
   const CREATE_POST_URL = API_URL + `/user/scheduler/posts?brandId=${brandId}`;
   const UPDATE_POST_URL =

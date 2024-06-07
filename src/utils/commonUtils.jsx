@@ -52,6 +52,8 @@ export const isJSON = (text) => {
 };
 
 export function getTextForRoleInfo(role) {
+  if (role == null) return null;
+
   let permissions = [];
   if (role?.fullAccessPlanner == true) {
     permissions.push("fullAccessPlanner");

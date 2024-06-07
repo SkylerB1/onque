@@ -134,6 +134,7 @@ export default function Header({ children }) {
                 <DropdownClientList
                   setOpen={setOpen}
                   key={dropdownClientListKey}
+                  isSubscribed={isSubscribed}
                 />
               </div>
               <div className="ml-8">

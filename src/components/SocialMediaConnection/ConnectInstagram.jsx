@@ -17,6 +17,7 @@ const ConnectInstagram = ({
 }) => {
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
+  // console.log(brandId, " is at connectInstagram at 20");
   const { broadcastConnection } = useAppContext();
   const GET_ACCOUNTS_URL =
     API_URL + `/auth/instagram-business-accounts?brandId=${brandId}`;

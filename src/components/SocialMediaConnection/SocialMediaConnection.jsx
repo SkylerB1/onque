@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import SelectionModal from "../dialog/SelectDialog";
-import { ConnectUrl } from "../../utils";
+import { ConnectUrl, ConnectUrlFn } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import useConnections from "../customHooks/useConnections.jsx";
 import { socialMediaList } from "../common/index";
@@ -97,7 +97,9 @@ const SocialMediaConnection = ({ children }) => {
   const handleSelected = async (data) => {
     try {
       setLoading(true);
-      const URL = ConnectUrl[selected];
+      // const URL = ConnectUrl[selected];
+      const URL = ConnectUrlFn(selected, brandId);
+
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
         getConnections();

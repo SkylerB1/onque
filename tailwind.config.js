@@ -6,17 +6,18 @@ module.exports = withMT({
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/planner/calendar/**/*.{js,ts,jsx,tsx,mdx}",
     "./node_modules/react-tailwindcss-datepicker/dist/**/*.js",
+    "node_modules/flowbite-react/lib/esm/**/*.js",
   ],
   theme: {
     extend: {
       screens: {
-        'tablet': '640px',
+        tablet: "640px",
         // => @media (min-width: 640px) { ... }
 
-        'laptop': '1024px',
+        laptop: "1024px",
         // => @media (min-width: 1024px) { ... }
 
-        'desktop': '1280px',
+        desktop: "1280px",
         // => @media (min-width: 1280px) { ... }
       },
       backgroundImage: {
@@ -43,5 +44,5 @@ module.exports = withMT({
       },
     },
   },
-  plugins: [],
+  plugins: [require("flowbite/plugin")],
 });

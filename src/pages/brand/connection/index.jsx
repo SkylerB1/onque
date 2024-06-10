@@ -184,7 +184,6 @@ const Connection = () => {
 
   useEffect(() => {
     let textForRoleInfo = getTextForRoleInfo(role);
-    console.log(textForRoleInfo);
     setTextForRoleInfo(textForRoleInfo);
   }, [role]);
 
@@ -216,7 +215,11 @@ const Connection = () => {
                     </svg>
                     <span className="sr-only">Info</span>
                     <h3 className="text-lg font-medium">
-                      {textForRoleInfo.map((value) => value.title + " , ")}
+                      {textForRoleInfo.map(
+                        (value, index) =>
+                          value.title +
+                          (textForRoleInfo.legth - 1 < index ? " , " : "")
+                      )}
                     </h3>
                   </div>
                   <div className="mt-2 mb-4 text-sm">

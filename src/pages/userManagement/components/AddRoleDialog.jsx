@@ -37,7 +37,8 @@ const AddRoleDialog = ({
     () => !isEditing && roles?.some((item) => item.name === data.name),
     [roles, data, isEditing]
   );
-  const descriptionMaxLength = 500;
+  const roleNameMaxLength = 30;
+  const descriptionMaxLength = 400;
   const isSubmitDisabled = useMemo(() => {
     const {
       name,
@@ -50,6 +51,7 @@ const AddRoleDialog = ({
 
     return (
       name === "" ||
+      name.length > roleNameMaxLength ||
       // description === "" ||
       description.length > descriptionMaxLength ||
       (!viewPlanner && !fullAccessPlanner && !schedulePosts && !editBrand)
@@ -162,6 +164,14 @@ const AddRoleDialog = ({
                   There is already a role with this name
                 </Typography>
               )}
+
+              {data?.name?.length > roleNameMaxLength && (
+                <>
+                  <p className="mt-2 text-sm text-red-600">
+                    {`Only ${roleNameMaxLength} characters are allowed !`}
+                  </p>
+                </>
+              )}
             </div>
           </div>
           <div className="grid sm:grid-cols-2 gap-4 gap-x-10 mb-8">
@@ -174,7 +184,7 @@ const AddRoleDialog = ({
               {data?.description?.length > descriptionMaxLength && (
                 <>
                   <p className="mt-2 text-sm text-red-600">
-                    {"Only 500 characters are allowed !"}
+                    {`Only ${descriptionMaxLength} characters are allowed !`}
                   </p>
                 </>
               )}

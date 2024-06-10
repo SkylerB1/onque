@@ -3,14 +3,17 @@ import { Button } from "@material-tailwind/react";
 import { planLabel } from "../../../../utils";
 import { getDateFromUnix } from "../../../../utils/dateUtils";
 import CancelSubscription from "../../../../components/modal/CancelSubscription";
+import ModifyBrandsStatus from "../../../../components/modal/ModifyBrandsStatus";
 import ResumeSubscription from "../../../../components/modal/ResumeSubscription";
 
 import { useAppContext } from "../../../../context/AuthContext";
+import { axiosInstance } from "../../../../utils/Interceptor";
 import {
   capitalizeFirstLetter,
   paymentFailedStatuses,
 } from "../../../../utils/index";
 import LoadingButton from "../../../../components/button/LoadingButton";
+
 const CurrentSubscription = ({
   subscription,
   getSubscriptions,
@@ -23,12 +26,17 @@ const CurrentSubscription = ({
   const [openResumeModal, setResumeModal] = useState(false);
   const { validations, openChangePlanModel, setOpenChangePlanModel } =
     useAppContext();
+  const [openBrandStatusModal, setOpenBrandStatusModal] = useState(false);
+  const [brands, setBrands] = useState([]);
 
   const toggleCancelModal = () => {
     setCancelModal(!openCancelModal);
   };
   const toggleResumeModal = () => {
     setResumeModal(!openResumeModal);
+  };
+  const toggleBrandStatusModal = () => {
+    setOpenBrandStatusModal(!openBrandStatusModal);
   };
 
   const reloadSubscription = () => {
@@ -37,9 +45,26 @@ const CurrentSubscription = ({
   useEffect(() => {
     reloadSubscription();
   }, []);
+
   const handleChangePlan = () => {
     setOpenChangePlanModel(!openChangePlanModel);
   };
+
+  const openBrandModel = async () => {
+    await getBrands();
+    setOpenBrandStatusModal(true);
+  };
+
+  const getBrands = async () => {
+    try {
+      const res = await axiosInstance.get(`/brands`);
+      setBrands(res.data);
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <div className="flex flex-1 flex-wrap justify-evenly mb-14">
@@ -77,6 +102,13 @@ const CurrentSubscription = ({
                     Change plan
                   </Button>
                 )}
+              <Button
+                variant="outlined"
+                className="text-white text-xs py-1 px-2 gradient-button-dark normal-case"
+                onClick={openBrandModel}
+              >
+                Manage Brands
+              </Button>
 
               {subscription?.status &&
                 (subscription.status == "trialing" ||
@@ -123,11 +155,11 @@ const CurrentSubscription = ({
             {planLabel[subscription.plan.name]}
           </strong>
           <div className="flex justify-between">
-            <span className="text-sm">
+            <span className="text-sm text-white">
               Clients: {validations?.clients_count} of{" "}
               {validations?.max_clients}
             </span>
-            <span className="text-sm">
+            <span className="text-sm text-white">
               Posts: {validations?.posts_count_monthly} of{" "}
               {validations?.max_posts_monthly}
             </span>
@@ -182,6 +214,15 @@ const CurrentSubscription = ({
           toggleModal={toggleCancelModal}
           reloadSubscription={reloadSubscription}
           subscription={subscription}
+        />
+        <ModifyBrandsStatus
+          isOpen={openBrandStatusModal}
+          close={setOpenBrandStatusModal}
+          toggleModal={toggleBrandStatusModal}
+          onClose={() => {
+            setOpenBrandStatusModal(false);
+          }}
+          brands={brands}
         />
 
         <ResumeSubscription

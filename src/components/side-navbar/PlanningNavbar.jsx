@@ -33,7 +33,8 @@ export default function PlanningNavbar() {
             Calendar
           </ListItem>
         </Link>
-        <Link
+        {/* Commenting the Planning History Link */}
+        {/* <Link
           to="/planner/history"
           className={`flex items-center font-medium text-lg `}
         >
@@ -49,7 +50,7 @@ export default function PlanningNavbar() {
             </ListItemPrefix>
             History
           </ListItem>
-        </Link>
+        </Link> */}
       </List>
       <List className="bg-[#F1F2F4] xl:hidden md:block md:w-6 md:min-w-full ">
         <Link

@@ -84,16 +84,17 @@ const router = createBrowserRouter([
       </PrivateRoute>
     ),
   },
-  {
-    path: "/planner/history",
-    element: (
-      <PrivateRoute>
-        <Header>
-          <History />
-        </Header>
-      </PrivateRoute>
-    ),
-  },
+  /* Commenting the Planning History Link */
+  // {
+  //   path: "/planner/history",
+  //   element: (
+  //     <PrivateRoute>
+  //       <Header>
+  //         <History />
+  //       </Header>
+  //     </PrivateRoute>
+  //   ),
+  // },
   {
     path: "/brand/connection",
     element: (

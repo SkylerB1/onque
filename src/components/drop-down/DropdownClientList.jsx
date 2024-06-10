@@ -215,8 +215,12 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                 ?.map((item) => (
                   <button
                     key={item.id}
-                    onClick={() => handleItemClick(item)}
-                    className=" w-full my-2 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 "
+                    onClick={() =>
+                      item.is_active == "1" ? handleItemClick(item) : null
+                    }
+                    className={` ${
+                      item.is_active !== "1" && " opacity-20 "
+                    } w-full my-2 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
                     role="menuitem"
                   >
                     <div className="flex flex-1 items-center justify-start gap-3">
@@ -227,7 +231,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                       </div>
                       <div>
                         <Typography className="text-base">
-                          {item?.brand_name}
+                          {item?.brand_name}{" "}
                         </Typography>
                         <div className="flex flex-1 items-center justify-start gap-2 mt-1">
                           {item.platforms.length === 0 && (

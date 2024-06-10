@@ -135,7 +135,11 @@ const PostCalendar = (props) => {
                 </svg>
                 <span className="sr-only">Info</span>
                 <h3 className="text-lg font-medium">
-                  {textForRoleInfo.map((value) => value.title + " , ")}
+                  {textForRoleInfo.map(
+                    (value) =>
+                      value.title +
+                      (textForRoleInfo.legth - 1 < index ? " , " : "")
+                  )}
                 </h3>
               </div>
               <div className="mt-2 mb-4 text-sm">

@@ -10,10 +10,11 @@ import { setUser } from "../../redux/features/userSlice";
 
 const useUserInfo = () => {
   const dispatch = useDispatch();
-
+  const [userData, setUserData] = useState(null);
   const [cookies, setCookie] = useCookies(["access_token"]);
   const { getSubscriptions, getCounter } = useAppContext();
   const { getConnections } = useConnections();
+  const user = useSelector((state) => state.user.value);
 
   const handlePostLogin = async (response) => {
     const { data: userData } = response;
@@ -22,17 +23,21 @@ const useUserInfo = () => {
     setCookie("access_token", access_token);
 
     let item = await dispatch(getBrands());
-    const brand = item.payload.brands[0];
+    let brand = user?.brand;
+    const brandId = user?.brand?.id;
+    if (brandId) {
+      item.payload.brands.filter((brand) => brand.id == brandId);
+    } else {
+      brand = item.payload.brands[0];
+    }
+
     const userBrand = {
       ...userData,
       brand: brand,
     };
     // console.log(brand);
-    getCounter(brand.id);
-    dispatch(setUser(userBrand));
-    getConnections(brand.id);
 
-    getSubscriptions();
+    setUserData(userBrand);
     return userBrand;
   };
 
@@ -59,14 +64,22 @@ const useUserInfo = () => {
         return false;
       }
     } catch (error) {
-      // console.log(error);
-      const message = error.response.data.message || "An error occurred.";
+      console.log(error);
+      const message = error.response?.data?.message || "An error occurred.";
       // console.log(message);
       toastrError(message);
       return false;
     }
   };
 
+  useEffect(() => {
+    if (userData != null) {
+      getCounter(userData.brand.id);
+      dispatch(setUser(userData));
+      getConnections(userData.brand.id);
+      getSubscriptions();
+    }
+  }, [userData]);
   return { getUserRefreshedData };
 };
 

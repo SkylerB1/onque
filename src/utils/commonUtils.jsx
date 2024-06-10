@@ -84,7 +84,7 @@ export function getTextForRoleInfo(role) {
             break;
           case "fullAccessPlanner":
             response = {
-              title: "Manage Permissions",
+              title: "Manage Planning Permissions",
               description: `
           Granting editing permission provides complete access to the planner, including the calendar, history, and autolists. Additionally, it enables the creation, modification, and publishing of posts, along with all associated functionalities.`,
             };

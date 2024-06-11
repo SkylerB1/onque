@@ -142,6 +142,9 @@ const AddRoleDialog = ({
                 value={data.name}
                 error={isNameAlreadyExist}
                 onChange={(e) => handleChange("name", e.target.value)}
+                labelProps={{
+                  className: "",
+                }}
               />
               {isNameAlreadyExist && (
                 <Typography

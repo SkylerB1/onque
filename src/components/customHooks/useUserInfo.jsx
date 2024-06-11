@@ -16,11 +16,11 @@ const useUserInfo = () => {
   const { getConnections } = useConnections();
   const user = useSelector((state) => state.user.value);
 
-  const handlePostLogin = async (response) => {
+  const updateData = async (response) => {
     const { data: userData } = response;
-    const { access_token } = userData;
-    localStorage.setItem("access_token", access_token);
-    setCookie("access_token", access_token);
+    // const { access_token } = userData;
+    // localStorage.setItem("access_token", access_token);
+    // setCookie("access_token", access_token);
 
     let item = await dispatch(getBrands());
     let brand = user?.brand;
@@ -35,9 +35,14 @@ const useUserInfo = () => {
       ...userData,
       brand: brand,
     };
-    // console.log(brand);
 
-    setUserData(userBrand);
+    setUserData((prevData) => {
+      if (JSON.stringify(prevData) !== JSON.stringify(userBrand)) {
+        return userBrand;
+      }
+      return prevData;
+    });
+
     return userBrand;
   };
 
@@ -51,11 +56,12 @@ const useUserInfo = () => {
       setCookie("access_token", token);
 
       const response = await axiosInstance.post(
-        `${import.meta.env.VITE_API_URL}/user/refresh-token`
+        `${import.meta.env.VITE_API_URL}/user/refresh-token`,
+        { isRefreshToken: false }
       );
 
       if (response.status === 200) {
-        let userInfo = await handlePostLogin(response);
+        let userInfo = await updateData(response);
         return userInfo;
       } else {
         const message = response.data.message;
@@ -66,14 +72,13 @@ const useUserInfo = () => {
     } catch (error) {
       console.log(error);
       const message = error.response?.data?.message || "An error occurred.";
-      // console.log(message);
       toastrError(message);
       return false;
     }
   };
 
   useEffect(() => {
-    if (userData != null) {
+    if (userData !== null) {
       getCounter(userData.brand.id);
       dispatch(setUser(userData));
       getConnections(userData.brand.id);

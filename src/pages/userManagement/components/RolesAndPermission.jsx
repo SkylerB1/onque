@@ -26,6 +26,8 @@ import {
   DeleteModalError,
   EnterpisePlanPng,
 } from "../../../components/common/Images";
+import { shortenText } from "../../../utils/commonUtils.jsx";
+
 import { useAppContext } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 const initial = {
@@ -227,7 +229,7 @@ const RolesAndPermission = ({ collaborators }) => {
                                   color="blue-gray"
                                   className="font-normal"
                                 >
-                                  {row.description}
+                                  {shortenText(row.description)}
                                 </Typography>
                               </td>
                               <td className={classes} colSpan={2}>

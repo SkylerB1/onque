@@ -13,7 +13,7 @@ import { AppLogo } from "../common/Images";
 import DropdownClientList from "../drop-down/DropdownClientList";
 import AddModal from "../modal/addClientModal";
 import { useAppContext } from "../../context/AuthContext";
-import { ChangePlanModel } from "../modal/ChangePlanModel/Index";
+
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { FaLink } from "react-icons/fa6";
@@ -24,6 +24,7 @@ import { useCookies } from "react-cookie";
 export default function Header({ children }) {
   const { pathname } = useLocation();
   const [cookies, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
 
   const {
     subscription,
@@ -181,10 +182,6 @@ export default function Header({ children }) {
         open={opens}
         Close={() => setOpen(false)}
         title={`Add Client`}
-      />
-      <ChangePlanModel
-        openChangePlanModel={openChangePlanModel}
-        setOpenChangePlanModel={setOpenChangePlanModel}
       />
     </div>
   );

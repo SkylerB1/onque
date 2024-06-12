@@ -29,14 +29,24 @@ const AddUserDialog = ({
   clearSelectedUser,
 }) => {
   const [email, setEmail] = useState("");
+  const [isValidEmail, setIsValidEmail] = useState(false);
   const userDetail = useSelector((state) => state.user.value);
   const [loading, setLoading] = useState(false);
-  const isValidEmail = useMemo(() => Boolean(validateEmail(email)), [email]);
+
+  // const isValidEmail = useMemo(() => {
+  //   let isValid = Boolean(validateEmail(email));
+  //   console.log(isValid);
+  //   return isValid;
+  // }, [email]);
+
   const [user, setUser] = useState(initialUser);
 
   const handleEmailChange = (event) => {
-    console.log({ isValidEmail });
     const email = event.target.value;
+    setEmail(email);
+    let isValidEmail = Boolean(validateEmail(email));
+    setIsValidEmail(isValidEmail);
+
     if (isValidEmail) {
       if (email === userDetail.email) {
         setUser({
@@ -54,9 +64,7 @@ const AddUserDialog = ({
         message: "Please enter a valid email.",
       });
     }
-    setEmail(email);
   };
-
   const handleClose = () => {
     setEmail("");
     setUser(initialUser);
@@ -115,10 +123,6 @@ const AddUserDialog = ({
       setEmail("");
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} maxWidth="xs">

@@ -38,7 +38,10 @@ const useUserInfo = () => {
 
     setUserData((prevData) => {
       if (JSON.stringify(prevData) !== JSON.stringify(userBrand)) {
+        console.log("new data");
         return userBrand;
+      } else {
+        console.log("old data");
       }
       return prevData;
     });

@@ -26,7 +26,6 @@ import {
   DeleteModalError,
   EnterpisePlanPng,
 } from "../../../components/common/Images";
-import { shortenText } from "../../../utils/commonUtils.jsx";
 
 import { useAppContext } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -174,104 +173,108 @@ const RolesAndPermission = ({ collaborators }) => {
                   {loading ? (
                     <Loader />
                   ) : (
-                    <table className="w-full min-w-max table-auto text-left">
-                      <thead>
-                        <tr>
-                          {tableHeaders.map((header, index) => (
-                            <th
-                              key={index}
-                              className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
-                              colSpan={2}
-                            >
-                              <Typography
-                                variant="small"
-                                color="blue-gray"
-                                className="font-normal leading-none opacity-70"
+                    <div class="overflow-x-auto">
+                      <table className="w-full min-w-full  table-auto text-left">
+                        <thead>
+                          <tr>
+                            {tableHeaders.map((header, index) => (
+                              <th
+                                key={index}
+                                className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
+                                colSpan={2}
                               >
-                                {header}
-                              </Typography>
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {rolesData?.map((row, index) => {
-                          const isLast = index === rolesData.length - 1;
-                          const classes = isLast
-                            ? "p-4"
-                            : "p-4 border-b border-blue-gray-50";
-                          return (
-                            <tr
-                              key={row.id}
-                              onClick={(e) => handleEditRole(e, row)}
-                              style={{ cursor: "pointer" }}
-                            >
-                              <td className={classes} colSpan={2}>
-                                <div className="flex items-center gap-3">
-                                  <ShieldCheckIcon
-                                    className="h-6 w-6"
-                                    color="black"
-                                  />
+                                <Typography
+                                  variant="small"
+                                  color="blue-gray"
+                                  className="font-normal leading-none opacity-70"
+                                >
+                                  {header}
+                                </Typography>
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {rolesData?.map((row, index) => {
+                            const isLast = index === rolesData.length - 1;
+                            const classes = isLast
+                              ? "p-4"
+                              : "p-4 border-b border-blue-gray-50";
+                            return (
+                              <tr
+                                key={row.id}
+                                onClick={(e) => handleEditRole(e, row)}
+                                style={{ cursor: "pointer" }}
+                              >
+                                <td className={classes} colSpan={2}>
                                   <div className="flex items-center gap-3">
+                                    <ShieldCheckIcon
+                                      className="h-6 w-6"
+                                      color="black"
+                                    />
+                                    <div className="flex items-center gap-3">
+                                      <Typography
+                                        variant="small"
+                                        color="blue-gray"
+                                        className="font-bold"
+                                      >
+                                        {row.name}
+                                      </Typography>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className={classes} colSpan={2}>
+                                  <div class="max-w-sm ">
                                     <Typography
                                       variant="small"
                                       color="blue-gray"
-                                      className="font-bold"
+                                      className="font-normal break-words"
                                     >
-                                      {row.name}
+                                      {row.description}
                                     </Typography>
                                   </div>
-                                </div>
-                              </td>
-                              <td className={classes} colSpan={2}>
-                                <Typography
-                                  variant="small"
-                                  color="blue-gray"
-                                  className="font-normal"
-                                >
-                                  {shortenText(row.description)}
-                                </Typography>
-                              </td>
-                              <td className={classes} colSpan={2}>
-                                <Typography
-                                  variant="small"
-                                  color="blue-gray"
-                                  className="font-normal"
-                                >
-                                  {row.assignedUsersCount}
-                                </Typography>
-                              </td>
-                              <td className={classes} colSpan={2}>
-                                <Tooltip content="edit">
-                                  <IconButton
-                                    variant="text"
-                                    onClick={(e) => handleEditRole(e, row)}
+                                </td>
+                                <td className={classes} colSpan={2}>
+                                  <Typography
+                                    variant="small"
+                                    color="blue-gray"
+                                    className="font-normal"
                                   >
-                                    <PencilSquareIcon
-                                      className="h-6 w-6"
-                                      color="black"
-                                    />
-                                  </IconButton>
-                                </Tooltip>
-                                <Tooltip content="delete">
-                                  <IconButton
-                                    variant="text"
-                                    onClick={(e) =>
-                                      checkDeleteRole(e, row.id, row.name)
-                                    }
-                                  >
-                                    <TrashIcon
-                                      className="h-6 w-6"
-                                      color="black"
-                                    />
-                                  </IconButton>
-                                </Tooltip>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                                    {row.assignedUsersCount}
+                                  </Typography>
+                                </td>
+                                <td className={classes} colSpan={2}>
+                                  <Tooltip content="edit">
+                                    <IconButton
+                                      variant="text"
+                                      onClick={(e) => handleEditRole(e, row)}
+                                    >
+                                      <PencilSquareIcon
+                                        className="h-6 w-6"
+                                        color="black"
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                  <Tooltip content="delete">
+                                    <IconButton
+                                      variant="text"
+                                      onClick={(e) =>
+                                        checkDeleteRole(e, row.id, row.name)
+                                      }
+                                    >
+                                      <TrashIcon
+                                        className="h-6 w-6"
+                                        color="black"
+                                      />
+                                    </IconButton>
+                                  </Tooltip>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
                   {rolesData?.length === 0 && (
                     <div className="text-center mb-0 pt-4">

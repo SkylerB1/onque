@@ -15,6 +15,10 @@ import { useAppContext } from "../../../context/AuthContext";
 import { plansList, findPlan } from "../../../utils/index";
 import toast, { Toaster } from "react-hot-toast";
 import ChangePlanStep2 from "../../modal/ChangePlanStep2";
+import ModifyBrandsStatus from "../../modal/ModifyBrandsStatus";
+import UserService from "../../../services/UserServices";
+import BrandServices from "../../../services/BrandServices";
+import SubscriptionServices from "../../../services/SubscriptionServices";
 
 export function ChangePlanModel({
   openChangePlanModel,
@@ -24,6 +28,13 @@ export function ChangePlanModel({
   const [loading, setLoading] = useState(false);
   const handleOpen = () => setOpenChangePlanModel(!openChangePlanModel);
   const handleClose = () => setOpenChangePlanModel(false);
+
+  // Brand Status model variables
+  const [openBrandStatusModal, setOpenBrandStatusModal] = useState(false);
+  const [brands, setBrands] = useState([]);
+  const [newBrands, setNewBrands] = useState([]);
+  const [existingClientCount, setExistingClientCount] = useState(0);
+  const [selectAllBrand, setSelectAllBrand] = useState(false);
 
   const [selectedPlanName, setSelectedPlanName] = useState(null);
   const [selectedPlanPeriod, setSelectedPlanPeriod] = useState(null);
@@ -42,20 +53,33 @@ export function ChangePlanModel({
 
   const openChangePlanStep2Model = async () => {
     try {
+      let newPlanAllowedClients = selectedPlanDetails.totalClients;
       let lookup_key = lookupKeys[selectedPlanName][selectedPlanPeriod];
       setLoading(true);
-      const response = await axiosInstance.post(
-        "/payments/calculate-invoice-details-for-change-plan",
-        {
+      const response =
+        await SubscriptionServices.calculateInvoiceDetailsForChangePlan({
           lookup_key: lookup_key,
-        }
-      );
+        });
 
       if (response.status === 200) {
-        console.log(response.data.data);
+        if (response?.data?.data?.isPlanUpgrade === false) {
+          // Downgrading the plan
+          let userInfo = await UserService.getUserInfo();
+          setExistingClientCount(userInfo.data.clientsCount);
+          if (userInfo.data.clientsCount > newPlanAllowedClients) {
+            // Open step 2 model
+            openBrandModel();
+          } else {
+            // Brand status manage model
+            // Plan downgrading ,Open step 2 model
+            setChangePlanStep2Modal(true);
+          }
+        } else {
+          // Plan upgrading ,Open step 2 model
+          setChangePlanStep2Modal(true);
+        }
         setUpcomingInvoiceData(response.data.data);
         handleClose();
-        setChangePlanStep2Modal(true);
       }
       setLoading(false);
     } catch (err) {
@@ -66,16 +90,32 @@ export function ChangePlanModel({
     }
   };
 
+  const handleSaveBrandAction = () => {
+    setOpenBrandStatusModal(false);
+    setChangePlanStep2Modal(true);
+  };
   const handleSubmit = async () => {
     try {
       let lookup_key = lookupKeys[selectedPlanName][selectedPlanPeriod];
 
+      let brands =
+        newBrands.length > 0
+          ? newBrands.map((brand) => {
+              return {
+                id: brand.id,
+                is_active: brand.is_active,
+              };
+            })
+          : [];
+
       setstep2Loading(true);
-      const response = await axiosInstance.post(
-        "/payments/upgrade-degrade-subscription",
-        {
-          lookup_key: lookup_key,
-        }
+      let data = {
+        lookup_key: lookup_key,
+        brands: brands,
+      };
+
+      const response = await SubscriptionServices.upgradeDegradeSubscription(
+        data
       );
 
       if (response.status === 200) {
@@ -94,6 +134,26 @@ export function ChangePlanModel({
       setstep2Loading(false);
     }
   };
+
+  const toggleBrandStatusModal = () => {
+    setOpenBrandStatusModal(!openBrandStatusModal);
+  };
+
+  const openBrandModel = async () => {
+    await getBrands();
+    setOpenBrandStatusModal(true);
+  };
+  const getBrands = async () => {
+    try {
+      const res = await BrandServices.getUserBrandsList();
+      let brands = res.data.brands;
+      setBrands(brands);
+      // setting is_active = false for default value when opening brand model
+      setNewBrands(brands?.map((brand) => ({ ...brand, is_active: false })));
+    } catch (err) {
+      console.log(err);
+    }
+  };
   useEffect(() => {
     if (!selectedPlanName) return;
     let plan = findPlan(selectedPlanName);
@@ -110,7 +170,7 @@ export function ChangePlanModel({
 
   return (
     <>
-      <Dialog size="xl" open={openChangePlanModel} handler={handleOpen}>
+      <Dialog size="lg" open={openChangePlanModel} handler={handleOpen}>
         <DialogHeader>Change Plan</DialogHeader>
         <hr />
         <Toaster />
@@ -157,6 +217,27 @@ export function ChangePlanModel({
         loading={step2loading}
         setLoading={setstep2Loading}
       />
+      {openBrandStatusModal && (
+        <>
+          <ModifyBrandsStatus
+            isOpen={openBrandStatusModal}
+            close={setOpenBrandStatusModal}
+            toggleModal={toggleBrandStatusModal}
+            onClose={() => {
+              setOpenBrandStatusModal(false);
+            }}
+            brands={brands}
+            setBrands={setBrands}
+            newBrands={newBrands}
+            setNewBrands={setNewBrands}
+            selectedPlanDetails={selectedPlanDetails}
+            existingClientCount={existingClientCount}
+            handleSaveBrandAction={handleSaveBrandAction}
+            selectAllBrand={selectAllBrand}
+            setSelectAllBrand={setSelectAllBrand}
+          />
+        </>
+      )}
     </>
   );
 }

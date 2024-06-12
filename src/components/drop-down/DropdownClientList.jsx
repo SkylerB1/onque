@@ -216,10 +216,10 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                   <button
                     key={item.id}
                     onClick={() =>
-                      item.is_active == "1" ? handleItemClick(item) : null
+                      item.is_active == true ? handleItemClick(item) : null
                     }
                     className={` ${
-                      item.is_active !== "1" && " opacity-20 "
+                      item.is_active !== true && " opacity-20 "
                     } w-full my-2 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
                     role="menuitem"
                   >

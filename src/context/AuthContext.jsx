@@ -35,7 +35,6 @@ export function AppContextProvider({ children }) {
   const [cookies, setCookie] = useCookies(["access_token"]);
   const dispatch = useDispatch();
 
-  const [openChangePlanModel, setOpenChangePlanModel] = React.useState(false);
   const [dropdownClientListKey, setDropdownClientListKey] = React.useState(0);
 
   const getCounter = async (brandId) => {
@@ -103,8 +102,6 @@ export function AppContextProvider({ children }) {
     subscription,
     loadingSub,
     loadingValidations,
-    openChangePlanModel,
-    setOpenChangePlanModel,
     userInfo,
     getUserInfo,
     dropdownClientListKey,

@@ -316,6 +316,7 @@ export const plansList = () => {
         "AI Caption assistant",
       ],
       recommended: false,
+      totalClients: 10,
     },
     {
       key: "advanced",
@@ -336,6 +337,7 @@ export const plansList = () => {
         "AI Caption assistant",
       ],
       recommended: true,
+      totalClients: 30,
     },
     {
       key: "enterprise",
@@ -356,6 +358,7 @@ export const plansList = () => {
         "AI Caption assistant",
       ],
       recommended: false,
+      totalClients: 50,
     },
   ];
 };
@@ -441,11 +444,13 @@ export const getCommaSeparatedNames = (arr, indentifier) => {
 };
 
 export const validateEmail = (email) => {
-  return String(email)
+  let isValid = String(email)
     .toLowerCase()
     .match(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
+
+  return isValid;
 };
 
 export function capitalizeFirstLetter(string) {

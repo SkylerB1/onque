@@ -18,20 +18,71 @@ import { useSelector } from "react-redux";
 
 import CustomSwitch from "../../components/Input/CustomSwitch";
 
-const tableHead = ["Brands", "Role", "Connection"];
+const tableHead = ["Brands", "Status"];
 
-const ModifyBrandsStatus = ({ isOpen, onClose, toggleModal, brands }) => {
+const ModifyBrandsStatus = ({
+  isOpen,
+  onClose,
+  toggleModal,
+  brands,
+  setBrands,
+  newBrands,
+  setNewBrands,
+  selectedPlanDetails,
+  existingClientCount,
+  handleSaveBrandAction,
+  selectAllBrand,
+  setSelectAllBrand,
+}) => {
   const [text, setText] = useState("");
+  const [activeBrandCount, setActiveBrandCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const isDisabled = useMemo(() => text.length < 10, [text]);
+
+  const checkActiveBrandsCount = () => {
+    let activeBrandCount = 0;
+    newBrands &&
+      newBrands.map((brand) => brand.is_active == true && activeBrandCount++);
+    setActiveBrandCount(activeBrandCount);
+  };
+  const isDisabled = useMemo(
+    () => activeBrandCount != selectedPlanDetails?.totalClients,
+    [activeBrandCount]
+  );
   const user = useSelector((state) => state.user.value);
   const FirstLetter = user?.firstName?.charAt(0).toUpperCase();
   const SecondLetter = user?.firstName?.charAt(1).toUpperCase();
 
-  const handleBrandAction = () => {};
+  const handleSelectBrand = (brandId, event) => {
+    setNewBrands((prev) =>
+      prev.map((item) => {
+        if (item.id == brandId) {
+          return {
+            ...item,
+            is_active: event,
+          };
+        } else {
+          return item;
+        }
+      })
+    );
+  };
+  const handleSelectAllBrand = (brandId, event) => {
+    setNewBrands((prev) =>
+      prev.map((item) => {
+        return {
+          ...item,
+          is_active: event == true,
+        };
+      })
+    );
+    setSelectAllBrand(event);
+  };
+  useEffect(() => {
+    checkActiveBrandsCount();
+  }, [newBrands]);
 
   return (
-    <Dialog size="lg" className="dialogIndex" open={isOpen} onClose={onClose}>
+    <Dialog size="md" className="dialogIndex" open={isOpen} onClose={onClose}>
       <DialogHeader className="justify-between">
         <div className="flex flex-row items-center">
           <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-md ">
@@ -76,6 +127,34 @@ const ModifyBrandsStatus = ({ isOpen, onClose, toggleModal, brands }) => {
       </DialogHeader>
       <DialogBody className="max-h-[700px] overflow-auto">
         <Toaster />
+        <div
+          class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+          role="alert"
+        >
+          <svg
+            class="flex-shrink-0 inline w-4 h-4 me-3"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+          </svg>
+          <span class="sr-only">Info</span>
+          <div>
+            <span class="font-medium">Downgrading Plan : </span>You are
+            downgrading the your subscription. Kindly select any{" "}
+            {selectedPlanDetails?.totalClients} brands to make active out of{" "}
+            {existingClientCount}.
+          </div>
+        </div>
+        <div
+          class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+          role="alert"
+        >
+          <span class="font-medium">Total Selected Brands : </span>
+          {activeBrandCount}
+        </div>
         <div className="max-h-96 overflow-auto">
           <table className="w-full min-w-max table-auto text-left">
             <thead className="sticky top-0 z-10">
@@ -85,33 +164,45 @@ const ModifyBrandsStatus = ({ isOpen, onClose, toggleModal, brands }) => {
                     className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                     key={index}
                   >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {item}
-                    </Typography>
+                    {" "}
+                    <div className="flex items-center gap-3">
+                      {index == 0 && (
+                        <CustomSwitch
+                          checked={selectAllBrand}
+                          onChange={handleSelectAllBrand}
+                        />
+                      )}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {item}
+                      </Typography>
+                    </div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {brands.length &&
-                brands?.map((brand, index) => {
-                  const isSelected = user?.brands?.find(
-                    (item) => item.id === brand.id
-                  );
-                  const roleName = isSelected?.brandRole?.roleName;
+              {newBrands.length &&
+                newBrands?.map((brand, index) => {
                   return (
-                    <tr key={index}>
+                    <tr
+                      key={index}
+                      className={
+                        newBrands[index]?.is_active == true && `opacity-50`
+                      }
+                    >
                       <td className="p-4 w-30">
                         <div className="flex items-center gap-3">
                           <CustomSwitch
-                            checked={Boolean(isSelected)}
-                            onChange={() =>
-                              handleSelectBrand(brand, Boolean(isSelected))
+                            identifier={brand.id}
+                            checked={
+                              newBrands[index]?.is_active == true ? true : false
                             }
+                            defaultValue={false}
+                            onChange={handleSelectBrand}
                           />
                           <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
                             <span className="font-normal text-gray-600 dark:text-gray-300">
@@ -124,31 +215,10 @@ const ModifyBrandsStatus = ({ isOpen, onClose, toggleModal, brands }) => {
                         </div>
                       </td>
                       <td>
-                        {/* <RoleUpdate
-                        open={openRoleMenu}
-                        handler={roleMenuHandler}
-                        brand={brand}
-                        selectedRole={roleName}
-                        handleRoleChange={handleRoleChange}
-                        isEnabled={Boolean(isSelected)}
-                      /> */}
-                        Role
-                      </td>
-                      <td className="p-4">
-                        <div className=" flex flex-row justify-between">
-                          Connections
-                          {/* {Object.keys(SocialPlatforms).map((key) => {
-                          const { coloredIcon, nonColoredIcon } =
-                            SocialPlatforms[key];
-                          const isConnected = brand.platforms.some(
-                            (item) => item.platform === key
-                          );
-
-                          if (isConnected) {
-                            return coloredIcon(20, 20);
-                          }
-                          return nonColoredIcon(20, 20);
-                        })} */}
+                        <div className=" flex flex-row justify-between ml-5">
+                          {brands[index]?.is_active == true
+                            ? "Active"
+                            : "In Active"}
                         </div>
                       </td>
                     </tr>
@@ -158,16 +228,17 @@ const ModifyBrandsStatus = ({ isOpen, onClose, toggleModal, brands }) => {
           </table>
         </div>
       </DialogBody>
-      <DialogFooter className="flex flex-row justify-between">
+      <DialogFooter className="flex flex-row items-end">
         <Button variant="outlined" onClick={toggleModal}>
           Cancel
-        </Button>
+        </Button>{" "}
+        &nbsp;
         <LoadingButton
-          title={"Update Brands"}
+          title={"Save Brands"}
           loading={loading}
           disabled={isDisabled}
-          className="w-36 h-10"
-          onClick={handleBrandAction}
+          className="w-45 h-10"
+          onClick={handleSaveBrandAction}
         />
       </DialogFooter>
     </Dialog>

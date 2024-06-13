@@ -18,6 +18,7 @@ const useUserInfo = () => {
 
   const updateData = async (response) => {
     const { data: userData } = response;
+
     // const { access_token } = userData;
     // localStorage.setItem("access_token", access_token);
     // setCookie("access_token", access_token);
@@ -38,10 +39,10 @@ const useUserInfo = () => {
 
     setUserData((prevData) => {
       if (JSON.stringify(prevData) !== JSON.stringify(userBrand)) {
-        console.log("new data");
+        // console.log("new data");
         return userBrand;
       } else {
-        console.log("old data");
+        // console.log("old data");
       }
       return prevData;
     });
@@ -73,8 +74,8 @@ const useUserInfo = () => {
         return false;
       }
     } catch (error) {
-      console.log(error);
-      const message = error.response?.data?.message || "An error occurred.";
+      // console.log(error);
+      const message = error.response?.data?.message || "An error occurred 2.";
       toastrError(message);
       return false;
     }
@@ -82,10 +83,7 @@ const useUserInfo = () => {
 
   useEffect(() => {
     if (userData !== null) {
-      getCounter(userData.brand.id);
       dispatch(setUser(userData));
-      getConnections(userData.brand.id);
-      getSubscriptions();
     }
   }, [userData]);
   return { getUserRefreshedData };

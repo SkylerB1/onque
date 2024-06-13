@@ -46,6 +46,7 @@ const UserManagement = () => {
       const res = await axiosInstance.get(
         `/user/collaborators?searchQuery=${searchQuery}`
       );
+
       setCollaborators(res.data);
       setLoadingCollaborator(false);
     } catch (err) {

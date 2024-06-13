@@ -142,20 +142,20 @@ export const GoogleBusinessOptions = [
     label: "POST",
     description: "For posting an update to your Google Business Profile",
   },
-  {
-    icon: (width = 10, height = 10) => (
-      <OfferSvg width={width} height={height} fill="#000000" />
-    ),
-    label: "OFFER",
-    description: "For posting an offer to your Google Business Profile",
-  },
-  {
-    icon: (width = 12, height = 12) => (
-      <EventSvg width={width} height={height} fill="#000000" />
-    ),
-    label: "EVENT",
-    description: "For posting an event to your Google Business Profile",
-  },
+  // {
+  //   icon: (width = 10, height = 10) => (
+  //     <OfferSvg width={width} height={height} fill="#000000" />
+  //   ),
+  //   label: "OFFER",
+  //   description: "For posting an offer to your Google Business Profile",
+  // },
+  // {
+  //   icon: (width = 12, height = 12) => (
+  //     <EventSvg width={width} height={height} fill="#000000" />
+  //   ),
+  //   label: "EVENT",
+  //   description: "For posting an event to your Google Business Profile",
+  // },
 ];
 
 export const SocialPlatforms = {

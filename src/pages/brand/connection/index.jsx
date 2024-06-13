@@ -57,6 +57,7 @@ const Connection = () => {
       const oauthUrl = `${import.meta.env.VITE_API_URL}/auth/instagram?userId=${
         user?.id
       }&brandId=${brandId}`;
+
       const width = 450;
       const height = 730;
       const left = window.screen.width / 2 - width / 2;
@@ -154,7 +155,7 @@ const Connection = () => {
       setLoading(true);
       // const URL = ConnectUrl[selected];
       const URL = ConnectUrlFn(selected, brandId);
-      console.log(selected, URL, data);
+      // console.log(selected, URL, data);
       const response = await axiosInstance.post(URL, data);
       if (response.status === 200) {
         getConnections(brandId);
@@ -173,6 +174,7 @@ const Connection = () => {
         setConnectionError({ platform, error });
       } else {
         const brandId = user?.brand?.id;
+
         getConnections(brandId);
       }
     };
@@ -180,7 +182,7 @@ const Connection = () => {
     return () => {
       broadcastConnection.removeEventListener("message", handleConnection);
     };
-  }, [broadcastConnection]);
+  }, [broadcastConnection, brandId]);
 
   useEffect(() => {
     let textForRoleInfo = getTextForRoleInfo(role);

@@ -99,7 +99,9 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
               </div>
             </div>
           ) : (
-            <Spinner />
+            <>
+              <Spinner />
+            </>
           )}
         </MenuHandler>
         <MenuList className="w-96 max-h-[70vh]">
@@ -200,7 +202,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
             </div>
           </button>
 
-          {loading ? (
+          {loading && !brands ? (
             <div className="justifyCenter py-4">
               <Spinner />
             </div>

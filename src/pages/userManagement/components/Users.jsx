@@ -88,7 +88,6 @@ const Users = ({
 
   const handleRowClick = (data) => {
     setEditing(true);
-    setEditing(true);
     setSelectedUser(data);
     setDialogOpen(true);
   };

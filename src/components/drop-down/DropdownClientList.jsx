@@ -105,7 +105,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
           )}
         </MenuHandler>
         <MenuList className="w-96 max-h-[70vh]">
-          {!loading && (
+          {(!loading || brands) && (
             <input
               type="text"
               role="menuitem"

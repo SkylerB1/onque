@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const UserIcon = ({width,height,fill}) => {
+const UserIcon = ({ width, height, fill }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -12,7 +12,7 @@ const UserIcon = ({width,height,fill}) => {
       y="0"
       viewBox="0 0 100 100"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path
@@ -24,6 +24,6 @@ const UserIcon = ({width,height,fill}) => {
       </g>
     </svg>
   );
-}
+};
 
-export default UserIcon
+export default UserIcon;

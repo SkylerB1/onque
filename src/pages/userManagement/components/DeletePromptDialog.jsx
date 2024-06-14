@@ -51,13 +51,15 @@ const DeletePromptDialog = ({
           <img src={logo} max-width="100%" alt />
         </div>
         <div className="text-center flex items-center flex-col">
-          <p class="mb-6 text-2xl">Are you sure you want to delete {email}?</p>
-          <div class="w-full text-center">
-            <p class="leading-8 mb-3">
+          <p className="mb-6 text-2xl">
+            Are you sure you want to delete {email}?
+          </p>
+          <div className="w-full text-center">
+            <p className="leading-8 mb-3">
               The {email} roles associated with the following brands will be
               removed:
             </p>
-            <p class="font-bold items-center mb-4">
+            <p className="font-bold items-center mb-4">
               {getCommaSeparatedNames(brands, "brand_name")}
             </p>
           </div>

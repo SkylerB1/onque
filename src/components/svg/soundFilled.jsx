@@ -13,7 +13,7 @@ const soundFilled = ({ width, height, fill }) => {
       height={height}
       viewBox="0 0 32 32"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path

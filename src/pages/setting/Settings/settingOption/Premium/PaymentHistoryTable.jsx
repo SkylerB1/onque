@@ -159,34 +159,34 @@ const PaymentHistoryTable = () => {
             </tbody>
           </table>
         ) : payments?.length === 0 ? (
-          <div class="p-8 mb-4 flex justify-center">
+          <div className="p-8 mb-4 flex justify-center">
             <div
-              class="flex gap-4 justify-center items-center"
+              className="flex gap-4 justify-center items-center"
               style={{ maxWidth: 600 }}
             >
               <img alt src={PaymentHistoryEmpty} />
               <div>
-                <p class="text-muted mb-1">
+                <p className="text-muted mb-1">
                   There is no payment in your history yet.
                 </p>
-                <p class="text-muted mb-0">
+                <p className="text-muted mb-0">
                   You will be able to check your invoices here.
                 </p>
               </div>
             </div>
           </div>
         ) : (
-          <div class="p-8 mb-4 flex justify-center">
+          <div className="p-8 mb-4 flex justify-center">
             <div
-              class="flex gap-4 justify-center items-center"
+              className="flex gap-4 justify-center items-center"
               style={{ maxWidth: 600 }}
             >
               <Cross width={100} height={100} fill="red" />
               <div>
-                <p class="text-muted mb-1">
+                <p className="text-muted mb-1">
                   There is some error fetching your payment history.
                 </p>
-                <p class="text-muted mb-0">We are working on the fix.</p>
+                <p className="text-muted mb-0">We are working on the fix.</p>
               </div>
             </div>
           </div>

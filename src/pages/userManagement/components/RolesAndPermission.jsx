@@ -173,7 +173,7 @@ const RolesAndPermission = ({ collaborators }) => {
                   {loading ? (
                     <Loader />
                   ) : (
-                    <div class="overflow-x-auto">
+                    <div className="overflow-x-auto">
                       <table className="w-full min-w-full  table-auto text-left">
                         <thead>
                           <tr>
@@ -224,7 +224,7 @@ const RolesAndPermission = ({ collaborators }) => {
                                   </div>
                                 </td>
                                 <td className={classes} colSpan={2}>
-                                  <div class="max-w-sm ">
+                                  <div className="max-w-sm ">
                                     <Typography
                                       variant="small"
                                       color="blue-gray"

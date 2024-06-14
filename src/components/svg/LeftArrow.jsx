@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const LeftArrow = ({width,height,fill}) => {
+const LeftArrow = ({ width, height, fill }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +13,7 @@ const LeftArrow = ({width,height,fill}) => {
       y="0"
       viewBox="0 0 492 492"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path
@@ -24,6 +24,6 @@ const LeftArrow = ({width,height,fill}) => {
       </g>
     </svg>
   );
-}
+};
 
-export default LeftArrow
+export default LeftArrow;

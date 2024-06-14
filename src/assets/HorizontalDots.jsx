@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const HorizontalDots = ({width,height,fill='#000000'}) => {
+const HorizontalDots = ({ width, height, fill = "#000000" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,17 +13,17 @@ const HorizontalDots = ({width,height,fill='#000000'}) => {
       y="0"
       viewBox="0 0 32 32"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path
           d="M16 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM6 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM26 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3z"
           fill={fill}
-          class=""
+          className=""
         ></path>
       </g>
     </svg>
   );
-}
+};
 
-export default HorizontalDots
+export default HorizontalDots;

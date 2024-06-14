@@ -118,7 +118,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
             <>
               <div
                 id="alert-4"
-                class="flex items-center p-4 mb-4 text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+                className="flex items-center p-4 mb-4 text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
                 role="alert"
               >
                 <InfoIcon />
@@ -139,11 +139,11 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
             <>
               <div
                 id="alert-1"
-                class="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
+                className="flex items-center p-4 mb-4 text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400"
                 role="alert"
               >
                 <InfoIcon />
-                <span class="sr-only">Info</span>
+                <span className="sr-only">Info</span>
                 <div className="ms-3 text-sm font-medium">
                   You have {clients_count} brands out {max_clients}.
                 </div>
@@ -236,7 +236,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                         </Typography>
                         <div className="flex flex-1 items-center justify-start gap-2 mt-1">
                           {item.platforms.length === 0 && (
-                            <span class="text-muted text-sm italic">
+                            <span className="text-muted text-sm italic">
                               No networks connected
                             </span>
                           )}

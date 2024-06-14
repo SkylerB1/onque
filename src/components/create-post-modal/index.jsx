@@ -1438,8 +1438,8 @@ const CreatePostModal = ({
                         >
                           Remember
                         </div>
-                        <div class="overflow-auto max-h-[72px]">
-                          <ol class="list-decimal pl-5 text-xs">
+                        <div className="overflow-auto max-h-[72px]">
+                          <ol className="list-decimal pl-5 text-xs">
                             {errors.map((item, index) => {
                               return (
                                 <li

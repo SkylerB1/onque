@@ -169,20 +169,20 @@ const router = createBrowserRouter([
 const stripePromise = loadStripe(stripeKey);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  // <React.StrictMode>
-  <Provider store={store}>
-    <div>
-      <Toaster position="bottom-center" reverseOrder={false} />
-    </div>
-    <ThemeProvider>
-      <CookiesProvider>
-        <AppContextProvider>
-          <Elements stripe={stripePromise}>
-            <RouterProvider router={router} />
-          </Elements>
-        </AppContextProvider>
-      </CookiesProvider>
-    </ThemeProvider>
-  </Provider>
-  // </React.StrictMode>
+  <React.StrictMode>
+    <Provider store={store}>
+      <div>
+        <Toaster position="bottom-center" reverseOrder={false} />
+      </div>
+      <ThemeProvider>
+        <CookiesProvider>
+          <AppContextProvider>
+            <Elements stripe={stripePromise}>
+              <RouterProvider router={router} />
+            </Elements>
+          </AppContextProvider>
+        </CookiesProvider>
+      </ThemeProvider>
+    </Provider>
+  </React.StrictMode>
 );

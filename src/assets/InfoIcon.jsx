@@ -12,7 +12,7 @@ const InfoIcon = ({ width, height, fill }) => {
       y="0"
       viewBox="0 0 48 48"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <circle
@@ -22,7 +22,7 @@ const InfoIcon = ({ width, height, fill }) => {
           fill={fill}
           opacity="1"
           data-original="#2196f3"
-          class=""
+          className=""
         ></circle>
         <g fill="#fff">
           <circle

@@ -56,12 +56,12 @@ const CancelSubscription = ({
           <div className="flex justify-center mb-6">
             <Cross width={100} height={100} fill="red" />
           </div>
-          <div class="text-center flex items-center flex-col">
-            <p class="mb-6 text-2xl text-black">
+          <div className="text-center flex items-center flex-col">
+            <p className="mb-6 text-2xl text-black">
               Uh-oh! It looks like you're about to unsubscribe...
             </p>
-            <div class="text-base">
-              <p class="mb-0 text-black">
+            <div className="text-base">
+              <p className="mb-0 text-black">
                 Are you sure you want to cancel the current subscription? You
                 can enjoy all its benefits until{" "}
                 {getDateFromUnix(subscription.end_date)}, then your plan will

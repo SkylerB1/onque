@@ -75,7 +75,7 @@ const useUserInfo = () => {
       }
     } catch (error) {
       // console.log(error);
-      const message = error.response?.data?.message || "An error occurred 2.";
+      const message = error.response?.data?.message || "An error occurred.";
       toastrError(message);
       return false;
     }

@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react";
 
-const YoutubeVideo = ({width,height,fill}) => {
+const YoutubeVideo = ({ width, height, fill }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +13,7 @@ const YoutubeVideo = ({width,height,fill}) => {
       y="0"
       viewBox="0 0 24 24"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <g fill="#000" fill-rule="evenodd" clip-rule="evenodd">
@@ -31,6 +31,6 @@ const YoutubeVideo = ({width,height,fill}) => {
       </g>
     </svg>
   );
-}
+};
 
-export default YoutubeVideo
+export default YoutubeVideo;

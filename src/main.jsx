@@ -31,6 +31,12 @@ import ForgotPassword from "./pages/auth/fogot-password";
 import Error404 from "./pages/404";
 import NewPassword from "./pages/auth/NewPassword";
 
+if (import.meta.env.MODE === "development") {
+  console.log("Running in development mode");
+} else {
+  console.log("Running in production mode");
+}
+
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const router = createBrowserRouter([

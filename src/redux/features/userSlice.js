@@ -9,7 +9,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const data = action.payload
+      const data = action.payload;
       state.value = data;
       localStorage.setItem("user", JSON.stringify(data));
     },

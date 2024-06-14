@@ -8,5 +8,4 @@ export default defineConfig({
   preview: {
     port: 3025,
   },
-  mode: "development", // Ensure the mode is set to development
 });

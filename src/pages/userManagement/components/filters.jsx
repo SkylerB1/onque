@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 
-const Filters = ({ options, selectedOptions, onChange, title,identifier }) => {
+const Filters = ({ options, selectedOptions, onChange, title, identifier }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [selectedCheckboxes, setSelectedCheckboxes] = useState(
@@ -33,7 +33,7 @@ const Filters = ({ options, selectedOptions, onChange, title,identifier }) => {
   const handleApply = () => {
     setLoading(true);
     // Apply filter logic here
-    const filtered = Object.keys(selectedCheckboxes).filter(
+    const filtered = Object.keys(selectedCheckboxes)?.filter(
       (option) => selectedCheckboxes[option]
     );
     onChange(filtered);

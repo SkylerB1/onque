@@ -42,6 +42,7 @@ const Login = () => {
   const { getSubscriptions, getCounter } = useAppContext();
   const [cookies, setCookie] = useCookies(["access_token"]);
   const [showPassword, setShowPassword] = useState(false);
+
   const user = localStorage.getItem("user");
   if (user) {
     return <Navigate to="/planner/calendar" />;

@@ -13,15 +13,15 @@ const AlertDialog = ({
   title,
   description,
   alertImgSrc = DeleteModalError,
-    loading = false,
-  btnTitle="OK",
+  loading = false,
+  btnTitle = "OK",
   onSubmit,
 }) => {
   return (
     <Dialog open={open}>
       <DialogBody>
         <div className="text-center flex items-center flex-col">
-          <div class="flex justify-center mb-6">
+          <div className="flex justify-center mb-6">
             <img
               src={alertImgSrc}
               alt="delete-modal-img"

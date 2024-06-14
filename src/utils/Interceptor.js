@@ -86,9 +86,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log(error);
-    let status = error?.response?.status;
+    console.log(typeof error, "typeof is error");
+    console.log(error, "is error");
+    let status = error?.response?.status || error?.response?.data?.status;
     if (status == 401) {
+      console.log("I am in 401");
       Swal.fire({
         title: "Session expired",
         html: "Please login again.",
@@ -108,6 +110,7 @@ axiosInstance.interceptors.response.use(
     } else if (status == 508) {
       toastrError("Time Out");
     } else {
+      console.log("I am in error");
       return Promise.reject(error);
     }
   }

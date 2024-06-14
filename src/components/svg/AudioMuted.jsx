@@ -4,7 +4,7 @@ const AudioMuted = ({ width, height, fill }) => {
   return (
     <svg
       aria-label="Audio is muted."
-      class="x1lliihq x1n2onr6"
+      className="x1lliihq x1n2onr6"
       color={fill}
       fill={fill}
       height={height}

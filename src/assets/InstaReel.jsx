@@ -1,6 +1,6 @@
 import React from "react";
 
-const InstaReel = ({ width, height, fill='#000000' }) => {
+const InstaReel = ({ width, height, fill = "#000000" }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +13,7 @@ const InstaReel = ({ width, height, fill='#000000' }) => {
       y="0"
       viewBox="0 0 32 32"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path

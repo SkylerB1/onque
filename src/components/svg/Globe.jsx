@@ -7,7 +7,7 @@ const Globe = ({ width, height, fill }) => {
       viewBox="0 0 16 16"
       width={width}
       height={height}
-      class="x1lliihq x1k90msu x2h7rmj x1qfuztq xcza8v6 x1kpxq89 xsmyaan"
+      className="x1lliihq x1k90msu x2h7rmj x1qfuztq xcza8v6 x1kpxq89 xsmyaan"
       title="Shared with Public"
     >
       <title>Shared with Public</title>

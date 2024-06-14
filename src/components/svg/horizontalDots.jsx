@@ -13,14 +13,14 @@ const horizontalDots = ({ width, height, fill }) => {
       y="0"
       viewBox="0 0 32 32"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path
           d="M16 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM6 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3zM26 13c-1.654 0-3 1.346-3 3s1.346 3 3 3 3-1.346 3-3-1.346-3-3-3z"
           fill={fill}
           data-original="#000000"
-          class=""
+          className=""
         ></path>
       </g>
     </svg>

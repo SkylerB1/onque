@@ -1,6 +1,6 @@
 import React from "react";
 
-const Instagram = ({ width=25, height=25 }) => {
+const Instagram = ({ width = 25, height = 25 }) => {
   const svgStyle = {
     enableBackground: "new 0 0 512 512", // Update style properties as needed
     fill: "none", // Example style property
@@ -128,7 +128,8 @@ const Instagram = ({ width=25, height=25 }) => {
 
 export default Instagram;
 
-{/* <svg
+{
+  /* <svg
   xmlns="http://www.w3.org/2000/svg"
   version="1.1"
   xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -140,7 +141,7 @@ export default Instagram;
   viewBox="0 0 551.034 551.034"
   style="enable-background:new 0 0 512 512"
   xml:space="preserve"
-  class=""
+  className=""
 >
   <g>
     <linearGradient
@@ -203,4 +204,5 @@ export default Instagram;
       fill=""
     ></circle>
   </g>
-</svg>; */}
+</svg>; */
+}

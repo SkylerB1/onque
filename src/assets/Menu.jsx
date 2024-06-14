@@ -12,7 +12,7 @@ const Menu = ({ width, height, fill = "#000000" }) => {
       y="0"
       viewBox="0 0 32 32"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path

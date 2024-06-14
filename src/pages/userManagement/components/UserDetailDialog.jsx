@@ -100,11 +100,11 @@ const UserDetailDialog = ({
               </span>
             </div>
 
-            <div class="flex flex-col justify-center text-md ml-3">
-              <p class="text-base">
+            <div className="flex flex-col justify-center text-md ml-3">
+              <p className="text-base">
                 {selectedUser?.firstName + " " + selectedUser?.lastName}
               </p>
-              <span class="text-tertiary text-sm text-[#7e878c]">
+              <span className="text-tertiary text-sm text-[#7e878c]">
                 {selectedUser?.email}
               </span>
             </div>

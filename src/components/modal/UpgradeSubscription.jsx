@@ -27,10 +27,10 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
               style={{ maxWidth: "190px" }}
             ></img>
           </div>
-          <div class="text-center flex items-center flex-col">
-            <p class="mb-6 text-2xl text-black">Update your subscription</p>
-            <div class="text-base">
-              <p class="mb-0 text-black">{body}</p>
+          <div className="text-center flex items-center flex-col">
+            <p className="mb-6 text-2xl text-black">Update your subscription</p>
+            <div className="text-base">
+              <p className="mb-0 text-black">{body}</p>
             </div>
           </div>
         </div>

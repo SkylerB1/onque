@@ -7,7 +7,7 @@ const LinkedInUser = ({ width, height, fill }) => {
       title=""
       width={width}
       height={height}
-      class="Icon__StyledIcon-bufferapp-ui__sc-dbjb4v-0 jDIXHd"
+      className="Icon__StyledIcon-bufferapp-ui__sc-dbjb4v-0 jDIXHd"
     >
       <title></title>
       <g>

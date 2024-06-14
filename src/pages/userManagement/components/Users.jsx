@@ -378,11 +378,11 @@ const Users = ({
                               )}
                             </span>
                           </div>
-                          <div class="flex flex-col justify-center text-md ml-3">
-                            <p class="text-base font-medium">
+                          <div className="flex flex-col justify-center text-md ml-3">
+                            <p className="text-base font-medium">
                               {firstName + " " + lastName}
                             </p>
-                            <span class="text-tertiary text-sm text-[#7e878c]">
+                            <span className="text-tertiary text-sm text-[#7e878c]">
                               {email}
                             </span>
                           </div>

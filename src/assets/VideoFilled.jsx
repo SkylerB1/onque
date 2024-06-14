@@ -12,7 +12,7 @@ const VideoFilled = ({ width, height, fill }) => {
       y="0"
       viewBox="0 0 467.968 467.968"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path

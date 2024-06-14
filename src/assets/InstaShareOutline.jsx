@@ -13,7 +13,7 @@ const InstaShareOutline = ({ width, height, fill }) => {
       y="0"
       viewBox="0 0 32 32"
       xml:space="preserve"
-      class=""
+      className=""
     >
       <g>
         <path

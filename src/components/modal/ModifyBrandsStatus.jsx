@@ -95,9 +95,11 @@ const ModifyBrandsStatus = ({
             </span>
           </div>
 
-          <div class="flex flex-col justify-center text-md ml-3">
-            <p class="text-base">{user?.firstName + " " + user?.lastName}</p>
-            <span class="text-tertiary text-sm text-[#7e878c]">
+          <div className="flex flex-col justify-center text-md ml-3">
+            <p className="text-base">
+              {user?.firstName + " " + user?.lastName}
+            </p>
+            <span className="text-tertiary text-sm text-[#7e878c]">
               {user?.email}
             </span>
           </div>
@@ -128,11 +130,11 @@ const ModifyBrandsStatus = ({
       <DialogBody className="max-h-[700px] overflow-auto">
         <Toaster />
         <div
-          class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+          className="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
           role="alert"
         >
           <svg
-            class="flex-shrink-0 inline w-4 h-4 me-3"
+            className="flex-shrink-0 inline w-4 h-4 me-3"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
@@ -140,19 +142,19 @@ const ModifyBrandsStatus = ({
           >
             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
           </svg>
-          <span class="sr-only">Info</span>
+          <span className="sr-only">Info</span>
           <div>
-            <span class="font-medium">Downgrading Plan : </span>You are
+            <span className="font-medium">Downgrading Plan : </span>You are
             downgrading the your subscription. Kindly select any{" "}
             {selectedPlanDetails?.totalClients} brands to make active out of{" "}
             {existingClientCount}.
           </div>
         </div>
         <div
-          class="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
+          className="p-4 mb-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300"
           role="alert"
         >
-          <span class="font-medium">Total Selected Brands : </span>
+          <span className="font-medium">Total Selected Brands : </span>
           {activeBrandCount}
         </div>
         <div className="max-h-96 overflow-auto">

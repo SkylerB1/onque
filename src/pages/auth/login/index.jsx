@@ -30,17 +30,16 @@ import InputEmailForSocialMeadia from "../modal/inputEmailForSocialMeadia";
 const Login = () => {
   const { socialMedia, token } = useParams();
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  const [openInputEmailForSML, setOpenInputEmailForSML] = useState(false);
-  const [loadingInputEmailForSM, setLoadingInputEmailForSM] = useState(false);
-
-  const { getConnections } = useConnections();
-  const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
+  const { getConnections } = useConnections();
   const { getSubscriptions, getCounter } = useAppContext();
   const [cookies, setCookie] = useCookies(["access_token"]);
+  const { register, handleSubmit } = useForm();
+
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openInputEmailForSML, setOpenInputEmailForSML] = useState(false);
+  const [loadingInputEmailForSM, setLoadingInputEmailForSM] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const user = localStorage.getItem("user");
@@ -101,10 +100,11 @@ const Login = () => {
       getCounter(brand.id);
       dispatch(setUser(userBrand));
       getConnections(brand.id);
+
+      getSubscriptions();
+      setLoading(false);
+      navigate("/planner/calendar");
     });
-    getSubscriptions();
-    setLoading(false);
-    navigate("/planner/calendar");
   };
   // Ths function is used to refresh the token when facebook login callback come
   const refreshToken = async (token) => {

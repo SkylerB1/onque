@@ -62,9 +62,9 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
         open={isOpen}
         handler={toggleDropdown}
         placement="bottom-end"
-        dismiss={{
-          itemPress: false,
-        }}
+        // dismiss={{
+        //   itemPress: false,
+        // }}
       >
         <MenuHandler>
           {brandName ? (

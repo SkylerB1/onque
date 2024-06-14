@@ -97,10 +97,11 @@ axiosInstance.interceptors.response.use(
         icon: "warning",
         confirmButtonText: "Ok",
         confirmButtonColor: "#ff6b72",
+        allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
           localStorage.clear();
-          location.reload();
+          window.location.reload();
         }
       });
     } else if (status === 404) {

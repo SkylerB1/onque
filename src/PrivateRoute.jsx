@@ -9,9 +9,7 @@ const PrivateRoute = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [cookies, setCookie] = useCookies(["access_token"]);
   const access_token = cookies?.access_token;
-  const memoizedToken = useMemo(() => access_token, [access_token])
-
-
+  const memoizedToken = useMemo(() => access_token, [access_token]);
 
   // const getUserInfo = async () => {
   //   try {
@@ -40,19 +38,20 @@ const PrivateRoute = ({ children }) => {
   }, []);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">
-      <ColorRing
-        visible={true}
-        height="100"
-        width="100"
-        ariaLabel="color-ring-loading"
-        wrapperStyle={{}}
-        wrapperClass="color-ring-wrapper"
-        colors={["black"]}
-      />
-    </div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ColorRing
+          visible={true}
+          height="100"
+          width="100"
+          ariaLabel="color-ring-loading"
+          wrapperStyle={{}}
+          wrapperClass="color-ring-wrapper"
+          colors={["black"]}
+        />
+      </div>
+    );
   }
-
 
   if (user) {
     return <>{children}</>;

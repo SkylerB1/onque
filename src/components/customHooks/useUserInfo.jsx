@@ -64,17 +64,17 @@ const useUserInfo = () => {
         { isRefreshToken: false }
       );
 
-      if (response.status === 200) {
+      if (response?.status === 200) {
         let userInfo = await updateData(response);
         return userInfo;
       } else {
-        const message = response.data.message;
-        // console.log(message);
-        toastrError(message);
+        const message = response?.data?.message;
+        console.log(response);
+        message && toastrError(message);
         return false;
       }
     } catch (error) {
-      // console.log(error);
+      console.log(error);
       const message = error.response?.data?.message || "An error occurred.";
       toastrError(message);
       return false;

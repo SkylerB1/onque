@@ -30,9 +30,8 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
   const [userInfo, setUserInfo] = useState(user);
   const { getUserRefreshedData } = useUserInfo();
 
-  const { clients_count, max_clients } = useSelector(
-    (state) => state.user.value
-  );
+  const { clients_count = 0, max_clients = 0 } =
+    useSelector((state) => state.user.value) || {};
   const { value: brands, loading } = useSelector((state) => state.brands);
   const brandName = user?.brand?.brand_name || "Loading...";
   const [searchTerm, setSearchTerm] = useState("");

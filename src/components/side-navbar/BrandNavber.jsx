@@ -30,7 +30,7 @@ const BrandNavber = () => {
   );
   const [opens, setOpen] = useState(false);
   const user = useSelector((state) => state.user.value);
-  const { id: brandId, brand_name: brandName } = user?.brand;
+  const { id: brandId = false, brand_name: brandName = "" } = user?.brand || {};
   const dispatch = useDispatch();
 
   const handleDeleteClient = async (id) => {
@@ -104,15 +104,17 @@ const BrandNavber = () => {
           </ListItem>
         )}
       </div>
-      <CustomModal
-        open={opens}
-        Close={() => setOpen(false)}
-        title={`Are you sure that you want to delete ${brandName}?`}
-        body={`If you continue you will delete this brand (${brandName}) from your account with social networks connections`}
-        handleDelete={handleDeleteClient}
-        data={brandId}
-        brandName={brandName}
-      />
+      {brandId && (
+        <CustomModal
+          open={opens}
+          Close={() => setOpen(false)}
+          title={`Are you sure that you want to delete ${brandName}?`}
+          body={`If you continue you will delete this brand (${brandName}) from your account with social networks connections`}
+          handleDelete={handleDeleteClient}
+          data={brandId}
+          brandName={brandName}
+        />
+      )}
     </div>
   );
 };

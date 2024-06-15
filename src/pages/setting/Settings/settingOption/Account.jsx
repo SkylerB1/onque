@@ -44,7 +44,7 @@ const Account = () => {
                 type="text"
                 {...register("firstName", { required: true })}
                 label="First Name"
-                size="regular"
+                size="md"
                 className="focus:shadow-none"
                 defaultValue={user?.firstName}
               />
@@ -54,7 +54,7 @@ const Account = () => {
                 type="text"
                 {...register("lastName", { required: true })}
                 label="Last Name"
-                size="regular"
+                size="md"
                 className="focus:shadow-none"
                 defaultValue={user?.lastName}
               />
@@ -67,7 +67,7 @@ const Account = () => {
                 type="text"
                 {...register("language", { required: true })}
                 label="Language"
-                size="regular"
+                size="md"
                 className="focus:shadow-none"
                 defaultValue={userLocalSettings.language}
               />
@@ -77,7 +77,7 @@ const Account = () => {
                 type="text"
                 {...register("timezone", { required: true })}
                 label="Timezone"
-                size="regular"
+                size="md"
                 className="focus:shadow-none"
                 defaultValue={userLocalSettings.timezone}
               />

@@ -272,8 +272,8 @@ const Login = () => {
                           {...register("password", { required: true })}
                           placeholder="Password"
                           label="Password"
-                          size="regular"
-                          fullWidth
+                          size="md"
+                          fullwidth={"true"}
                           className="focus:shadow-none"
                           icon={
                             <div
@@ -293,14 +293,14 @@ const Login = () => {
                       </div>
                       <div className="flex flex-1 justify-between">
                         <div className=" w-3/6 relative flex">
-                          <p>
+                          <div>
                             <Link
                               className="text-gray-500 font-semibold hover:text-blue-500"
                               to="/register"
                             >
-                              <p>Don&apos;t have an account?</p>
+                              <div>Don&apos;t have an account?</div>
                             </Link>
-                          </p>
+                          </div>
                         </div>
                         <div className="  w-3/6  mb-4 grid justify-items-stretch">
                           <div className="justify-self-end">

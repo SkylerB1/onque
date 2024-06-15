@@ -38,7 +38,6 @@ const Setting = () => {
 
   useEffect(() => {
     navigate("/setting/" + activeTab);
-    console.log(activeTab);
   }, [activeTab]);
 
   useEffect(() => {

@@ -458,9 +458,11 @@ export function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 export function toastrSuccess(message) {
+  toast.dismiss();
   toast.success(message, { duration: 4000, position: "bottom-center" });
 }
 export function toastrError(message) {
+  toast.dismiss();
   toast.error(message, { duration: 4000, position: "bottom-center" });
 }
 

@@ -15,7 +15,7 @@ export default function CustomModal({
   handleDelete,
   data,
   title,
-  body,
+  body = "",
   loading,
 }) {
   return (
@@ -24,7 +24,7 @@ export default function CustomModal({
         {title}
       </DialogHeader>
       <DialogBody className="text-center text-black px-6">
-        <Typography className="text-base">{body}</Typography>
+        {body != "" && <Typography className="text-base">{body}</Typography>}
       </DialogBody>
       <DialogFooter className="flex flex-row justify-center items-center">
         <LoadingButton

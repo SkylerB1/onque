@@ -5,14 +5,14 @@ const Youtube = ({ width = 30, height = 30, fill }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
       xmlns:svgjs="http://svgjs.com/svgjs"
       width={width}
       height={height}
       x="0"
       y="0"
       viewBox="0 0 461.001 461.001"
-      xml:space="preserve"
+      xmlSpace="preserve"
       className=""
     >
       <g>

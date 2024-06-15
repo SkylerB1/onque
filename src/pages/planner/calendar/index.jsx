@@ -75,7 +75,7 @@ const Calendar = () => {
     return () => {
       broadcastConnection.removeEventListener("message", handleConnection);
     };
-  }, [broadcastConnection]);
+  }, [broadcastConnection, brandId]);
 
   if (!connections) {
     return (

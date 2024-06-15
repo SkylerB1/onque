@@ -45,7 +45,7 @@ export default function ForgotPassword({ open, Close }) {
       <DialogHeader>Recover your account</DialogHeader>
       <DialogBody>
         <Typography
-          variant="p"
+          variant="paragraph"
           component="h2"
           sx={{ marginBottom: "16px", fontWeight: "bold" }}
           className="mb-5"
@@ -59,9 +59,9 @@ export default function ForgotPassword({ open, Close }) {
           name="email"
           placeholder="Enter your email"
           {...register("email", { required: true })}
-          label={
-            <div style={{ backgroundColor: "white", height: "0px" }}>Email</div>
-          }
+          // label={
+          //   <div style={{ backgroundColor: "white", height: "0px" }}>Email</div>
+          // }
           className="focus:shadow-none"
           color="purple"
         />

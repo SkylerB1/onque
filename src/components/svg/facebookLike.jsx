@@ -5,14 +5,14 @@ const facebookLike = ({ width, height, fill }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
       xmlns:svgjs="http://svgjs.com/svgjs"
       x="0"
       y="0"
       width={width}
       height={height}
       viewBox="0 0 512 512"
-      xml:space="preserve"
+      xmlSpace="preserve"
       className=""
     >
       <g>

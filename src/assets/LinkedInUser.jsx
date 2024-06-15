@@ -13,9 +13,9 @@ const LinkedInUser = ({ width, height, fill }) => {
       <g>
         <path
           fill={fill}
-          fill-rule="evenodd"
+          fillRule="evenodd"
           d="M7.96 8c1.634 0 2.96-1.343 2.96-3S9.593 2 7.96 2C6.325 2 5 3.343 5 5s1.325 3 2.96 3z"
-          clip-rule="evenodd"
+          clipRule="evenodd"
         ></path>
         <path
           fill={fill}

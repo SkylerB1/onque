@@ -40,8 +40,6 @@ axiosInstance.interceptors.request.use(async (req) => {
     accessToken == "undefined"
   ) {
     logout();
-  } else {
-    console.log(accessToken);
   }
   req.headers.Authorization = `Bearer ${accessToken}`;
 

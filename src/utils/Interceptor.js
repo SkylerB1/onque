@@ -33,6 +33,16 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(async (req) => {
   let accessToken = localStorage.getItem(ACCESS_TOKEN_KEY);
+  if (
+    !accessToken ||
+    typeof accessToken == "undefined" ||
+    accessToken == "" ||
+    accessToken == "undefined"
+  ) {
+    logout();
+  } else {
+    console.log(accessToken);
+  }
   req.headers.Authorization = `Bearer ${accessToken}`;
 
   const user = jwt_decode(accessToken);
@@ -100,8 +110,7 @@ axiosInstance.interceptors.response.use(
         allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
-          localStorage.clear();
-          window.location.reload();
+          logout();
         }
       });
     } else if (status === 404) {
@@ -116,3 +125,8 @@ axiosInstance.interceptors.response.use(
     }
   }
 );
+
+function logout() {
+  localStorage.clear();
+  window.location.reload();
+}

@@ -145,15 +145,17 @@ const Price = () => {
         )
       )}
       {subscriptionId ? (
-        <CurrentSubscription
-          subscription={subscription}
-          getSubscriptions={getSubscriptions}
-          handleResumeSubscription={handleResumeSubscription}
-          loadingReactivate={loadingReactivate}
-          setLoadingReactivate={setLoadingReactivate}
-          handleKeepCurrentPlan={handleKeepCurrentPlan}
-          loadingKeepCurrentPlan={loadingKeepCurrentPlan}
-        />
+        <>
+          <CurrentSubscription
+            subscription={subscription}
+            getSubscriptions={getSubscriptions}
+            handleResumeSubscription={handleResumeSubscription}
+            loadingReactivate={loadingReactivate}
+            setLoadingReactivate={setLoadingReactivate}
+            handleKeepCurrentPlan={handleKeepCurrentPlan}
+            loadingKeepCurrentPlan={loadingKeepCurrentPlan}
+          />
+        </>
       ) : (
         <SubscriptionPlans />
       )}

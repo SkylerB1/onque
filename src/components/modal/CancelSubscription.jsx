@@ -11,6 +11,8 @@ import LoadingButton from "../button/LoadingButton";
 import { getDateFromUnix } from "../../utils/dateUtils";
 import { toastrSuccess, toastrError } from "../../utils/index";
 import toast, { Toaster } from "react-hot-toast";
+import SubscriptionServices from "../../services/SubscriptionServices";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const CancelSubscription = ({
   open,
@@ -26,12 +28,12 @@ const CancelSubscription = ({
   const handleCancelSubscription = async () => {
     try {
       setLoading(true);
-      const res = await axiosInstance.post("/payments/subscription/cancel", {
+
+      const res = await SubscriptionServices.cancelSubscription({
         comments: text,
       });
-
       let response = res?.data;
-      if (response.status === true) {
+      if (response.status == true) {
         toastrSuccess(response?.message);
       } else {
         toastrError(response?.message);
@@ -51,7 +53,7 @@ const CancelSubscription = ({
   return (
     <Dialog open={open} onClose={toggleModal}>
       <DialogBody className="max-h-[700px] overflow-auto">
-        <Toaster />
+        <ToasterCustomConatiner />
         <div className="p-8">
           <div className="flex justify-center mb-6">
             <Cross width={100} height={100} fill="red" />
@@ -90,7 +92,7 @@ const CancelSubscription = ({
         <LoadingButton
           title={"Cancel plan"}
           loading={loading}
-          disabled={isDisabled}
+          disabled={isDisabled || loading}
           className="w-36 h-10"
           onClick={handleCancelSubscription}
         />

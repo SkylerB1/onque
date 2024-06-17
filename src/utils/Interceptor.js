@@ -94,11 +94,8 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.log(typeof error, "typeof is error");
-    console.log(error, "is error");
     let status = error?.response?.status || error?.response?.data?.status;
     if (status == 401) {
-      console.log("I am in 401");
       Swal.fire({
         title: "Session expired",
         html: "Please login again.",
@@ -112,9 +109,17 @@ axiosInstance.interceptors.response.use(
         }
       });
     } else if (status === 404) {
-      toastrError("Not Found");
+      let msg =
+        error?.response?.data?.msg ||
+        error?.response?.data?.message ||
+        "Not Found";
+      toastrError(msg);
     } else if (status == 500) {
-      toastrError("Internal Server Error");
+      let msg =
+        error?.response?.data?.msg ||
+        error?.response?.data?.message ||
+        "Internal Server Error";
+      toastrError(msg);
     } else if (status == 508) {
       toastrError("Time Out");
     } else {

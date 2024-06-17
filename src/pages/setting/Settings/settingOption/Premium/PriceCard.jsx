@@ -11,8 +11,10 @@ const PriceCard = ({ selectedPlan, selectedOption, switchDuration }) => {
   const [loading, setLoading] = useState(false);
   const color = selectedPlan.color;
   const user = useSelector((state) => state.user.value);
+  const [ChangePlanModelKey, setChangePlanModelKey] = useState(Date.now());
 
   const handleOpen = () => {
+    setChangePlanModelKey((prev) => Date.now());
     setIsOpen(true);
   };
 
@@ -98,6 +100,7 @@ const PriceCard = ({ selectedPlan, selectedOption, switchDuration }) => {
         listData={selectedPlan}
         selectedOption={selectedOption}
         switchDuration={switchDuration}
+        key={ChangePlanModelKey}
       />
     </div>
   );

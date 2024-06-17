@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@material-tailwind/react";
-import { planLabel } from "../../../../utils";
+import { planLabel, toastrError, toastrSuccess } from "../../../../utils";
 import { getDateFromUnix } from "../../../../utils/dateUtils";
 import CancelSubscription from "../../../../components/modal/CancelSubscription";
 
@@ -180,9 +180,9 @@ const CurrentSubscription = ({
           <div className="flex justify-end">
             <strong className="text-black text-3xl leading-none font-bold">
               {subscription?.subscriptionScheduledId != null ? (
-                <>{subscription.scheduledPlanInfo.price}</>
+                <>{subscription?.scheduledPlanInfo?.price}</>
               ) : (
-                <>{subscription.plan.price}</>
+                <>{subscription?.plan?.price}</>
               )}{" "}
               GBP
             </strong>

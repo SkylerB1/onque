@@ -19,6 +19,7 @@ import ModifyBrandsStatus from "../../modal/ModifyBrandsStatus";
 import UserService from "../../../services/UserServices";
 import BrandServices from "../../../services/BrandServices";
 import SubscriptionServices from "../../../services/SubscriptionServices";
+import ToasterCustomConatiner from "../../ToasterCustomConatiner";
 
 export function ChangePlanModel({
   openChangePlanModel,
@@ -173,7 +174,8 @@ export function ChangePlanModel({
       <Dialog size="lg" open={openChangePlanModel} handler={handleOpen}>
         <DialogHeader>Change Plan</DialogHeader>
         <hr />
-        <Toaster />
+
+        <ToasterCustomConatiner />
         <DialogBody className="p-0">
           <PricingPlansCard
             selectedPlanName={selectedPlanName}
@@ -191,6 +193,7 @@ export function ChangePlanModel({
             className="w-24 h-10"
             size="md"
             onClick={openChangePlanStep2Model}
+            disabled={loading}
           />
           <Button
             size="sm"

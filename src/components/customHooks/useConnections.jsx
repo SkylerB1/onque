@@ -3,11 +3,10 @@ import {
   connectionsLoading,
   initialiseConnections,
 } from "../../redux/features/connectionSlice";
-import { API_URL } from "../../utils";
+import { API_URL, toastrError } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
 
 const useConnections = () => {
   const connections = useSelector((state) => state.connections.value);
@@ -30,7 +29,8 @@ const useConnections = () => {
       }
     } catch (err) {
       console.log(err);
-      toast.error("Error fetching connections");
+
+      toastrError("Error fetching connections");
     }
   };
 

@@ -17,6 +17,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useSelector } from "react-redux";
 
 import CustomSwitch from "../../components/Input/CustomSwitch";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const tableHead = ["Brands", "Status"];
 
@@ -128,7 +129,7 @@ const ModifyBrandsStatus = ({
         </IconButton>
       </DialogHeader>
       <DialogBody className="max-h-[700px] overflow-auto">
-        <Toaster />
+        <ToasterCustomConatiner />
         <div
           className="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
           role="alert"

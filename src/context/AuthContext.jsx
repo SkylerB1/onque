@@ -13,6 +13,8 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../redux/features/userSlice";
 import useConnections from "../components/customHooks/useConnections";
 
+import SubscriptionServices from "../services/SubscriptionServices";
+
 const AppContext = createContext({
   subscription: null,
 });
@@ -50,8 +52,7 @@ export function AppContextProvider({ children }) {
 
   const getSubscriptions = async () => {
     try {
-      const res = await axiosInstance.get("/user/subscription");
-
+      const res = await SubscriptionServices.getSubscriptionsDetails();
       setSubscription(res.data);
       setLoadingSub(false);
     } catch (err) {

@@ -23,7 +23,8 @@ import YotubeShorts from "../components/svg/YotubeShorts";
 import Youtube from "../components/svg/Youtube";
 import YoutubeVideo from "../components/svg/YoutubeVideo";
 import { useLocalStorage } from "./LocalStorage";
-import toast, { Toaster } from "react-hot-toast";
+// import toast, { Toaster } from "react-hot-toast";
+import { toast, Bounce } from "react-toastify";
 
 export const API_URL = import.meta.env.VITE_API_URL;
 export const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
@@ -459,11 +460,33 @@ export function capitalizeFirstLetter(string) {
 }
 export function toastrSuccess(message) {
   toast.dismiss();
-  toast.success(message, { duration: 4000, position: "bottom-center" });
+
+  toast.success(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+    transition: Bounce,
+  });
 }
 export function toastrError(message) {
   toast.dismiss();
-  toast.error(message, { duration: 4000, position: "bottom-center" });
+
+  toast.error(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "colored",
+    transition: Bounce,
+  });
 }
 
 export function toFixedNumber(value) {

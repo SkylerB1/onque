@@ -15,7 +15,7 @@ import {
   capitalizeFirstLetter,
   toFixedNumber,
 } from "../../utils/index";
-import toast, { Toaster } from "react-hot-toast";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const ChangePlanStep2 = ({
   open,
@@ -32,7 +32,7 @@ const ChangePlanStep2 = ({
   return (
     <Dialog size="sm" open={open} onClose={toggleModal}>
       <DialogBody className="max-h-[700px] overflow-auto">
-        <Toaster />
+        <ToasterCustomConatiner />
         <div>
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center">
@@ -149,6 +149,7 @@ const ChangePlanStep2 = ({
           loading={loading}
           className="w-36 h-10"
           onClick={handleSubmit}
+          disabled={loading}
         />
       </DialogFooter>
     </Dialog>

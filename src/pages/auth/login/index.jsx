@@ -76,12 +76,13 @@ const Login = () => {
         await handlePostLogin(response);
       } else {
         const message = response.data.message;
-        toast.error(message);
+        toastrError(message);
       }
     } catch (error) {
       setLoading(false);
       const message = error.response.data.message || "An error occurred.";
-      toast.error(message);
+
+      toastrError(message);
     }
   };
 

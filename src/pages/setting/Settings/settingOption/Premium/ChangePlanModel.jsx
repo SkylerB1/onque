@@ -20,6 +20,7 @@ import InfoIcon from "../../../../../assets/InfoIcon";
 import { lookupKeys } from "../../../../../utils";
 import { Toaster } from "react-hot-toast";
 import { toastrSuccess, toastrError } from "../../../../../utils/index";
+import ToasterCustomConatiner from "../../../../../components/ToasterCustomConatiner";
 const initial = {
   code: "",
   isValid: false,
@@ -89,7 +90,7 @@ const ChangePlanModel = ({
   return (
     <Dialog size="xs" open={open} handler={handler}>
       <DialogBody>
-        <Toaster />
+        <ToasterCustomConatiner />
         <div>
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center">

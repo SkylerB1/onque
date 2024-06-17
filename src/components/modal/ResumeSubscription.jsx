@@ -12,6 +12,7 @@ import LoadingButton from "../button/LoadingButton";
 import { getDateFromUnix } from "../../utils/dateUtils";
 import { toastrSuccess, toastrError } from "../../utils/index";
 import toast, { Toaster } from "react-hot-toast";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const ResumeSubscription = ({
   open,
@@ -51,7 +52,7 @@ const ResumeSubscription = ({
   return (
     <Dialog open={open} onClose={toggleModal}>
       <DialogBody className="max-h-[700px] overflow-auto">
-        <Toaster />
+        <ToasterCustomConatiner />
         <div className="p-8">
           <div className="flex justify-center mb-6">
             <AcceptIcon width={100} height={100} />

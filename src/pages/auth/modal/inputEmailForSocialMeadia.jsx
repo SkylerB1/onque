@@ -11,6 +11,7 @@ import {
   DialogHeader,
 } from "@material-tailwind/react";
 import { Toaster } from "react-hot-toast";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
 
 export default function InputEmailForSocialMeadia({
   open,
@@ -27,7 +28,7 @@ export default function InputEmailForSocialMeadia({
 
   return (
     <Dialog className="border-none" open={open} onClose={handleclose} size="md">
-      <Toaster />
+      <ToasterCustomConatiner />
       <DialogHeader>Confirm your email address</DialogHeader>
       <DialogBody>
         <Typography

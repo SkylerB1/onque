@@ -32,8 +32,9 @@ const CancelSubscription = ({
       const res = await SubscriptionServices.cancelSubscription({
         comments: text,
       });
+
       let response = res?.data;
-      if (response.status == true) {
+      if (response.data.status == true) {
         toastrSuccess(response?.message);
       } else {
         toastrError(response?.message);

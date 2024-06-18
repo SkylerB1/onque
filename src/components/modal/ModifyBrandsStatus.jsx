@@ -239,7 +239,7 @@ const ModifyBrandsStatus = ({
         <LoadingButton
           title={"Save Brands"}
           loading={loading}
-          disabled={isDisabled}
+          disabled={isDisabled || loading}
           className="w-45 h-10"
           onClick={handleSaveBrandAction}
         />

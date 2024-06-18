@@ -62,7 +62,7 @@ export function ChangePlanModel({
           lookup_key: lookup_key,
         });
 
-      if (response.status === 200) {
+      if (response?.status === 200) {
         if (response?.data?.data?.isPlanUpgrade === false) {
           // Downgrading the plan
           let userInfo = await UserService.getUserInfo();

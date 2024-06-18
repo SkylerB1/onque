@@ -101,6 +101,7 @@ const CurrentSubscription = ({
                           loading={loadingKeepCurrentPlan}
                           className="normal-case ml-5 w-30 whitespace-nowrap"
                           onClick={handleKeepCurrentPlan}
+                          disabled={loadingKeepCurrentPlan}
                         />
                       </>
                     ) : (
@@ -112,6 +113,7 @@ const CurrentSubscription = ({
                               loading={loadingReactivate}
                               className="normal-case ml-5 w-30 whitespace-nowrap"
                               onClick={handleResumeSubscription}
+                              disabled={loadingReactivate}
                             />
                           </>
                         ) : (

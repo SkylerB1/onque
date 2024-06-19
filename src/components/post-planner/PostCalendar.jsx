@@ -116,7 +116,7 @@ const PostCalendar = (props) => {
     <>
       <div className="md:my-2 xl:mt-24 lg:mt-24">
         {/* Role Info Section */}
-        {textForRoleInfo != null && (
+        {textForRoleInfo != null && textForRoleInfo.length != 0 && (
           <>
             <div
               id="alert-additional-content-1"
@@ -135,20 +135,22 @@ const PostCalendar = (props) => {
                 </svg>
                 <span className="sr-only">Info</span>
                 <h3 className="text-lg font-medium">
-                  {textForRoleInfo.map(
-                    (value) =>
-                      value.title +
-                      (textForRoleInfo.legth - 1 < index ? " , " : "")
-                  )}
+                  {textForRoleInfo &&
+                    textForRoleInfo?.map(
+                      (value, index) =>
+                        value.title +
+                        (textForRoleInfo.legth - 1 < index ? " , " : "")
+                    )}
                 </h3>
               </div>
               <div className="mt-2 mb-4 text-sm">
-                {textForRoleInfo.map((value, index) => (
-                  <React.Fragment key={index}>
-                    {value.description}
-                    <br />
-                  </React.Fragment>
-                ))}
+                {textForRoleInfo &&
+                  textForRoleInfo?.map((value, index) => (
+                    <React.Fragment key={index}>
+                      {value.description}
+                      <br />
+                    </React.Fragment>
+                  ))}
               </div>
             </div>
           </>

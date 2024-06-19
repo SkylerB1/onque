@@ -5,13 +5,13 @@ const InfoIcon = ({ width, height, fill }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlnsXlink="http://www.w3.org/1999/xlink"
       width={width}
       height={height}
       x="0"
       y="0"
       viewBox="0 0 48 48"
-      xml:space="preserve"
+      xmlSpace="preserve"
       className=""
     >
       <g>

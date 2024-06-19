@@ -36,6 +36,7 @@ import UserDetailDialog from "./UserDetailDialog";
 import AlertDialog from "../../../components/dialog/AlertDialog";
 import GoPremiumDialog from "../../../components/dialog/GoPremiumDialog";
 import { useAppContext } from "../../../context/AuthContext";
+import UserService from "../../../services/UserServices";
 
 const TABLE_HEAD = ["Users", "Brands", "Action"];
 const initialUserData = {
@@ -210,15 +211,18 @@ const Users = ({
   const addCollaborator = async (data) => {
     try {
       setLoading(true);
-      let result = await axiosInstance.post("/user/collaborators", data);
-      console.log(result);
-      if (result.status == 200) {
-        let message = result.data.message;
+      let result = await UserService.addCollaborator(data);
+
+      if (result.code == 200) {
+        let message = result.message;
+        data = { ...data, id: result.data.id };
+
         setCollaborators((prev) => [data, ...prev]);
         setSelectedUser(initialUserData);
         setEmailDialog(intialEmailDialogData);
         toastrSuccess(message);
       } else {
+        toastrError(result.message);
       }
 
       setLoading(false);
@@ -263,8 +267,13 @@ const Users = ({
   const sendInvitation = async (data) => {
     try {
       setLoading(true);
-      await axiosInstance.post("/user/collaborator/activation-link", data);
-      toast.success("Invitation sent");
+      let result = await UserService.sendCollaboratorInvitation(data);
+      if (result.code == 200) {
+        toastrSuccess("Invitation email is sent successfully");
+      } else {
+        toastrError(result?.message || "Failed to send invitation email");
+      }
+
       setSelectedUser(initialUserData);
       setEmailDialog(intialEmailDialogData);
       setLoading(false);

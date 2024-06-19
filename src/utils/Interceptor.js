@@ -108,6 +108,12 @@ axiosInstance.interceptors.response.use(
           logout();
         }
       });
+    } else if (status === 400) {
+      let msg =
+        error?.response?.data?.msg ||
+        error?.response?.data?.message ||
+        "Not Found";
+      toastrError(msg);
     } else if (status === 404) {
       let msg =
         error?.response?.data?.msg ||

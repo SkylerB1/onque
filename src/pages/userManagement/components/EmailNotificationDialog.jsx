@@ -8,6 +8,7 @@ import {
 import React from "react";
 import { AddUserColored } from "../../../components/common/Images";
 import LoadingButton from "../../../components/button/LoadingButton";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
 
 const EmailNotificationDialog = ({
   data,
@@ -28,6 +29,7 @@ const EmailNotificationDialog = ({
   const { sendCustomEmail, resendInvite, customEmailMessage } = selectedUser;
   return (
     <Dialog size="lg" open={open}>
+      <ToasterCustomConatiner />
       <DialogBody className="max-h-[584px] overflow-auto">
         <div>
           <div className="flex justify-center mb-6">
@@ -61,7 +63,7 @@ const EmailNotificationDialog = ({
                 <textarea
                   className="w-full border border-black rounded-lg p-4 text-black"
                   value={customEmailMessage}
-                  onChange={(e)=>handleCustomEmail(e.target.value)}
+                  onChange={(e) => handleCustomEmail(e.target.value)}
                   rows="3"
                 />
               </div>
@@ -80,6 +82,7 @@ const EmailNotificationDialog = ({
               onClick={() => onSubmit(selectedUser)}
               className="w-32"
               loading={loading}
+              disabled={loading}
             />
           </div>
         </div>

@@ -15,6 +15,8 @@ import { validateEmail } from "../../../utils";
 import { axiosInstance } from "../../../utils/Interceptor";
 import InfoIcon from "../../../assets/InfoIcon";
 import { useSelector } from "react-redux";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
+import UserService from "../../../services/UserServices";
 const initialUser = {
   isValid: false,
   showMessage: true,
@@ -73,44 +75,43 @@ const AddUserDialog = ({
   };
 
   const checkUser = async (email) => {
-    try {
-      setLoading(true);
-      const res = await axiosInstance.get(`/user/isValid?email=${email}`);
-      if (res.status === 200) {
-        const existingCollaborator = collaborators?.some(
-          (item) => item.email === email
-        );
-        if (existingCollaborator) {
-          setUser((prev) => ({
-            ...prev,
-            isValid: false,
-            showMessage: true,
-            message:
-              "This user has already been added to your collaborators list",
-          }));
-        } else {
-          setSelectedUser((prev) => ({ ...prev, ...res.data, isActive: true }));
-          setUser((prev) => ({
-            ...prev,
-            showMessage: false,
-            isValid: true,
-            message: "",
-          }));
-        }
-        setLoading(false);
-      }
-    } catch (err) {
-      if (err?.response?.status === 404) {
-        setUser({
-          isValid: true,
+    setLoading(true);
+    let params = "email=" + email;
+
+    const res = await UserService.isValid(params);
+
+    if (res.code === 200) {
+      const existingCollaborator = collaborators?.some(
+        (item) => item.email === email
+      );
+      if (existingCollaborator) {
+        setUser((prev) => ({
+          ...prev,
+          isValid: false,
           showMessage: true,
           message:
-            "This e-mail address does not match any active user. You will be able to send them a personalized email to join!",
-        });
-        setSelectedUser((prev) => ({ ...prev, email }));
+            "This user has already been added to your collaborators list",
+        }));
+      } else {
+        setSelectedUser((prev) => ({ ...prev, ...res.data, isActive: true }));
+        setUser((prev) => ({
+          ...prev,
+          showMessage: false,
+          isValid: true,
+          message: "",
+        }));
       }
       setLoading(false);
+    } else if (res.code === 404) {
+      setUser({
+        isValid: true,
+        showMessage: true,
+        message:
+          "This e-mail address does not match any active user. You will be able to send them a personalized email to join!",
+      });
+      setSelectedUser((prev) => ({ ...prev, email }));
     }
+    setLoading(false);
   };
 
   const handleContinue = () => {
@@ -126,6 +127,7 @@ const AddUserDialog = ({
 
   return (
     <Dialog open={isOpen} onClose={handleClose} maxWidth="xs">
+      <ToasterCustomConatiner />
       <DialogHeader className="justify-between">
         <Typography variant="h5" color="blue-gray">
           Add User

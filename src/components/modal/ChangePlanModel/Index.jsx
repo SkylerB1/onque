@@ -172,6 +172,7 @@ export function ChangePlanModel({
   return (
     <>
       <Dialog size="lg" open={openChangePlanModel} handler={handleOpen}>
+        <ToasterCustomConatiner />
         <DialogHeader>Change Plan</DialogHeader>
         <hr />
 

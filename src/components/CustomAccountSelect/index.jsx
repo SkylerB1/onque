@@ -1,4 +1,3 @@
-;
 import React from "react";
 import {
   Button,
@@ -8,6 +7,7 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 import { Radio } from "@material-tailwind/react";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const CustomAccountSelect = ({
   open,
@@ -19,9 +19,13 @@ const CustomAccountSelect = ({
 }) => {
   return (
     <Dialog size="md" className="bg-[#efefef]" open={open}>
+      <ToasterCustomConatiner />
       <DialogHeader className="">{title}</DialogHeader>
       <p className="ml-5 mb-5 text-sm font-black">{subTitle}</p>
-      <DialogBody divider={false} className="bg-white mx-4 rounded-md shadow-md">
+      <DialogBody
+        divider={false}
+        className="bg-white mx-4 rounded-md shadow-md"
+      >
         {data?.map((item, index) => {
           return (
             <div

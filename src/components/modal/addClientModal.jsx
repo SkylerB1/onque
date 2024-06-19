@@ -17,6 +17,7 @@ import LoadingButton from "../button/LoadingButton";
 import { addBrand } from "../../redux/features/brandsSlice";
 import { initialiseConnections } from "../../redux/features/connectionSlice";
 import { toastrError } from "../../utils";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const initial = {
   brand_name: "",
@@ -77,6 +78,7 @@ export default function AddModal({ open, Close }) {
   return (
     <>
       <Dialog className="border-none" open={open} onClose={Close}>
+        <ToasterCustomConatiner />
         <DialogHeader className="">Add Client</DialogHeader>
         <hr />
         <DialogBody>

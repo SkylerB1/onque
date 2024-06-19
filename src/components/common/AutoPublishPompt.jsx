@@ -14,6 +14,7 @@ import TikTok from "../../assets/tiktok.svg?react";
 import Instagram from "../../assets/instagram.svg?react";
 import { useLocalStorage } from "../../utils/LocalStorage";
 import { InstagramPlatform } from "./commonString";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const AutoPublishPompt = ({
   isOpen,
@@ -52,6 +53,7 @@ const AutoPublishPompt = ({
   };
   return (
     <Dialog open={isOpen} onClose={onClose} size="md">
+      <ToasterCustomConatiner />
       <DialogHeader className="justify-between my-2">
         <div className="flex items-center gap-3">
           {platform === InstagramPlatform ? (

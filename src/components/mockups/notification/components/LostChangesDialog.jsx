@@ -5,10 +5,12 @@ import {
   Button,
 } from "@material-tailwind/react";
 import React from "react";
+import ToasterCustomConatiner from "../../../ToasterCustomConatiner";
 
 const LostChangesDialog = ({ open, onClose, closeParentDialog }) => {
   return (
     <Dialog open={open} onClose={onClose} size="md">
+      <ToasterCustomConatiner />
       <DialogBody>Your changes will be lost, are you sure?</DialogBody>
       <DialogFooter className="flex justify-center gap-3">
         <Button

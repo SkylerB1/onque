@@ -7,6 +7,7 @@ import {
 import React from "react";
 import LoadingButton from "../button/LoadingButton";
 import { DeleteModalError } from "../common/Images";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const AlertDialog = ({
   open,
@@ -19,6 +20,7 @@ const AlertDialog = ({
 }) => {
   return (
     <Dialog open={open}>
+      <ToasterCustomConatiner />
       <DialogBody>
         <div className="text-center flex items-center flex-col">
           <div className="flex justify-center mb-6">

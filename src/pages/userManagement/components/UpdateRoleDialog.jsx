@@ -9,6 +9,7 @@ import {
   Checkbox,
 } from "@material-tailwind/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
 
 const UpdateRoleDialog = ({ isOpen, onClose, brands, selectedBrands }) => {
   const isBrandSelected = (brand) => {
@@ -17,6 +18,7 @@ const UpdateRoleDialog = ({ isOpen, onClose, brands, selectedBrands }) => {
 
   return (
     <Dialog size="sm" open={isOpen} onClose={onClose}>
+      <ToasterCustomConatiner />
       <DialogHeader className="justify-between">
         <Typography variant="h5" color="blue-gray">
           Update role

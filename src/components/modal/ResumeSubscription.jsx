@@ -51,6 +51,7 @@ const ResumeSubscription = ({
 
   return (
     <Dialog open={open} onClose={toggleModal}>
+      <ToasterCustomConatiner />
       <DialogBody className="max-h-[700px] overflow-auto">
         <ToasterCustomConatiner />
         <div className="p-8">

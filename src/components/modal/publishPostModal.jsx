@@ -15,8 +15,10 @@ import {
   TimelineBody,
 } from "@material-tailwind/react";
 import React from "react";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const PublishPostModal = ({ open, onClose, platform }) => {
+  <ToasterCustomConatiner />;
   return (
     <Dialog size="sm" open={open} onClose={onClose} className="bg-gray-100">
       <DialogHeader className="justify-between">

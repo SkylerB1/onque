@@ -17,6 +17,7 @@ import LoadingButton from "../../../components/button/LoadingButton";
 import { useDispatch } from "react-redux";
 import { addRole, updateRole } from "../../../redux/features/roleSlice";
 import toast from "react-hot-toast";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
 
 const AddRoleDialog = ({
   isOpen,
@@ -106,6 +107,7 @@ const AddRoleDialog = ({
 
   return (
     <Dialog open={isOpen} onClose={onClose} size="md">
+      <ToasterCustomConatiner />
       <DialogHeader className="justify-between my-2">
         <Typography variant="h5">
           {isEditing ? "Update Role" : "Add Role"}

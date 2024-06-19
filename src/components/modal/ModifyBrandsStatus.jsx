@@ -84,6 +84,7 @@ const ModifyBrandsStatus = ({
 
   return (
     <Dialog size="md" className="dialogIndex" open={isOpen} onClose={onClose}>
+      <ToasterCustomConatiner />
       <DialogHeader className="justify-between">
         <div className="flex flex-row items-center">
           <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-md ">

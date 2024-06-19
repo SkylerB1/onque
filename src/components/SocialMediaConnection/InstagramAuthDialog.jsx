@@ -7,10 +7,12 @@ import {
   DialogHeader,
   Typography,
 } from "@material-tailwind/react";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const InstagramAuthDialog = ({ open, handler, onConfirm }) => {
   return (
     <Dialog open={open} handler={handler}>
+      <ToasterCustomConatiner />
       <DialogHeader>Authenticate with Facebook</DialogHeader>
       <DialogBody>
         <Typography variant="h6" className="my-2">

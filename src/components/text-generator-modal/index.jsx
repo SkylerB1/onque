@@ -1,9 +1,17 @@
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader } from "@material-tailwind/react";
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogFooter,
+  DialogHeader,
+} from "@material-tailwind/react";
 import React from "react";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
-function TextGeneratorModal({ open,toggleModal }) {
+function TextGeneratorModal({ open, toggleModal }) {
   return (
     <Dialog open={open}>
+      <ToasterCustomConatiner />
       <DialogHeader>AI Text Generator</DialogHeader>
       <DialogBody>
         <div>
@@ -13,7 +21,6 @@ function TextGeneratorModal({ open,toggleModal }) {
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               What do you want to write about?
-              
             </label>
             <textarea
               id="message"
@@ -28,7 +35,9 @@ function TextGeneratorModal({ open,toggleModal }) {
         <Button variant="outlined" onClick={toggleModal} color="gray">
           <p>Cancel</p>
         </Button>
-        <Button className="ml-2" onClick={toggleModal}>Generate</Button>
+        <Button className="ml-2" onClick={toggleModal}>
+          Generate
+        </Button>
       </DialogFooter>
     </Dialog>
   );

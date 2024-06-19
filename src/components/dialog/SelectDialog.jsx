@@ -8,6 +8,7 @@ import {
   Spinner,
   Typography,
 } from "@material-tailwind/react";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const SelectionModal = ({
   open,
@@ -21,6 +22,7 @@ const SelectionModal = ({
 }) => {
   return (
     <Dialog size="sm" className="bg-[#efefef]" open={open}>
+      <ToasterCustomConatiner />
       <DialogHeader className="">{title}</DialogHeader>
       <p className="ml-4 mb-4 text-sm">{subTitle}</p>
       <DialogBody

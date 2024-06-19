@@ -12,6 +12,7 @@ import {
   DialogHeader,
 } from "@material-tailwind/react";
 import toast from "react-hot-toast";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
 
 export default function ForgotPassword({ open, Close }) {
   const { register, handleSubmit, reset } = useForm();
@@ -42,6 +43,7 @@ export default function ForgotPassword({ open, Close }) {
 
   return (
     <Dialog open={open} onClose={handleclose} size="xs">
+      <ToasterCustomConatiner />
       <DialogHeader>Recover your account</DialogHeader>
       <DialogBody>
         <Typography

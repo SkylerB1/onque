@@ -34,6 +34,7 @@ const ModifyBrandsStatus = ({
   handleSaveBrandAction,
   selectAllBrand,
   setSelectAllBrand,
+  isUpgarding,
 }) => {
   const [text, setText] = useState("");
   const [activeBrandCount, setActiveBrandCount] = useState(0);
@@ -84,6 +85,7 @@ const ModifyBrandsStatus = ({
 
   return (
     <Dialog size="md" className="dialogIndex" open={isOpen} onClose={onClose}>
+      <ToasterCustomConatiner />
       <DialogHeader className="justify-between">
         <div className="flex flex-row items-center">
           <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-md ">
@@ -145,10 +147,22 @@ const ModifyBrandsStatus = ({
           </svg>
           <span className="sr-only">Info</span>
           <div>
-            <span className="font-medium">Downgrading Plan : </span>You are
-            downgrading the your subscription. Kindly select any{" "}
-            {selectedPlanDetails?.totalClients} brands to make active out of{" "}
-            {existingClientCount}.
+            {isUpgarding === 0 ? (
+              <>
+                <span className="font-medium">Downgrading Plan : </span>You are
+                downgrading the your subscription. Kindly select any{" "}
+                {selectedPlanDetails?.totalClients} brands to make active out of{" "}
+                {existingClientCount}.
+              </>
+            ) : (
+              <>
+                <span className="font-medium">Upgrading Plan : </span>You are
+                upgrading the your subscription. You can make active maximum{" "}
+                {selectedPlanDetails?.totalClients} brands out of{" "}
+                {existingClientCount}. So kindly select any{" "}
+                {selectedPlanDetails?.totalClients} brands to make active.
+              </>
+            )}
           </div>
         </div>
         <div

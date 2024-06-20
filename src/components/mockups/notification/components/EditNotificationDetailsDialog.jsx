@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { axiosInstance } from "../../../../utils/Interceptor";
 import { toast } from "react-hot-toast";
+import ToasterCustomConatiner from "../../../ToasterCustomConatiner";
 
 const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
   const [openLostChangesDialog, setOpenLostChangesDialog] = useState(false);
@@ -105,6 +106,7 @@ const EditNotificationDetailsDialog = ({ isOpen, onClose }) => {
   return (
     <>
       <Dialog open={isOpen} onClose={closeDialog} size="lg">
+        <ToasterCustomConatiner />
         <DialogHeader className="justify-between my-2">
           <Typography variant="h5">Settings</Typography>
           <IconButton

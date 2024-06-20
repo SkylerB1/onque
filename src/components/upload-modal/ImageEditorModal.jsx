@@ -11,6 +11,7 @@ import {
   DialogHeader,
 } from "@material-tailwind/react";
 import { getSource } from "../../utils";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
   const src = getSource(files[index]);
@@ -26,6 +27,7 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
 
   return (
     <Dialog size={"xl"} open={show}>
+      <ToasterCustomConatiner />
       <DialogHeader>Image Editor</DialogHeader>
       <DialogBody>
         <div style={{ height: "600px" }}>
@@ -62,6 +64,6 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
       </DialogFooter>
     </Dialog>
   );
-};
+}
 
 export default React.memo(ImgEditorModal);

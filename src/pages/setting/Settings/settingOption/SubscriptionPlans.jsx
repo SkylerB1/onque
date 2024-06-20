@@ -6,73 +6,11 @@ import {
   EnterpisePlanPng,
   StarterPlanPng,
 } from "../../../../components/common/Images";
+import { plansList } from "../../../../utils";
 
 const SubscriptionPlans = () => {
-  const selectedPlanList = useMemo(
-    () => [
-      {
-        key: "starter",
-        icon: StarterPlanPng,
-        title: "Starter Plan",
-        color: "#95C1D5",
-        bgClass: "bg_starter_plan",
-        monthly_price: 85,
-        annualy_price: 850,
-        savingWithAnnualPlan: 170,
-        period: "Monthly",
-        priceBody: [
-          "Up to 10 clients",
-          "Management of all your clients’ social media accounts.",
-          "Team member access",
-          "Client review access",
-          "OQ-Links",
-          "AI Caption assistant",
-        ],
-        recommended: false,
-      },
-      {
-        key: "advanced",
-        icon: AdvancedPlanPng,
-        title: "Advanced Plan",
-        color: "#F9DC77",
-        bgClass: "bg_advance_plan",
-        monthly_price: 145,
-        annualy_price: 1450,
-        savingWithAnnualPlan: 290,
-        period: "Monthly",
-        priceBody: [
-          "Up to 30 clients",
-          "Management of all your clients’ social media accounts.",
-          "Team member access",
-          "Client review access",
-          "OQ-Links",
-          "AI Caption assistant",
-        ],
-        recommended: true,
-      },
-      {
-        key: "enterprise",
-        icon: EnterpisePlanPng,
-        title: "Enterprise Plan",
-        color: "#ED94B6",
-        bgClass: "bg_enterprise_plan",
-        monthly_price: 225,
-        annualy_price: 2250,
-        savingWithAnnualPlan: 450,
-        period: "Monthly",
-        priceBody: [
-          "Up to 50 clients",
-          "Management of all your clients’ social media accounts.",
-          "Team member access",
-          "Client review access",
-          "OQ-Links",
-          "AI Caption assistant",
-        ],
-        recommended: false,
-      },
-    ],
-    []
-  );
+  plansList;
+  const selectedPlanList = useMemo(() => plansList(), []);
   const [selectedOption, setSelectedOption] = useState("monthly");
 
   const switchDuration = (option) => {

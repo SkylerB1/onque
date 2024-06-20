@@ -10,6 +10,7 @@ import {
 import logo from "../../../assets/delete-account-modal.svg";
 import { getCommaSeparatedNames } from "../../../utils";
 import LoadingButton from "../../../components/button/LoadingButton";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
 
 const DeletePromptDialog = ({
   isOpen,
@@ -21,6 +22,7 @@ const DeletePromptDialog = ({
 }) => {
   return (
     <Dialog size="lg" open={isOpen} onClose={onClose}>
+      <ToasterCustomConatiner />
       <DialogHeader className="flex justify-end">
         <IconButton
           color="blue-gray"

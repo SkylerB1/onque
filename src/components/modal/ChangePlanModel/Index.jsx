@@ -20,18 +20,22 @@ import UserService from "../../../services/UserServices";
 import BrandServices from "../../../services/BrandServices";
 import SubscriptionServices from "../../../services/SubscriptionServices";
 import ToasterCustomConatiner from "../../ToasterCustomConatiner";
+import { useSelector } from "react-redux";
 
 export function ChangePlanModel({
   openChangePlanModel,
   setOpenChangePlanModel,
 }) {
-  const { subscription, getSubscriptions } = useAppContext();
+  const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand?.id;
+  const { subscription, getSubscriptions, getCounter } = useAppContext();
   const [loading, setLoading] = useState(false);
   const handleOpen = () => setOpenChangePlanModel(!openChangePlanModel);
   const handleClose = () => setOpenChangePlanModel(false);
 
   // Brand Status model variables
   const [openBrandStatusModal, setOpenBrandStatusModal] = useState(false);
+  const [isUpgarding, setUpgrading] = useState(null);
   const [brands, setBrands] = useState([]);
   const [newBrands, setNewBrands] = useState([]);
   const [existingClientCount, setExistingClientCount] = useState(0);
@@ -63,10 +67,21 @@ export function ChangePlanModel({
         });
 
       if (response?.status === 200) {
+        let userInfo = await UserService.getUserInfo();
+        setExistingClientCount(userInfo.data.clientsCount);
         if (response?.data?.data?.isPlanUpgrade === false) {
+          setUpgrading(0);
           // Downgrading the plan
-          let userInfo = await UserService.getUserInfo();
-          setExistingClientCount(userInfo.data.clientsCount);
+          if (userInfo.data.clientsCount > newPlanAllowedClients) {
+            // Open step 2 model
+            openBrandModel();
+          } else {
+            // Brand status manage model
+            // Plan downgrading ,Open step 2 model
+            setChangePlanStep2Modal(true);
+          }
+        } else if (response?.data?.data?.isPlanUpgrade === true) {
+          setUpgrading(1);
           if (userInfo.data.clientsCount > newPlanAllowedClients) {
             // Open step 2 model
             openBrandModel();
@@ -124,7 +139,10 @@ export function ChangePlanModel({
         toastrSuccess(response.data.message);
         handleStep2ModelClose();
         setTimeout(async () => {
+          // update the subscription as well
           await getSubscriptions();
+          // update the counter as well
+          brandId && (await getCounter(brandId));
         }, 5000); //give time for the server to update the subscription before refreshing
       }
       setstep2Loading(false);
@@ -172,6 +190,7 @@ export function ChangePlanModel({
   return (
     <>
       <Dialog size="lg" open={openChangePlanModel} handler={handleOpen}>
+        <ToasterCustomConatiner />
         <DialogHeader>Change Plan</DialogHeader>
         <hr />
 
@@ -238,6 +257,7 @@ export function ChangePlanModel({
             handleSaveBrandAction={handleSaveBrandAction}
             selectAllBrand={selectAllBrand}
             setSelectAllBrand={setSelectAllBrand}
+            isUpgarding={isUpgarding}
           />
         </>
       )}

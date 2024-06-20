@@ -18,6 +18,7 @@ import RoleUpdate from "./RoleUpdate";
 import { SocialPlatforms } from "../../../utils";
 import LoadingButton from "../../../components/button/LoadingButton";
 import { useSelector } from "react-redux";
+import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
 
 const tableHead = ["Brands", "Role", "Connection"];
 
@@ -88,6 +89,7 @@ const UserDetailDialog = ({
   return (
     <>
       <Dialog size="lg" className="dialogIndex" open={isOpen} onClose={onClose}>
+        <ToasterCustomConatiner />
         <DialogHeader className="justify-between">
           <div className="flex flex-row items-center">
             <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-md ">

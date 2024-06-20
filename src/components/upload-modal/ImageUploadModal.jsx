@@ -7,10 +7,12 @@ import {
 } from "@material-tailwind/react";
 import React from "react";
 import Dropzone from "react-dropzone";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 function ImgUploadModal({ show, toggleModal, onChange }) {
   return (
     <Dialog open={show} handler={toggleModal}>
+      <ToasterCustomConatiner />
       <DialogHeader>Image Upload</DialogHeader>
       <DialogBody>
         <div className="w-full">

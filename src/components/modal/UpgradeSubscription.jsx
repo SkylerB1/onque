@@ -7,6 +7,7 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { IllustrationPremium } from "../common/Images";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const UpgradeSubscription = ({ open, toggleModal, body }) => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ const UpgradeSubscription = ({ open, toggleModal, body }) => {
 
   return (
     <Dialog open={open} onClose={toggleModal}>
+      <ToasterCustomConatiner />
       <DialogBody>
         <div className="p-8">
           <div className="flex justify-center mb-6">

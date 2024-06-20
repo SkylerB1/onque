@@ -6,11 +6,13 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import React from "react";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const AlertModal = ({ show, toggleModal, alertData }) => {
   const { header = "", onAccept = () => {} } = alertData;
   return (
     <Dialog size="sm" open={show}>
+      <ToasterCustomConatiner />
       <DialogBody className="justifyCenter">
         <Typography color="black">{header}</Typography>
       </DialogBody>

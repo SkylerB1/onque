@@ -8,6 +8,7 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import LoadingButton from "../button/LoadingButton";
+import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 export default function CustomModal({
   open,
@@ -20,6 +21,7 @@ export default function CustomModal({
 }) {
   return (
     <Dialog size="md" className="border-none" open={open} onClose={Close}>
+      <ToasterCustomConatiner />
       <DialogHeader className="flex justify-center font-medium text-xl">
         {title}
       </DialogHeader>

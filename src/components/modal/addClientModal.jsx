@@ -57,11 +57,11 @@ export default function AddModal({ open, Close }) {
       Close();
       if (error?.response?.status === 403) {
         setOpenSubscriptionModal(true);
+      } else {
+        let errorMessage =
+          error?.response?.data?.msg || "Something went wrong!";
+        toastrError(errorMessage);
       }
-      console.log(error);
-      let errorMessage = error?.response?.data?.msg || "Something went wrong!";
-      toastrError(errorMessage);
-
       console.log(error);
     }
   };
@@ -106,6 +106,7 @@ export default function AddModal({ open, Close }) {
             className="w-24 h-9"
             size="sm"
             onClick={handleSubmit}
+            disabled={loading}
           />
           <Button
             size="sm"

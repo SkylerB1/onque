@@ -66,6 +66,8 @@ import {
   socialPlateFormCharactersLength,
   socialPlateFormVideosLength,
 } from "../../utils/commonUtils.jsx";
+import PostsService from "../../services/PostsService.js";
+import LoadingButton from "../button/LoadingButton.jsx";
 
 const schdulePostBtnLabel = [
   {
@@ -324,7 +326,8 @@ const CreatePostModal = ({
 
   const createPost = async (data) => {
     try {
-      const response = await axiosInstance.post(CREATE_POST_URL, data);
+      const response = await PostsService.createPost(brandId, data);
+      // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         getPostData();
         handleClose();
@@ -1493,7 +1496,7 @@ const CreatePostModal = ({
                               </div>
                             ) : (
                               <div className="flex flex-row">
-                                <Button
+                                {/* <Button
                                   size="md"
                                   onClick={handlePublish}
                                   disabled={loading || errors.length > 0}
@@ -1504,7 +1507,21 @@ const CreatePostModal = ({
                                   }`}
                                 >
                                   {loading ? "Please wait" : submitButton}
-                                </Button>
+                                </Button> */}
+                                <LoadingButton
+                                  size="md"
+                                  onClick={handlePublish}
+                                  disabled={loading || errors.length > 0}
+                                  className={`rounded-r-none normal-case text-xs ${
+                                    loading || errors.length > 0
+                                      ? "opacity-50 cursor-not-allowed w-24"
+                                      : ""
+                                  }`}
+                                  title={loading ? "Please wait" : submitButton}
+                                  loading={loading}
+                                  color="primary"
+                                  variant="contained"
+                                />
                                 <Menu>
                                   <MenuHandler>
                                     <button className="bg-black py-2 px-3 rounded-l-none ml-[1px]">

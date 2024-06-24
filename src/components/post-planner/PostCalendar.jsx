@@ -43,6 +43,8 @@ const PostCalendar = (props) => {
   const updatePostData = async (eventInfo) => {
     const { title = "", extendedProps = {} } = eventInfo.event._def;
     const { rowId, files, platform, postdate } = extendedProps;
+
+    if (!platform || platform.length == 0) return false;
     const data = {
       caption: title,
       id: rowId,

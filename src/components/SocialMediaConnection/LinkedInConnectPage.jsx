@@ -5,6 +5,7 @@ import { LinkedInPages, SelectBrandPage } from "../common/commonString";
 import LinkedIn from "../svg/LinkedIn";
 import { useSelector } from "react-redux";
 import { useAppContext } from "../../context/AuthContext";
+import ConnectionService from "../../services/ConnectionService";
 
 let popup;
 
@@ -57,8 +58,10 @@ const LinkedInConnectPage = ({
     try {
       setLoading(true);
       handleShowModal(header);
-      const response = await axiosInstance.get(URL);
-      if (response.status === 200) {
+      // const response = await axiosInstance.get(URL);
+      let brandId = user?.brand?.id;
+      const response = await ConnectionService.getLinkedInPages(brandId);
+      if (response?.code === 200) {
         if (response.data.length > 0) {
           const pages = response.data.map((item) => {
             return {

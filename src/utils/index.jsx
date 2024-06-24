@@ -85,6 +85,13 @@ const FacebookOptions = [
     description: "Standard Facebook publication",
   },
   {
+    icon: (width = 10, height = 10) => (
+      <GridSvg width={width} height={height} fill="#000000" />
+    ),
+    label: "STORY",
+    description: "Standard Facebook publication",
+  },
+  {
     icon: (width = 14, height = 14) => (
       <ReelsSvg width={width} height={height} fill="#000000" />
     ),

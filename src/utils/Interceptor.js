@@ -109,17 +109,13 @@ axiosInstance.interceptors.response.use(
         }
       });
     } else if (status === 400) {
-      let msg =
-        error?.response?.data?.msg ||
-        error?.response?.data?.message ||
-        "Not Found";
-      toastrError(msg);
+      let msg = error?.response?.data?.msg || error?.response?.data?.message;
+      msg && toastrError(msg);
     } else if (status === 404) {
       let msg =
         error?.response?.data?.msg ||
         error?.response?.data?.message ||
-        "Not Found";
-      toastrError(msg);
+        (msg && toastrError(msg));
     } else if (status == 500) {
       let msg =
         error?.response?.data?.msg ||
@@ -130,8 +126,9 @@ axiosInstance.interceptors.response.use(
       toastrError("Time Out");
     } else {
       console.log("I am in error");
-      return Promise.reject(error);
+      // return Promise.reject(error);
     }
+    return Promise.reject(error);
   }
 );
 

@@ -30,8 +30,9 @@ const RenderFiles = ({
         return (
           <div
             key={index}
-            className={`relative border rounded-md w-20 h-20 flex items-center justify-center ${index > 0 && "ml-3"
-              }`}
+            className={`relative border rounded-md w-20 h-20 flex items-center justify-center ${
+              index > 0 && "ml-3"
+            }`}
           >
             {isContainVideo(file) ? (
               <>
@@ -39,15 +40,15 @@ const RenderFiles = ({
                   ref={videoRef}
                   autoPlay={false}
                   muted={true}
-                  onLoadedMetadata={() =>
+                  onLoadedMetadata={() => {
                     handleVideoError(
                       videoRef.current?.videoWidth,
                       videoRef.current?.videoHeight,
                       index,
                       videoRef.current?.duration,
                       file.size
-                    )
-                  }
+                    );
+                  }}
                   src={src}
                   className="w-full h-full rounded-md object-cover"
                 />

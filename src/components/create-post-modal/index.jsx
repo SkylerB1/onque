@@ -22,6 +22,7 @@ import {
   SocialPlatforms,
   isContainImage,
   isContainVideo,
+  toastrError,
 } from "../../utils";
 import PostPreview from "./PostPreview";
 import ModalInput from "./ModalInput";
@@ -47,6 +48,13 @@ import {
   TikTokPlatform,
   TwitterPlatform,
   YoutubePlatform,
+  FBPost,
+  FBReal,
+  FBStory,
+  MB,
+  KB,
+  ImageMimeTypesForFbStory,
+  VideoMimeTypesForFbStory,
 } from "../common/commonString";
 import ImgUploadModal from "../upload-modal/ImageUploadModal.jsx";
 import ImageEditorModal from "../upload-modal/ImageEditorModal.jsx";
@@ -286,6 +294,12 @@ const CreatePostModal = ({
   const calculateAspectRatio = (width, height) => {
     return width / height;
   };
+  const calculateFrameRate = (frames, duration) => {
+    if (duration && frames) {
+      return frames / duration;
+    }
+    return 0;
+  };
 
   const uploadFiles = async () => {
     const formData = new FormData();
@@ -336,6 +350,15 @@ const CreatePostModal = ({
     } catch (err) {
       if (err.response.status === 403) {
         setOpenSubscriptionModal(true);
+      }
+
+      if (err.response.status === 400) {
+        let error = err?.response?.data;
+        if (error && Array.isArray(error)) {
+          error.map((err) => {
+            toastrError(err);
+          });
+        }
       }
       setLoading(false);
     }
@@ -591,6 +614,7 @@ const CreatePostModal = ({
     const imagesCount = files?.filter((item) => isContainImage(item)).length;
     const noFileSelected = files.length === 0;
     const noContent = caption.length === 0;
+
     errors?.forEach((element) => {
       if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
         setErrors((prev) =>
@@ -755,38 +779,158 @@ const CreatePostModal = ({
         }
       }
       if (platform.includes(FacebookPagePlatform)) {
-        if (noFileSelected && noContent) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "facebook",
-              error: "Facebook - Add at least 1 character or 1 media file.",
-            },
-          ]);
-        }
+        if (item.mediaType == FBPost) {
+          if (noFileSelected && noContent) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "facebook",
+                error: "Facebook - Add at least 1 character or 1 media file.",
+              },
+            ]);
+          }
 
-        if (caption.length > pateformPostCharactersLength.facebook) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "facebook",
-              error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
-            },
-          ]);
-        }
-        if (hasImages && hasVideos) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "facebook",
-              error:
-                "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
-            },
-          ]);
+          if (caption.length > pateformPostCharactersLength.facebook) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "facebook",
+                error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
+              },
+            ]);
+          }
+          if (hasImages && hasVideos) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "facebook",
+                error:
+                  "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+              },
+            ]);
+          }
+        } else if (item.mediaType == FBStory) {
+          if (hasImages == false && hasVideos == false) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "facebook",
+                error: `Facebook - Auto publish (story) - Add at least 1 image or video.`,
+              },
+            ]);
+          } else {
+            files.length > 0 &&
+              files.map((file) => {
+                // check if file is image
+                if (isContainImage(file) == true) {
+                  if (!ImageMimeTypesForFbStory.includes(file.type)) {
+                    setErrors((prev) => [
+                      ...prev,
+                      {
+                        id: dimensions.id,
+                        platform: "facebook",
+                        error: `Facebook - Only .jpeg, .bmp, .png, .gif, .tiff image are allowed.`,
+                      },
+                    ]);
+                  }
+
+                  if (file?.type == "image/png" && file?.size > 1 * MB) {
+                    setErrors((prev) => [
+                      ...prev,
+                      {
+                        id: dimensions.id,
+                        platform: "facebook",
+                        error: `Facebook - Only 1 MB size Png image is allowed.`,
+                      },
+                    ]);
+                  } else if (file?.size > 4 * MB) {
+                    setErrors((prev) => [
+                      ...prev,
+                      {
+                        id: dimensions.id,
+                        platform: "facebook",
+                        error: `Facebook - Only 1 MB size image is allowed.`,
+                      },
+                    ]);
+                  }
+                }
+
+                if (isContainVideo(file) == true) {
+                  console.log(file);
+                  if (!VideoMimeTypesForFbStory.includes(file.type)) {
+                    setErrors((prev) => [
+                      ...prev,
+                      {
+                        id: dimensions.id,
+                        platform: "facebook",
+                        error: `Facebook - Only .mp4 video is allowed.`,
+                      },
+                    ]);
+                  }
+                }
+              });
+          }
+          console.log(dimensions, " is dimensions");
+          if (
+            dimensions?.type?.includes("video") &&
+            (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions?.id,
+                platform: "facebook",
+                error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
+                  1
+                )}s long`,
+              },
+            ]);
+          }
+
+          if (
+            dimensions?.type?.includes("video") &&
+            dimensions?.aspectRatio !== 0.5625
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions?.id,
+                platform: "facebook",
+                error: `Facebook - Invalid aspect stroy for Reels, it must be 9:16. You can crop this in the editor.`,
+              },
+            ]);
+          }
+          if (
+            dimensions?.type?.includes("video") &&
+            !(dimensions?.width >= 540 && dimensions?.width <= 1080)
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "facebook",
+                error: `Facebook - Video width should  be between 540 px to 1080 pixels. This video width is (${dimensions.width}px).`,
+              },
+            ]);
+          }
+          if (
+            dimensions?.type?.includes("video") &&
+            !(dimensions?.height >= 960 && dimensions?.height <= 1920)
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "facebook",
+                error: `Facebook - Video height should  be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
+              },
+            ]);
+          }
         }
       }
       if (platform.includes(TwitterPlatform)) {

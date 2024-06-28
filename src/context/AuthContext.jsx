@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { BroadcastChannel } from "broadcast-channel";
-import { axiosInstance } from "../utils/Interceptor";
+import { axiosInstance, logout } from "../utils/Interceptor";
 import { getBrands } from "../redux/features/brandsSlice";
 import { useCookies } from "react-cookie";
 import { useDispatch } from "react-redux";
@@ -14,6 +14,9 @@ import { setUser } from "../redux/features/userSlice";
 import useConnections from "../components/customHooks/useConnections";
 
 import SubscriptionServices from "../services/SubscriptionServices";
+import UserService from "../services/UserServices";
+import toast, { Toaster } from "react-hot-toast";
+import { toastrError } from "../utils";
 
 const AppContext = createContext({
   subscription: null,
@@ -62,9 +65,14 @@ export function AppContextProvider({ children }) {
   };
   const getUserInfo = async () => {
     try {
-      const res = await axiosInstance.get("/user/user-info");
+      const res = await UserService.getUserInfo();
       setUserInfo(res);
     } catch (err) {
+      if (err?.response?.status == 400) {
+        let message = err?.response?.data?.message || "No user data found !";
+        toastrError(message);
+      }
+      logout();
       console.log(err);
     }
   };

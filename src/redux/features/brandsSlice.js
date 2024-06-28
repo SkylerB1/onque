@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosInstance } from "../../utils/Interceptor";
+import BrandService from "../../services/BrandServices";
 
 const initialState = {
   value: [],
@@ -9,7 +10,7 @@ const initialState = {
 
 export const getBrands = createAsyncThunk("brands", async () => {
   try {
-    const response = await axiosInstance.get("/brands");
+    const response = await BrandService.getUserBrandsList();
     return response.data;
   } catch (err) {
     return err?.response?.data?.message;
@@ -44,6 +45,7 @@ export const brands = createSlice({
         state.loading = true;
       })
       .addCase(getBrands.fulfilled, (state, action) => {
+        console.log(action);
         state.value = action.payload.brands;
         state.loading = false;
       })

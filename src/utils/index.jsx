@@ -14,6 +14,7 @@ import {
   EnterpisePlanPng,
   StarterPlanPng,
 } from "../components/common/Images";
+import { FBPost, FBReal, FBStory } from "../components/common/commonString";
 import FacebookFilled from "../components/svg/FacebookFilled";
 import Instagram from "../components/svg/Instagram";
 import LinkedIn from "../components/svg/LinkedIn";
@@ -81,21 +82,21 @@ const FacebookOptions = [
     icon: (width = 10, height = 10) => (
       <GridSvg width={width} height={height} fill="#000000" />
     ),
-    label: "POST",
+    label: FBPost,
     description: "Standard Facebook publication",
   },
   {
     icon: (width = 10, height = 10) => (
       <GridSvg width={width} height={height} fill="#000000" />
     ),
-    label: "STORY",
-    description: "Standard Facebook publication",
+    label: FBStory,
+    description: "Automatic posting",
   },
   {
     icon: (width = 14, height = 14) => (
       <ReelsSvg width={width} height={height} fill="#000000" />
     ),
-    label: "REEL",
+    label: FBReal,
     description: "Automatic posting",
   },
 ];

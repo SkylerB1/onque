@@ -16,3 +16,19 @@ export const TikTokPersonal = "TikTok_Personal";
 export const TikTokBusiness = "TikTok_Business";
 export const TikTokPlatform = "TikTok";
 export const LinkedInPlatform = "LinkedIn";
+export const FBPost = "POST";
+export const FBReal = "REAL";
+export const FBStory = "STORY";
+
+// Size String
+export const MB = 1 * 1000 * 1000;
+export const KB = 1 * 1000;
+export const ImageMimeTypesForFbStory = [
+  "image/jpeg",
+  "image/jpg",
+  "image/bmp",
+  "image/png",
+  "image/gif",
+  "image/tiff",
+];
+export const VideoMimeTypesForFbStory = ["video/mp4"];

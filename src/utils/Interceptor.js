@@ -132,7 +132,7 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-function logout() {
+export function logout() {
   localStorage.clear();
   window.location.reload();
 }

@@ -17,6 +17,7 @@ import {
   getTextForRoleInfo,
   isJSON,
 } from "../../utils/commonUtils";
+import StoryCarousel from "../mockups/facebook/StoryCarousel";
 
 const PostCalendar = (props) => {
   const { getPostData, events, role } = props;

@@ -488,7 +488,7 @@ const CreatePostModal = ({
         updateDuration(index, 0);
         return false;
       }
-      console.log(files);
+      // console.log(files);
       const fileURL = URL.createObjectURL(file);
       const video = document.createElement("video");
 
@@ -528,11 +528,12 @@ const CreatePostModal = ({
       // console.log(selectedPreview);
 
       const Component = platformComponentMap[platform];
+
       const presets = additionalPresets[platform];
       const date = dayjs(scheduledDate).format("DD MMM");
 
       if (Component) {
-        return Component({
+        let component = Component({
           files,
           viewMode,
           caption: shortenText(caption, true),
@@ -541,6 +542,8 @@ const CreatePostModal = ({
           data: presets,
           mediaType: mediaType,
         });
+
+        return component;
       }
     } else {
       return (
@@ -861,7 +864,7 @@ const CreatePostModal = ({
                 }
 
                 if (isContainVideo(file) == true) {
-                  console.log(file);
+                  // console.log(file);
                   if (!VideoMimeTypesForFbStory.includes(file.type)) {
                     setErrors((prev) => [
                       ...prev,
@@ -875,7 +878,7 @@ const CreatePostModal = ({
                 }
               });
           }
-          console.log(dimensions, " is dimensions");
+          // console.log(dimensions, " is dimensions");
           if (
             dimensions?.type?.includes("video") &&
             (dimensions?.duration < 0.3 || dimensions?.duration > 60)

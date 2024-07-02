@@ -2,7 +2,13 @@ import React from "react";
 import Post from "./Post";
 import ReelsMobile from "./ReelsMobile";
 import ReelsDesktop from "./ReelsDesktop";
-import { FacebookPagePlatform } from "../../common/commonString";
+import {
+  FBPost,
+  FBReal,
+  FBStory,
+  FacebookPagePlatform,
+} from "../../common/commonString";
+import Story from "./Story";
 
 function GetFacebookComponent({
   mediaType,
@@ -16,7 +22,7 @@ function GetFacebookComponent({
     (item) => item.platform === FacebookPagePlatform
   );
 
-  if (mediaType == "POST") {
+  if (mediaType == FBPost) {
     return (
       <Post
         captions={caption}
@@ -26,7 +32,17 @@ function GetFacebookComponent({
         date={date}
       />
     );
-  } else if (mediaType == "REEL" && viewMode == 1) {
+  } else if (mediaType == FBStory) {
+    return (
+      <Story
+        captions={caption}
+        viewMode={viewMode}
+        files={files}
+        screenName={screenName}
+        date={date}
+      />
+    );
+  } else if (mediaType == FBReal && viewMode == 1) {
     return (
       <ReelsDesktop captions={caption} files={files} screenName={screenName} />
     );

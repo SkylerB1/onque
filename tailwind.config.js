@@ -42,6 +42,12 @@ module.exports = withMT({
           "100%": { transform: "translateX(0%)" },
         },
       },
+      height: {
+        "1/7": "14.2857143%",
+      },
+      height: {
+        "1/8": "12.5%",
+      },
     },
   },
   plugins: [require("flowbite/plugin")],

@@ -17,7 +17,7 @@ export const TikTokBusiness = "TikTok_Business";
 export const TikTokPlatform = "TikTok";
 export const LinkedInPlatform = "LinkedIn";
 export const FBPost = "POST";
-export const FBReal = "REAL";
+export const FBReal = "REEL";
 export const FBStory = "STORY";
 
 // Size String

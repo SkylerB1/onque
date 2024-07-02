@@ -4,7 +4,7 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import TextGeneratorModal from "../text-generator-modal";
 import VideoUploadModal from "../upload-modal/VideoUploadModal";
 import SocialPlatform from "../social-platform-selection/SocialPlatform";
@@ -187,6 +187,7 @@ const CreatePostModal = ({
     },
   });
   const user = useSelector((state) => state.user.value);
+
   const brandId = user?.brand?.id;
   // console.log(brandId, " is at create post model index at 183");
   const [dimensions, setDimensions] = useState({});
@@ -250,7 +251,7 @@ const CreatePostModal = ({
     setimgEditorModal(!showimgEditorModal);
   };
   const toggleEmojiModal = () => {
-    setShowEmoji(!showEmoji);
+    setShowEmoji((prev) => !prev);
   };
   const toggleAiModal = () => {
     setShowAiModal(!showAiModal);
@@ -258,6 +259,7 @@ const CreatePostModal = ({
   const closeEmoji = () => {
     setShowEmoji(false);
   };
+
   const handleCaption = (caption) => {
     setCaption(caption);
   };
@@ -1559,6 +1561,7 @@ const CreatePostModal = ({
                       showEmoji={showEmoji}
                       toggleEmojiModal={toggleEmojiModal}
                       closeEmoji={closeEmoji}
+                      setShowEmoji={setShowEmoji}
                       toggleAiModal={toggleAiModal}
                       handleFile={handleFile}
                       caption={caption}

@@ -4,7 +4,7 @@ import {
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import TextGeneratorModal from "../text-generator-modal";
 import VideoUploadModal from "../upload-modal/VideoUploadModal";
 import SocialPlatform from "../social-platform-selection/SocialPlatform";
@@ -55,6 +55,7 @@ import {
   KB,
   ImageMimeTypesForFbStory,
   VideoMimeTypesForFbStory,
+  postStatuses,
 } from "../common/commonString";
 import ImgUploadModal from "../upload-modal/ImageUploadModal.jsx";
 import ImageEditorModal from "../upload-modal/ImageEditorModal.jsx";
@@ -79,12 +80,19 @@ import LoadingButton from "../button/LoadingButton.jsx";
 
 const schdulePostBtnLabel = [
   {
+    label: "Save As Draft",
+    description: "Save as Draft at a later time",
+    key: "saveAsDraft",
+  },
+  {
     label: "Schedule",
-    description: "Save and publish at a later time",
+    description: "Save and schedule post",
+    key: "schedule",
   },
   {
     label: "Publish Now",
     description: "Publish with current date and time",
+    key: "publishNow",
   },
 ];
 
@@ -108,9 +116,10 @@ const CreatePostModal = ({
   setVideoDurations,
 }) => {
   const isDuplicating = useMemo(
-    () => isEdit === "Published" || false,
+    () => isEdit === "Published" || isEdit === "SaveAsDraft" || false,
     [isEdit]
   );
+
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [viewMode, setViewMode] = useState(0);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -127,7 +136,12 @@ const CreatePostModal = ({
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
-  const [submitButton, setSubmitButton] = useState("Schedule");
+  const [submitButton, setSubmitButton] = useState(
+    postData?.status == postStatuses?.saveAsDraft ? "Save As Draft" : "Schedule"
+  );
+  const [submitButtonKey, setSubmitButtonKey] = useState(
+    postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
+  );
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
@@ -187,6 +201,7 @@ const CreatePostModal = ({
     },
   });
   const user = useSelector((state) => state.user.value);
+
   const brandId = user?.brand?.id;
   // console.log(brandId, " is at create post model index at 183");
   const [dimensions, setDimensions] = useState({});
@@ -250,7 +265,7 @@ const CreatePostModal = ({
     setimgEditorModal(!showimgEditorModal);
   };
   const toggleEmojiModal = () => {
-    setShowEmoji(!showEmoji);
+    setShowEmoji((prev) => !prev);
   };
   const toggleAiModal = () => {
     setShowAiModal(!showAiModal);
@@ -258,6 +273,7 @@ const CreatePostModal = ({
   const closeEmoji = () => {
     setShowEmoji(false);
   };
+
   const handleCaption = (caption) => {
     setCaption(caption);
   };
@@ -384,6 +400,7 @@ const CreatePostModal = ({
 
   const handlePublish = async () => {
     setLoading(true);
+
     let media = [];
     if (files?.length > 0) {
       media = await uploadFiles();
@@ -397,6 +414,7 @@ const CreatePostModal = ({
       caption,
       scheduledDate,
       files: media,
+      submitButtonKey: submitButtonKey,
     };
     if (isEdit && postData) {
       updatePost(data);
@@ -488,7 +506,7 @@ const CreatePostModal = ({
         updateDuration(index, 0);
         return false;
       }
-      console.log(files);
+      // console.log(files);
       const fileURL = URL.createObjectURL(file);
       const video = document.createElement("video");
 
@@ -515,11 +533,12 @@ const CreatePostModal = ({
     setErrors((prev) => prev.filter((item) => item.id !== i));
   };
 
-  const handleSubmitButton = (value) => {
+  const handleSubmitButton = (value, key) => {
     if (value === "Publish Now") {
       setScheduledDate(dayjs());
     }
     setSubmitButton(value);
+    setSubmitButtonKey(key);
   };
 
   const handlePreview = useCallback(() => {
@@ -528,11 +547,12 @@ const CreatePostModal = ({
       // console.log(selectedPreview);
 
       const Component = platformComponentMap[platform];
+
       const presets = additionalPresets[platform];
       const date = dayjs(scheduledDate).format("DD MMM");
 
       if (Component) {
-        return Component({
+        let component = Component({
           files,
           viewMode,
           caption: shortenText(caption, true),
@@ -541,6 +561,8 @@ const CreatePostModal = ({
           data: presets,
           mediaType: mediaType,
         });
+
+        return component;
       }
     } else {
       return (
@@ -559,6 +581,7 @@ const CreatePostModal = ({
     scheduledDate,
   ]);
 
+  // It updates  when connection and post data changed
   useEffect(() => {
     if (
       selectedPlaforms.length == 0 &&
@@ -567,6 +590,7 @@ const CreatePostModal = ({
       !selectedPreview
     ) {
       if (postData) {
+        // console.log()
         const { platforms } = postData;
         const presets = {};
         platforms.forEach((item) => {
@@ -608,6 +632,8 @@ const CreatePostModal = ({
       dayjs(scheduledDate).isAfter(dayjs()) ||
       dayjs(scheduledDate).isSame(dayjs()) ||
       submitButton === "Publish Now";
+    const saveAsDraft = submitButton === "Save As Draft";
+
     const hasImages = files.some((item) => isContainImage(item));
     const hasVideos = files.some((item) => isContainVideo(item));
     const videosCount = files?.filter((item) => isContainVideo(item)).length;
@@ -623,7 +649,7 @@ const CreatePostModal = ({
       }
     });
 
-    if (!canPublish && !isDuplicating) {
+    if (!canPublish && !isDuplicating && !saveAsDraft) {
       setErrors((prev) => [
         ...prev,
         {
@@ -861,7 +887,7 @@ const CreatePostModal = ({
                 }
 
                 if (isContainVideo(file) == true) {
-                  console.log(file);
+                  // console.log(file);
                   if (!VideoMimeTypesForFbStory.includes(file.type)) {
                     setErrors((prev) => [
                       ...prev,
@@ -875,7 +901,7 @@ const CreatePostModal = ({
                 }
               });
           }
-          console.log(dimensions, " is dimensions");
+          // console.log(dimensions, " is dimensions");
           if (
             dimensions?.type?.includes("video") &&
             (dimensions?.duration < 0.3 || dimensions?.duration > 60)
@@ -1556,6 +1582,7 @@ const CreatePostModal = ({
                       showEmoji={showEmoji}
                       toggleEmojiModal={toggleEmojiModal}
                       closeEmoji={closeEmoji}
+                      setShowEmoji={setShowEmoji}
                       toggleAiModal={toggleAiModal}
                       handleFile={handleFile}
                       caption={caption}
@@ -1625,7 +1652,7 @@ const CreatePostModal = ({
 
                           {editAccess &&
                             (isDuplicating ? (
-                              <div className="flex flex-row">
+                              <div className="flex flex-row mx-2">
                                 <Button
                                   onClick={handleDuplicate}
                                   size="md"
@@ -1658,7 +1685,7 @@ const CreatePostModal = ({
                                   disabled={loading || errors.length > 0}
                                   className={`rounded-r-none normal-case text-xs ${
                                     loading || errors.length > 0
-                                      ? "opacity-50 cursor-not-allowed w-24"
+                                      ? "opacity-50 cursor-not-allowed w-32"
                                       : ""
                                   }`}
                                   title={loading ? "Please wait" : submitButton}
@@ -1678,12 +1705,12 @@ const CreatePostModal = ({
                                   </MenuHandler>
                                   <MenuList className="px-0">
                                     {schdulePostBtnLabel.map((item) => {
-                                      const { label, description } = item;
+                                      const { label, description, key } = item;
                                       return (
                                         <MenuItem
                                           className="rounded-none"
                                           onClick={() =>
-                                            handleSubmitButton(label)
+                                            handleSubmitButton(label, key)
                                           }
                                         >
                                           <div>

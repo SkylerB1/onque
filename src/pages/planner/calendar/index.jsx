@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { useAppContext } from "../../../context/AuthContext";
 import NoAccessPermission from "./NoAccessPermission";
 import { Planner } from "../../../components/common/Images";
+import { CarouselDefault } from "./CarouselDefault";
 
 dayjs.extend(UTC);
 
@@ -100,6 +101,7 @@ const Calendar = () => {
 
   return (
     <>
+      {/* <CarouselDefault /> */}
       <div className="p-4 sm:ml-20 bg-[#F1F2F4] xl:ml-64">
         {connections.length === 0 ? (
           <SocialLinkPostCalendar validations={validations} role={role} />

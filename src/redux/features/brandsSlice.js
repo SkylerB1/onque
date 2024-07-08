@@ -45,7 +45,6 @@ export const brands = createSlice({
         state.loading = true;
       })
       .addCase(getBrands.fulfilled, (state, action) => {
-        console.log(action);
         state.value = action.payload.brands;
         state.loading = false;
       })

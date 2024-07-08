@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import Dropdown from "../drop-down/Dropdown";
 import RenderFiles from "./RenderFiles";
 import GbusinessPresets from "../mockups/google-business/GbusinessPresets";
@@ -18,6 +24,16 @@ import { useSelector } from "react-redux";
 import EmojiPicker from "emoji-picker-react";
 import { Textarea } from "@material-tailwind/react";
 import NotificationPreset from "../mockups/notification/NotificationPreset";
+import Cross from "../svg/Cross";
+
+// Debounce function to limit the rate at which a function can fire.
+const debounce = (func, wait) => {
+  let timeout;
+  return (...args) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+};
 
 const ModalInput = ({
   selectedPreview,
@@ -41,8 +57,12 @@ const ModalInput = ({
   setAdditionalPresets,
   isDuplicating,
   brandId,
+  setShowEmoji,
 }) => {
   const user = useSelector((state) => state.user.value);
+  const inputRef = useRef(null);
+  const emojiWrapperRef = useRef(null);
+
   const [showNotificationPreset, setShowNotificationPreset] = useState(false);
 
   const handleNotificationPresets = () => {
@@ -85,6 +105,34 @@ const ModalInput = ({
     ],
     []
   );
+
+  const handleEmojiClick = (emojiData) => {
+    const emoji = emojiData.emoji;
+    const input = inputRef.current;
+
+    const textarea =
+      inputRef.current && inputRef.current.querySelector("textarea");
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    // console.log(input, text);
+
+    const before = text.substring(0, start);
+    const after = text.substring(end, text.length);
+    // console.log(before + emoji + after);
+    setCaption((prev) => before + emoji + after);
+    // Move the cursor to the right position after inserting the emoji
+    setTimeout(() => {
+      textarea.focus();
+      textarea.selectionEnd = start + emoji.length;
+    }, 0);
+
+    // setCaption((prevCaption) => prevCaption + emojiData.emoji);
+  };
+  const closeEmojiPicker = () => {
+    setShowEmoji(false);
+  };
+
   return (
     <div className="bg-white flex flex-col flex-1 w-65 rounded-l-md p-2 overflow-y-auto">
       <div className="flex flex-col flex-1">
@@ -165,17 +213,27 @@ const ModalInput = ({
             </div>
 
             <div className="flex flex-1 flex-col px-4 py-2 bg-white rounded-b-lg dark:bg-gray-800">
-              {showEmoji && (
-                <div className="absolute left-20 z-50">
-                  <EmojiPicker
-                    autoFocusSearch={true}
-                    onEmojiClick={(emoji) =>
-                      setCaption((prevCaption) => prevCaption + emoji.emoji)
-                    }
-                  />
-                </div>
-              )}
+              <div className="" ref={emojiWrapperRef}>
+                {showEmoji && (
+                  <div className="absolute left-20 z-50">
+                    <div className="emoji-picker-container relative">
+                      <EmojiPicker
+                        autoFocusSearch={true}
+                        onEmojiClick={handleEmojiClick}
+                        skinTonesDisabled={true}
+                      />
+                      <button
+                        onClick={closeEmojiPicker}
+                        className="close-button absolute top-0 right-0  h-16 w-16 cursor-pointer"
+                      >
+                        <Cross width={22} height={22} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
               <Textarea
+                ref={inputRef}
                 rows={1}
                 resize={true}
                 placeholder="Write your captions here..."

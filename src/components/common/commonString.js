@@ -17,7 +17,7 @@ export const TikTokBusiness = "TikTok_Business";
 export const TikTokPlatform = "TikTok";
 export const LinkedInPlatform = "LinkedIn";
 export const FBPost = "POST";
-export const FBReal = "REAL";
+export const FBReal = "REEL";
 export const FBStory = "STORY";
 
 // Size String
@@ -32,3 +32,11 @@ export const ImageMimeTypesForFbStory = [
   "image/tiff",
 ];
 export const VideoMimeTypesForFbStory = ["video/mp4"];
+export const postStatuses = {
+  ongoing: "Ongoing",
+  pending: "Pending",
+  published: "Published",
+  error: "Error",
+  sent: "Sent",
+  saveAsDraft: "SaveAsDraft",
+};

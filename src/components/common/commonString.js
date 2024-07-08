@@ -32,3 +32,11 @@ export const ImageMimeTypesForFbStory = [
   "image/tiff",
 ];
 export const VideoMimeTypesForFbStory = ["video/mp4"];
+export const postStatuses = {
+  ongoing: "Ongoing",
+  pending: "Pending",
+  published: "Published",
+  error: "Error",
+  sent: "Sent",
+  saveAsDraft: "SaveAsDraft",
+};

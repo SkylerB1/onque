@@ -192,6 +192,7 @@ const CreatePostModal = ({
     Instagram: {
       showReelOnFeed: true,
       autoPublish: true,
+      collaborators: [],
     },
     YouTube: {
       title: "",
@@ -416,6 +417,7 @@ const CreatePostModal = ({
       files: media,
       submitButtonKey: submitButtonKey,
     };
+
     if (isEdit && postData) {
       updatePost(data);
     } else {

@@ -132,6 +132,7 @@ const Login = () => {
       toast.error(message);
     }
   };
+
   const handleFacebookLogin = async () => {
     try {
       let redirectUrl = `${import.meta.env.VITE_API_URL}/auth/facebook/login`;

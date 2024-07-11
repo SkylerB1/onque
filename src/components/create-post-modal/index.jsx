@@ -592,16 +592,32 @@ const CreatePostModal = ({
       !selectedPreview
     ) {
       if (postData) {
-        // console.log()
-        const { platforms } = postData;
+        const { platforms, socialPresets } = postData;
         const presets = {};
-        platforms.forEach((item) => {
-          const { additionalPresets, platform } = item;
+        platforms.forEach((item, index) => {
+          let { additionalPresets, platform } = item;
+
           if (additionalPresets) {
             presets[platform] = additionalPresets;
+          } else {
+            let socialPresetPlateformData =
+              socialPresets &&
+              socialPresets.find((socialPreset) => {
+                return socialPreset.platform == platform;
+              });
+
+            if (socialPresetPlateformData) {
+              presets[platform] = socialPresetPlateformData.additionalPresets;
+              platforms[index] = {
+                ...platforms[index],
+                mediaType: socialPresetPlateformData.mediaType,
+              };
+            }
           }
         });
+
         setAdditionalPresets((prev) => ({ ...prev, ...presets }));
+
         setSelectedPlatforms(platforms);
         setSelectedPreview(platforms[0]);
       } else {

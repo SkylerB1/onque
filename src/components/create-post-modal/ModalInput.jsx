@@ -302,6 +302,8 @@ const ModalInput = ({
                 additionalPresets={additionalPresets[platform]}
                 setAdditionalPresets={setAdditionalPresets}
                 brandId={brandId}
+                mediaType={item.mediaType}
+                files={files}
               />
             );
           }
@@ -311,6 +313,8 @@ const ModalInput = ({
                 key={index}
                 additionalPresets={additionalPresets.Instagram}
                 setAdditionalPresets={setAdditionalPresets}
+                mediaType={item.mediaType}
+                files={files}
               />
             );
           }

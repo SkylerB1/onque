@@ -49,8 +49,10 @@ const Calendar = () => {
             postdate: item.scheduledDate ?? dayjs.utc(),
             platform: item.platform,
             contentType: "post",
+            socialPresets: item?.socialPresets,
           };
         });
+
         setEvents(data);
       } else {
         console.log("Error fetching Twitter data");

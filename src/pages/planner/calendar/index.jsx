@@ -12,6 +12,8 @@ import { useAppContext } from "../../../context/AuthContext";
 import NoAccessPermission from "./NoAccessPermission";
 import { Planner } from "../../../components/common/Images";
 import { CarouselDefault } from "./CarouselDefault";
+import PostsService from "../../../services/PostsService";
+import { toastrError } from "../../../utils";
 
 dayjs.extend(UTC);
 
@@ -30,28 +32,30 @@ const Calendar = () => {
 
   const getPostData = async () => {
     try {
-      const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/user/getPostData/${brandId}`
-      );
-      if (response.status === 200) {
-        const data = response.data?.map((item) => {
-          return {
-            rowId: item.id,
-            userId: item.userId,
-            title: item.text,
-            status: item.status,
-            files:
-              typeof item.files === "string"
-                ? JSON.parse(item.files)
-                : item.files,
-            start:
-              item.scheduledDate ?? dayjs.utc().format("YYYY-MM-DDTHH:mm:ssZ"),
-            postdate: item.scheduledDate ?? dayjs.utc(),
-            platform: item.platform,
-            contentType: "post",
-            socialPresets: item?.socialPresets,
-          };
-        });
+      const response = await PostsService.getPostData(brandId);
+
+      if (response?.status === 200) {
+        const data =
+          response?.data.length > 0 &&
+          response?.data?.map((item) => {
+            return {
+              rowId: item.id,
+              userId: item.userId,
+              title: item.text,
+              status: item.status,
+              files:
+                typeof item.files === "string"
+                  ? JSON.parse(item.files)
+                  : item.files,
+              start:
+                item.scheduledDate ??
+                dayjs.utc().format("YYYY-MM-DDTHH:mm:ssZ"),
+              postdate: item.scheduledDate ?? dayjs.utc(),
+              platform: item.platform,
+              contentType: "post",
+              socialPresets: item?.socialPresets,
+            };
+          });
 
         setEvents(data);
       } else {

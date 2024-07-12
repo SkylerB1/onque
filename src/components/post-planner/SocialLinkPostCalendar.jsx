@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import SelectionModal from "../dialog/SelectDialog";
 import useConnections from "../customHooks/useConnections";
-import { API_URL, ConnectUrl } from "../../utils";
+import { API_URL, ConnectUrl, ConnectUrlFn } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import { socialMediaList } from "../common/index.jsx";
 import { useSelector } from "react-redux";
@@ -97,7 +97,8 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
 
   const handleSelected = async (data) => {
     try {
-      const URL = ConnectUrl[selected];
+      // const URL = ConnectUrl[selected];
+      const URL = ConnectUrlFn(selected, brandId);
 
       const response = await axiosInstance.post(URL, data);
 
@@ -122,7 +123,10 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
       }
     };
     broadcastConnection.addEventListener("message", handleConnection);
-  }, [broadcastConnection]);
+    return () => {
+      broadcastConnection.removeEventListener("message", handleConnection);
+    };
+  }, [broadcastConnection, brandId]);
 
   return (
     <>

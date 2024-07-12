@@ -219,6 +219,10 @@ const CreatePostModal = ({
     () => validations && (!role || role?.fullAccessPlanner),
     [role]
   );
+  // console.log(editAccess, " is editAccess");
+  // console.log(isEdit, " is isEdit");
+  // console.log(isDuplicating, " is isDuplicating");
+
   let pateformPostCharactersLength = socialPlateFormCharactersLength;
   let pateformPostVideosLength = socialPlateFormVideosLength;
   const brandAccess = useMemo(
@@ -360,7 +364,7 @@ const CreatePostModal = ({
       const response = await PostsService.createPost(brandId, data);
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
-        getPostData();
+        await getPostData();
         handleClose();
         setLoading(false);
       }
@@ -538,6 +542,7 @@ const CreatePostModal = ({
   const handleSubmitButton = (value, key) => {
     if (value === "Publish Now") {
       setScheduledDate(dayjs());
+      console.log("ok", dayjs());
     }
     setSubmitButton(value);
     setSubmitButtonKey(key);
@@ -1668,23 +1673,28 @@ const CreatePostModal = ({
                             </IconButton>
                           )}
 
+                          {editAccess && isDuplicating && (
+                            <div className="flex flex-row mx-2">
+                              <Button
+                                onClick={handleDuplicate}
+                                size="md"
+                                className={`${
+                                  loading || errors.length > 0
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                }`}
+                              >
+                                {loading ? "Duplicating.." : "Duplicate"}
+                              </Button>
+                            </div>
+                          )}
+
                           {editAccess &&
-                            (isDuplicating ? (
-                              <div className="flex flex-row mx-2">
-                                <Button
-                                  onClick={handleDuplicate}
-                                  size="md"
-                                  className={`${
-                                    loading || errors.length > 0
-                                      ? "opacity-50 cursor-not-allowed"
-                                      : "cursor-pointer"
-                                  }`}
-                                >
-                                  {loading ? "Duplicating.." : "Duplicate"}
-                                </Button>
-                              </div>
-                            ) : (
-                              <div className="flex flex-row">
+                            (isEdit == "SaveAsDraft" ||
+                              isEdit == "Pending" ||
+                              isEdit == false ||
+                              isEdit == null) && (
+                              <div className="flex flex-row mr-2">
                                 {/* <Button
                                   size="md"
                                   onClick={handlePublish}
@@ -1745,7 +1755,7 @@ const CreatePostModal = ({
                                   </MenuList>
                                 </Menu>
                               </div>
-                            ))}
+                            )}
                         </div>
                       </div>
                     </div>

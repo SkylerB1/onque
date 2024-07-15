@@ -13,7 +13,6 @@ import NoAccessPermission from "./NoAccessPermission";
 import { Planner } from "../../../components/common/Images";
 import { CarouselDefault } from "./CarouselDefault";
 import PostsService from "../../../services/PostsService";
-import { toastrError } from "../../../utils";
 
 dayjs.extend(UTC);
 
@@ -24,6 +23,7 @@ const Calendar = () => {
   const brandId = user?.brand?.id;
   const { connections, getConnections } = useConnections();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const { blockUI, setblockUI } = useAppContext();
   const viewAccess = useMemo(
     () =>
       validations && (!role || role?.viewPlanner || role?.fullAccessPlanner),
@@ -32,6 +32,7 @@ const Calendar = () => {
 
   const getPostData = async () => {
     try {
+      setblockUI(true);
       const response = await PostsService.getPostData(brandId);
 
       if (response?.status === 200) {
@@ -63,6 +64,8 @@ const Calendar = () => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setblockUI(false);
     }
   };
 
@@ -108,6 +111,7 @@ const Calendar = () => {
   return (
     <>
       {/* <CarouselDefault /> */}
+
       <div className="p-4 sm:ml-20 bg-[#F1F2F4] xl:ml-64">
         {connections.length === 0 ? (
           <SocialLinkPostCalendar validations={validations} role={role} />

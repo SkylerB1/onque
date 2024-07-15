@@ -338,7 +338,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 290,
       period: "Monthly",
       priceBody: [
-        "Up to 15 clients",
+        "Up to 30 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
         "Client review access",
@@ -346,7 +346,7 @@ export const plansList = () => {
         "AI Caption assistant",
       ],
       recommended: true,
-      totalClients: 15,
+      totalClients: 30,
     },
     {
       key: "enterprise",
@@ -359,7 +359,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 450,
       period: "Monthly",
       priceBody: [
-        "Up to 20 clients",
+        "Up to 50 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
         "Client review access",
@@ -367,7 +367,7 @@ export const plansList = () => {
         "AI Caption assistant",
       ],
       recommended: false,
-      totalClients: 20,
+      totalClients: 50,
     },
   ];
 };

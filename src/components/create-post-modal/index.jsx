@@ -77,6 +77,7 @@ import {
 } from "../../utils/commonUtils.jsx";
 import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
+import BlockUIComponent from "../BlockUIComponent.jsx";
 
 const schdulePostBtnLabel = [
   {
@@ -213,12 +214,17 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection, validations } = useAppContext();
+  const { broadcastConnection, validations, blockUI, setblockUI } =
+    useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
     () => validations && (!role || role?.fullAccessPlanner),
     [role]
   );
+  // console.log(editAccess, " is editAccess");
+  // console.log(isEdit, " is isEdit");
+  // console.log(isDuplicating, " is isDuplicating");
+
   let pateformPostCharactersLength = socialPlateFormCharactersLength;
   let pateformPostVideosLength = socialPlateFormVideosLength;
   const brandAccess = useMemo(
@@ -346,6 +352,10 @@ const CreatePostModal = ({
     setIsEdit(null);
     clearPostData();
   };
+  const handleLoading = (state) => {
+    setLoading(state);
+    setblockUI(state);
+  };
 
   const getAdditionalPreset = (platform, mediaType) => {
     if (platform === GoogleBusinessPlatform) {
@@ -360,9 +370,9 @@ const CreatePostModal = ({
       const response = await PostsService.createPost(brandId, data);
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
-        getPostData();
+        await getPostData();
         handleClose();
-        setLoading(false);
+        handleLoading(false);
       }
     } catch (err) {
       if (err.response.status === 403) {
@@ -377,7 +387,7 @@ const CreatePostModal = ({
           });
         }
       }
-      setLoading(false);
+      handleLoading(false);
     }
   };
 
@@ -387,11 +397,11 @@ const CreatePostModal = ({
       if (response.status === 200) {
         getPostData();
         handleClose();
-        setLoading(false);
+        handleLoading(false);
       }
     } catch (err) {
       console.log(err);
-      setLoading(false);
+      handleLoading(false);
     }
   };
 
@@ -400,7 +410,7 @@ const CreatePostModal = ({
   };
 
   const handlePublish = async () => {
-    setLoading(true);
+    handleLoading(true);
 
     let media = [];
     if (files?.length > 0) {
@@ -538,6 +548,7 @@ const CreatePostModal = ({
   const handleSubmitButton = (value, key) => {
     if (value === "Publish Now") {
       setScheduledDate(dayjs());
+      console.log("ok", dayjs());
     }
     setSubmitButton(value);
     setSubmitButtonKey(key);
@@ -1506,6 +1517,7 @@ const CreatePostModal = ({
               >
                 <input {...getInputProps()} />
 
+                <BlockUIComponent />
                 <div className="relative bg-white flex flex-1 flex-row rounded-lg h-[90vh]">
                   {isDragActive && (
                     <div className="absolute bg-blue-600 opacity-50 z-50 w-full h-full flex justify-center items-center">
@@ -1668,23 +1680,28 @@ const CreatePostModal = ({
                             </IconButton>
                           )}
 
+                          {editAccess && isDuplicating && (
+                            <div className="flex flex-row mx-2">
+                              <Button
+                                onClick={handleDuplicate}
+                                size="md"
+                                className={`${
+                                  loading || errors.length > 0
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                }`}
+                              >
+                                {loading ? "Duplicating.." : "Duplicate"}
+                              </Button>
+                            </div>
+                          )}
+
                           {editAccess &&
-                            (isDuplicating ? (
-                              <div className="flex flex-row mx-2">
-                                <Button
-                                  onClick={handleDuplicate}
-                                  size="md"
-                                  className={`${
-                                    loading || errors.length > 0
-                                      ? "opacity-50 cursor-not-allowed"
-                                      : "cursor-pointer"
-                                  }`}
-                                >
-                                  {loading ? "Duplicating.." : "Duplicate"}
-                                </Button>
-                              </div>
-                            ) : (
-                              <div className="flex flex-row">
+                            (isEdit == "SaveAsDraft" ||
+                              isEdit == "Pending" ||
+                              isEdit == false ||
+                              isEdit == null) && (
+                              <div className="flex flex-row mr-2">
                                 {/* <Button
                                   size="md"
                                   onClick={handlePublish}
@@ -1745,7 +1762,7 @@ const CreatePostModal = ({
                                   </MenuList>
                                 </Menu>
                               </div>
-                            ))}
+                            )}
                         </div>
                       </div>
                     </div>

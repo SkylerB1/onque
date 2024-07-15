@@ -77,6 +77,7 @@ import {
 } from "../../utils/commonUtils.jsx";
 import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
+import BlockUIComponent from "../BlockUIComponent.jsx";
 
 const schdulePostBtnLabel = [
   {
@@ -213,7 +214,8 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection, validations } = useAppContext();
+  const { broadcastConnection, validations, blockUI, setblockUI } =
+    useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
     () => validations && (!role || role?.fullAccessPlanner),
@@ -350,6 +352,10 @@ const CreatePostModal = ({
     setIsEdit(null);
     clearPostData();
   };
+  const handleLoading = (state) => {
+    setLoading(state);
+    setblockUI(state);
+  };
 
   const getAdditionalPreset = (platform, mediaType) => {
     if (platform === GoogleBusinessPlatform) {
@@ -366,7 +372,7 @@ const CreatePostModal = ({
       if (response.status === 200) {
         await getPostData();
         handleClose();
-        setLoading(false);
+        handleLoading(false);
       }
     } catch (err) {
       if (err.response.status === 403) {
@@ -381,7 +387,7 @@ const CreatePostModal = ({
           });
         }
       }
-      setLoading(false);
+      handleLoading(false);
     }
   };
 
@@ -391,11 +397,11 @@ const CreatePostModal = ({
       if (response.status === 200) {
         getPostData();
         handleClose();
-        setLoading(false);
+        handleLoading(false);
       }
     } catch (err) {
       console.log(err);
-      setLoading(false);
+      handleLoading(false);
     }
   };
 
@@ -404,7 +410,7 @@ const CreatePostModal = ({
   };
 
   const handlePublish = async () => {
-    setLoading(true);
+    handleLoading(true);
 
     let media = [];
     if (files?.length > 0) {
@@ -1511,6 +1517,7 @@ const CreatePostModal = ({
               >
                 <input {...getInputProps()} />
 
+                <BlockUIComponent />
                 <div className="relative bg-white flex flex-1 flex-row rounded-lg h-[90vh]">
                   {isDragActive && (
                     <div className="absolute bg-blue-600 opacity-50 z-50 w-full h-full flex justify-center items-center">

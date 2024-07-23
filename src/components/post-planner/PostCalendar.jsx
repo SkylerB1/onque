@@ -47,7 +47,8 @@ const PostCalendar = (props) => {
 
   const updatePostData = async (eventInfo) => {
     const { title = "", extendedProps = {} } = eventInfo.event._def;
-    const { rowId, files, platform, postdate } = extendedProps;
+
+    const { rowId, files, platform, postdate, status } = extendedProps;
 
     if (!platform || platform.length == 0) return false;
     const data = {
@@ -55,6 +56,7 @@ const PostCalendar = (props) => {
       id: rowId,
       files: files,
       platforms: isJSON(platform) ? JSON.parse(platform) : platform,
+      status: status,
     };
 
     setPostData(data);
@@ -67,6 +69,7 @@ const PostCalendar = (props) => {
   const renderEventContent = (eventInfo) => {
     const images_arr = eventInfo.event._def.extendedProps.files;
     const status = eventInfo.event._def.extendedProps.status;
+    // console.log({ status });
     const publishDate = eventInfo.event._context.dateProfileGenerator.nowDate;
     let dateStr = EventDateFormat(publishDate);
     let postDate = new Date(eventInfo.event._def.extendedProps.postdate);

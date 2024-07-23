@@ -11,6 +11,7 @@ import { Badges } from "../common/badge";
 import { ParseData } from "../../utils/ParseData";
 import Tiktok from "../svg/Tiktok";
 import { isContainVideo } from "../../utils";
+import { postStatuses } from "../common/commonString";
 
 const platformIcons = {
   LinkedIn: <LinkedIn fill="#0077B5" width={12} height={12} />,
@@ -36,9 +37,10 @@ const Event = ({
   postDate,
 }) => {
   const statusClasses = {
-    published: "",
-    Pending: "bg-[#688FA4]",
-    error: "bg-red-200",
+    [postStatuses.published]: "",
+    [postStatuses.pending]: "bg-[#688FA4]",
+    [postStatuses.error]: "bg-red-200",
+    [postStatuses.saveAsDraft]: "bg-gray-200",
   };
 
   const platforms = Array.isArray(ParseData(platformLogo))
@@ -58,8 +60,8 @@ const Event = ({
   });
 
   const handleEditPost = () => {
-    setIsEdit(status)
-  }
+    setIsEdit(status);
+  };
 
   const tooltipContent = (
     <div className="w-80 h-auto px-2  cursor-pointer border-l-slate-600 bottom-2 ">
@@ -69,10 +71,23 @@ const Event = ({
       </div>
       <div className="mt-1 h-11">
         <span className={`mb-3 rounded-lg ${statusClasses[status]}`}>
-          {status === "Published" ? (
+          {status === postStatuses.published ? (
             <Badges platformIconsToShow={platformIconsToShow} status={status} />
-          ) : status === "Pending" ? (
+          ) : status === postStatuses.pending ? (
             <span className="px-4">Pending</span>
+          ) : status === postStatuses.saveAsDraft ? (
+            <>
+              <div>
+                <Badges
+                  platformIconsToShow={platformIconsToShow}
+                  status={status}
+                />
+              </div>
+              {/* <div class="flex items-center justify-center">
+                <div class="w-3 h-3 bg-gray-600 rounded-full"></div>{" "}
+                <div className="ml-2">Draft</div>
+              </div> */}
+            </>
           ) : (
             <span className="px-4">Error</span>
           )}
@@ -117,7 +132,10 @@ const Event = ({
       className="w-auto justify-between bg-white text-black border-gray-300 border-2 h-40"
       content={tooltipContent}
     >
-      <div onClick={handleEditPost} className="h-auto py-1 px-2 bg-white  cursor-pointer border-l-4 border-l-green-400 border-l-slate-600 rounded-md">
+      <div
+        onClick={handleEditPost}
+        className="h-auto py-1 px-2 bg-white  cursor-pointer border-l-4 border-l-green-400 border-l-slate-600 rounded-md"
+      >
         <div className="flex flex-wrap gap-1 justify-between">
           <p className="flex font-bold text-xs">{platformIconsToShow}</p>
           <p className="font-bold text-xs">{eventTime}</p>

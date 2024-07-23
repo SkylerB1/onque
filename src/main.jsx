@@ -31,6 +31,7 @@ import ForgotPassword from "./pages/auth/fogot-password";
 import Error404 from "./pages/404";
 import NewPassword from "./pages/auth/NewPassword";
 import ToasterCustomConatiner from "./components/ToasterCustomConatiner";
+import Smartlink from "./pages/smart-link";
 
 if (import.meta.env.MODE === "development") {
   console.log("Running in development mode");
@@ -75,6 +76,16 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <Header>
           <Calendar />
+        </Header>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/smartlink",
+    element: (
+      <PrivateRoute>
+        <Header>
+          <Smartlink />
         </Header>
       </PrivateRoute>
     ),

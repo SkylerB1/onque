@@ -317,6 +317,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 170,
       period: "Monthly",
       priceBody: [
+        "Plan up to 2000 posts per month",
         "Up to 10 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
@@ -338,6 +339,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 290,
       period: "Monthly",
       priceBody: [
+        "Plan up to 6000 posts per month",
         "Up to 15 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
@@ -359,6 +361,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 450,
       period: "Monthly",
       priceBody: [
+        "Plan up to 12000 posts per month",
         "Up to 20 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",

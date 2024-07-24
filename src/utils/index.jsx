@@ -86,17 +86,17 @@ const FacebookOptions = [
     description: "Standard Facebook publication",
   },
   {
-    icon: (width = 10, height = 10) => (
-      <GridSvg width={width} height={height} fill="#000000" />
-    ),
-    label: FBStory,
-    description: "Automatic posting",
-  },
-  {
     icon: (width = 14, height = 14) => (
       <ReelsSvg width={width} height={height} fill="#000000" />
     ),
     label: FBReal,
+    description: "Automatic posting",
+  },
+  {
+    icon: (width = 10, height = 10) => (
+      <GridSvg width={width} height={height} fill="#000000" />
+    ),
+    label: FBStory,
     description: "Automatic posting",
   },
 ];
@@ -340,7 +340,7 @@ export const plansList = () => {
       period: "Monthly",
       priceBody: [
         "Plan up to 6000 posts per month",
-        "Up to 15 clients",
+        "Up to 30 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
         "Client review access",
@@ -348,7 +348,7 @@ export const plansList = () => {
         "AI Caption assistant",
       ],
       recommended: true,
-      totalClients: 15,
+      totalClients: 30,
     },
     {
       key: "enterprise",
@@ -362,7 +362,7 @@ export const plansList = () => {
       period: "Monthly",
       priceBody: [
         "Plan up to 12000 posts per month",
-        "Up to 20 clients",
+        "Up to 50 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
         "Client review access",
@@ -370,7 +370,7 @@ export const plansList = () => {
         "AI Caption assistant",
       ],
       recommended: false,
-      totalClients: 20,
+      totalClients: 50,
     },
   ];
 };

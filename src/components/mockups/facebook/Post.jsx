@@ -237,7 +237,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
       ) : (
         <div
           className={`${
-            viewMode ? "h-[450px]" : "h-60"
+            viewMode ? "h-[450px]" : "h-96"
           } w-full flex items-center justify-center bg-black`}
         >
           <p className="font-bold text-sm text-white">

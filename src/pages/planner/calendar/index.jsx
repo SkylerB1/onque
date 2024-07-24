@@ -12,6 +12,7 @@ import { useAppContext } from "../../../context/AuthContext";
 import NoAccessPermission from "./NoAccessPermission";
 import { Planner } from "../../../components/common/Images";
 import { CarouselDefault } from "./CarouselDefault";
+import PostsService from "../../../services/PostsService";
 
 dayjs.extend(UTC);
 
@@ -22,6 +23,7 @@ const Calendar = () => {
   const brandId = user?.brand?.id;
   const { connections, getConnections } = useConnections();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
+  const { blockUI, setblockUI } = useAppContext();
   const viewAccess = useMemo(
     () =>
       validations && (!role || role?.viewPlanner || role?.fullAccessPlanner),
@@ -30,33 +32,40 @@ const Calendar = () => {
 
   const getPostData = async () => {
     try {
-      const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/user/getPostData/${brandId}`
-      );
-      if (response.status === 200) {
-        const data = response.data?.map((item) => {
-          return {
-            rowId: item.id,
-            userId: item.userId,
-            title: item.text,
-            status: item.status,
-            files:
-              typeof item.files === "string"
-                ? JSON.parse(item.files)
-                : item.files,
-            start:
-              item.scheduledDate ?? dayjs.utc().format("YYYY-MM-DDTHH:mm:ssZ"),
-            postdate: item.scheduledDate ?? dayjs.utc(),
-            platform: item.platform,
-            contentType: "post",
-          };
-        });
+      setblockUI(true);
+      const response = await PostsService.getPostData(brandId);
+
+      if (response?.status === 200) {
+        const data =
+          response?.data.length > 0 &&
+          response?.data?.map((item) => {
+            return {
+              rowId: item.id,
+              userId: item.userId,
+              title: item.text,
+              status: item.status,
+              files:
+                typeof item.files === "string"
+                  ? JSON.parse(item.files)
+                  : item.files,
+              start:
+                item.scheduledDate ??
+                dayjs.utc().format("YYYY-MM-DDTHH:mm:ssZ"),
+              postdate: item.scheduledDate ?? dayjs.utc(),
+              platform: item.platform,
+              contentType: "post",
+              socialPresets: item?.socialPresets,
+            };
+          });
+
         setEvents(data);
       } else {
         console.log("Error fetching Twitter data");
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setblockUI(false);
     }
   };
 
@@ -102,6 +111,7 @@ const Calendar = () => {
   return (
     <>
       {/* <CarouselDefault /> */}
+
       <div className="p-4 sm:ml-20 bg-[#F1F2F4] xl:ml-64">
         {connections.length === 0 ? (
           <SocialLinkPostCalendar validations={validations} role={role} />

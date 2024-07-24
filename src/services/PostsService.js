@@ -8,4 +8,9 @@ PostsService.createPost = async function (brandId, data) {
   );
   return response;
 };
+
+PostsService.getPostData = async function (brandId) {
+  const response = await axiosInstance.get(`user/getPostData/${brandId}`);
+  return response;
+};
 export default PostsService;

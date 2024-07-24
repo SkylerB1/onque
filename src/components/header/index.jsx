@@ -20,6 +20,7 @@ import { FaLink } from "react-icons/fa6";
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
+import BlockUIComponent from "../BlockUIComponent";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
@@ -82,13 +83,16 @@ export default function Header({ children }) {
         className={`font-bold  text-base rounded-lg`}
       >
         <div className="group relative flex justify-center">
-          <Link className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default">
+          <Link
+            to="/smartlink"
+            className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default"
+          >
             <FaLink className="w-5 h-5" />
             SmartLinks
           </Link>
-          <span className="absolute top-16 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
+          {/* <span className="absolute top-16 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
             Coming Soon
-          </span>
+          </span> */}
         </div>
       </Typography>
     </ul>
@@ -96,6 +100,7 @@ export default function Header({ children }) {
 
   return (
     <div className="flex min-h-screen z-50">
+      <BlockUIComponent />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar className="fixed top-0 z-50 h-max max-w-full rounded-none py-2 px-16 bg-black flex flex-row items-center ju">
           <div className="flex flex-1 items-center justify-between text-blue-gray-900">

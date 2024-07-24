@@ -83,10 +83,17 @@ const Event = ({
                   status={status}
                 />
               </div>
-              {/* <div class="flex items-center justify-center">
+              <div class="flex items-center justify-start mt-2">
                 <div class="w-3 h-3 bg-gray-600 rounded-full"></div>{" "}
                 <div className="ml-2">Draft</div>
-              </div> */}
+              </div>
+            </>
+          ) : status === postStatuses.ongoing ? (
+            <>
+              <div class="flex items-center justify-start mt-2">
+                <div class="w-3 h-3 bg-green-100 rounded-full"></div>{" "}
+                <div className="ml-2">Ongoing</div>
+              </div>
             </>
           ) : (
             <span className="px-4">Error</span>

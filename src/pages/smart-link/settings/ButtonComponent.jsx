@@ -7,7 +7,13 @@ import { FaRegCopy } from "react-icons/fa6";
 import { BsThreeDots } from "react-icons/bs";
 import { BsThreeDotsVertical } from "react-icons/bs";
 
-const ButtonComponent = ({ id, deleteButton, values, updateButtonValues }) => {
+const ButtonComponent = ({
+  id,
+  deleteButton,
+  values,
+  updateButtonValues,
+  handleClone,
+}) => {
   const uniqueId = useId();
   const textInputRef = useRef(null);
   const urlInputRef = useRef(null);
@@ -160,6 +166,7 @@ const ButtonComponent = ({ id, deleteButton, values, updateButtonValues }) => {
                 variant="outlined"
                 className="flex items-center gap-3"
                 size="sm"
+                onClick={() => handleClone(id)}
               >
                 <FaRegClone size={12} />
                 Clone

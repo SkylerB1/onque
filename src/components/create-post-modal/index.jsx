@@ -769,7 +769,7 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          dimensions?.width > 1920
+          dimensions?.width > 1920 && !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -783,7 +783,7 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78)
+          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) && !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -797,7 +797,7 @@ const CreatePostModal = ({
         if (
           (item.mediaType == "POST" || item.mediaType == "STORY") &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+          (dimensions?.duration < 0.3 || dimensions?.duration > 60) && !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -821,7 +821,7 @@ const CreatePostModal = ({
           ]);
         } else if (
           item.mediaType == "REEL" &&
-          dimensions?.aspectRatio !== 0.5625
+          dimensions?.aspectRatio !== 0.5625 && !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,

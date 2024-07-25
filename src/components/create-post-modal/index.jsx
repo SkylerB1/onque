@@ -883,7 +883,7 @@ const CreatePostModal = ({
               files.map((file) => {
                 // check if file is image
                 if (isContainImage(file) == true) {
-                  if (!ImageMimeTypesForFbStory.includes(file.type)) {
+                  if (!ImageMimeTypesForFbStory.includes(file?.mimetype || file?.type)) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -917,7 +917,7 @@ const CreatePostModal = ({
 
                 if (isContainVideo(file) == true) {
                   // console.log(file);
-                  if (!VideoMimeTypesForFbStory.includes(file.type)) {
+                  if (!VideoMimeTypesForFbStory.includes(file?.type || file?.mimetype)) {
                     setErrors((prev) => [
                       ...prev,
                       {

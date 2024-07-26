@@ -40,13 +40,14 @@ const Smartlink = () => {
   useEffect(() => {
     console.log(activeTab);
   }, [activeTab]);
-  const ORIGIN_URL = import.meta.env.VITE_PQINA_NPM_KEY;
+  const VITE_PQINA_NPM_KEY = import.meta.env.VITE_PQINA_NPM_KEY;
+  console.log(VITE_PQINA_NPM_KEY, " is VITE_PQINA_NPM_KEY");
   return (
     <div className="mt-[100px] mx-16  min-h-screen shadow-lg shadow-gray-300 rounded-lg border-2">
       <div className="w-full grid lg:grid-cols-12 gap-2">
         <div className="lg:col-span-7  border-gray-200 ">
           <div className="m-10 flex flex-wrap gap-3 ">
-            {ORIGIN_URL}asdad
+            {VITE_PQINA_NPM_KEY} asdad
             <div class="lg:w-[60%] w-full">
               <SelectInput
                 label={"Brand"}

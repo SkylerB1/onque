@@ -6,3 +6,4 @@ node_modules2
 dist
 .eslintrc.json
 .eslintignore
+package-lock.json

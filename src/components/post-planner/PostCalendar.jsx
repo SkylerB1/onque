@@ -12,14 +12,18 @@ import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import { Card, CardBody, Button } from "@material-tailwind/react";
 import { IoMdAdd } from "react-icons/io";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   abbreviateString,
   getTextForRoleInfo,
   isJSON,
 } from "../../utils/commonUtils";
 import StoryCarousel from "../mockups/facebook/StoryCarousel";
+import { useAppContext } from "../../context/AuthContext";
 
 const PostCalendar = (props) => {
+  const  {validations}  = useAppContext();
+  const navigate = useNavigate();
   const { getPostData, events, role } = props;
   const [files, setFiles] = useState([]);
   const [videoDurations, setVideoDurations] = useState([]);
@@ -165,14 +169,30 @@ const PostCalendar = (props) => {
         )}
         {/* Role Info Section End Here */}
         {fullAccess && (
-          <Button
-            size="sm"
-            onClick={handleModal}
-            className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
-          >
-            <IoMdAdd className="w-5 h-5 mr-1" />
-            Create Post
-          </Button>
+          <>
+            <div className="flex items-center justify-between border-2 border-black rounded-md py-2 px-5 mb-5">
+              <span className="text-sm text-black">
+                You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month. Upgrade your plan to increase the limit.
+              </span>
+                  <Button
+                    variant="gradient"
+                    size="sm"
+                    className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
+                    onClick={() => navigate("/setting/price")}
+                  >
+                    Upgrade
+                  </Button>
+            </div>
+
+            <Button
+              size="sm"
+              onClick={handleModal}
+              className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
+            >
+              <IoMdAdd className="w-5 h-5 mr-1" />
+              Create Post
+            </Button>
+          </>
         )}
         <Card className="mt-2">
           <CardBody>

@@ -41,6 +41,7 @@ export function AppContextProvider({ children }) {
   const dispatch = useDispatch();
 
   const [dropdownClientListKey, setDropdownClientListKey] = React.useState(0);
+  const [blockUI, setblockUI] = useState(false);
 
   const getCounter = async (brandId) => {
     try {
@@ -115,6 +116,8 @@ export function AppContextProvider({ children }) {
     getUserInfo,
     dropdownClientListKey,
     setDropdownClientListKey,
+    blockUI,
+    setblockUI,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

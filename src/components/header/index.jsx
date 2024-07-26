@@ -20,6 +20,7 @@ import { FaLink } from "react-icons/fa6";
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
+import BlockUIComponent from "../BlockUIComponent";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
@@ -96,6 +97,7 @@ export default function Header({ children }) {
 
   return (
     <div className="flex min-h-screen z-50">
+      <BlockUIComponent />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Navbar className="fixed top-0 z-50 h-max max-w-full rounded-none py-2 px-16 bg-black flex flex-row items-center ju">
           <div className="flex flex-1 items-center justify-between text-blue-gray-900">

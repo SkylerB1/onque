@@ -32,9 +32,9 @@ const StoryMobile = ({ viewMode, files, screenName }) => {
           })}
       </div>
       <div className=" absolute top-10 z-50 flex flex-row items-center px-2">
-        <UserIcon width={35} height={35} fill={"#ffffff"} />
-        <p className="ml-2 text-white text-sm font-semibold">{screenName}</p>
-        <p className="ml-2 text-xs text-gray-200">10m</p>
+        <UserIcon width={35} height={35} fill={"#eee"} />
+        <p className="ml-2 text-gray-800 text-sm font-semibold">{screenName}</p>
+        <p className="ml-2 text-xs text-gray-500">10m</p>
       </div>
       <div
         className={`flex w-full ${

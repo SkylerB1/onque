@@ -33,7 +33,7 @@ const SmartLinkSettings = () => {
     },
   ];
   return (
-    <div>
+    <div className="">
       <div className="font-bold ">General</div>
 
       <div className="flex flex-wrap mt-5">
@@ -64,7 +64,7 @@ const SmartLinkSettings = () => {
               </Tab>
             ))}
           </TabsHeader>
-          <TabsBody className="pb-[300px] pt-[30px]">
+          <TabsBody className="">
             {data.map(({ value, desc }) => (
               <TabPanel key={value} value={value}>
                 {desc}

@@ -138,7 +138,7 @@ const AddRoleDialog = ({
       <DialogBody>
         <div className="overflow-y-auto xl:max-h-[700px] sm:max-h-[500px]">
           <div className="grid sm:grid-cols-2 gap-4 gap-x-10 mb-3">
-            <div className="w-100">
+            <div className="w-100 mt-1">
               <Input
                 label="RoleName"
                 value={data.name}

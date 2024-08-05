@@ -141,7 +141,8 @@ const Event = ({
     >
       <div
         onClick={handleEditPost}
-        className="h-auto py-1 px-2 bg-white  cursor-pointer border-l-4 border-l-green-400 border-l-slate-600 rounded-md"
+        className={`h-auto py-1 px-2 bg-white cursor-pointer border-l-4 rounded-md ${status === postStatuses.saveAsDraft ? statusClasses[status] : 'border-l-green-400'
+          }`}
       >
         <div className="flex flex-wrap gap-1 justify-between">
           <p className="flex font-bold text-xs">{platformIconsToShow}</p>

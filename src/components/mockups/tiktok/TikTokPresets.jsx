@@ -14,6 +14,7 @@ import PublishPostModal from "../../modal/publishPostModal";
 import QuestionMark from "../../../assets/QuestionMark";
 import { TikTokPlatform } from "../../common/commonString";
 import AutoPublishPompt from "../../common/AutoPublishPompt";
+import { useLocalStorage } from "../../../utils/LocalStorage";
 
 const getPrivacyLabel = {
   PUBLIC_TO_EVERYONE: (

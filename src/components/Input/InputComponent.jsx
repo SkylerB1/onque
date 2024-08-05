@@ -18,8 +18,7 @@ function InputComponent({
   identifier,
   className,
   platform,
-  handleInput
-
+  handleInput,
 }) {
   const handleChange = (value) => {
     onChange((prev) => {

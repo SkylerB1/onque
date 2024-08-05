@@ -8,4 +8,7 @@ export default defineConfig({
   preview: {
     port: 3025,
   },
+  define: {
+    'process.env.VITE_PQINA_NPM_KEY': process.env.VITE_PQINA_NPM_KEY
+  }
 });

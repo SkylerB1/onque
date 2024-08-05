@@ -56,6 +56,7 @@ import {
   ImageMimeTypesForFbStory,
   VideoMimeTypesForFbStory,
   postStatuses,
+  TikTokBusiness,
 } from "../common/commonString";
 import ImgUploadModal from "../upload-modal/ImageUploadModal.jsx";
 import ImageEditorModal from "../upload-modal/ImageEditorModal.jsx";
@@ -237,6 +238,7 @@ const CreatePostModal = ({
       [InstagramPlatform]: GetInstagramComponent,
       [YoutubePlatform]: GetYoutubeComponent,
       [TikTokPersonal]: GetTikTokComponent,
+      [TikTokBusiness]: GetTikTokComponent,
       [TwitterPlatform]: GetTwitterComponent,
       [LinkedInPages]: GetLinkedinComponent,
       [LinkedInProfile]: GetLinkedinComponent,

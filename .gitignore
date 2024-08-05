@@ -3,6 +3,7 @@ node_modules2
 .env.local
 .env.production
 .env.development
+.env
 dist
 .eslintrc.json
 .eslintignore

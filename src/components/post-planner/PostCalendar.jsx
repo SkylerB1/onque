@@ -151,7 +151,7 @@ const PostCalendar = (props) => {
                     textForRoleInfo?.map(
                       (value, index) =>
                         value.title +
-                        (textForRoleInfo.legth - 1 < index ? " , " : "")
+                        (textForRoleInfo.length - 1 < index ? " , " : "")
                     )}
                 </h3>
               </div>
@@ -174,14 +174,14 @@ const PostCalendar = (props) => {
               <span className="text-sm text-black">
                 You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month. Upgrade your plan to increase the limit.
               </span>
-                  <Button
+                  {validations.max_posts_monthly < 12000  && <Button
                     variant="gradient"
                     size="sm"
                     className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
                     onClick={() => navigate("/setting/price")}
                   >
                     Upgrade
-                  </Button>
+                  </Button>}
             </div>
 
             <Button

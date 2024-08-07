@@ -19,7 +19,7 @@ function ImgUploadModal({ show, toggleModal, onChange }) {
           <div className="flex items-center justify-center w-full">
             <Dropzone
               accept={{ "image/jpeg": [], "image/png": [] }}
-              onDrop={onChange}
+              onDrop={(files) => onChange(files, "image")}
             >
               {({ getRootProps, getInputProps }) => (
                 <section className="w-full">

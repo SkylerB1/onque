@@ -187,13 +187,10 @@ const ButtonSettings = () => {
       prev.map((socialIcon) => (socialIcon.id != id ? socialIcon : values))
     );
   };
-  useEffect(() => {
-    console.log(socialIcons);
-  }, [socialIcons]);
 
   return (
     <div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 mt-10">
         <div class="w-1/2">
           <Button
             variant="outlined"

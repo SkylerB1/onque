@@ -19,7 +19,7 @@ function VideoUploadModal({ show, toggleModal, onChange }) {
           <div className="flex items-center justify-center w-full">
             <Dropzone
               accept={{ "video/mp4": [], "video/mov": [] }}
-              onDrop={onChange}
+              onDrop={(files) => onChange(files, "video")}
             >
               {({ getRootProps, getInputProps }) => (
                 <section className="w-full">

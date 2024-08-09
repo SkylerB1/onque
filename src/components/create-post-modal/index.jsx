@@ -118,7 +118,7 @@ const CreatePostModal = ({
   setVideoDurations,
 }) => {
   const isDuplicating = useMemo(
-    () => isEdit === "Published" || isEdit === "SaveAsDraft" || false,
+    () => isEdit === "Published" || false,
     [isEdit]
   );
 
@@ -1621,6 +1621,7 @@ const CreatePostModal = ({
                       setCaption={setCaption}
                       handleCaption={handleCaption}
                       files={files}
+                      setFiles={setFiles}
                       handleimgError={handleimgError}
                       handleVideoError={handleVideoError}
                       removeimg={removeimg}

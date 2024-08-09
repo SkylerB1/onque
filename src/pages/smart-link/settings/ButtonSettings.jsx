@@ -1,197 +1,118 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@material-tailwind/react";
-import { MdAddLink } from "react-icons/md";
+import { MdAddLink, MdOutlineEmojiSymbols } from "react-icons/md";
 import { TbSection } from "react-icons/tb";
-import { Input } from "@material-tailwind/react";
-import { FaRegCopy } from "react-icons/fa6";
-import { MdDelete } from "react-icons/md";
-import { useId } from "react";
-import { MdOutlineEmojiSymbols } from "react-icons/md";
-
-MdDelete;
-
-import InputColor from "react-input-color";
-import { FaRegClone } from "react-icons/fa6";
-import parse from "html-react-parser";
+import { useSelector, useDispatch } from "react-redux";
+import { addBtn } from '../../../redux/features/smartLinkSlice';
+import { addIcons } from '../../../redux/features/smartIcons';
 import ButtonComponent from "./ButtonComponent";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMove from "array-move";
 import IconItems from "./IconItems";
 
 const ButtonSettings = () => {
+  const data = useSelector((state) => state.smartLink.value) || [];
+  const iconsData = useSelector((state) => state.smartIcons.value) || [];
+  const dispatch = useDispatch();
+
   const defaultValues = {
-    text: "Button text",
+    text: "Button Text",
     url: "https://example.com",
-    textColor: { hex: "#eeeeee" },
-    bgColor: { hex: "#eeeeee" },
-    borderColor: { hex: "#eeeeee" },
+    textColor: { hex: "#333333" },
+    bgColor: { hex: "#007bff" },
+    borderColor: { hex: "#0056b3" },
     isDisabled: false,
   };
-  const defaultIcons = [
-    {
-      id: 1,
-      iconName: "twitter",
-      url: "https://twitter.com/...",
-    },
-    {
-      id: 2,
-      iconName: "facebook",
-      url: "https://www.facebook.com/people/user-name",
-    },
-    {
-      id: 3,
-      iconName: "instagram",
-      url: "https://instagram.com/...",
-    },
-    {
-      id: 4,
-      iconName: "linkedIn",
-      url: "https://example.com",
-    },
-  ];
-  const [buttonItems, setButtonItems] = useState([
-    {
-      id: 1,
-      values: defaultValues,
-      content: (id, values) => (
-        <ButtonComponent
-          id={id}
-          deleteButton={deleteButton}
-          values={values}
-          updateButtonValues={updateButtonValues}
-          handleClone={handleClone}
-        />
-      ),
-    },
-    {
-      id: 2,
-      values: defaultValues,
-      content: (id, values) => (
-        <ButtonComponent
-          id={id}
-          deleteButton={deleteButton}
-          values={values}
-          updateButtonValues={updateButtonValues}
-          handleClone={handleClone}
-        />
-      ),
-    },
-    {
-      id: 3,
-      values: defaultValues,
-      content: (id, values) => (
-        <ButtonComponent
-          id={id}
-          deleteButton={deleteButton}
-          values={values}
-          updateButtonValues={updateButtonValues}
-          handleClone={handleClone}
-        />
-      ),
-    },
-    {
-      id: 4,
-      values: defaultValues,
-      content: (id, values) => (
-        <ButtonComponent
-          id={id}
-          deleteButton={deleteButton}
-          values={values}
-          updateButtonValues={updateButtonValues}
-          handleClone={handleClone}
-        />
-      ),
-    },
-  ]);
-  const [buttonCount, setButtonCount] = useState(5);
 
-  const [socialIcons, setSocialIcons] = useState(defaultIcons);
-  const [socialIconsCount, setSocialIconsCount] = useState(
-    defaultIcons.length + 1
-  );
+  const defaultIcons = [
+    { id: 1, iconName: "twitter", url: "https://twitter.com/..." },
+    { id: 2, iconName: "facebook", url: "https://www.facebook.com/people/user-name" },
+    { id: 3, iconName: "instagram", url: "https://instagram.com/..." },
+    { id: 4, iconName: "linkedIn", url: "https://example.com" },
+  ];
+
+  const defaultButtons = Array.from({ length: 4 }, (_, index) => ({
+    id: index + 1,
+    values: defaultValues,
+  }));
+
+  const [buttonCount, setButtonCount] = useState(5);
+  const [socialIconsCount, setSocialIconsCount] = useState(defaultIcons.length + 1);
+
+  useEffect(() => {
+    dispatch(addBtn(defaultButtons));
+    dispatch(addIcons(defaultIcons));
+  }, [dispatch]);
 
   const addButton = () => {
-    setButtonItems((prev) => {
-      return [
-        ...prev,
-        {
-          id: buttonCount,
-          values: defaultValues,
-          content: (buttonCount, values) => (
-            <ButtonComponent
-              id={buttonCount}
-              deleteButton={deleteButton}
-              values={values}
-              updateButtonValues={updateButtonValues}
-              handleClone={handleClone}
-            />
-          ),
-        },
-      ];
-    });
+    const newButton = {
+      id: buttonCount,
+      values: defaultValues,
+    };
+    dispatch(addBtn([...data, newButton]));
     setButtonCount((count) => count + 1);
   };
+
   const deleteButton = (id) => {
-    setButtonItems((prev) => prev.filter((item) => item.id != id));
-    setButtonCount((count) => count - 1);
+    if (id <= 4) return; // Prevent deletion of default buttons
+    dispatch(addBtn(data.filter((item) => item.id !== id)));
   };
 
   const handleClone = (id) => {
-    setButtonItems((prev) => {
-      let slice1 = prev.slice(0, id);
-      let cloneItem = prev[id - 1];
-      let slice2 = prev.slice(id);
-      let newItems = [
-        ...slice1,
-        { ...cloneItem, id: cloneItem.id + 1 },
-        ...slice2.map((item) => ({ ...item, id: item.id + 1 })),
-      ];
+    const cloneItem = data.find((item) => item.id === id);
+    if (!cloneItem) return;
 
-      return newItems;
-    });
-
+    const newButton = {
+      ...cloneItem,
+      id: buttonCount,
+    };
+    dispatch(addBtn([...data, newButton]));
     setButtonCount((count) => count + 1);
   };
+
   const updateButtonValues = (id, identifier, value) => {
-    setButtonItems((prev) =>
-      prev.map((item) =>
-        item.id != id
-          ? item
-          : { ...item, values: { ...item.values, [identifier]: value } }
-      )
+    const updatedItems = data.map((item) =>
+      item.id === id ? { ...item, values: { ...item.values, [identifier]: value } } : item
     );
+    dispatch(addBtn(updatedItems));
   };
+
   const onSortEnd = (oldIndex, newIndex) => {
-    setButtonItems((array) => arrayMove(array, oldIndex, newIndex));
+    const newItems = arrayMove(data, oldIndex, newIndex);
+    dispatch(addBtn(newItems));
   };
+
   const onSortEndIcons = (oldIndex, newIndex) => {
-    setSocialIcons((array) => arrayMove(array, oldIndex, newIndex));
+    const newIcons = arrayMove(iconsData, oldIndex, newIndex);
+    dispatch(addIcons(newIcons));
   };
+
   const addIcon = () => {
-    setSocialIcons((prev) => [
-      ...prev,
-      {
-        id: socialIconsCount,
-        iconName: "twitter",
-        url: "https://example.com",
-      },
-    ]);
+    const newIcon = {
+      id: socialIconsCount,
+      iconName: "twitter",
+      url: "https://example.com",
+    };
+    dispatch(addIcons([...iconsData, newIcon]));
     setSocialIconsCount((count) => count + 1);
   };
+
   const deleteIcon = (id) => {
-    setSocialIcons((prev) => prev.filter((socialIcon) => socialIcon.id != id));
-    setSocialIconsCount((count) => count - 1);
+    if (id <= 4) return; // Prevent deletion of default icons
+    dispatch(addIcons(iconsData.filter((icon) => icon.id !== id)));
   };
+
   const updateValues = (id, values) => {
-    setSocialIcons((prev) =>
-      prev.map((socialIcon) => (socialIcon.id != id ? socialIcon : values))
+    const updatedIcons = iconsData.map((icon) =>
+      icon.id === id ? { ...icon, ...values } : icon
     );
+    dispatch(addIcons(updatedIcons));
   };
 
   return (
     <div>
       <div className="flex gap-2 mt-10">
-        <div class="w-1/2">
+        <div className="w-1/2">
           <Button
             variant="outlined"
             fullWidth
@@ -202,7 +123,7 @@ const ButtonSettings = () => {
             Add Button
           </Button>
         </div>
-        <div class="w-1/2">
+        <div className="w-1/2">
           <Button
             fullWidth
             variant="outlined"
@@ -220,10 +141,16 @@ const ButtonSettings = () => {
           draggedItemClassName="dragged"
         >
           <div className="space-y-8 mt-5">
-            {buttonItems.map((item) => (
+            {data.map((item) => (
               <SortableItem key={item.id}>
                 <div key={item.id} className="item">
-                  {item.content(item.id, item.values)}
+                  <ButtonComponent
+                    id={item.id}
+                    deleteButton={deleteButton}
+                    values={item.values}
+                    updateButtonValues={updateButtonValues}
+                    handleClone={handleClone}
+                  />
                 </div>
               </SortableItem>
             ))}
@@ -231,7 +158,7 @@ const ButtonSettings = () => {
         </SortableList>
       </div>
       <div className="my-5 border-r border border-gray-500 shadow-lg"></div>
-      <div class="w-full">
+      <div className="w-full">
         <Button
           fullWidth
           variant="outlined"
@@ -249,18 +176,17 @@ const ButtonSettings = () => {
           draggedItemClassName="dragged"
         >
           <div className="space-y-8 mt-5">
-            {socialIcons &&
-              socialIcons.map((values) => (
-                <SortableItem key={values.id}>
-                  <div className="my-5" key={values.id}>
-                    <IconItems
-                      values={values}
-                      deleteIcon={deleteIcon}
-                      updateValues={updateValues}
-                    />
-                  </div>
-                </SortableItem>
-              ))}
+            {Array.isArray(iconsData) && iconsData.map((values) => (
+              <SortableItem key={values.id}>
+                <div className="my-5" key={values.id}>
+                  <IconItems
+                    values={values}
+                    deleteIcon={deleteIcon}
+                    updateValues={updateValues}
+                  />
+                </div>
+              </SortableItem>
+            ))}
           </div>
         </SortableList>
       </div>

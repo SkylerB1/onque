@@ -81,8 +81,8 @@ const Smartlink = () => {
   return (
     <div className="mt-[100px] mx-16  min-h-screen shadow-lg shadow-gray-300 rounded-lg border-2">
       <div className="w-full grid lg:grid-cols-12 gap-2">
-        <div className="lg:col-span-7  border-gray-200 ">
-          <div className="h-screen flex flex-col">
+        <div className="lg:col-span-7  border-gray-200 h-96 ">
+          <div className="h-[60rem] flex flex-col min-h-[32rem]">
             <div className="flex-none p-4">
               <div className="m-10 flex flex-wrap gap-3 ">
                 <div className="lg:w-[60%] w-full">

@@ -4,7 +4,9 @@ import userSlice from "./features/userSlice";
 import brandsSlice from "./features/brandsSlice";
 import roleSlice from "./features/roleSlice";
 import smartLinkSlice from "./features/smartLinkSlice";
-import smartIconsSlice from "./features/smartIcons"
+import smartIconsSlice from "./features/smartIcons";
+import smartLinkMediaSlice  from "./features/smartLinkMediaSlice";
+import addSmartSection  from "./features/AddSectionSlice";
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +15,8 @@ export const store = configureStore({
     brands: brandsSlice,
     roles:roleSlice,
     smartLink: smartLinkSlice,
-    smartIcons:smartIconsSlice
+    smartIcons:smartIconsSlice,
+    smartLinkMedia:smartLinkMediaSlice,
+    smartSection:addSmartSection
   },
 });

@@ -3,8 +3,8 @@ import { Button } from "@material-tailwind/react";
 import { MdAddLink, MdOutlineEmojiSymbols } from "react-icons/md";
 import { TbSection } from "react-icons/tb";
 import { useSelector, useDispatch } from "react-redux";
-import { addBtn } from '../../../redux/features/smartLinkSlice';
-import { addIcons } from '../../../redux/features/smartIcons';
+import { addBtn } from "../../../redux/features/smartLinkSlice";
+import { addIcons } from "../../../redux/features/smartIcons";
 import ButtonComponent from "./ButtonComponent";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMove from "array-move";
@@ -38,6 +38,7 @@ const ButtonSettings = () => {
 
   const [buttonCount, setButtonCount] = useState(5);
   const [socialIconsCount, setSocialIconsCount] = useState(defaultIcons.length + 1);
+  const [savedData, setSavedData] = useState({ buttons: defaultButtons, icons: defaultIcons });
 
   useEffect(() => {
     dispatch(addBtn(defaultButtons));
@@ -70,21 +71,44 @@ const ButtonSettings = () => {
     setButtonCount((count) => count + 1);
   };
 
+  const saveData = async (buttonData, iconData) => {
+    console.log("Saving data:", { buttonData, iconData });
+    setSavedData({ buttons: buttonData, icons: iconData }); // Update the saved state
+  };
+
+  const resetData = () => {
+    console.log("Called")
+    console.log(savedData.buttons)
+    dispatch(addBtn(savedData.buttons)); // Reset buttons to the saved state
+    dispatch(addIcons(savedData.icons)); // Reset icons to the saved state
+  };
+
   const updateButtonValues = (id, identifier, value) => {
     const updatedItems = data.map((item) =>
       item.id === id ? { ...item, values: { ...item.values, [identifier]: value } } : item
     );
     dispatch(addBtn(updatedItems));
+    saveData(updatedItems, iconsData); // Auto-save whenever button values are updated
+  };
+
+  const updateValues = (id, values) => {
+    const updatedIcons = iconsData.map((icon) =>
+      icon.id === id ? { ...icon, ...values } : icon
+    );
+    dispatch(addIcons(updatedIcons));
+    saveData(data, updatedIcons); // Auto-save whenever icon values are updated
   };
 
   const onSortEnd = (oldIndex, newIndex) => {
     const newItems = arrayMove(data, oldIndex, newIndex);
     dispatch(addBtn(newItems));
+    saveData(newItems, iconsData); // Auto-save after sorting buttons
   };
 
   const onSortEndIcons = (oldIndex, newIndex) => {
     const newIcons = arrayMove(iconsData, oldIndex, newIndex);
     dispatch(addIcons(newIcons));
+    saveData(data, newIcons); // Auto-save after sorting icons
   };
 
   const addIcon = () => {
@@ -102,15 +126,9 @@ const ButtonSettings = () => {
     dispatch(addIcons(iconsData.filter((icon) => icon.id !== id)));
   };
 
-  const updateValues = (id, values) => {
-    const updatedIcons = iconsData.map((icon) =>
-      icon.id === id ? { ...icon, ...values } : icon
-    );
-    dispatch(addIcons(updatedIcons));
-  };
-
   return (
-    <div>
+    <>
+    <div className="relative">
       <div className="flex gap-2 mt-10">
         <div className="w-1/2">
           <Button
@@ -190,8 +208,27 @@ const ButtonSettings = () => {
           </div>
         </SortableList>
       </div>
+
     </div>
+      <div className="fixed flex items-center justify-end bottom-1  gap-4 border-solid w-[58rem] p-2 mt-10 bg-[#f3f4f6]">
+        <Button
+          variant="outlined"
+          className="flex items-center justify-center"
+          onClick={resetData}
+        >
+          Reset
+        </Button>
+        <Button
+          variant="filled"
+          className="flex items-center justify-center"
+          onClick={() => saveData(data, iconsData)}
+        >
+          Save
+        </Button>
+      </div>
+    </>
   );
 };
 
 export default ButtonSettings;
+

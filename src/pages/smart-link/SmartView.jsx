@@ -11,10 +11,15 @@ import LinkedIn from "../../components/svg/LinkedIn";
 import Youtube from "../../components/svg/Youtube";
 import Email from "../../components/svg/Email";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 const SmartView = () => {
+  const navigate = useNavigate();
   const data = useSelector((state) => state.smartLink.value);
   const iconsData = useSelector((state) => state.smartIcons.value) || [];
+  const media = useSelector((state) => state.smartLinkMedia.value) || [];
+
 
   // Local icon mapping
   const iconMapping = {
@@ -35,6 +40,7 @@ const SmartView = () => {
               size="sm"
               variant="outlined"
               className="flex items-center gap-2"
+              // onClick={() => navigate("/smartlink/view")}
             >
               <MdLink size={16} />
               View Live
@@ -90,21 +96,29 @@ const SmartView = () => {
                     })}
                   </div>
                 </div>
-                <div className="imageBlock flex flex-row flex-wrap gap-4 justify-center cursor-pointer">
-                  <div className="">
-                    <img
-                      className="w-24 h-24 mt-5 rounded-lg"
-                      src={advanture}
-                      alt="Adventure"
-                    />
-                  </div>
-                  <div className="">
-                    <img
-                      className="w-24 h-24 mt-5 rounded-lg"
-                      src={advantureRiver}
-                      alt="Adventure River"
-                    />
-                  </div>
+                <div className="mediaBlock flex flex-row flex-wrap gap-4 justify-center cursor-pointer">
+                  {media.map((mediaItem, index) => (
+                    <div key={index} className="mt-5">
+                      {mediaItem.mediaType === "image" && (
+                        <img
+                          className="w-24 h-24 rounded-lg"
+                          src={mediaItem.mediaUrl}
+                          alt={`Media ${index + 1}`}
+                          onClick={() => window.open(mediaItem?.navigationUrl, "_blank")}
+                        />
+                      )}
+                      {mediaItem.mediaType === "video" && (
+                        <video
+                          className="w-24 h-24 rounded-lg"
+                          controls
+                          onClick={() => window.open(mediaItem?.navigationUrl, "_blank")}
+                        >
+                          <source src={mediaItem.mediaUrl} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

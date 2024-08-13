@@ -123,8 +123,8 @@ const Smartlink = () => {
                 </div>
               </div>
             </div>
-            <div className="flex-grow overflow-y-auto p-4 bg-gray-100">
-              <div className="m-10  ">
+            <div className="flex-grow overflow-y-auto p-4 bg-gray-100 border-b-2 border-black-200">
+              <div className="m-5  ">
                 <Tabs value={activeTab} className="">
                   <TabsHeader
                     className=" w-[20rem] rounded-none border-b border-blue-gray-50 bg-transparent p-0"

@@ -1,44 +1,35 @@
-import React, { useState, useRef, useId } from "react";
+import React, { useRef, useState } from "react";
 import { Button, Input, IconButton } from "@material-tailwind/react";
 import { MdDelete } from "react-icons/md";
-import InputColor from "react-input-color";
 import { FaRegCopy } from "react-icons/fa6";
 import { BsThreeDots, BsThreeDotsVertical } from "react-icons/bs";
 
 const AddSectionComponent = ({
   id,
-  deleteButton,  // This is actually deleteSection passed from the parent
+  deleteButton, // This is deleteSection passed from the parent
   values = {},
   updateButtonValues,
 }) => {
-  const uniqueId = useId();
   const urlInputRef = useRef(null);
   const [lastCopied, setLastCopied] = useState(null);
 
   const handleChange = (e, identifier) => {
     let value = e.target.value;
-    if (updateButtonValues) {
-      updateButtonValues(id, identifier, value);
-    } else {
-      console.warn("updateButtonValues function is not provided");
-    }
+    updateButtonValues(id, { [identifier]: value }); // Use updateButtonValues to update section
   };
 
   const copyToClipboard = (ref, identifier) => {
     if (ref.current) {
       const inputValue = ref.current.value;
-      let key = identifier + "-" + id;
       navigator.clipboard
         .writeText(inputValue)
         .then(() => {
-          setLastCopied(key);
+          setLastCopied(identifier + "-" + id);
           setTimeout(() => setLastCopied(false), 2000);
         })
         .catch((err) => {
           console.error("Failed to copy text: ", err);
         });
-    } else {
-      console.warn("Reference is not defined in copyToClipboard");
     }
   };
 
@@ -55,19 +46,17 @@ const AddSectionComponent = ({
               inputRef={urlInputRef}
               inputType={"text"}
               label={"Section Text"}
-              onChange={(e) => handleChange(e, "url")}
+              onChange={(e) => handleChange(e, "text")}
               icon={
                 <FaRegCopy
                   size={16}
                   className={`cursor-pointer ${
-                    lastCopied === `urlInput-${id}`
-                      ? "text-green-500 border-2"
-                      : ""
+                    lastCopied === `text-${id}` ? "text-green-500 border-2" : ""
                   }`}
-                  onClick={() => copyToClipboard(urlInputRef, "urlInput")}
+                  onClick={() => copyToClipboard(urlInputRef, "text")}
                 />
               }
-              value={values.url || ""}
+              value={values.text || ""}
             />
             <IconButton variant="outlined" onClick={() => deleteButton(id)}>
               <MdDelete size={24} className="cursor-pointer" />

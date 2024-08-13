@@ -19,6 +19,7 @@ const SmartView = () => {
   const data = useSelector((state) => state.smartLink.value);
   const iconsData = useSelector((state) => state.smartIcons.value) || [];
   const media = useSelector((state) => state.smartLinkMedia.value) || [];
+  const sectionsData = useSelector((state) => state.smartSection.value) || [];
 
 
   // Local icon mapping
@@ -40,13 +41,13 @@ const SmartView = () => {
               size="sm"
               variant="outlined"
               className="flex items-center gap-2"
-              // onClick={() => navigate("/smartlink/view")}
+            // onClick={() => navigate("/smartlink/view")}
             >
               <MdLink size={16} />
               View Live
             </Button>
           </div>
-          <div className="min-w-[80%] min-h-screen border-gray-900 border-8 border-y-[36px] rounded-2xl overflow-y-auto" style={{ maxHeight: '80vh' }}>
+          <div className="min-w-[80%] min-h-screen border-gray-900 border-8 border-y-[36px] rounded-2xl overflow-y-auto bg-[#e7ca9c]" style={{ maxHeight: '80vh' }}>
             <div className="p-5 flex justify-center flex-col items-center">
               <div>
                 <img
@@ -68,12 +69,36 @@ const SmartView = () => {
                           backgroundColor: bgColor.hex,
                           borderColor: borderColor.hex,
                           color: textColor.hex,
+                          padding: "15px",
+                          fontSize: "16px"
                         }}
                         disabled={isDisabled}
                         onClick={() => window.open(url, "_blank")}
                       >
                         {text}
                       </Button>
+                    </div>
+                  );
+                })}
+
+                {sectionsData?.map((item, index) => {
+                  return (
+                    <div key={index} className="text-center font-bold">
+                      {/* <Button
+                        variant="outlined"
+                        fullWidth
+                        // style={{
+                        //   backgroundColor: bgColor.hex,
+                        //   borderColor: borderColor.hex,
+                        //   color: textColor.hex,
+                        // }}
+                        // disabled={isDisabled}
+                        // onClick={() => window.open(url, "_blank")}
+                      >
+                        {text}
+                      </Button> */}
+                      {item?.text}
+
                     </div>
                   );
                 })}

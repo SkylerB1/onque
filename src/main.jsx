@@ -32,6 +32,7 @@ import Error404 from "./pages/404";
 import NewPassword from "./pages/auth/NewPassword";
 import ToasterCustomConatiner from "./components/ToasterCustomConatiner";
 import Smartlink from "./pages/smart-link";
+import PublicBio from "./pages/public/PublicBio";
 
 if (import.meta.env.MODE === "development") {
   console.log("Running in development mode");
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/public/smartlink/:bioname?",
+    element: <PublicBio />,
   },
   {
     path: "/privacy-policy",

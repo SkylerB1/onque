@@ -93,7 +93,7 @@ export default function Story({ files, captions, viewMode, screenName, date }) {
         <div className="relative h-full w-full bg-black">
           <div
             className={`${
-              viewMode == false ? "h-[60%]" : "h-[60%]"
+              viewMode == false ? "h-[50%]" : "h-[50%]"
             } w-full flex place-items-center justify-center bg-black `}
           >
             <p className="font-bold text-sm text-white">

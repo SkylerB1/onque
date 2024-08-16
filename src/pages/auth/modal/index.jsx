@@ -13,6 +13,10 @@ import {
 } from "@material-tailwind/react";
 import toast from "react-hot-toast";
 import ToasterCustomConatiner from "../../../components/ToasterCustomConatiner";
+import {
+  toastrError,
+  toastrSuccess
+} from "../../../utils";
 
 export default function ForgotPassword({ open, Close }) {
   const { register, handleSubmit, reset } = useForm();
@@ -25,13 +29,12 @@ export default function ForgotPassword({ open, Close }) {
         `${import.meta.env.VITE_API_URL}/user/forgot-password`,
         data
       );
-      // console.log(response);
-      toast.success(response?.data?.msg);
+      toastrSuccess(response?.data?.msg);
       reset();
       setLoading(false);
       Close();
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      toastrError(error?.response?.data?.message);
       setLoading(false);
     }
   };

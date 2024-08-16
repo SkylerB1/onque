@@ -153,7 +153,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
             <>
               {isSubscribed && (
                 <>
-                  <div
+                  {userInfo?.max_posts_monthly < 12000 && <div
                     id="alert-2"
                     className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
                     role="alert"
@@ -172,7 +172,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                       </Link>
                       .
                     </div>
-                  </div>
+                  </div>}
                 </>
               )}
             </>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import SelectInput from "../../components/Input/SelectInput";
 import { Button } from "@material-tailwind/react";
 import AddFilled from "../../assets/AddFilled";
@@ -15,31 +15,68 @@ import {
 import SmartLinkAnalytics from "./SmartLinkAnalytics";
 import SmartLinkSettings from "./SmartLinkSettings";
 import InputColor from "react-input-color";
+import SmartView from "./SmartView";
+import { useSelector } from "react-redux";
+
+function isValidUrlPath(url) {
+  // Regular expression to match valid URL paths
+  const regex = /^[a-zA-Z0-9-_]+$/;
+
+  // Test the URL against the regex
+  return regex.test(url);
+}
 
 const Smartlink = () => {
   const [color, setColor] = React.useState({});
   const [activeTab, setActiveTab] = React.useState("settings");
-  const data = [
-    {
-      label: "Settings",
-      value: "settings",
-      desc: <SmartLinkSettings />,
-    },
-    {
-      label: "Analytics",
-      value: "analytics",
-      desc: <SmartLinkAnalytics />,
-    },
-  ];
+  const user = useSelector((state) => state.user.value);
+  const brandName = user?.brand?.brand_name || "";
+  const [bioName, setBioName] = useState(brandName);
+  const [bioSlug, setBioSlug] = useState("");
+
   const brands = [
     { label: "Brand A", value: "A" },
     { label: "Brand B", value: "A" },
     { label: "Brand C", value: "A" },
   ];
   const handleChange = () => {};
-  useEffect(() => {
-    console.log(activeTab);
-  }, [activeTab]);
+
+  const handleBioNameChange = (e) => {
+    setBioName(e.target.value);
+  };
+
+  const handleBioSlugChange = useCallback((e) => {
+    const value = e.target.value;
+
+    if (value === "") {
+      setBioSlug("");
+    } else if (isValidUrlPath(value)) {
+      setBioSlug(value);
+    }
+  }, []);
+
+  const data = [
+    {
+      label: "Settings",
+      value: "settings",
+      desc: (
+        <SmartLinkSettings
+          bioName={bioName}
+          bioSlug={bioSlug}
+          handleBioNameChange={handleBioNameChange}
+          handleBioSlugChange={handleBioSlugChange}
+        />
+      ),
+      disabled: false,
+    },
+    {
+      label: "Analytics",
+      value: "analytics",
+      desc: <SmartLinkAnalytics />,
+      disabled: true,
+    },
+  ];
+  useEffect(() => {}, [activeTab]);
 
   return (
     <div className="mt-[100px] mx-16  min-h-screen shadow-lg shadow-gray-300 rounded-lg border-2">
@@ -96,12 +133,13 @@ const Smartlink = () => {
                         "bg-transparent border-b-2 border-gray-900 shadow-none rounded-none",
                     }}
                   >
-                    {data.map(({ label, value }) => (
+                    {data.map(({ label, value, disabled }) => (
                       <Tab
                         key={value}
                         value={value}
                         onClick={() => setActiveTab(value)}
                         className={activeTab === value ? "text-gray-900" : ""}
+                        disabled={disabled}
                       >
                         {label}
                       </Tab>
@@ -119,7 +157,9 @@ const Smartlink = () => {
             </div>
           </div>
         </div>
-        <div className="lg:col-span-5  hidden lg:block">2</div>
+        <div className="lg:col-span-5  hidden lg:block">
+          <SmartView />
+        </div>
       </div>
     </div>
   );

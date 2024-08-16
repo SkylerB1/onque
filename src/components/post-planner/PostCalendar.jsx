@@ -20,6 +20,12 @@ import {
 } from "../../utils/commonUtils";
 import StoryCarousel from "../mockups/facebook/StoryCarousel";
 import { useAppContext } from "../../context/AuthContext";
+import { axiosInstance } from "../../utils/Interceptor";
+import {
+  API_URL,
+  toastrError,
+  toastrSuccess
+} from "../../utils";
 
 const PostCalendar = (props) => {
   const  {validations}  = useAppContext();
@@ -33,7 +39,7 @@ const PostCalendar = (props) => {
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
   const [textForRoleInfo, setTextForRoleInfo] = useState(null);
-
+  const [draggingEvent, setDraggingEvent] = useState(false);
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
 
@@ -119,6 +125,43 @@ const PostCalendar = (props) => {
     setIsEdit(false);
   };
 
+  const handleEventDrop = async (info) => {
+    const { event } = info;
+    let date = dayjs(event.start).startOf("minute");
+
+    const { rowId } = event._def.extendedProps;
+    const status = info.event._def.extendedProps.status;
+
+    const data = {
+      scheduledDate: date,
+      status
+    };
+
+    try {
+      const response = await axiosInstance.patch( API_URL + `/user/update/post-time/${rowId}`, data);
+      if (response.status === 200) {
+        getPostData();
+        toastrSuccess('Post schedule has been updated');
+      } else {
+        toastrError('Failed to update post');
+      }
+    } catch (err) {
+      console.log(err);
+      toastrError('Error updating post');
+    }
+  };
+
+  const eventDragStart = (info) => {
+    const status = info.event._def.extendedProps.status;
+    setDraggingEvent(status === "SaveAsDraft" || status === "Pending");
+  };
+
+  const eventAllow = (dropInfo, draggedEvent) => {
+    const start = dropInfo.start;
+    const now = new Date();
+    return draggingEvent && start >= now;
+  };
+
   useEffect(() => {
     let textForRoleInfo = getTextForRoleInfo(role);
 
@@ -151,7 +194,7 @@ const PostCalendar = (props) => {
                     textForRoleInfo?.map(
                       (value, index) =>
                         value.title +
-                        (textForRoleInfo.legth - 1 < index ? " , " : "")
+                        (textForRoleInfo.length - 1 < index ? " , " : "")
                     )}
                 </h3>
               </div>
@@ -174,14 +217,14 @@ const PostCalendar = (props) => {
               <span className="text-sm text-black">
                 You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month. Upgrade your plan to increase the limit.
               </span>
-                  <Button
+                  {validations.max_posts_monthly < 12000  && <Button
                     variant="gradient"
                     size="sm"
                     className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
                     onClick={() => navigate("/setting/price")}
                   >
                     Upgrade
-                  </Button>
+                  </Button>}
             </div>
 
             <Button
@@ -226,6 +269,11 @@ const PostCalendar = (props) => {
                 }
               }}
               height="76vh"
+              editable={true}
+              droppable={true}
+              eventDrop={handleEventDrop}
+              eventDragStart={eventDragStart}
+              eventAllow={eventAllow}
             />
 
             {openModal && (

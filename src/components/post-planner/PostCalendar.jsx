@@ -127,22 +127,13 @@ const PostCalendar = (props) => {
 
   const handleEventDrop = async (info) => {
     const { event } = info;
-    const newStartDate = new Date(event.start);
-    const options = {
-      year: "numeric",
-      month: "numeric",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    };
-    const formattedStartDate = newStartDate.toLocaleDateString("en-US", options);
-  
+    let date = dayjs(event.start).startOf("minute");
+
     const { rowId } = event._def.extendedProps;
     const status = info.event._def.extendedProps.status;
 
     const data = {
-      scheduledDate: formattedStartDate,
+      scheduledDate: date,
       status
     };
 

@@ -215,7 +215,7 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection, validations, blockUI, setblockUI } =
+  const { broadcastConnection, validations, blockUI, setblockUI, getCounter } =
     useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
@@ -373,6 +373,7 @@ const CreatePostModal = ({
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         await getPostData();
+
         handleClose();
         handleLoading(false);
       }
@@ -771,7 +772,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          dimensions?.width > 1920 && !noFileSelected
+          dimensions?.width > 1920 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -785,7 +787,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) && !noFileSelected
+          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -799,7 +802,8 @@ const CreatePostModal = ({
         if (
           (item.mediaType == "POST" || item.mediaType == "STORY") &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.duration < 0.3 || dimensions?.duration > 60) && !noFileSelected
+          (dimensions?.duration < 0.3 || dimensions?.duration > 60) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -823,7 +827,8 @@ const CreatePostModal = ({
           ]);
         } else if (
           item.mediaType == "REEL" &&
-          dimensions?.aspectRatio !== 0.5625 && !noFileSelected
+          dimensions?.aspectRatio !== 0.5625 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -885,7 +890,11 @@ const CreatePostModal = ({
               files.map((file) => {
                 // check if file is image
                 if (isContainImage(file) == true) {
-                  if (!ImageMimeTypesForFbStory.includes(file?.mimetype || file?.type)) {
+                  if (
+                    !ImageMimeTypesForFbStory.includes(
+                      file?.mimetype || file?.type
+                    )
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -919,7 +928,11 @@ const CreatePostModal = ({
 
                 if (isContainVideo(file) == true) {
                   // console.log(file);
-                  if (!VideoMimeTypesForFbStory.includes(file?.type || file?.mimetype)) {
+                  if (
+                    !VideoMimeTypesForFbStory.includes(
+                      file?.type || file?.mimetype
+                    )
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {

@@ -215,7 +215,7 @@ const PostCalendar = (props) => {
           <>
             <div className="flex items-center justify-between border-2 border-black rounded-md py-2 px-5 mb-5">
               <span className="text-sm text-black">
-                You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month. Upgrade your plan to increase the limit.
+                You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month.{validations?.max_posts_monthly < 12000 && "Upgrade your plan to increase the limit."}
               </span>
                   {validations.max_posts_monthly < 12000  && <Button
                     variant="gradient"

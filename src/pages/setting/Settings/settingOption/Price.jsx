@@ -28,9 +28,6 @@ const Price = () => {
   // useEffect(() => {
   //   getSubscriptions();
   // }, []);
-  useEffect(() => {
-    getCounter(brandId);
-  });
 
   const handleResumeSubscription = async () => {
     try {

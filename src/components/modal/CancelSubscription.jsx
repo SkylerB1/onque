@@ -71,6 +71,10 @@ const CancelSubscription = ({
                 {getDateFromUnix(subscription.end_date)}, then your plan will
                 become Free.
               </p>
+              <p className="mt-5 text-black font-semibold text-red-500">
+                <strong>Note: </strong>All your brands will be deactivated, with
+                only one remaining active.
+              </p>
             </div>
 
             <textarea

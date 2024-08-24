@@ -164,7 +164,7 @@ export function ChangePlanModel({
   };
   const getBrands = async () => {
     try {
-      const res = await BrandServices.getUserBrandsList();
+      const res = await BrandServices.getMyBrandsList();
       let brands = res.data.brands;
       setBrands(brands);
       // setting is_active = false for default value when opening brand model

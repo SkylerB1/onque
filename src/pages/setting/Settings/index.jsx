@@ -10,6 +10,8 @@ import Account from "./settingOption/Account";
 import Access from "./settingOption/Access";
 import Price from "./settingOption/Price";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useAppContext } from "../../../context/AuthContext";
+import { useSelector } from "react-redux";
 
 const Setting = () => {
   const { tab } = useParams();
@@ -35,8 +37,13 @@ const Setting = () => {
       desc: <Price />,
     },
   ];
+  const { getCounter } = useAppContext();
+
+  const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand?.id;
 
   useEffect(() => {
+    getCounter(brandId);
     navigate("/setting/" + activeTab);
   }, [activeTab]);
 

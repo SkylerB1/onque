@@ -442,6 +442,9 @@ export const getCurrentPlan = (plan) => {
   return { currentPlan, planDuration };
 };
 
+export const getHighestPlanName = () => {
+  return "enterprise_plan_gbp";
+};
 export const getCommaSeparatedNames = (arr, indentifier) => {
   const names = arr.map((item) => item[indentifier]);
 

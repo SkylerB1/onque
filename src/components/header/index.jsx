@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Navbar,
   Typography,
@@ -14,6 +14,9 @@ import DropdownClientList from "../drop-down/DropdownClientList";
 import AddModal from "../modal/addClientModal";
 import { useAppContext } from "../../context/AuthContext";
 
+import BrandServices from "../../services/BrandServices";
+import { toastrError, toastrSuccess } from "../../utils/index";
+
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from "react-icons/io";
 import { TbDeviceDesktopAnalytics } from "react-icons/tb";
 import { FaLink } from "react-icons/fa6";
@@ -21,6 +24,9 @@ import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import BlockUIComponent from "../BlockUIComponent";
+import EnableBrands from "../modal/EnableBrands";
+import AlertModal from "../modal/AlertModal";
+import BrandService from "../../services/BrandServices";
 
 export default function Header({ children }) {
   const { pathname } = useLocation();
@@ -31,6 +37,98 @@ export default function Header({ children }) {
   const isSubscribed = Boolean(subscription) || false;
   const [openNav, setOpenNav] = React.useState(false);
   const [opens, setOpen] = useState(false);
+
+  // Brand Status model variables
+  const [openBrandStatusModal, setOpenBrandStatusModal] = useState(false);
+  const [newBrands, setNewBrands] = useState([]);
+  const [activeBrands, setActiveBrands] = useState([]);
+
+  const [selectAllBrand, setSelectAllBrand] = useState(false);
+  const [showAlertModal, setAlertModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const toggleBrandStatusModal = () => {
+    setOpenBrandStatusModal(!openBrandStatusModal);
+  };
+  const closeBrandStatusModal = () => {
+    setOpenBrandStatusModal(false);
+  };
+  const toggleAlertModal = () => {
+    setAlertModal(!showAlertModal);
+  };
+
+  const openBrandModel = async () => {
+    await getInactiveBrands();
+    await getActiveBrands();
+    setOpenBrandStatusModal(true);
+  };
+
+  // Fetch the user inactive brands from db
+  const getInactiveBrands = async () => {
+    try {
+      const status = 0;
+      const res = await BrandServices.getMyBrands(status);
+      let brands = res.data.brands;
+      setNewBrands(brands);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  // Fetch the user active brands from db
+  const getActiveBrands = async () => {
+    try {
+      const status = 1;
+      const res = await BrandServices.getMyBrands(status);
+      let brands = res.data.brands;
+      setActiveBrands(brands);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleSaveBrandAction = () => {
+    let brands = newBrands.filter((brand) => {
+      return brand.is_active == true;
+    });
+    if (brands.length == 0) {
+      toastrError("Kindly select atleast one brand.");
+      return false;
+    }
+    toggleAlertModal();
+    const data = {
+      header:
+        "Are you sure you want to activate this? This action cannot be undone.",
+      onAccept: handleBrandStatusChangeAction,
+    };
+
+    setAlertData(data);
+    toggleAlertModal();
+  };
+  const handleBrandStatusChangeAction = async () => {
+    try {
+      // get the active brands
+      setAlertModal(false);
+      let brands = newBrands.filter((brand) => {
+        return brand.is_active == true;
+      });
+      setLoading(true);
+      let data = { brands: brands };
+      let result = await BrandService.updateBrands(data);
+      if (result?.status == 200) {
+        let message = result.data.message;
+        toastrSuccess(message);
+        setLoading(false);
+        closeBrandStatusModal();
+      }
+    } catch (err) {
+      setLoading(false);
+    }
+  };
+
+  const [alertData, setAlertData] = useState({
+    header: "",
+    onAccept: handleBrandStatusChangeAction,
+  });
 
   // const user = useSelector((state) => state.user.value);
 
@@ -132,6 +230,10 @@ export default function Header({ children }) {
                   setOpen={setOpen}
                   key={dropdownClientListKey}
                   isSubscribed={isSubscribed}
+                  openBrandModel={openBrandModel}
+                  subscription={subscription}
+                  activeBrands={activeBrands}
+                  getActiveBrands={getActiveBrands}
                 />
               </div>
               <div className="ml-8">
@@ -179,6 +281,35 @@ export default function Header({ children }) {
         Close={() => setOpen(false)}
         title={`Add Client`}
       />
+
+      {openBrandStatusModal && (
+        <>
+          <EnableBrands
+            isOpen={openBrandStatusModal}
+            close={setOpenBrandStatusModal}
+            toggleModal={toggleBrandStatusModal}
+            onClose={() => {
+              setOpenBrandStatusModal(false);
+            }}
+            newBrands={newBrands}
+            setNewBrands={setNewBrands}
+            selectAllBrand={selectAllBrand}
+            setSelectAllBrand={setSelectAllBrand}
+            activeBrands={activeBrands}
+            handleSaveBrandAction={handleSaveBrandAction}
+            loading={loading}
+          />
+          {showAlertModal && (
+            <>
+              <AlertModal
+                show={showAlertModal}
+                alertData={alertData}
+                toggleModal={toggleAlertModal}
+              />
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 }

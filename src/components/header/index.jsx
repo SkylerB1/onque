@@ -130,7 +130,12 @@ export default function Header({ children }) {
     onAccept: handleBrandStatusChangeAction,
   });
 
-  // const user = useSelector((state) => state.user.value);
+  const user = useSelector((state) => state.user.value);
+  let fullName = "";
+  if (user) {
+    const { firstName, lastName } = user;
+    fullName = firstName + " " + lastName;
+  }
 
   // if (user == null) {
   //   localStorage.clear();
@@ -236,7 +241,10 @@ export default function Header({ children }) {
                   getActiveBrands={getActiveBrands}
                 />
               </div>
-              <div className="ml-8">
+              <div className="ml-8 flex justify-center gap-2">
+                <div className=" capitalize mt-2 font-semibold text-white text-wrap  overflow-hidden md:overflow-visible break-words">
+                  Hello {fullName}
+                </div>
                 <NavProfile clientData={[]} setOpen={setOpen} />
               </div>
 

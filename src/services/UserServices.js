@@ -28,4 +28,16 @@ UserService.sendCollaboratorInvitation = async function (data) {
   );
   return result.data;
 };
+
+// Login user by admin
+UserService.loginAs = async function (data) {
+  let result = await axiosInstance.post("/user/login-as", data);
+  return result.data;
+};
+
+// Login user by admin
+UserService.backToAdmin = async function (data) {
+  let result = await axiosInstance.post("/user/back-to-admin", data);
+  return result.data;
+};
 export default UserService;

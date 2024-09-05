@@ -88,6 +88,7 @@ const Login = () => {
 
   const handlePostLogin = async (response) => {
     const { data: userData } = response;
+
     const { access_token } = userData;
     localStorage.setItem("access_token", access_token);
     setCookie("access_token", access_token);

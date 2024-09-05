@@ -20,6 +20,7 @@ import ClientDetails from "./pages/brand/clientDetails";
 import TeamAccess from "./pages/brand/teamAccess";
 import Setting from "./pages/setting/Settings/index";
 import UserManagement from "./pages/userManagement/index";
+import AllUsers from "./pages/allUsers";
 
 import { CookiesProvider } from "react-cookie";
 import PrivateRoute from "./PrivateRoute";
@@ -181,6 +182,16 @@ const router = createBrowserRouter([
   {
     path: "/404",
     element: <Error404 />,
+  },
+  {
+    path: "/allUsers",
+    element: (
+      <PrivateRoute>
+        <Header>
+          <AllUsers />
+        </Header>
+      </PrivateRoute>
+    ),
   },
 ]);
 const stripePromise = loadStripe(stripeKey);

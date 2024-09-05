@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MdPersonAddAlt1 } from "react-icons/md";
-import { PiPlugsConnectedBold } from "react-icons/pi";
+import { PiPlugsConnectedBold, PiUsersFourBold } from "react-icons/pi";
 import { FaMoneyBill } from "react-icons/fa";
 import { IoIosMenu, IoMdClose } from "react-icons/io";
 import { BsPersonFillGear } from "react-icons/bs";
@@ -168,6 +168,22 @@ const NavProfile = ({ clientData, setOpen }) => {
               <li className="gap-2 flex flex-1 items-center justify-start  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white">
                 <HiUserCircle className="text-lg" />
                 User Management
+              </li>
+            </Link>
+            <Link
+              to="/allUsers"
+              className={` py-2 hover:bg-[#fde8ef] pl-8  block px-4 ${
+                pathname === "/allUsers" ? "bg-[#fde8ef]" : ""
+              }`}
+              onClick={closeDropdown}
+            >
+              <li
+                className={`gap-2 flex flex-1 items-center justify-start text-black hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white  ${
+                  pathname === "/allUsers" ? `bg-[#fde8ef] ` : ""
+                }`}
+              >
+                <PiUsersFourBold className="text-lg " />
+                Site Users
               </li>
             </Link>
             <li className="pl-4 flex flex-1 items-center justify-start text-black  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600">

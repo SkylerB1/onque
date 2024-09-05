@@ -35,12 +35,6 @@ import ToasterCustomConatiner from "./components/ToasterCustomConatiner";
 import Smartlink from "./pages/smart-link";
 import PublicBio from "./pages/public/PublicBio";
 
-if (import.meta.env.MODE === "development") {
-  console.log("Running in development mode");
-} else {
-  console.log("Running in production mode");
-}
-
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
 const router = createBrowserRouter([

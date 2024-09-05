@@ -34,6 +34,7 @@ const DropdownClientList = ({
   const { getCounter } = useAppContext();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+
   const [userInfo, setUserInfo] = useState(user);
   const { getUserRefreshedData } = useUserInfo();
   const heighrestPlanName = getHighestPlanName();

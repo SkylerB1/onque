@@ -16,14 +16,19 @@ import AddClientModal from "../modal/addClientModal";
 import { toast } from "react-hot-toast";
 import { useCookies } from "react-cookie";
 import UserIcon from "../../assets/userIcon";
+import UserService from "../../services/UserServices";
+import { useAppContext } from "../../context/AuthContext";
+import { toastrSuccess } from "../../utils";
 
 const NavProfile = ({ clientData, setOpen }) => {
   const ref = useRef();
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const { handlePostLogin } = useAppContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dispatch = useDispatch();
   const [cookies, setCookie, removeCookie] = useCookies();
+  const user = useSelector((state) => state.user.value);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -67,6 +72,19 @@ const NavProfile = ({ clientData, setOpen }) => {
   useEffect(() => {
     dispatch(getUserFromLocalStorage());
   }, []);
+
+  const handlerAdminLogin = async () => {
+    let adminEmail = user.adminEmail;
+    let adminToken = user.adminToken;
+
+    let response = await UserService.backToAdmin({ adminEmail, adminToken });
+    const { firstName, lastName } = response;
+    let fullName = firstName + " " + lastName;
+    await handlePostLogin(response);
+    navigate("/planner/calendar");
+
+    toastrSuccess(`You are backed to logged in as ${fullName} successfully.`);
+  };
 
   return (
     <div className="inline-block text-left" ref={ref}>
@@ -170,23 +188,42 @@ const NavProfile = ({ clientData, setOpen }) => {
                 User Management
               </li>
             </Link>
-            <Link
-              to="/allUsers"
-              className={` py-2 hover:bg-[#fde8ef] pl-8  block px-4 ${
-                pathname === "/allUsers" ? "bg-[#fde8ef]" : ""
-              }`}
-              onClick={closeDropdown}
-            >
-              <li
-                className={`gap-2 flex flex-1 items-center justify-start text-black hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white  ${
-                  pathname === "/allUsers" ? `bg-[#fde8ef] ` : ""
-                }`}
-              >
-                <PiUsersFourBold className="text-lg " />
-                Site Users
-              </li>
-            </Link>
-            <li className="pl-4 flex flex-1 items-center justify-start text-black  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600">
+            {user?.adminRole == "admin" && (
+              <>
+                <Link
+                  to="/allUsers"
+                  className={` py-2 hover:bg-[#fde8ef] pl-8  block px-4 ${
+                    pathname === "/allUsers" ? "bg-[#fde8ef]" : ""
+                  }`}
+                  onClick={closeDropdown}
+                >
+                  <li
+                    className={`gap-2 flex flex-1 items-center justify-start text-black hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white  ${
+                      pathname === "/allUsers" ? `bg-[#fde8ef] ` : ""
+                    }`}
+                  >
+                    <PiUsersFourBold className="text-lg " />
+                    Site Users
+                  </li>
+                </Link>
+              </>
+            )}
+            {user?.adminRole == "user" &&
+              user?.adminEmail != "" &&
+              user?.adminToken != "" && (
+                <li className="pl-4 flex flex-1 items-center justify-start text-black  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600 border-t ">
+                  <PiUsersFourBold className="text-lg ml-4" />
+
+                  <div
+                    className="block px-4 py-2 cursor-pointer"
+                    onClick={handlerAdminLogin}
+                  >
+                    Back To Admin
+                  </div>
+                </li>
+              )}
+
+            <li className="pl-4 flex flex-1 items-center justify-start text-black  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600 border-t ">
               <HiOutlineLogout className="text-lg ml-4" />
               <div
                 className="block px-4 py-2 cursor-pointer"

@@ -34,29 +34,26 @@ export function Badges({ platformIconsToShow, status }) {
 
   return (
     <div className="flex flex-1 gap-2">
-      {platformIconsToShow.map((platformIconsToShow, index) => (
-        <Badge
-          color="green"
-          content={
-            status === postStatuses.published ? (
-              <FaCheck className="h-3 w-3 text-white" strokeWidth={0.5} />
-            ) : status === postStatuses.error ? (
-              <BsExclamation className="h-3 w-3 text-white" strokeWidth={0.5} />
-            ) : (
-              <MdOutlineDrafts
-                className="h-3 w-3 text-white"
-                strokeWidth={0.5}
-              />
-            )
-          }
-          className={statusClasses[status]}
-          key={index}
-        >
-          <Button className={`w-[2rem] px-2 py-2 ${buttonBgClasses[status]}`}>
-            {platformIconsToShow}
-          </Button>
-        </Badge>
-      ))}
+      <Badge
+        color="green"
+        content={
+          status === postStatuses.published ? (
+            <FaCheck className="h-3 w-3 text-white" strokeWidth={0.5} />
+          ) : status === postStatuses.error ? (
+            <BsExclamation className="h-3 w-3 text-white" strokeWidth={0.5} />
+          ) : (
+            <MdOutlineDrafts
+              className="h-3 w-3 text-white"
+              strokeWidth={0.5}
+            />
+          )
+        }
+        className={statusClasses[status]}
+      >
+        <Button className={`w-[2rem] px-2 py-2 ${buttonBgClasses[status]}`}>
+          {platformIconsToShow}
+        </Button>
+      </Badge>
     </div>
   );
 }

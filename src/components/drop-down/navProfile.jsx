@@ -81,7 +81,8 @@ const NavProfile = ({ clientData, setOpen }) => {
     const { firstName, lastName } = response;
     let fullName = firstName + " " + lastName;
     await handlePostLogin(response);
-    navigate("/allUsers");
+    navigate("/planner/calendar");
+    closeDropdown();
 
     toastrSuccess(`You are backed to logged in as ${fullName} successfully.`);
   };

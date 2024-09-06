@@ -88,9 +88,9 @@ const Connection = () => {
     setInstagramAuth(!instagramAuth);
   };
 
-  const handleShowModal = (header) => {
+  const handleShowModal = (header, toggle = true) => {
     setModalHeader(header);
-    setShowModal(true);
+    setShowModal(toggle);
   };
   // This function is called when clicked on on social media when wants to connect
   const handleMenuItemClick = (item) => {

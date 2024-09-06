@@ -30,6 +30,12 @@ UserService.sendCollaboratorInvitation = async function (data) {
 };
 
 // Login user by admin
+UserService.getAllUsers = async function (data) {
+  let result = await axiosInstance.post("/user/get-all-users", data);
+  return result.data;
+};
+
+// Login user by admin
 UserService.loginAs = async function (data) {
   let result = await axiosInstance.post("/user/login-as", data);
   return result.data;

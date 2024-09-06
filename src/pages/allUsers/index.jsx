@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { ListItem, ListItemPrefix } from "@material-tailwind/react";
 import {
   Button,
   Typography,
@@ -25,6 +26,8 @@ import { useAppContext } from "../../context/AuthContext";
 import { setUser } from "../../redux/features/userSlice";
 import useConnections from "../../components/customHooks/useConnections";
 import UserService from "../../services/UserServices";
+import { FaNetworkWired } from "react-icons/fa";
+import { AllUserTable } from "./AllUserTable";
 
 // Constants for pagination
 const DEFAULT_LIMIT = 10;
@@ -57,6 +60,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 const AllUsers = () => {
+  const { pathname } = useLocation();
+  const url = pathname;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_LIMIT);
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,150 +77,107 @@ const AllUsers = () => {
   const user = useSelector((state) => state.user.value);
 
   // Fetch all users data
-  const getAllUsersData = async (page, rowsPerPage, searchQuery) => {
-    const offset = page * rowsPerPage;
-    setLoading(true);
-    try {
-      const response = await axiosInstance.post(
-        API_URL + `/user/get-all-users`,
-        {
-          params: { limit: rowsPerPage, offset, searchValue: searchQuery },
-        }
-      );
-      setUsersData(response.data.rows);
-      setTotalUsers(response.data.count);
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      toastrError("Failed to fetch users.");
-    }
-  };
+  // const getAllUsersData = async (page, rowsPerPage, searchQuery) => {
+  //   const offset = page * rowsPerPage;
+  //   setLoading(true);
+  //   try {
+  //     const response = await UserService.getAllUsers({
+  //       limit: rowsPerPage,
+  //       offset,
+  //       searchValue: searchQuery,
+  //     });
 
-  useEffect(() => {
-    if (user?.adminRole == "admin") {
-      getAllUsersData(page, rowsPerPage, searchQuery);
-    }
-  }, [page, rowsPerPage, searchQuery]);
+  //     setUsersData(response.rows);
+  //     setTotalUsers(response.count);
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     toastrError("Failed to fetch users.");
+  //   }
+  // };
 
-  useEffect(() => {
-    if (user?.adminRole != "admin") {
-      toastrError("Unauthrized Access!");
-      setTimeout(() => {
-        navigate("/planner/calendar");
-      }, 2000);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (user?.adminRole == "admin") {
+  //     getAllUsersData(page, rowsPerPage, searchQuery);
+  //   }
+  // }, [page, rowsPerPage, searchQuery]);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+  // useEffect(() => {
+  //   if (user?.adminRole != "admin") {
+  //     toastrError("Unauthrized Access!");
+  //     setTimeout(() => {
+  //       navigate("/planner/calendar");
+  //     }, 2000);
+  //   }
+  // }, []);
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+  // const handleChangePage = (event, newPage) => {
+  //   setPage(newPage);
+  // };
 
-  const handleSearch = (event) => {
-    setSearchQuery(event.target.value);
-    setPage(0);
-  };
+  // const handleChangeRowsPerPage = (event) => {
+  //   setRowsPerPage(parseInt(event.target.value, 10));
+  //   setPage(0);
+  // };
 
-  const handleLogin = async (id) => {
-    setRowLoading((prev) => ({ ...prev, [id]: true }));
-    try {
-      const response = await UserService.loginAs({ id: id });
-      const { firstName, lastName } = response;
-      let fullName = firstName + " " + lastName;
+  // const handleSearch = (event) => {
+  //   setSearchQuery(event.target.value);
+  //   setPage(0);
+  // };
 
-      await handlePostLogin(response);
-      navigate("/planner/calendar");
-      toastrSuccess(`You are logged in as ${fullName} successfully.`);
-    } catch (error) {
-      const message = error.response?.data?.message || "An error occurred.";
-      toastrError(message);
-    } finally {
-      setRowLoading((prev) => ({ ...prev, [id]: false }));
-    }
-  };
+  // const handleLogin = async (id) => {
+  //   setRowLoading((prev) => ({ ...prev, [id]: true }));
+  //   try {
+  //     const response = await UserService.loginAs({ id: id });
+  //     const { firstName, lastName } = response;
+  //     let fullName = firstName + " " + lastName;
+
+  //     await handlePostLogin(response);
+  //     navigate("/planner/calendar");
+  //     toastrSuccess(`You are logged in as ${fullName} successfully.`);
+  //   } catch (error) {
+  //     const message = error.response?.data?.message || "An error occurred.";
+  //     toastrError(message);
+  //   } finally {
+  //     setRowLoading((prev) => ({ ...prev, [id]: false }));
+  //   }
+  // };
 
   return (
-    <div className="mt-24 max-h-[10rem]">
-      <Box
-        className="content-center"
-        style={{
-          maxHeight: "42rem",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "0 20px",
-          marginTop: "7.6rem",
-        }}
-      >
-        <BoxWrapper>
-          <Box sx={{ textAlign: "end" }}>
-            <TextField
-              sx={{ width: "20rem", borderRadius: "10px" }}
-              label="Search"
-              variant="outlined"
-              fullWidth
-              margin="normal"
-              onChange={handleSearch}
-              value={searchQuery}
-            />
-          </Box>
-
-          <TableContainer component={Paper} sx={{ maxHeight: "40rem" }}>
-            <Table>
-              <TableHead sx={{ bgcolor: "white", zIndex: "9999" }}>
-                <TableRow>
-                  {columns.map((column) => (
-                    <StyledTableCell key={column.id}>
-                      <Typography
-                        variant="subtitle2"
-                        color="textSecondary"
-                        style={{ fontWeight: "bold" }}
-                      >
-                        {column.label}
-                      </Typography>
-                    </StyledTableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {usersData?.map((row) => (
-                  <TableRow key={row.id}>
-                    {columns.map((column) => (
-                      <StyledTableCell key={column.id}>
-                        {column.id === "actions" ? (
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={() => handleLogin(row.id)}
-                            disabled={rowLoading[row.id]}
-                          >
-                            {rowLoading[row.id] ? "Loading..." : "Login"}
-                          </Button>
-                        ) : (
-                          row[column.id]
-                        )}
-                      </StyledTableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={totalUsers}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </BoxWrapper>
-      </Box>
+    <div className=" ">
+      <div className="">
+        <div className="min-h-[50rem] flex mb-2 bg-white rounded-lg shadow-2xl">
+          <div className="xl:w-1/6 xl:border-r-2 xl:ml-8 md:w-2/6 md:ml-2 ">
+            <div className="mt-24 ">
+              <div className="ml-2 mr-2">
+                <Link
+                  className="w-full text-base text-black hover:text-black"
+                  to={"/allUsers"}
+                >
+                  <ListItem
+                    className={
+                      url === "/allUsers"
+                        ? "w-full text-black mt-8 bg-[#fde8ef] rounded-md shadow-sm hover:bg-[#fde8ef] hover:text-[#ec407a] "
+                        : "w-full mt-8 hover:bg-[#fde8ef] hover:text-[#ec407a]"
+                    }
+                  >
+                    <ListItemPrefix>
+                      <FaNetworkWired className="h-5 w-5" />
+                    </ListItemPrefix>
+                    All Users
+                  </ListItem>
+                </Link>
+              </div>
+            </div>
+          </div>
+          {/* Right Section */}
+          <div className="xl:w-5/6 pb-40 md:w-4/6">
+            <div className="mt-24">
+              <AllUserTable />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

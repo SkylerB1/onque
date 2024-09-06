@@ -27,7 +27,7 @@ const BlockUIComponent = ({}) => {
         <div className="fixed inset-0 bg-white-700 bg-opacity-75 flex items-center justify-center z-50">
           <div className="w-64 text-black font-light  text-center   p-5 rounded-lg shadow-lg">
             <LoadingSVG fill="rgb(203 213 225)" />
-            <p class="text-gray-500">Loading, please wait...</p>
+            <p className="text-gray-500">Loading, please wait...</p>
           </div>
         </div>
       )}{" "}

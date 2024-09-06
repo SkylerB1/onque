@@ -7,6 +7,7 @@ import useConnections from "./useConnections";
 import { toastrError } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import { setUser } from "../../redux/features/userSlice";
+import UserService from "../../services/UserServices";
 
 const useUserInfo = () => {
   const dispatch = useDispatch();
@@ -50,7 +51,7 @@ const useUserInfo = () => {
     return userBrand;
   };
 
-  const getUserRefreshedData = async () => {
+  const getUserRefreshedData = async (params = {}) => {
     try {
       let token = localStorage.getItem("access_token");
       if (token == undefined) {
@@ -58,11 +59,8 @@ const useUserInfo = () => {
       }
       localStorage.setItem("access_token", token);
       setCookie("access_token", token);
-
-      const response = await axiosInstance.post(
-        `${import.meta.env.VITE_API_URL}/user/refresh-token`,
-        { isRefreshToken: false }
-      );
+      let data = { ...params, isRefreshToken: false };
+      const response = await UserService.refreshToken(data);
 
       if (response?.status === 200) {
         let userInfo = await updateData(response);

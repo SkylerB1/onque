@@ -157,7 +157,7 @@ export function ChangePlanModel({
   const toggleBrandStatusModal = () => {
     setOpenBrandStatusModal(!openBrandStatusModal);
   };
-
+  // Test comment
   const openBrandModel = async () => {
     await getBrands();
     setOpenBrandStatusModal(true);

@@ -20,6 +20,7 @@ import ClientDetails from "./pages/brand/clientDetails";
 import TeamAccess from "./pages/brand/teamAccess";
 import Setting from "./pages/setting/Settings/index";
 import UserManagement from "./pages/userManagement/index";
+import AllUsers from "./pages/allUsers";
 
 import { CookiesProvider } from "react-cookie";
 import PrivateRoute from "./PrivateRoute";
@@ -33,12 +34,6 @@ import NewPassword from "./pages/auth/NewPassword";
 import ToasterCustomConatiner from "./components/ToasterCustomConatiner";
 import Smartlink from "./pages/smart-link";
 import PublicBio from "./pages/public/PublicBio";
-
-if (import.meta.env.MODE === "development") {
-  console.log("Running in development mode");
-} else {
-  console.log("Running in production mode");
-}
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
@@ -181,6 +176,16 @@ const router = createBrowserRouter([
   {
     path: "/404",
     element: <Error404 />,
+  },
+  {
+    path: "/allUsers",
+    element: (
+      <PrivateRoute>
+        <Header>
+          <AllUsers />
+        </Header>
+      </PrivateRoute>
+    ),
   },
 ]);
 const stripePromise = loadStripe(stripeKey);

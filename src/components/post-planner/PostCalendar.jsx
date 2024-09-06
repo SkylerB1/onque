@@ -227,14 +227,14 @@ const PostCalendar = (props) => {
                   </Button>}
             </div>
 
-            <Button
+            {validations?.posts_count_monthly < validations?.max_posts_monthly && <Button
               size="sm"
               onClick={handleModal}
               className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
             >
               <IoMdAdd className="w-5 h-5 mr-1" />
               Create Post
-            </Button>
+            </Button>}
           </>
         )}
         <Card className="mt-2">

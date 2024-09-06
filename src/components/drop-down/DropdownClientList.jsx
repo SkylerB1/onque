@@ -52,7 +52,13 @@ const DropdownClientList = ({
 
   const toggleDropdown = () => {
     if (isOpen == false) {
-      getUserRefreshedData().then((response) => {
+      let adminEmail = user?.adminEmail;
+      let adminToken = user?.adminToken;
+      let params = {
+        adminEmail,
+        adminToken,
+      };
+      getUserRefreshedData(params).then((response) => {
         if (response) {
           setUserInfo(response);
         }
@@ -63,7 +69,6 @@ const DropdownClientList = ({
   };
 
   const handleItemClick = (item) => {
-    alert("ok");
     setIsOpen(false);
     const user = useLocalStorage("user", "get");
     const data = { ...user, brand: item };

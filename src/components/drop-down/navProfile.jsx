@@ -81,7 +81,7 @@ const NavProfile = ({ clientData, setOpen }) => {
     const { firstName, lastName } = response;
     let fullName = firstName + " " + lastName;
     await handlePostLogin(response);
-    navigate("/planner/calendar");
+    navigate("/allUsers");
 
     toastrSuccess(`You are backed to logged in as ${fullName} successfully.`);
   };
@@ -209,8 +209,8 @@ const NavProfile = ({ clientData, setOpen }) => {
               </>
             )}
             {user?.adminRole == "user" &&
-              user?.adminEmail != "" &&
-              user?.adminToken != "" && (
+              user.adminEmail &&
+              user.adminToken && (
                 <li className="pl-4 flex flex-1 items-center justify-start text-black  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600 border-t ">
                   <PiUsersFourBold className="text-lg ml-4" />
 

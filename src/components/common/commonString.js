@@ -4,7 +4,7 @@ export const InstagramAccount = "instagram_account";
 export const TwitterPlatform = "Twitter";
 export const YoutubePlatform = "YouTube";
 export const GoogleBusinessPlatform = "Google_Business";
-export const RegisterSuccessful = "Registration successful";
+export const RegisterSuccessful = "Registration successful verification email is sent on your email";
 export const RegisterFailed = "Registration failed";
 export const SelectBrandPage =
   "Select the page you would like to connect to this client.";

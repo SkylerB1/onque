@@ -219,7 +219,7 @@ export default function Header({ children }) {
             {/* Header section */}
             <div className="flex items-center gap-4">
               <div className="mr-4 hidden lg:block">{navList}</div>
-              {!isSubscribed && (
+              {!(user?.adminRole === "admin" || isSubscribed) && (
                 <Button
                   variant="gradient"
                   size="sm"

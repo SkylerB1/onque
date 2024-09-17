@@ -141,7 +141,7 @@ const DropdownClientList = ({
             />
           )}
 
-          {!isSubscribed && (
+          {!(userInfo?.adminRole === "admin" || isSubscribed) && (
             <>
               <div
                 id="alert-4"
@@ -162,7 +162,7 @@ const DropdownClientList = ({
               </div>
             </>
           )}
-          {isSubscribed && userInfo?.clients_count < userInfo?.max_clients ? (
+          {userInfo?.adminRole === "admin" || isSubscribed && userInfo?.clients_count < userInfo?.max_clients ? (
             <>
               <div
                 id="alert-1"
@@ -172,8 +172,12 @@ const DropdownClientList = ({
                 <InfoIcon />
                 <span className="sr-only">Info</span>
                 <div className="ms-3 text-sm font-medium">
-                  You have {clients_count} brands out {max_clients}.
+                  {userInfo?.adminRole === "admin"
+                    ? `You have ${clients_count} clients.`
+                    : `You have ${clients_count} ${userInfo?.adminRole !== "admin" && "brands out"} ${max_clients}.`
+                  }
                 </div>
+
               </div>
             </>
           ) : (

@@ -34,6 +34,7 @@ import NewPassword from "./pages/auth/NewPassword";
 import ToasterCustomConatiner from "./components/ToasterCustomConatiner";
 import Smartlink from "./pages/smart-link";
 import PublicBio from "./pages/public/PublicBio";
+import VerifyEmail from "./pages/auth/verify-email/index";
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
   {
     path: "/forgot-password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/verify-email",
+    element: <VerifyEmail />,
   },
   {
     path: "/public/smartlink/:bioname?",

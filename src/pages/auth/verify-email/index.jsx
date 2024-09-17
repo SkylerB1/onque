@@ -30,8 +30,9 @@ const VerifyEmail = () => {
       toastrError(message);
     }
   };
-
+  console.log("Working")
   useEffect(() => {
+    console.log(token, "Token")
     if (!token) {
       navigate("/404");
     }

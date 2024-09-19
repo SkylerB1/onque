@@ -59,6 +59,7 @@ const RolesAndPermission = ({ collaborators }) => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState(initial);
   const { value: roles, loading } = useSelector((state) => state.roles);
+  const user = useSelector((state) => state.user.value);
   const rolesData = useMemo(
     () =>
       roles?.filter((item) => {
@@ -148,7 +149,7 @@ const RolesAndPermission = ({ collaborators }) => {
       <div className="xl:mr-52 md:mr-0 sm:mr-0">
         <Card>
           <CardBody>
-            {isSubscribed == true ? (
+            {isSubscribed == true || user?.adminRole === "admin" ? (
               <>
                 <div>
                   <div className="mb-4 mt-4 flex flex-col gap-2 justify-between md:flex-row md:items-center">

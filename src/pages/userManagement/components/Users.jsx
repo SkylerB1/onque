@@ -76,6 +76,7 @@ const Users = ({
   const { subscription } = useAppContext();
   const isSubscribed = Boolean(subscription) || false;
   const { value: brands = [] } = useSelector((state) => state.brands);
+  const user = useSelector((state) => state.user.value);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
@@ -294,7 +295,7 @@ const Users = ({
   };
   const openAddUserDialog = () => {
     // check user has taken the subscription or not
-    if (isSubscribed == true) {
+    if (isSubscribed == true || user?.adminRole === "admin") {
       setUserDialogOpen(true);
     } else {
       // open the go premmium dialog

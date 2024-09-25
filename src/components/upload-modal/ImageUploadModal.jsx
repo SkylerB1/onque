@@ -19,7 +19,7 @@ function ImgUploadModal({ show, toggleModal, onChange }) {
           <div className="flex items-center justify-center w-full">
             <Dropzone
               accept={{ "image/jpeg": [], "image/png": [] }}
-              onDrop={onChange}
+              onDrop={(files) => onChange(files, "image")}
             >
               {({ getRootProps, getInputProps }) => (
                 <section className="w-full">
@@ -50,9 +50,9 @@ function ImgUploadModal({ show, toggleModal, onChange }) {
                           </span>
                           or drag and drop
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {/* <p className="text-xs text-gray-500 dark:text-gray-400">
                           SVG, PNG, JPG or GIF (MAX. 800x400px)
-                        </p>
+                        </p> */}
                       </div>
                     </label>
                     <input {...getInputProps()} />

@@ -20,6 +20,7 @@ import ClientDetails from "./pages/brand/clientDetails";
 import TeamAccess from "./pages/brand/teamAccess";
 import Setting from "./pages/setting/Settings/index";
 import UserManagement from "./pages/userManagement/index";
+import AllUsers from "./pages/allUsers";
 
 import { CookiesProvider } from "react-cookie";
 import PrivateRoute from "./PrivateRoute";
@@ -31,12 +32,9 @@ import ForgotPassword from "./pages/auth/fogot-password";
 import Error404 from "./pages/404";
 import NewPassword from "./pages/auth/NewPassword";
 import ToasterCustomConatiner from "./components/ToasterCustomConatiner";
-
-if (import.meta.env.MODE === "development") {
-  console.log("Running in development mode");
-} else {
-  console.log("Running in production mode");
-}
+import Smartlink from "./pages/smart-link";
+import PublicBio from "./pages/public/PublicBio";
+import VerifyEmail from "./pages/auth/verify-email/index";
 
 const stripeKey = import.meta.env.VITE_STRIPE_KEY;
 
@@ -58,6 +56,14 @@ const router = createBrowserRouter([
     element: <ForgotPassword />,
   },
   {
+    path: "/verify-email",
+    element: <VerifyEmail />,
+  },
+  {
+    path: "/public/smartlink/:bioname?",
+    element: <PublicBio />,
+  },
+  {
     path: "/privacy-policy",
     element: <PrivacyPolicy />,
   },
@@ -75,6 +81,16 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <Header>
           <Calendar />
+        </Header>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/smartlink",
+    element: (
+      <PrivateRoute>
+        <Header>
+          <Smartlink />
         </Header>
       </PrivateRoute>
     ),
@@ -165,6 +181,16 @@ const router = createBrowserRouter([
   {
     path: "/404",
     element: <Error404 />,
+  },
+  {
+    path: "/allUsers",
+    element: (
+      <PrivateRoute>
+        <Header>
+          <AllUsers />
+        </Header>
+      </PrivateRoute>
+    ),
   },
 ]);
 const stripePromise = loadStripe(stripeKey);

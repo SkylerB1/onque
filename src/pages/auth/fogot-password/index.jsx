@@ -5,6 +5,10 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import {
+  toastrError,
+  toastrSuccess
+} from "../../../utils";
 const ORIGIN_URL = import.meta.env.VITE_ORIGIN_URL;
 
 const ForgotPassword = () => {
@@ -30,12 +34,12 @@ const ForgotPassword = () => {
       );
       if (response.status === 200) {
         navigate("/login");
-        toast.success(response?.data?.msg);
+        toastrSuccess(response?.data?.msg);
       }
     } catch (error) {
       console.log(error);
       const message = error.response.data.msg || "An error occurred.";
-      toast.error(message);
+      toastrError(message);
     }
   };
 

@@ -46,6 +46,7 @@ const ModalInput = ({
   toggleAiModal,
   handleCaption,
   files,
+  setFiles,
   handleimgError,
   handleVideoError,
   removeimg,
@@ -252,6 +253,7 @@ const ModalInput = ({
 
               <RenderFiles
                 files={files}
+                setFiles={setFiles}
                 handleimgError={handleimgError}
                 handleVideoError={handleVideoError}
                 removeimg={removeimg}

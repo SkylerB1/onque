@@ -56,6 +56,7 @@ import {
   ImageMimeTypesForFbStory,
   VideoMimeTypesForFbStory,
   postStatuses,
+  TikTokBusiness,
 } from "../common/commonString";
 import ImgUploadModal from "../upload-modal/ImageUploadModal.jsx";
 import ImageEditorModal from "../upload-modal/ImageEditorModal.jsx";
@@ -117,7 +118,7 @@ const CreatePostModal = ({
   setVideoDurations,
 }) => {
   const isDuplicating = useMemo(
-    () => isEdit === "Published" || isEdit === "SaveAsDraft" || false,
+    () => isEdit === "Published" || false,
     [isEdit]
   );
 
@@ -216,7 +217,7 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection, validations, blockUI, setblockUI } =
+  const { broadcastConnection, validations, blockUI, setblockUI, getCounter } =
     useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
@@ -239,6 +240,7 @@ const CreatePostModal = ({
       [InstagramPlatform]: GetInstagramComponent,
       [YoutubePlatform]: GetYoutubeComponent,
       [TikTokPersonal]: GetTikTokComponent,
+      [TikTokBusiness]: GetTikTokComponent,
       [TwitterPlatform]: GetTwitterComponent,
       [LinkedInPages]: GetLinkedinComponent,
       [LinkedInProfile]: GetLinkedinComponent,
@@ -373,6 +375,7 @@ const CreatePostModal = ({
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         await getPostData();
+
         handleClose();
         handleLoading(false);
       }
@@ -771,7 +774,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          dimensions?.width > 1920
+          dimensions?.width > 1920 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -785,7 +789,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78)
+          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -799,7 +804,8 @@ const CreatePostModal = ({
         if (
           (item.mediaType == "POST" || item.mediaType == "STORY") &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+          (dimensions?.duration < 0.3 || dimensions?.duration > 60) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -823,7 +829,8 @@ const CreatePostModal = ({
           ]);
         } else if (
           item.mediaType == "REEL" &&
-          dimensions?.aspectRatio !== 0.5625
+          dimensions?.aspectRatio !== 0.5625 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -885,7 +892,11 @@ const CreatePostModal = ({
               files.map((file) => {
                 // check if file is image
                 if (isContainImage(file) == true) {
-                  if (!ImageMimeTypesForFbStory.includes(file.type)) {
+                  if (
+                    !ImageMimeTypesForFbStory.includes(
+                      file?.mimetype || file?.type
+                    )
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -919,7 +930,11 @@ const CreatePostModal = ({
 
                 if (isContainVideo(file) == true) {
                   // console.log(file);
-                  if (!VideoMimeTypesForFbStory.includes(file.type)) {
+                  if (
+                    !VideoMimeTypesForFbStory.includes(
+                      file?.type || file?.mimetype
+                    )
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -1627,6 +1642,7 @@ const CreatePostModal = ({
                       setCaption={setCaption}
                       handleCaption={handleCaption}
                       files={files}
+                      setFiles={setFiles}
                       handleimgError={handleimgError}
                       handleVideoError={handleVideoError}
                       removeimg={removeimg}

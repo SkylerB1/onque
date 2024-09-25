@@ -16,7 +16,7 @@ import useConnections from "../components/customHooks/useConnections";
 import SubscriptionServices from "../services/SubscriptionServices";
 import UserService from "../services/UserServices";
 import toast, { Toaster } from "react-hot-toast";
-import { toastrError } from "../utils";
+import { toastrError, toastrSuccess } from "../utils";
 
 const AppContext = createContext({
   subscription: null,
@@ -78,6 +78,26 @@ export function AppContextProvider({ children }) {
     }
   };
 
+  const handlePostLogin = async (response) => {
+    const userData = response;
+    const { access_token } = userData;
+
+    localStorage.setItem("access_token", access_token);
+    setCookie("access_token", access_token);
+    dispatch(getBrands()).then(async (item) => {
+      const brand = item.payload.brands[0];
+      const userBrand = {
+        ...userData,
+        brand: brand,
+      };
+      await getCounter(brand.id);
+      dispatch(setUser(userBrand));
+      await getConnections(brand.id);
+      await getSubscriptions();
+      return true;
+    });
+  };
+
   useEffect(() => {
     let user = localStorage.getItem("user");
     if (user) {
@@ -118,6 +138,7 @@ export function AppContextProvider({ children }) {
     setDropdownClientListKey,
     blockUI,
     setblockUI,
+    handlePostLogin,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

@@ -170,7 +170,7 @@ const NavProfile = ({ clientData, setOpen }) => {
                 User Management
               </li>
             </Link>
-            <li className="pl-4 flex flex-1 items-center justify-start text-black  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600">
+            <li className="pl-5 flex flex-1 items-center justify-start text-black  hover:bg-[#fde8ef] dark:hover:bg-gray-600 dark:hover:text-white hover:text-red-600">
               <HiOutlineLogout className="text-lg ml-4" />
               <div
                 className="block px-4 py-2 cursor-pointer"

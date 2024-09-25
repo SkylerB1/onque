@@ -122,6 +122,7 @@ const CreatePostModal = ({
     [isEdit]
   );
 
+  const [showReelOnFeedChecked, setShowReelOnFeedChecked] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [viewMode, setViewMode] = useState(0);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -144,6 +145,7 @@ const CreatePostModal = ({
   const [submitButtonKey, setSubmitButtonKey] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
+
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
@@ -1588,6 +1590,12 @@ const CreatePostModal = ({
                                     platform={platform}
                                     selectedPreview={selectedPreview}
                                     setSelectedPreview={setSelectedPreview}
+                                    showReelOnFeedChecked={
+                                      showReelOnFeedChecked
+                                    }
+                                    setShowReelOnFeedChecked={
+                                      setShowReelOnFeedChecked
+                                    }
                                   />
                                 </span>
                               );
@@ -1646,6 +1654,8 @@ const CreatePostModal = ({
                       setAdditionalPresets={setAdditionalPresets}
                       isDuplicating={isDuplicating}
                       brandId={brandId}
+                      showReelOnFeedChecked={showReelOnFeedChecked}
+                      setShowReelOnFeedChecked={setShowReelOnFeedChecked}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">

@@ -87,7 +87,10 @@ export default function AddInstagramCollaboratorDialog({
             color="blue-gray"
             size="sm"
             variant="text"
-            onClick={() => handleClick("autoPublish", true)}
+            onClick={() => {
+              // handleClick("autoPublish", true);
+              handleClose();
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

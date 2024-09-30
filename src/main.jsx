@@ -21,7 +21,7 @@ import TeamAccess from "./pages/brand/teamAccess";
 import Setting from "./pages/setting/Settings/index";
 import UserManagement from "./pages/userManagement/index";
 import AllUsers from "./pages/allUsers";
-
+import AdminPasswordPage from "./pages/adminPassword";
 import { CookiesProvider } from "react-cookie";
 import PrivateRoute from "./PrivateRoute";
 import Home from "./pages";
@@ -188,6 +188,16 @@ const router = createBrowserRouter([
       <PrivateRoute>
         <Header>
           <AllUsers />
+        </Header>
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "/adminPassword",
+    element: (
+      <PrivateRoute>
+        <Header>
+          <AdminPasswordPage />
         </Header>
       </PrivateRoute>
     ),

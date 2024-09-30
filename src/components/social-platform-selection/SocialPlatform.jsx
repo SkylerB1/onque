@@ -20,6 +20,8 @@ const SocialPlatform = ({
   selectedPreview,
   setSelectedPreview,
   platform,
+  showReelOnFeedChecked,
+  setShowReelOnFeedChecked,
 }) => {
   const [open, setOpen] = useState(false);
   const selected = selectedPlaforms.find((item) => item.platform === platform);
@@ -73,6 +75,17 @@ const SocialPlatform = ({
         element.mediaType = type;
       }
     });
+    let isInstagramReelSelected = plaforms.find((element) => {
+      if (platform == "Instagram" && type == "REEL") {
+        return true;
+      }
+    });
+
+    if (isInstagramReelSelected) {
+      setShowReelOnFeedChecked(true);
+    } else {
+      setShowReelOnFeedChecked(false);
+    }
 
     setSelectedPlatforms(plaforms);
     setSelectedPreview((prev) => ({ ...prev, mediaType: type }));

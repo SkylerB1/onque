@@ -59,6 +59,8 @@ const ModalInput = ({
   isDuplicating,
   brandId,
   setShowEmoji,
+  showReelOnFeedChecked,
+  setShowReelOnFeedChecked,
 }) => {
   const user = useSelector((state) => state.user.value);
   const inputRef = useRef(null);
@@ -306,6 +308,8 @@ const ModalInput = ({
                 brandId={brandId}
                 mediaType={item.mediaType}
                 files={files}
+                showReelOnFeedChecked={showReelOnFeedChecked}
+                setShowReelOnFeedChecked={setShowReelOnFeedChecked}
               />
             );
           }

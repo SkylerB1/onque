@@ -89,14 +89,19 @@ const PostCalendar = (props) => {
       minute: "numeric",
       hour12: true,
     };
+    const timeOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    const formattedPostTime = postDate.toLocaleTimeString("en-US", timeOptions);
     const formattedPostDate = postDate.toLocaleDateString("en-US", options);
-
     return (
       <Event
         caption={abbreviateString(eventInfo.event._def.title)}
         status={status}
         dataData={dateStr}
-        eventTime={eventInfo.timeText}
+        eventTime={formattedPostTime}
         postDate={formattedPostDate}
         setIsEdit={setIsEdit}
         platformLogo={eventInfo.event._def.extendedProps.platform}
@@ -167,6 +172,7 @@ const PostCalendar = (props) => {
 
     setTextForRoleInfo(textForRoleInfo);
   }, [role]);
+ 
   return (
     <>
       <div className="md:my-2 xl:mt-24 lg:mt-24">

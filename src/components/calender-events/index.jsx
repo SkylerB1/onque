@@ -96,7 +96,8 @@ const Event = ({
                 {platformIcon}
               </div>
             ) : null;
-            return <span className={`mb-3 flex-shrink-0 flex-col rounded-lg ${statusClasses[status === 'Pending' ? status : status == 'SaveAsDraft' ? '' : item?.status]}`}>
+            return <span className={`mb-3 flex-shrink-0 flex-col rounded-lg ${statusClasses[status === 'Pending' ? status : status === 'Ongoing' ?  status : status === 'SaveAsDraft' ? '' : item?.status]}`}>
+
               {item?.status === postStatuses.published ? (
                 <Badges platformIconsToShow={platformIconShow} status={item?.status} platforms={platforms} />
               ) : status === postStatuses.pending ? (
@@ -114,7 +115,7 @@ const Event = ({
                     <div className="ml-2">Draft</div>
                   </div>}
                 </>
-              ) : item?.status === postStatuses.ongoing ? (
+              ) : status === postStatuses.ongoing ? (
                 <>
                   <div class="flex items-center justify-start mt-2">
                     <div class="w-3 h-3 bg-green-100 rounded-full"></div>{" "}

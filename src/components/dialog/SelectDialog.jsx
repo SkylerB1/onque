@@ -39,8 +39,7 @@ const SelectionModal = ({
               return (
                 <div
                   key={index}
-                  onClick={() => handleSelect(item)}
-                  className={`flex flex-row items-center cursor-pointer ${
+                  className={`flex flex-row items-center cursor-pointer pr-4 ${
                     index > 0 && "mt-2"
                   }`}
                 >
@@ -65,7 +64,8 @@ const SelectionModal = ({
                       </span>
                     )}
                   </div>
-                  <Typography color="blue" variant="small">
+                  <Typography color="blue" variant="small"
+                  onClick={() => handleSelect(item)}>
                     Connect
                   </Typography>
                 </div>

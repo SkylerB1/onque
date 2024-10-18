@@ -5,12 +5,12 @@ export const abbreviateString = (str) => {
   }
 
   // Get the first 6 characters
-  const firstPart = str.slice(0, 6);
+  const firstPart = str.slice(0, 25);
   // Get the last 6 characters
   const lastPart = str.slice(-6);
 
   // Combine the parts with three dots in between
-  return `${firstPart}...${lastPart}`;
+  return `${firstPart}...`;
 };
 
 export function shortenText(text, seeMore = false, length = 150) {

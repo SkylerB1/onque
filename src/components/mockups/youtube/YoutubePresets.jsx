@@ -26,7 +26,7 @@ function YoutubePresets({ setAdditionalPresets, additionalPresets }) {
   const audience_configuraitons = useMemo(
     () => [
       { label: "Yes, it's a video made for kids", value: true },
-      { label: "No, it's a video made for kids", value: false },
+      { label: "No, it's not a video made for kids", value: false },
     ],
     []
   );

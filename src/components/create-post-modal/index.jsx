@@ -1209,18 +1209,18 @@ const CreatePostModal = ({
         }
         const maxVideoDuration =
           additionalPresets[platform].maxVideoPostDuration;
-        if (additionalPresets[platform].privacyLevel === "") {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "tiktok",
-              error:
-                "TikTok - Tiktok Presets - A privacy option must be selected.",
-            },
-          ]);
-        }
+        // if (additionalPresets[platform].privacyLevel === "") {
+        //   setErrors((prev) => [
+        //     ...prev,
+        //     {
+        //       id: 0,
+        //       type: "",
+        //       platform: "tiktok",
+        //       error:
+        //         "TikTok - Tiktok Presets - A privacy option must be selected.",
+        //     },
+        //   ]);
+        // }
         if (hasImages) {
           setErrors((prev) => [
             ...prev,

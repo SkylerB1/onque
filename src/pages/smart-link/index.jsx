@@ -81,10 +81,10 @@ const Smartlink = () => {
   return (
     <div className="mt-[100px] mx-16  min-h-screen shadow-lg shadow-gray-300 rounded-lg border-2">
       <div className="w-full grid lg:grid-cols-12 gap-2">
-        <div className="lg:col-span-7  border-gray-200 ">
-          <div className="h-screen flex flex-col">
-            <div className="flex-none p-4">
-              <div className="m-10 flex flex-wrap gap-3 ">
+        <div className="lg:col-span-7  border-gray-200 h-96 ">
+          <div className="h-[60rem] flex flex-col min-h-[32rem]">
+            <div className="flex-none pt-4 px-10">
+              <div className="mt-10 mb-2 flex flex-wrap gap-3 ">
                 <div className="lg:w-[60%] w-full">
                   <SelectInput
                     label={"Brand"}
@@ -123,8 +123,8 @@ const Smartlink = () => {
                 </div>
               </div>
             </div>
-            <div className="flex-grow overflow-y-auto p-4 bg-gray-100">
-              <div className="m-10  ">
+            <div className="flex-grow overflow-y-auto px-4 bg-gray-100 border-b-2 border-black-200">
+              <div className="m-5  ">
                 <Tabs value={activeTab} className="">
                   <TabsHeader
                     className=" w-[20rem] rounded-none border-b border-blue-gray-50 bg-transparent p-0"

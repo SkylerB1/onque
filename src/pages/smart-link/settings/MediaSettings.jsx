@@ -1,131 +1,236 @@
-import React, { useEffect, useState } from "react";
-import { Button, Input, IconButton } from "@material-tailwind/react";
+// import React, { useEffect, useState } from "react";
+// import { Button, IconButton } from "@material-tailwind/react";
+// import SmartLinkButton from "../../../components/button/SmartLinkButton";
+// import CameraOutline from "../../../assets/camera-outline.svg?react";
+// import VideoCamera from "../../../assets/video-camera.svg?react";
+// import { MdDelete } from "react-icons/md";
+// import { BsThreeDots } from "react-icons/bs";
+// import { BsThreeDotsVertical } from "react-icons/bs";
+// import MediaComponent from "./MediaComponent";
+// import ImgUploadModal from "../../../components/upload-modal/ImageUploadModal";
+// import { getSource } from "../../../utils";
+// import VideoUploadModal from "../../../components/upload-modal/VideoUploadModal";
+// import { useSelector, useDispatch } from "react-redux";
+// import { addMedia, updateMedia, deleteMedia } from "../../../redux/features/smartLinkMediaSlice";
+
+// const MediaSettings = () => {
+//   const media = useSelector((state) => state.smartLinkMedia.value) || [];
+//   const dispatch = useDispatch();
+
+//   const [showimgUploadModal, setimgUploadModal] = useState(false);
+//   const [showVideoUploadModal, setVideoUploadModal] = useState(false);
+
+//   const updateMediaItem = (id, identifier, value) => {
+//     dispatch(updateMedia({ id, identifier, value }));
+//   };
+
+//   const addMediaItem = (mediaType, mediaUrl = "", file = null) => {
+//     dispatch(addMedia({
+//       id: media.length + 1,
+//       mediaType: mediaType,
+//       mediaUrl: mediaUrl,
+//       navigationUrl: "https://example.com",
+//       file: file,
+//     }));
+//   };
+
+//   const deleteMediaItem = (id) => {
+//     dispatch(deleteMedia(id));
+//   };
+
+//   const handleFile = (files, mediaType) => {
+//     setimgUploadModal(false);
+//     setVideoUploadModal(false);
+//     files.forEach((item) => {
+//       const mediaUrl = getSource(item);
+//       addMediaItem(mediaType, mediaUrl, item);
+//     });
+//   };
+
+//   const toggleimgUploadModal = () => {
+//     setimgUploadModal(!showimgUploadModal);
+//   };
+
+//   const openImageModel = () => {
+//     setimgUploadModal(true);
+//   };
+
+//   const toggleVideoUploadModal = () => {
+//     setVideoUploadModal(!showVideoUploadModal);
+//   };
+
+//   const openVideoModel = () => {
+//     setVideoUploadModal(true);
+//   };
+
+//   return (
+//     <div>
+//       <div className="flex gap-2 w-full mt-10">
+//         <div className="w-1/2">
+//           <SmartLinkButton
+//             variant="outlined"
+//             fullWidth
+//             className="flex items-center gap-3 "
+//             onClick={openImageModel}
+//           >
+//             <CameraOutline width={18} height={18} fill="#000000" />
+//             Add Image
+//           </SmartLinkButton>
+//         </div>
+//         <div className="w-1/2">
+//           <SmartLinkButton
+//             fullWidth
+//             variant="outlined"
+//             className="flex items-center gap-3"
+//             onClick={openVideoModel}
+//           >
+//             <VideoCamera width={20} height={20} fill="#000000" />
+//             Add Video
+//           </SmartLinkButton>
+//         </div>
+//       </div>
+//       {/* Conditional rendering of media items */}
+//       {media.length > 0 && media.map((mediaItem) => (
+//         <div key={mediaItem.id} className="border border-gray-900 rounded-lg flex xl:flex-col mt-10">
+//           <div className="flex items-center justify-center xl:border-b border-r border-gray-900 cursor-move">
+//             <BsThreeDots size={24} className="xl:block hidden" />
+//             <BsThreeDotsVertical size={24} className=" xl:hidden" />
+//           </div>
+//           <div className="pb-5 px-5">
+//             <MediaComponent
+//               mediaItem={mediaItem}
+//               updateMedia={updateMediaItem}
+//               deleteMedia={deleteMediaItem}
+//             />
+//           </div>
+//         </div>
+//       ))}
+//       <ImgUploadModal
+//         show={showimgUploadModal}
+//         onChange={handleFile}
+//         toggleModal={toggleimgUploadModal}
+//       />
+//       <VideoUploadModal
+//         show={showVideoUploadModal}
+//         onChange={handleFile}
+//         toggleModal={toggleVideoUploadModal}
+//       />
+//     </div>
+//   );
+// };
+
+// export default MediaSettings;
+
+import React, { useState } from "react";
+import { Button, IconButton } from "@material-tailwind/react";
 import SmartLinkButton from "../../../components/button/SmartLinkButton";
 import CameraOutline from "../../../assets/camera-outline.svg?react";
 import VideoCamera from "../../../assets/video-camera.svg?react";
-import advanture from "../../../assets/advanture.jpg";
-import advantureRiver from "../../../assets/advantureRiver.jpg";
-import natureStatusVideo from "../../../assets/natureStatusVideo.mp4";
 import { MdDelete } from "react-icons/md";
-import { BsThreeDots } from "react-icons/bs";
-import { BsThreeDotsVertical } from "react-icons/bs";
+import { BsThreeDots, BsThreeDotsVertical } from "react-icons/bs";
 import MediaComponent from "./MediaComponent";
 import ImgUploadModal from "../../../components/upload-modal/ImageUploadModal";
-import { getSource } from "../../../utils";
 import VideoUploadModal from "../../../components/upload-modal/VideoUploadModal";
+import { useSelector, useDispatch } from "react-redux";
+import { addMedia, updateMedia, deleteMedia } from "../../../redux/features/smartLinkMediaSlice";
+import { getSource } from "../../../utils";
+
 const MediaSettings = () => {
-  const defaultMedia = [
-    {
-      id: 1,
-      mediaType: "image",
-      mediaUrl: advanture,
-      navigationUrl: "https://example.com",
-      file: null,
-    },
-    {
-      id: 2,
-      mediaType: "video",
-      mediaUrl: natureStatusVideo,
-      navigationUrl: "https://example.com",
-      file: null,
-    },
-  ];
-  const [media, setMedia] = React.useState(defaultMedia);
+  const media = useSelector((state) => state.smartLinkMedia.value) || [];
+  const dispatch = useDispatch();
+
   const [showimgUploadModal, setimgUploadModal] = useState(false);
   const [showVideoUploadModal, setVideoUploadModal] = useState(false);
 
-  const [files, setFiles] = useState([]);
-
-  const updateMedia = (id, identifier, value) => {
-    setMedia((prev) =>
-      prev.map((item) =>
-        item.id != id ? item : { ...item, [identifier]: value }
-      )
-    );
+  const updateMediaItem = (id, identifier, value) => {
+    dispatch(updateMedia({ id, identifier, value }));
   };
 
-  const addMedia = (mediaType, mediaUrl = "", file = null) => {
-    // toggleimgUploadModal();
-    setMedia((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        mediaType: mediaType,
-        mediaUrl: mediaUrl,
-        navigationUrl: "https://example.com",
-        file: file,
-      },
-    ]);
+  const addMediaItem = (mediaType, mediaUrl = "", file = null) => {
+    dispatch(addMedia({
+      id: media.length + 1,
+      mediaType: mediaType,
+      mediaUrl: mediaUrl,
+      navigationUrl: "https://example.com",
+      file: file,
+    }));
   };
-  const deleteMedia = (id) => {
-    setMedia((prev) => prev.filter((item) => item.id != id));
+
+  const deleteMediaItem = (id) => {
+    dispatch(deleteMedia(id));
   };
 
   const handleFile = (files, mediaType) => {
     setimgUploadModal(false);
     setVideoUploadModal(false);
-    setFiles((prevFiles) => [...prevFiles, ...files]);
-    files.map((item) => {
-      let mediaUrl = getSource(item);
-      addMedia(mediaType, mediaUrl, item);
+    files.forEach((item) => {
+      const mediaUrl = getSource(item);
+      addMediaItem(mediaType, mediaUrl, item);
     });
   };
+
   const toggleimgUploadModal = () => {
     setimgUploadModal(!showimgUploadModal);
   };
+
   const openImageModel = () => {
     setimgUploadModal(true);
   };
+
   const toggleVideoUploadModal = () => {
     setVideoUploadModal(!showVideoUploadModal);
   };
-  const openViddeoModel = () => {
+
+  const openVideoModel = () => {
     setVideoUploadModal(true);
   };
+
+  const handleSave = () => {
+    console.log("Media Data:", media);
+  };
+
   return (
     <div>
       <div className="flex gap-2 w-full mt-10">
-        <div class="w-1/2">
+        <div className="w-1/2">
           <SmartLinkButton
             variant="outlined"
             fullWidth
-            className="flex items-center gap-3 "
+            className="flex items-center gap-3"
             onClick={openImageModel}
           >
             <CameraOutline width={18} height={18} fill="#000000" />
             Add Image
           </SmartLinkButton>
         </div>
-        <div class="w-1/2">
+        <div className="w-1/2">
           <SmartLinkButton
             fullWidth
             variant="outlined"
             className="flex items-center gap-3"
-            onClick={openViddeoModel}
+            onClick={openVideoModel}
           >
             <VideoCamera width={20} height={20} fill="#000000" />
             Add Video
           </SmartLinkButton>
         </div>
       </div>
-      {media &&
-        media.map((mediaItem) => (
-          <div className="border border-gray-900 rounded-lg flex xl:flex-col mt-10">
-            <div className="flex items-center justify-center xl:border-b   border-r  border-gray-900 cursor-move">
-              <BsThreeDots size={24} className="xl:block hidden" />
-              <BsThreeDotsVertical size={24} className=" xl:hidden" />
-            </div>
-            <div className=" pb-5 px-5">
-              <div className="" key={mediaItem.id}>
-                <MediaComponent
-                  mediaItem={mediaItem}
-                  updateMedia={updateMedia}
-                  deleteMedia={deleteMedia}
-                />
-              </div>
-            </div>
+      {/* Conditional rendering of media items */}
+      {media.length > 0 && media.map((mediaItem) => (
+        <div key={mediaItem.id} className="border border-gray-900 rounded-lg flex xl:flex-col mt-10">
+          <div className="flex items-center justify-center xl:border-b border-r border-gray-900 cursor-move">
+            <BsThreeDots size={24} className="xl:block hidden" />
+            <BsThreeDotsVertical size={24} className="xl:hidden" />
           </div>
-        ))}
+          <div className="pb-5 px-5">
+            <MediaComponent
+              mediaItem={mediaItem}
+              updateMedia={updateMediaItem}
+              deleteMedia={deleteMediaItem}
+            />
+          </div>
+        </div>
+      ))}
       <ImgUploadModal
         show={showimgUploadModal}
         onChange={handleFile}
@@ -136,8 +241,16 @@ const MediaSettings = () => {
         onChange={handleFile}
         toggleModal={toggleVideoUploadModal}
       />
+
+      {/* Save Button */}
+      <div className="mt-5 flex justify-end">
+        <Button color="green" onClick={handleSave}>
+          Save
+        </Button>
+      </div>
     </div>
   );
 };
 
 export default MediaSettings;
+

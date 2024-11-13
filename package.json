@@ -29,6 +29,7 @@
     "apexcharts": "^3.42.0",
     "axios": "^1.4.0",
     "broadcast-channel": "^7.0.0",
+    "compressorjs": "^1.2.1",
     "dayjs": "^1.11.7",
     "dotenv": "^16.4.5",
     "emoji-picker-react": "^4.4.9",

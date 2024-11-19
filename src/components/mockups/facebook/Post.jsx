@@ -20,7 +20,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
   const videoRef = useRef([]);
   const [filteredFiles, setFilteredFiles] = useState([]);
   const memoizedSources = useMemo(() => {
-    return filteredFiles.map((file) => getSource(file));
+    return Array.isArray(filteredFiles) && filteredFiles.map((file) => getSource(file));
   }, [filteredFiles]);
 
   const togglePlay = useCallback(
@@ -89,7 +89,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
 
   const renderMedia = useCallback(() => {
     if (filteredFiles.length === 1) {
-      return filteredFiles.map((file, index) => {
+      return Array.isArray(filteredFiles) && filteredFiles.map((file, index) => {
         let mimeType = file.type || file.mimetype;
         if (mimeType.includes("video")) {
           return renderVideoComponent(index);
@@ -98,7 +98,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
         }
       });
     } else if (filteredFiles.length === 2) {
-      return filteredFiles.map((file, index) => {
+      return Array.isArray(filteredFiles) && filteredFiles.map((file, index) => {
         let mediaType = file.type || file.mimetype;
         if (mediaType.includes("image")) {
           return (
@@ -128,7 +128,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
         </div>
       );
     } else if (filteredFiles.length === 4) {
-      return filteredFiles.map((item, index) => {
+      return Array.isArray(filteredFiles) && filteredFiles.map((item, index) => {
         return (
           <div
             key={index}
@@ -147,7 +147,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
         );
       });
     } else if (filteredFiles.length >= 5) {
-      return filteredFiles.map((item, index) => {
+      return Array.isArray(filteredFiles) && filteredFiles.map((item, index) => {
         const src = memoizedSources[index];
         if (index < 2) {
           return (

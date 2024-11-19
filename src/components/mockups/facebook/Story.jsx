@@ -21,7 +21,7 @@ export default function Story({ files, captions, viewMode, screenName, date }) {
   const videoRef = useRef([]);
   const [filteredFiles, setFilteredFiles] = useState([]);
   const memoizedSources = useMemo(() => {
-    return filteredFiles.map((file) => getSource(file));
+    return Array.isArray(filteredFiles) && filteredFiles.map((file) => getSource(file));
   }, [filteredFiles]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function Story({ files, captions, viewMode, screenName, date }) {
   };
   const renderMedia = useCallback(() => {
     if (filteredFiles.length > 0) {
-      return filteredFiles.map((file, index) => {
+      return Array.isArray(filteredFiles) && filteredFiles.map((file, index) => {
         let mimeType = file.type || file.mimetype;
 
         return (

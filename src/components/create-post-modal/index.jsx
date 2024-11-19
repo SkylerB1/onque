@@ -331,7 +331,7 @@ const CreatePostModal = ({
   const uploadFiles = async () => {
     const formData = new FormData();
     const media = [];
-    files?.forEach((file) => {
+    Array.isArray(files) && files?.forEach((file) => {
       if (file instanceof File || file instanceof Blob) {
         formData.append("files", file);
       } else {
@@ -387,7 +387,7 @@ const CreatePostModal = ({
       if (err.response.status === 400) {
         let error = err?.response?.data;
         if (error && Array.isArray(error)) {
-          error.map((err) => {
+          Array.isArray(error) && error.map((err) => {
             toastrError(err);
           });
         }
@@ -422,7 +422,7 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
     const data = {
-      providers: selectedPlaforms.map((item) => ({
+      providers: Array.isArray(selectedPlaforms) && selectedPlaforms.map((item) => ({
         platform: item.platform,
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
@@ -518,7 +518,7 @@ const CreatePostModal = ({
       });
     };
 
-    files.forEach((file, index) => {
+    Array.isArray(files) && files.forEach((file, index) => {
       if (!isBlob(file)) {
         updateDuration(index, 0);
         return false;
@@ -537,7 +537,7 @@ const CreatePostModal = ({
     });
 
     return () => {
-      (videoElements &&
+      (Array.isArray(videoElements) && 
         videoElements.forEach((video) => {
           video.src = "";
         })) ||
@@ -610,14 +610,15 @@ const CreatePostModal = ({
       if (postData) {
         const { platforms, socialPresets } = postData;
         const presets = {};
-        platforms.forEach((item, index) => {
+        console.log({platforms})
+        Array.isArray(platforms) && platforms.forEach((item, index) => {
           let { additionalPresets, platform } = item;
 
           if (additionalPresets) {
             presets[platform] = additionalPresets;
           } else {
             let socialPresetPlateformData =
-              socialPresets &&
+            Array.isArray(socialPresets) && 
               socialPresets.find((socialPreset) => {
                 return socialPreset.platform == platform;
               });
@@ -668,18 +669,20 @@ const CreatePostModal = ({
       submitButton === "Publish Now";
     const saveAsDraft = submitButton === "Save As Draft";
 
-    const hasImages = files.some((item) => isContainImage(item));
-    const hasVideos = files.some((item) => isContainVideo(item));
+    const hasImages = Array.isArray(files) && files.some((item) => isContainImage(item));
+    const hasVideos = Array.isArray(files) && files.some((item) => isContainVideo(item));
     const videosCount = files?.filter((item) => isContainVideo(item)).length;
     const imagesCount = files?.filter((item) => isContainImage(item)).length;
     const noFileSelected = files.length === 0;
     const noContent = caption.length === 0;
 
-    errors?.forEach((element) => {
-      if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
-        setErrors((prev) =>
-          prev.filter((item) => item.platform !== element.platform)
-        );
+    Array.isArray(errors) && errors?.forEach((element) => {
+      if (Array.isArray(selectedPlaforms)) {
+        if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
+          setErrors((prev) =>
+            prev.filter((item) => item.platform !== element.platform)
+          );
+        }
       }
     });
 
@@ -693,7 +696,7 @@ const CreatePostModal = ({
       ]);
     }
 
-    selectedPlaforms.forEach((item) => {
+    Array.isArray(selectedPlaforms) && selectedPlaforms.forEach((item) => {
       const { platform } = item;
       if (platform == InstagramPlatform) {
         if (noFileSelected) {
@@ -717,7 +720,7 @@ const CreatePostModal = ({
           ]);
         }
         if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
+          const isAnyVideoLengthExceed = Array.isArray(videoDurations) && videoDurations.some(
             (videoDuration) =>
               videoDuration > pateformPostVideosLength.instagram
           );
@@ -889,7 +892,7 @@ const CreatePostModal = ({
             ]);
           } else {
             files.length > 0 &&
-              files.map((file) => {
+            Array.isArray(files) && files.map((file) => {
                 // check if file is image
                 if (isContainImage(file) == true) {
                   if (
@@ -1039,7 +1042,7 @@ const CreatePostModal = ({
         }
 
         if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
+          const isAnyVideoLengthExceed = Array.isArray(videoDurations) && videoDurations.some(
             (videoDuration) => videoDuration > pateformPostVideosLength.twitter
           );
           if (isAnyVideoLengthExceed) {
@@ -1183,7 +1186,7 @@ const CreatePostModal = ({
           ]);
         }
         if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
+          const isAnyVideoLengthExceed = Array.isArray(videoDurations) && videoDurations.some(
             (videoDuration) => videoDuration > pateformPostVideosLength.tiktok
           );
           if (isAnyVideoLengthExceed) {
@@ -1566,7 +1569,7 @@ const CreatePostModal = ({
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
-                            {connections.map((item, index) => {
+                            {Array.isArray(connections) && connections.map((item, index) => {
                               const {
                                 platform = "",
                                 screenName = "",
@@ -1670,7 +1673,7 @@ const CreatePostModal = ({
                         </div>
                         <div className="overflow-auto max-h-[72px]">
                           <ol className="list-decimal pl-5 text-xs">
-                            {errors.map((item, index) => {
+                            {Array.isArray(errors) && errors.map((item, index) => {
                               return (
                                 <li
                                   key={index}
@@ -1765,7 +1768,7 @@ const CreatePostModal = ({
                                     </button>
                                   </MenuHandler>
                                   <MenuList className="px-0">
-                                    {schdulePostBtnLabel.map((item) => {
+                                    {Array.isArray(schdulePostBtnLabel) && schdulePostBtnLabel.map((item) => {
                                       const { label, description, key } = item;
                                       return (
                                         <MenuItem

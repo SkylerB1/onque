@@ -80,7 +80,7 @@ const BillingInformation = () => {
                 className="w-full bg-[#EFEFEF] p-2 border rounded-lg"
               >
                 <option value="">Country</option>
-                {countries.map((country, index) => (
+                {Array.isArray(countries) && countries.map((country, index) => (
                   <option key={index} value={country}>
                     {country}
                   </option>

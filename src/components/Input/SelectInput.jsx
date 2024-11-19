@@ -54,7 +54,7 @@ const SelectInput = ({
       onChange={(value) => onChange(identifier, value, type)}
       {...props}
     >
-      {options.map((item, index) => {
+      {Array.isArray(options) && options.map((item, index) => {
         return (
           <Option
             key={index}

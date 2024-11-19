@@ -217,7 +217,7 @@ const Connection = () => {
                     </svg>
                     <span className="sr-only">Info</span>
                     <h3 className="text-lg font-medium">
-                      {textForRoleInfo.map(
+                      {Array.isArray(textForRoleInfo) && textForRoleInfo.map(
                         (value, index) =>
                           value.title +
                           (textForRoleInfo.legth - 1 < index ? " , " : "")
@@ -225,7 +225,7 @@ const Connection = () => {
                     </h3>
                   </div>
                   <div className="mt-2 mb-4 text-sm">
-                    {textForRoleInfo.map((value, index) => (
+                    {Array.isArray(textForRoleInfo) && textForRoleInfo.map((value, index) => (
                       <React.Fragment key={index}>
                         {value.description}
                         <br />
@@ -273,8 +273,8 @@ const Connection = () => {
               )}
             </div>
             <div className="flex flex-1 flex-wrap p-6">
-              {socialMediaList.map((item, index) => {
-                const conn = connections?.find(
+              {Array.isArray(socialMediaList) && socialMediaList.map((item, index) => {
+                const conn = Array.isArray(connections) && connections?.find(
                   (conn) =>
                     conn.platform.toLowerCase() === item.platform.toLowerCase()
                 );

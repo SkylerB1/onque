@@ -21,7 +21,7 @@ import HorizontalDots from "../../../assets/HorizontalDots";
 function InstagramPostMobile({ files, captions, viewMode, screenName }) {
   const [muted, setMuted] = useState(false);
   const memoizedSources = useMemo(() => {
-    return files.map((file) => getSource(file));
+    return Array.isArray(files) && files.map((file) => getSource(file));
   }, [files]);
 
   const toggleAudio = useCallback(() => {
@@ -44,7 +44,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
       >
         {files?.length > 0 ? (
           files?.length == 1 ? (
-            files?.map((file, key) => {
+            Array.isArray(files) && files?.map((file, key) => {
               const type = file.type || file.mimetype;
               if (type?.includes("video")) {
                 const src = memoizedSources[key];
@@ -100,7 +100,7 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
               modules={[Navigation, Pagination]}
               style={{ width: "100%", height: "100%" }}
             >
-              {files.map((file, key) => {
+              {Array.isArray(files) && files.map((file, key) => {
                 if (isContainVideo(file)) {
                   const src = memoizedSources[key];
                   return (

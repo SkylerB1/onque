@@ -69,7 +69,7 @@ const Setting = () => {
                 "bg-transparent border-b-2 border-gray-900 shadow-none rounded-none",
             }}
           >
-            {data.map(({ label, value }) => (
+            {Array.isArray(data) && data.map(({ label, value }) => (
               <Tab
                 key={value}
                 value={value}
@@ -82,7 +82,7 @@ const Setting = () => {
           </TabsHeader>
           <hr className="w-[90rem]" />
           <TabsBody>
-            {data.map(({ value, desc }) => (
+            {Array.isArray(data) && data.map(({ value, desc }) => (
               <TabPanel key={value} value={value}>
                 {desc}
               </TabPanel>

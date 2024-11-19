@@ -3,7 +3,7 @@ import TwitterMobile from "./TwitterMobile";
 import { TwitterPlatform } from "../../common/commonString";
 
 function GetTwitterComponent({ viewMode, caption, files, connections }) {
-  const { screenName = "" } = connections.find(
+  const { screenName = "" } = Array.isArray(connections) && connections.find(
     (item) => item.platform === TwitterPlatform
   );
   return (

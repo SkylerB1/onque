@@ -50,7 +50,7 @@ export default function AddInstagramCollaboratorDialog({
     // check name is already exist or not
     let collaborator_name = formData.collaborator_name;
     if (collaborators.length > 0) {
-      let isExist = collaborators.find(
+      let isExist = Array.isArray(collaborators) && collaborators.find(
         (item) => item.toLowerCase() === collaborator_name.toLowerCase()
       );
       if (isExist) {

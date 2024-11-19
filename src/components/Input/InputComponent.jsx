@@ -75,7 +75,7 @@ function InputComponent({
         label={label}
         onChange={(value) => handleChange(value)}
       >
-        {selectOptions.map((item, index) => {
+        {Array.isArray(selectOptions) && selectOptions.map((item, index) => {
           return (
             <Option key={index} value={item.value}>
               {item.label}

@@ -55,7 +55,7 @@ const PriceCard = ({ selectedPlan, selectedOption, switchDuration }) => {
         </div>
         <div style={{ borderColor: color }} className={`border p-4`}>
           <ul className="w-full mt-6 mb-6 text-sm text-gray-600 dark:text-gray-100">
-            {selectedPlan.priceBody.map((item, index) => (
+            {Array.isArray(selectedPlan) && selectedPlan.priceBody.map((item, index) => (
               <li className="mb-3 flex items-center" key={index}>
                 <svg
                   className="w-6 h-6 mr-2"

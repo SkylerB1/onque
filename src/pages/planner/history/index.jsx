@@ -42,7 +42,7 @@ const History = () => {
   };
 
   useEffect(() => {
-    const lowercaseValues = selectedValues.map((value) => value);
+    const lowercaseValues = Array.isArray(selectedValues) && selectedValues.map((value) => value);
     setLowercaseSelectedValues(lowercaseValues);
   }, [selectedValues]);
 
@@ -50,7 +50,7 @@ const History = () => {
     try {
 
       const platformParams = selectedValues.length > 0
-        ? selectedValues.map((value) => `platform=${value.toLowerCase()}`).join('&')
+        ? Array.isArray(selectedValues) && selectedValues.map((value) => `platform=${value.toLowerCase()}`).join('&')
         : '';
 
 

@@ -22,7 +22,7 @@ function TwitterMobile({ files, captions, viewMode, screenName }) {
   const videoRef = useRef(null);
   const [play, setPlay] = useState(false);
   const memoizedSources = useMemo(() => {
-    return files.map((file) => getSource(file));
+    return Array.isArray(files) && files.map((file) => getSource(file));
   }, [files]);
 
   const handlePlay = () => {
@@ -54,7 +54,7 @@ function TwitterMobile({ files, captions, viewMode, screenName }) {
         />
       );
     } else if (files.length === 2) {
-      return files.map((item, index) => {
+      return Array.isArray(files) && files.map((item, index) => {
         const src = memoizedSources[index];
         return (
           <div
@@ -102,7 +102,7 @@ function TwitterMobile({ files, captions, viewMode, screenName }) {
             )}
           </div>
           <div className={`flex flex-1 flex-col border-l-2`}>
-            {files.map((item, index) => {
+            {Array.isArray(files) && files.map((item, index) => {
               const src = memoizedSources[index];
               if (index > 0) {
                 return isContainVideo(item) ? (
@@ -137,7 +137,7 @@ function TwitterMobile({ files, captions, viewMode, screenName }) {
     } else if (files.length >= 4) {
       return (
         <div className="flex flex-1 flex-row h-full flex-wrap">
-          {files.map((item, index) => {
+          {Array.isArray(files) && files.map((item, index) => {
             const src = memoizedSources[index];
             return isContainVideo(item) ? (
               <video

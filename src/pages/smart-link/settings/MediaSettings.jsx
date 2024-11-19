@@ -65,7 +65,7 @@ const MediaSettings = () => {
     setimgUploadModal(false);
     setVideoUploadModal(false);
     setFiles((prevFiles) => [...prevFiles, ...files]);
-    files.map((item) => {
+    Array.isArray(files) && files.map((item) => {
       let mediaUrl = getSource(item);
       addMedia(mediaType, mediaUrl, item);
     });
@@ -108,7 +108,7 @@ const MediaSettings = () => {
           </SmartLinkButton>
         </div>
       </div>
-      {media &&
+      {Array.isArray(media) && 
         media.map((mediaItem) => (
           <div className="border border-gray-900 rounded-lg flex xl:flex-col mt-10">
             <div className="flex items-center justify-center xl:border-b   border-r  border-gray-900 cursor-move">

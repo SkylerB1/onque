@@ -3,7 +3,7 @@ import React from "react";
 function ButtonGroup({ groups, handleClick }) {
   return (
     <div className="inline-flex rounded-md shadow-sm my-4" role="group">
-      {groups?.map((item, index) => {
+      {Array.isArray(groups) && groups?.map((item, index) => {
         return (
           <button
             type="button"

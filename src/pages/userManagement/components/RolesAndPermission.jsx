@@ -93,7 +93,7 @@ const RolesAndPermission = ({ collaborators }) => {
   };
 
   const checkIsRoleAssigned = (roleId) => {
-    return collaborators.some((item) =>
+    return Array.isArray(collaborators) && collaborators.some((item) =>
       item.brands.some((brand) => {
         return brand.brandRole.roleId === roleId;
       })
@@ -178,7 +178,7 @@ const RolesAndPermission = ({ collaborators }) => {
                       <table className="w-full min-w-full  table-auto text-left">
                         <thead>
                           <tr>
-                            {tableHeaders.map((header, index) => (
+                            {Array.isArray(tableHeaders) && tableHeaders.map((header, index) => (
                               <th
                                 key={index}
                                 className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
@@ -196,7 +196,7 @@ const RolesAndPermission = ({ collaborators }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {rolesData?.map((row, index) => {
+                          {Array.isArray(rolesData) && rolesData?.map((row, index) => {
                             const isLast = index === rolesData.length - 1;
                             const classes = isLast
                               ? "p-4"

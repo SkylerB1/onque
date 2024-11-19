@@ -266,7 +266,7 @@ const DropdownClientList = ({
             </div>
           ) : (
             <>
-              {brands
+              {Array.isArray(brands) && brands
                 ?.filter((item) =>
                   item.brand_name
                     .toLowerCase()
@@ -300,7 +300,7 @@ const DropdownClientList = ({
                               No networks connected
                             </span>
                           )}
-                          {item.platforms.map((item) => {
+                          {Array.isArray(item?.platforms) && item.platforms.map((item) => {
                             const { platform } = item;
                             if (platform) {
                               const { coloredIcon } = SocialPlatforms[platform];

@@ -116,7 +116,7 @@ export function ChangePlanModel({
 
       let brands =
         newBrands.length > 0
-          ? newBrands.map((brand) => {
+          ? Array.isArray(newBrands) && newBrands.map((brand) => {
               return {
                 id: brand.id,
                 is_active: brand.is_active,
@@ -168,7 +168,7 @@ export function ChangePlanModel({
       let brands = res.data.brands;
       setBrands(brands);
       // setting is_active = false for default value when opening brand model
-      setNewBrands(brands?.map((brand) => ({ ...brand, is_active: false })));
+      setNewBrands(Array.isArray(brands) && brands?.map((brand) => ({ ...brand, is_active: false })));
     } catch (err) {
       console.log(err);
     }

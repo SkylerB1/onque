@@ -102,7 +102,7 @@ const RoleUpdate = ({ brand, selectedRole, handleRoleChange, isEnabled }) => {
           <>
             <div className="black p">Roles</div>
             <div className="grid gap-4 py-4">
-              {rolesData?.map((role) => (
+              {Array.isArray(rolesData) && rolesData?.map((role) => (
                 <MenuItem
                   variant="outlined"
                   key={role}

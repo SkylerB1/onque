@@ -96,7 +96,7 @@ const CustomMenu = ({ clientDatas }) => {
                 aria-orientation="vertical"
                 aria-labelledby="options-menu"
               >
-                {clientDatas?.map((item, index) => (
+                {Array.isArray(clientDatas) && clientDatas?.map((item, index) => (
                   <button
                     key={index}
                     onClick={() => handleItemClick(item)}
@@ -113,7 +113,7 @@ const CustomMenu = ({ clientDatas }) => {
                         {item.brand_name}
                         <div className="flex flex-1 items-center justify-start gap-2 mt-1">
                           {
-                            item.socialTokens.map((item, index) => (
+                            Array.isArray(item.socialTokens) && item.socialTokens.map((item, index) => (
                               <SocialIcon key={item.id} platform={item.platform} />
                             ))
                           }

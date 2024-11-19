@@ -16,7 +16,7 @@ const RenderFiles = ({
   setFiles,
 }) => {
   const memoizedSources = useMemo(() => {
-    return files.map((file) => getSource(file));
+    return Array.isArray(files) && files.map((file) => getSource(file));
   }, [files]);
 
   const videoRef = useRef();
@@ -51,7 +51,7 @@ const RenderFiles = ({
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {files?.map((file, index) => {
+            {Array.isArray(files) && files?.map((file, index) => {
               const src = memoizedSources[index];
               return (
                 <Draggable

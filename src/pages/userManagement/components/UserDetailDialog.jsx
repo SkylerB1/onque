@@ -187,7 +187,7 @@ const UserDetailDialog = ({
                 </tr>
               </thead>
               <tbody>
-                {brands?.map((brand, index) => {
+                {Array.isArray(brands) && brands?.map((brand, index) => {
                   const isSelected = selectedUser?.brands?.find(
                     (item) => item.id === brand.id
                   );

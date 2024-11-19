@@ -41,7 +41,7 @@ const EmailNotificationDialog = ({
               <p className="leading-6 mb-4 text-black">{description}</p>
             </div>
             <div className="flex w-full justify-evenly">
-              {radioBtnLabels.map((item) => {
+              {Array.isArray(radioBtnLabels) && radioBtnLabels.map((item) => {
                 const { name, label, value } = item;
                 return (
                   <Radio

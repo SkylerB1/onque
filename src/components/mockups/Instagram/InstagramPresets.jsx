@@ -128,7 +128,7 @@ function InstagramPresets({
         {(mediaType == "REEL" || mediaType == "POST") && (
           <div className="mb-8 flex items-center gap-2 flex-wrap">
             <div>Collaborator :</div>
-            {collaborators &&
+            {Array.isArray(collaborators) && 
               collaborators.map((collaborator, key) => (
                 <div
                   key={key}

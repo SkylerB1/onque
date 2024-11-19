@@ -71,7 +71,7 @@ const UserManagement = () => {
                 "bg-transparent border-b-2 border-gray-900 shadow-none rounded-none",
             }}
           >
-            {data.map(({ label, value }) => (
+            {Array.isArray(data) && data.map(({ label, value }) => (
               <Tab
                 key={value}
                 value={value}
@@ -84,7 +84,7 @@ const UserManagement = () => {
           </TabsHeader>
           <hr className="w-[90rem]" />
           <TabsBody>
-            {data.map((item, index) => (
+            {Array.isArray(data) && data.map((item, index) => (
               <TabPanel key={index} value={item.value}>
                 <item.component
                   collaborators={collaborators}

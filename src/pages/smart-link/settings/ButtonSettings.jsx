@@ -220,7 +220,7 @@ const ButtonSettings = () => {
           draggedItemClassName="dragged"
         >
           <div className="space-y-8 mt-5">
-            {buttonItems.map((item) => (
+            {Array.isArray(buttonItems) && buttonItems.map((item) => (
               <SortableItem key={item.id}>
                 <div key={item.id} className="item">
                   {item.content(item.id, item.values)}
@@ -250,7 +250,7 @@ const ButtonSettings = () => {
         >
           <div className="space-y-8 mt-5">
             {socialIcons &&
-              socialIcons.map((values) => (
+              Array.isArray(socialIcons) && socialIcons.map((values) => (
                 <SortableItem key={values.id}>
                   <div className="my-5" key={values.id}>
                     <IconItems

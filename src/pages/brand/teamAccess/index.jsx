@@ -112,7 +112,7 @@ const TeamAccess = () => {
                           className="w-full bg-[#EFEFEF] p-2 border rounded-lg"
                         >
                           <option value=""></option>
-                          {role.map((role, index) => (
+                          {Array.isArray(role) && role.map((role, index) => (
                             <option key={index} value={role}>
                               {role}
                             </option>

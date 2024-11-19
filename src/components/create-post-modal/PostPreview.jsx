@@ -15,6 +15,7 @@ const PostPreview = ({
   handleView,
   togglePreview,
 }) => {
+  console.log({selectedPlaforms}, Array.isArray(selectedPlaforms))
   return (
     <div className="bg-gray-100 w-[620px] h-full flex flex-col rounded-r-md items-center relative pointer-events-auto">
       <Button
@@ -24,7 +25,7 @@ const PostPreview = ({
         Show post
       </Button>
       <div className="flex flex-row  my-5">
-        {selectedPlaforms?.map((item, index) => {
+        {Array.isArray(selectedPlaforms) && selectedPlaforms?.map((item, index) => {
           const { platform } = item;
           const isSelected = platform === selectedPreview.platform;
           const { coloredIcon, nonColoredIcon } = SocialPlatforms[platform];

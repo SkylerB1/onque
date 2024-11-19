@@ -103,7 +103,7 @@ const MySetttings = ({ emails, addEmail, deleteEmail }) => {
           </thead>
           <tbody>
             {emails.length
-              ? emails?.map((email, index) => {
+              ? Array.isArray(emails) && emails?.map((email, index) => {
                   const isLast = index === emails.length - 1;
                   const classes = isLast
                     ? "p-2"

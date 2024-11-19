@@ -103,7 +103,7 @@ const PricingPlansCard = ({
             </div>
             {/* Plans Listing */}
             <div className=" ">
-              {selectedPlanList.map((item, index) => (
+              {Array.isArray(selectedPlanList) && selectedPlanList.map((item, index) => (
                 <div className="" key={index}>
                   <PriceCardItems
                     selectedPlan={item}
@@ -124,7 +124,7 @@ const PricingPlansCard = ({
       </div>
       <div className="basis-1/3 border-l-2 ">
         <div className="p-4">
-          {selectedPlanList.map((item, index) =>
+          {Array.isArray(selectedPlanList) && selectedPlanList.map((item, index) =>
             renderMatchingComponent(item, index)
           )}
         </div>

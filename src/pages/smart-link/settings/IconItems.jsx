@@ -96,7 +96,7 @@ export default function IconItems({ values, deleteIcon, updateValues }) {
                 value={iconValue}
                 onChange={(e) => handleChange(e, "iconName")}
               >
-                {options.map(({ value, label, icon }, key) => (
+                {Array.isArray(options) && options.map(({ value, label, icon }, key) => (
                   <Option
                     key={key}
                     value={value}

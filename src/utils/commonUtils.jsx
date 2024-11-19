@@ -69,7 +69,7 @@ export function getTextForRoleInfo(role) {
 
   return permissions.length == 0
     ? null
-    : permissions.map((permissionName, index) => {
+    : Array.isArray(permissions) && permissions.map((permissionName, index) => {
         let response = {};
         switch (permissionName) {
           case "viewPlanner":

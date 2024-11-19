@@ -26,7 +26,7 @@ const CustomAccountSelect = ({
         divider={false}
         className="bg-white mx-4 rounded-md shadow-md"
       >
-        {data?.map((item, index) => {
+        {Array.isArray(data) && data?.map((item, index) => {
           return (
             <div
               key={index}

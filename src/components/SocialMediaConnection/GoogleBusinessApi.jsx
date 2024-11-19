@@ -63,7 +63,7 @@ function GoogleBusinessApi({
         const { locations, account } = res.data;
         let data = [];
         if (locations && locations.length > 0) {
-          data = locations.map((item) => {
+          data = Array.isArray(locations) && locations.map((item) => {
             const { name, title, storefrontAddress = {} } = item;
             const addressLines = storefrontAddress?.addressLines || [];
             const postalCode = storefrontAddress?.postalCode || "";

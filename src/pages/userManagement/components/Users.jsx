@@ -363,7 +363,7 @@ const Users = ({
                 </tr>
               </thead>
               <tbody>
-                {collaborators?.map((item, index) => {
+                {Array.isArray(collaborators) && collaborators?.map((item, index) => {
                   const { firstName, lastName, email, brands, isActive } = item;
                   const isLast = index === collaborators.length - 1;
                   const classes = isLast

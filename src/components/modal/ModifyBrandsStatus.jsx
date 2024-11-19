@@ -42,7 +42,7 @@ const ModifyBrandsStatus = ({
 
   const checkActiveBrandsCount = () => {
     let activeBrandCount = 0;
-    newBrands &&
+    Array.isArray(newBrands) && 
       newBrands.map((brand) => brand.is_active == true && activeBrandCount++);
     setActiveBrandCount(activeBrandCount);
   };
@@ -176,7 +176,7 @@ const ModifyBrandsStatus = ({
           <table className="w-full min-w-max table-auto text-left">
             <thead className="sticky top-0 z-10">
               <tr>
-                {tableHead.map((item, index) => (
+                {Array.isArray(tableHead) && tableHead.map((item, index) => (
                   <th
                     className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                     key={index}
@@ -203,7 +203,7 @@ const ModifyBrandsStatus = ({
             </thead>
             <tbody>
               {newBrands.length &&
-                newBrands?.map((brand, index) => {
+                Array.isArray(newBrands) && newBrands?.map((brand, index) => {
                   return (
                     <tr
                       key={index}

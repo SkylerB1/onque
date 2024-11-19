@@ -35,7 +35,7 @@ const SelectionModal = ({
           </div>
         ) : data.length > 0 ? (
           <div className="max-h-96">
-            {data.map((item, index) => {
+            {Array.isArray(data) && data.map((item, index) => {
               return (
                 <div
                   key={index}

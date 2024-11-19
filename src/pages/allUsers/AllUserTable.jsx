@@ -214,7 +214,7 @@ export function AllUserTable() {
             <table className="w-full min-w-max table-auto text-left">
               <thead>
                 <tr>
-                  {TABLE_HEAD.map((head) => (
+                  {Array.isArray(TABLE_HEAD) && TABLE_HEAD.map((head) => (
                     <th
                       key={head}
                       className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
@@ -231,7 +231,7 @@ export function AllUserTable() {
                 </tr>
               </thead>
               <tbody>
-                {usersData?.map((row, index) => (
+                {Array.isArray(usersData) && usersData?.map((row, index) => (
                   <tr key={row.id}>
                     <td className="p-4 border-b border-blue-gray-50">{index + 1}</td>
                     <td className="p-4 border-b border-blue-gray-50">{row.firstName}</td>

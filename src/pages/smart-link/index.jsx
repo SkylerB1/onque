@@ -133,7 +133,7 @@ const Smartlink = () => {
                         "bg-transparent border-b-2 border-gray-900 shadow-none rounded-none",
                     }}
                   >
-                    {data.map(({ label, value, disabled }) => (
+                    {Array.isArray(data) && data.map(({ label, value, disabled }) => (
                       <Tab
                         key={value}
                         value={value}
@@ -146,7 +146,7 @@ const Smartlink = () => {
                     ))}
                   </TabsHeader>
                   <TabsBody>
-                    {data.map(({ value, desc }) => (
+                    {Array.isArray(data) && data.map(({ value, desc }) => (
                       <TabPanel key={value} value={value}>
                         {desc}
                       </TabPanel>

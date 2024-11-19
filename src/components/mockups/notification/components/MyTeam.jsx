@@ -25,7 +25,7 @@ const MyTeam = () => {
         <table className="w-full min-w-max table-auto text-left ">
           <thead>
             <tr>
-              {tableHead.map((item, index) => (
+              {Array.isArray(tableHead) && tableHead.map((item, index) => (
                 <th
                   className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
                   key={index}

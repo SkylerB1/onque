@@ -417,7 +417,7 @@ function TikTokPresets({
   };
 
   const generatePrivacyOptions = (options = []) => {
-    const newOptions = options.map((item) => {
+    const newOptions = Array.isArray(options) && options.map((item) => {
       if (getPrivacyLabel[item]) {
         return {
           label: getPrivacyLabel[item],

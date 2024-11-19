@@ -3,7 +3,7 @@ import TiktokMobile from "./TiktokMobile";
 import { TikTokPlatform } from "../../common/commonString";
 
 function GetTikTokComponent({mediaType, viewMode, caption, files, connections}) {
-  const { screenName = "" } = connections.find((item) =>
+  const { screenName = "" } = Array.isArray(connections) && connections.find((item) =>
     item.platform.includes(TikTokPlatform)
   );
   return (

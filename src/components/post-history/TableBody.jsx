@@ -12,7 +12,7 @@ const TableBody = ({ events }) => {
           </td>
         </tr>
       ) : (
-        events.map((event, index) => (
+        Array.isArray(events) && events.map((event, index) => (
           <tr key={index}>
             <td className="py-3 pl-4">
               <div className="flex items-center h-5">

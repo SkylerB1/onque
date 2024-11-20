@@ -70,7 +70,7 @@ const SocialPlatform = ({
 
   const handleSelect = (type) => {
     let plaforms = [...selectedPlaforms];
-    plaforms.forEach((element) => {
+    Array.isArray(plaforms) && plaforms.forEach((element) => {
       if (element.platform == platform) {
         element.mediaType = type;
       }

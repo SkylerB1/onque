@@ -24,7 +24,7 @@ const SocialPlatform = ({
   setShowReelOnFeedChecked,
 }) => {
   const [open, setOpen] = useState(false);
-  const selected = selectedPlaforms.find((item) => item.platform === platform);
+  const selected = Array.isArray(selectedPlaforms) && selectedPlaforms.find((item) => item.platform === platform);
   const {
     mediaOptions,
     mediaType,

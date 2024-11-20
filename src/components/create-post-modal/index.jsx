@@ -618,7 +618,7 @@ const CreatePostModal = ({
           } else {
             let socialPresetPlateformData =
               socialPresets &&
-              socialPresets.find((socialPreset) => {
+              Array.isArray(socialPresets) && socialPresets.find((socialPreset) => {
                 return socialPreset.platform == platform;
               });
 

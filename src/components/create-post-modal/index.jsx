@@ -134,7 +134,7 @@ const CreatePostModal = ({
   const [showAlertModal, setAlertModal] = useState(false);
   const [alertData, setAlertData] = useState({
     header: "",
-    onAccept: function () {},
+    onAccept: function () { },
   });
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
@@ -259,7 +259,7 @@ const CreatePostModal = ({
   const handleView = (index) => {
     setViewMode(index);
   };
-  const handlePostFeed = (index) => {};
+  const handlePostFeed = (index) => { };
 
   const toggleAlertModal = () => {
     setAlertModal(!showAlertModal);
@@ -422,7 +422,7 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
     const data = {
-      providers: selectedPlaforms.map((item) => ({
+      providers: Array.isArray(selectedPlaforms) && selectedPlaforms.map((item) => ({
         platform: item.platform,
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
@@ -610,7 +610,7 @@ const CreatePostModal = ({
       if (postData) {
         const { platforms, socialPresets } = postData;
         const presets = {};
-        platforms.forEach((item, index) => {
+        Array.isArray(platforms) && platforms.forEach((item, index) => {
           let { additionalPresets, platform } = item;
 
           if (additionalPresets) {
@@ -618,7 +618,7 @@ const CreatePostModal = ({
           } else {
             let socialPresetPlateformData =
               socialPresets &&
-              socialPresets.find((socialPreset) => {
+              Array.isArray(socialPresets) && socialPresets.find((socialPreset) => {
                 return socialPreset.platform == platform;
               });
 
@@ -676,10 +676,12 @@ const CreatePostModal = ({
     const noContent = caption.length === 0;
 
     errors?.forEach((element) => {
-      if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
-        setErrors((prev) =>
-          prev.filter((item) => item.platform !== element.platform)
-        );
+      if (Array.isArray(selectedPlaforms)) {
+        if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
+          setErrors((prev) =>
+            prev.filter((item) => item.platform !== element.platform)
+          );
+        }
       }
     });
 
@@ -693,7 +695,7 @@ const CreatePostModal = ({
       ]);
     }
 
-    selectedPlaforms.forEach((item) => {
+    Array.isArray(selectedPlaforms) && selectedPlaforms.forEach((item) => {
       const { platform } = item;
       if (platform == InstagramPlatform) {
         if (noFileSelected) {
@@ -889,7 +891,7 @@ const CreatePostModal = ({
             ]);
           } else {
             files.length > 0 &&
-              files.map((file) => {
+              Array.isArray(files) && files.map((file) => {
                 // check if file is image
                 if (isContainImage(file) == true) {
                   if (
@@ -1528,9 +1530,8 @@ const CreatePostModal = ({
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
                 {...getRootProps()}
-                className={`${
-                  handlePointerEvent() || loading ? "pointer-events-none" : ""
-                } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
+                className={`${handlePointerEvent() || loading ? "pointer-events-none" : ""
+                  } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />
 
@@ -1546,9 +1547,8 @@ const CreatePostModal = ({
                     </div>
                   )}
                   <div
-                    className={`flex flex-1 flex-col xl:w-5/12 ${
-                      !showPreview ? "" : "hidden"
-                    } `}
+                    className={`flex flex-1 flex-col xl:w-5/12 ${!showPreview ? "" : "hidden"
+                      } `}
                   >
                     <div className="p-2">
                       <div className="flex justify-between">
@@ -1566,7 +1566,7 @@ const CreatePostModal = ({
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
-                            {connections.map((item, index) => {
+                            {Array.isArray(connections) && connections.map((item, index) => {
                               const {
                                 platform = "",
                                 screenName = "",
@@ -1575,11 +1575,9 @@ const CreatePostModal = ({
                               return (
                                 <span
                                   key={id}
-                                  className={`${
-                                    index > 0 ? "ml-2" : "ml-0"
-                                  } flex items-center ${
-                                    isDuplicating && "opacity-50"
-                                  }`}
+                                  className={`${index > 0 ? "ml-2" : "ml-0"
+                                    } flex items-center ${isDuplicating && "opacity-50"
+                                    }`}
                                 >
                                   <SocialPlatform
                                     id={item.id}
@@ -1670,7 +1668,7 @@ const CreatePostModal = ({
                         </div>
                         <div className="overflow-auto max-h-[72px]">
                           <ol className="list-decimal pl-5 text-xs">
-                            {errors.map((item, index) => {
+                            {Array.isArray(errors) && errors.map((item, index) => {
                               return (
                                 <li
                                   key={index}
@@ -1711,11 +1709,10 @@ const CreatePostModal = ({
                               <Button
                                 onClick={handleDuplicate}
                                 size="md"
-                                className={`${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "cursor-pointer"
-                                }`}
+                                className={`${loading || errors.length > 0
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "cursor-pointer"
+                                  }`}
                               >
                                 {loading ? "Duplicating.." : "Duplicate"}
                               </Button>
@@ -1744,11 +1741,10 @@ const CreatePostModal = ({
                                   size="md"
                                   onClick={handlePublish}
                                   disabled={loading || errors.length > 0}
-                                  className={`rounded-r-none normal-case text-xs ${
-                                    loading || errors.length > 0
-                                      ? "opacity-50 cursor-not-allowed w-32"
-                                      : ""
-                                  }`}
+                                  className={`rounded-r-none normal-case text-xs ${loading || errors.length > 0
+                                    ? "opacity-50 cursor-not-allowed w-32"
+                                    : ""
+                                    }`}
                                   title={loading ? "Please wait" : submitButton}
                                   loading={loading}
                                   color="primary"
@@ -1765,7 +1761,7 @@ const CreatePostModal = ({
                                     </button>
                                   </MenuHandler>
                                   <MenuList className="px-0">
-                                    {schdulePostBtnLabel.map((item) => {
+                                    {Array.isArray(schdulePostBtnLabel) && schdulePostBtnLabel.map((item) => {
                                       const { label, description, key } = item;
                                       return (
                                         <MenuItem
@@ -1794,9 +1790,8 @@ const CreatePostModal = ({
                     </div>
                   </div>
                   <div
-                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${
-                      showPreview ? "" : "hidden"
-                    } rounded-lg justify-center items-center`}
+                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${showPreview ? "" : "hidden"
+                      } rounded-lg justify-center items-center`}
                   >
                     <PostPreview
                       selectedPlaforms={selectedPlaforms}

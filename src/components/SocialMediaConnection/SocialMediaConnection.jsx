@@ -129,7 +129,7 @@ const SocialMediaConnection = ({ children }) => {
         <MenuHandler>{children}</MenuHandler>
         <MenuList className="px-0">
           {socialMediaList.map((item, index) => {
-            const isConnected = connections?.some(
+            const isConnected = Array.isArray(connections) && connections?.some(
               (conn) => conn.platform === item.platform
             );
             if (!isConnected) {

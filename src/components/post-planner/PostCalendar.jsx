@@ -43,6 +43,9 @@ const PostCalendar = (props) => {
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
 
+
+  console.log( "Here the all changes")
+
   const renderContentType = (type) => {
     if (type === "reels") {
       return <InstaReel height={12} width={12} />;

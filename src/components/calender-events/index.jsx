@@ -58,7 +58,7 @@ const Event = ({
 
   const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
 
-  const iconsToShowOnPlatfroms = platforms.map((item) => {
+  const iconsToShowOnPlatfroms = Array.isArray(platforms) && platforms.map((item) => {
     const platformName = item.platform;
     const errorIconName = `${platformName}_Error`;
     const platformIcon = item?.status === postStatuses.error
@@ -84,7 +84,7 @@ const Event = ({
       </div>
       <div className="mt-1 flex flex-col gap-1">
         <div class="flex flex-grow-1 gap-3 flex-wrap">
-          {platforms?.map((item, index) => {
+          {Array.isArray(platforms) && platforms?.map((item, index) => {
             const platformName = item.platform;
             const errorIconName = `${platformName}_Error`;
             const platformIcon = item?.status === postStatuses.error

@@ -69,7 +69,7 @@ const ModalInput = ({
   const [showNotificationPreset, setShowNotificationPreset] = useState(false);
 
   const handleNotificationPresets = () => {
-    const isSelected = selectedPlaforms.some(
+    const isSelected = Array.isArray(selectedPlaforms) && selectedPlaforms.some(
       (item) =>
         item.platform === InstagramPlatform ||
         item.platform.includes(TikTokPlatform)

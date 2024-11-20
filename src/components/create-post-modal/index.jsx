@@ -676,10 +676,12 @@ const CreatePostModal = ({
     const noContent = caption.length === 0;
 
     errors?.forEach((element) => {
-      if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
-        setErrors((prev) =>
-          prev.filter((item) => item.platform !== element.platform)
-        );
+      if (Array.isArray(selectedPlaforms)) {
+        if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
+          setErrors((prev) =>
+            prev.filter((item) => item.platform !== element.platform)
+          );
+        }
       }
     });
 
@@ -1708,8 +1710,8 @@ const CreatePostModal = ({
                                 onClick={handleDuplicate}
                                 size="md"
                                 className={`${loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "cursor-pointer"
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "cursor-pointer"
                                   }`}
                               >
                                 {loading ? "Duplicating.." : "Duplicate"}
@@ -1740,8 +1742,8 @@ const CreatePostModal = ({
                                   onClick={handlePublish}
                                   disabled={loading || errors.length > 0}
                                   className={`rounded-r-none normal-case text-xs ${loading || errors.length > 0
-                                      ? "opacity-50 cursor-not-allowed w-32"
-                                      : ""
+                                    ? "opacity-50 cursor-not-allowed w-32"
+                                    : ""
                                     }`}
                                   title={loading ? "Please wait" : submitButton}
                                   loading={loading}

@@ -38,7 +38,7 @@ const Calendar = () => {
       if (response?.status === 200) {
         const data =
           response?.data.length > 0 &&
-          response?.data?.map((item) => {
+          Array.isArray(response?.data) && response?.data?.map((item) => {
             return {
               rowId: item.id,
               userId: item.userId,

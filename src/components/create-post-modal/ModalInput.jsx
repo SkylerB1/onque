@@ -264,7 +264,7 @@ const ModalInput = ({
             </div>
           </div>
         </div>
-        {selectedPlaforms.map((item, index) => {
+        {Array.isArray(selectedPlaforms) && selectedPlaforms.map((item, index) => {
           const { platform } = item;
           if (platform == GoogleBusinessPlatform) {
             return (

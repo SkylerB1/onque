@@ -610,7 +610,7 @@ const CreatePostModal = ({
       if (postData) {
         const { platforms, socialPresets } = postData;
         const presets = {};
-        Array.isArray(plaforms) && platforms.forEach((item, index) => {
+        Array.isArray(platforms) && platforms.forEach((item, index) => {
           let { additionalPresets, platform } = item;
 
           if (additionalPresets) {

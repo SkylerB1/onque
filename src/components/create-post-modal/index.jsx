@@ -610,7 +610,7 @@ const CreatePostModal = ({
       if (postData) {
         const { platforms, socialPresets } = postData;
         const presets = {};
-        platforms.forEach((item, index) => {
+        Array.isArray(plaforms) && platforms.forEach((item, index) => {
           let { additionalPresets, platform } = item;
 
           if (additionalPresets) {
@@ -693,7 +693,7 @@ const CreatePostModal = ({
       ]);
     }
 
-    selectedPlaforms.forEach((item) => {
+    Array.isArray(selectedPlaforms) && selectedPlaforms.forEach((item) => {
       const { platform } = item;
       if (platform == InstagramPlatform) {
         if (noFileSelected) {

@@ -422,7 +422,7 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
     const data = {
-      providers: Array.isArray(selectedPlaforms) && selectedPlaforms.map((item) => ({
+      providers: selectedPlaforms.map((item) => ({
         platform: item.platform,
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
@@ -693,7 +693,7 @@ const CreatePostModal = ({
       ]);
     }
 
-    Array.isArray(selectedPlaforms) && selectedPlaforms.forEach((item) => {
+    selectedPlaforms.forEach((item) => {
       const { platform } = item;
       if (platform == InstagramPlatform) {
         if (noFileSelected) {

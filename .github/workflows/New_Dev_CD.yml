@@ -1,11 +1,7 @@
-name: Azure Static Web Apps CI/CD
+name: newdev-CD
 
 on:
   push:
-    branches:
-      - newDev
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
     branches:
       - newDev
 
@@ -19,6 +15,15 @@ jobs:
         with:
           submodules: true
           lfs: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # or the version you're using
+      - name: Install Dependencies
+        run: npm install
+      - name: Build for Development
+        run: npm run build:dev
+        
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -31,16 +36,9 @@ jobs:
           app_location: "/" # App source code path
           api_location: "" # Api source code path - optional
           output_location: "dist" # Built app content directory - optional
+        env:
+          VITE_ORIGIN_URL: "https://gentle-mud-0f2be680f.5.azurestaticapps.net"
+          VITE_API_URL: "https://api.onqueapp.com/api"
+          VITE_CALLBACK_URL: "https://gentle-mud-0f2be680f.5.azurestaticapps.net/brands/connect"
+          VITE_POST_IMG_BASE_PATH: "https://onquemediastorage.blob.core.windows.net/onquemedia/"
           ###### End of Repository/Build Configurations ######
-
-  close_pull_request_job:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    name: Close Pull Request Job
-    steps:
-      - name: Close Pull Request
-        id: closepullrequest
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GENTLE_MUD_0F2BE680F }}
-          action: "close"

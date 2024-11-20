@@ -387,7 +387,7 @@ const CreatePostModal = ({
       if (err.response.status === 400) {
         let error = err?.response?.data;
         if (error && Array.isArray(error)) {
-          error.map((err) => {
+          Array.isArray(error) && Array.isArray(error) && error.map((err) => {
             toastrError(err);
           });
         }
@@ -422,7 +422,7 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
     const data = {
-      providers: selectedPlaforms.map((item) => ({
+      providers: Array.isArray(selectedPlaforms) && selectedPlaforms.map((item) => ({
         platform: item.platform,
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
@@ -889,7 +889,7 @@ const CreatePostModal = ({
             ]);
           } else {
             files.length > 0 &&
-              files.map((file) => {
+            Array.isArray(files) && files.map((file) => {
                 // check if file is image
                 if (isContainImage(file) == true) {
                   if (
@@ -1566,7 +1566,7 @@ const CreatePostModal = ({
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
-                            {connections.map((item, index) => {
+                            {Array.isArray(connections) && connections.map((item, index) => {
                               const {
                                 platform = "",
                                 screenName = "",
@@ -1670,7 +1670,7 @@ const CreatePostModal = ({
                         </div>
                         <div className="overflow-auto max-h-[72px]">
                           <ol className="list-decimal pl-5 text-xs">
-                            {errors.map((item, index) => {
+                            {Array.isArray(errors) && errors.map((item, index) => {
                               return (
                                 <li
                                   key={index}
@@ -1765,7 +1765,7 @@ const CreatePostModal = ({
                                     </button>
                                   </MenuHandler>
                                   <MenuList className="px-0">
-                                    {schdulePostBtnLabel.map((item) => {
+                                    {Array.isArray(schdulePostBtnLabel) && schdulePostBtnLabel.map((item) => {
                                       const { label, description, key } = item;
                                       return (
                                         <MenuItem

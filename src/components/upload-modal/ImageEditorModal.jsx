@@ -17,6 +17,7 @@ import Compressor from 'compressorjs';
 function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
   const src = getSource(files[index]);
   const editorRef = useRef();
+  const MAX_SIZE = 8 * 1024 * 1024; // 8MB in bytes
 
   const handleFile = async () => {
     const res = await editorRef.current.editor.processImage();

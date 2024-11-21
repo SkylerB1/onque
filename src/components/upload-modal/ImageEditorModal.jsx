@@ -21,7 +21,6 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
 
   const handleFile = async () => {
     const res = await editorRef.current.editor.processImage();
-    console.log(res, "erdtfgyhujikol")
     // const prevFiles = [...files];
     // prevFiles[index] = res?.dest;
     // setFiles(prevFiles);

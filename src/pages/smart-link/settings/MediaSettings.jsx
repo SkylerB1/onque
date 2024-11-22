@@ -41,9 +41,16 @@ const MediaSettings = () => {
   const handleFile = (files, mediaType) => {
     setimgUploadModal(false);
     setVideoUploadModal(false);
+<<<<<<< HEAD
     files.forEach((item) => {
       const mediaUrl = getSource(item);
       addMediaItem(mediaType, mediaUrl, item);
+=======
+    setFiles((prevFiles) => [...prevFiles, ...files]);
+    Array.isArray(files) && files.map((item) => {
+      let mediaUrl = getSource(item);
+      addMedia(mediaType, mediaUrl, item);
+>>>>>>> 71845c26eac3771e3b24cda25fb7730db84caa01
     });
   };
 

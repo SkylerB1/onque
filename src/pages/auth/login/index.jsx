@@ -42,10 +42,19 @@ const Login = () => {
   const [loadingInputEmailForSM, setLoadingInputEmailForSM] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const user = localStorage.getItem("user");
-  if (user) {
-    return <Navigate to="/planner/calendar" />;
-  }
+  // const user = localStorage.getItem("user");
+
+  // if (user) {
+  //   return <Navigate to="/planner/calendar" />;
+  // }
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+
+    if (user) {
+      // Programmatically navigate to "/planner/calendar"
+      navigate("/planner/calendar");
+    }
+  }, [navigate]); // Dependencies array ensures this effect runs once on mount
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -88,21 +97,24 @@ const Login = () => {
 
   const handlePostLogin = async (response) => {
     const { data: userData } = response;
+
     const { access_token } = userData;
     localStorage.setItem("access_token", access_token);
     setCookie("access_token", access_token);
-    dispatch(getBrands()).then((item) => {
+
+    dispatch(getBrands()).then(async (item) => {
       const brand = item.payload.brands[0];
       const userBrand = {
         ...userData,
         brand: brand,
       };
       // console.log(brand);
-      getCounter(brand.id);
-      dispatch(setUser(userBrand));
-      getConnections(brand.id);
+      await getCounter(brand.id);
 
-      getSubscriptions();
+      await getConnections(brand.id);
+
+      await getSubscriptions();
+      dispatch(setUser(userBrand));
       setLoading(false);
       navigate("/planner/calendar");
     });

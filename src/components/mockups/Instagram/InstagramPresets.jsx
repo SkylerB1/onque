@@ -27,6 +27,8 @@ function InstagramPresets({
   brandId,
   mediaType,
   files,
+  showReelOnFeedChecked,
+  setShowReelOnFeedChecked,
 }) {
   const [open, setOpen] = useState(true);
 
@@ -85,6 +87,18 @@ function InstagramPresets({
   useEffect(() => {
     handleChange("collaborators", collaborators);
   }, [collaborators]);
+
+  const handleChangeReelFeed = (event) => {
+    setShowReelOnFeedChecked(event.target.checked);
+    setAdditionalPresets((prev) => ({
+      ...prev,
+      [platform]: { ...prev[platform], showReelOnFeed: event.target.checked },
+    }));
+  };
+
+  useEffect(() => {
+    setShowReelOnFeedChecked(additionalPresets?.showReelOnFeed || false);
+  }, []);
   return (
     <div className="my-2">
       <Accordion
@@ -114,7 +128,7 @@ function InstagramPresets({
         {(mediaType == "REEL" || mediaType == "POST") && (
           <div className="mb-8 flex items-center gap-2 flex-wrap">
             <div>Collaborator :</div>
-            {collaborators &&
+            {Array.isArray(collaborators) && 
               collaborators.map((collaborator, key) => (
                 <div
                   key={key}
@@ -159,7 +173,8 @@ function InstagramPresets({
           <InputComponent
             inputType={"switch"}
             label={"Show Reel on feed"}
-            onChange={(text) => console.log(text)}
+            onChange={handleChangeReelFeed}
+            checked={showReelOnFeedChecked}
           />
         </div>
       </Accordion>

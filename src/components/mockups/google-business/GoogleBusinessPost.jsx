@@ -21,7 +21,7 @@ function GoogleBusinessPost({
   data,
   connections,
 }) {
-  const { screenName = "" } = connections.find((item) =>
+  const { screenName = "" } = Array.isArray(connections) && connections.find((item) =>
     item.platform.includes(GoogleBusinessPlatform)
   );
   const src = useMemo(() => getSource(files[0]), [files]); 

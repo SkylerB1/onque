@@ -13,14 +13,14 @@ import InstaShareOutline from "../../../assets/InstaShareOutline";
 import UserIcon from "../../../assets/userIcon";
 const StoryMobile = ({ viewMode, files, screenName }) => {
   const memoizedSources = useMemo(() => {
-    return files.map((file) => getSource(file));
+    return Array.isArray(files) && files.map((file) => getSource(file));
   }, [files]);
   const [swiperIndex, setIndex] = useState(0);
   return (
     <div className="w-full h-full bg-black">
       <div className="absolute top-8 flex z-50 flex-1 w-full flex-row px-2">
         {files.length > 0 &&
-          files.map((item, index) => {
+          Array.isArray(files) && files.map((item, index) => {
             return (
               <div
                 key={index}
@@ -43,7 +43,7 @@ const StoryMobile = ({ viewMode, files, screenName }) => {
       >
         {files.length > 0 ? (
           files.length == 1 ? (
-            files.map((file, key) => {
+            Array.isArray(files) && files.map((file, key) => {
               const src = memoizedSources[key];
               if (isContainVideo(file)) {
                 return (
@@ -86,7 +86,7 @@ const StoryMobile = ({ viewMode, files, screenName }) => {
               modules={[Navigation]}
               onRealIndexChange={(s) => setIndex(s.realIndex)}
             >
-              {files.map((file, key) => {
+              {Array.isArray(files) && files.map((file, key) => {
                 if (isContainVideo(file)) {
                   const src = memoizedSources[key];
 

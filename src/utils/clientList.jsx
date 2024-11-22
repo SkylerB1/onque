@@ -56,7 +56,7 @@ const ClientList = ({ clientData }) => {
         />
       </div>
       <List>
-        {filteredClients.map((client, index) => (
+        {Array.isArray(filteredClients) && filteredClients.map((client, index) => (
           <ListItem
             key={index}
             className={`h-12 ${selectedClient === client ? 'bg-blue-200' : ''}`}

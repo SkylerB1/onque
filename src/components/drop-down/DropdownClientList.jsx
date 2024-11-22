@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { GoPlus } from "react-icons/go";
 import { IoDiamondSharp } from "react-icons/io5";
 import useConnections from "../customHooks/useConnections";
@@ -14,21 +14,30 @@ import {
   Spinner,
   Typography,
 } from "@material-tailwind/react";
-import { SocialPlatforms } from "../../utils";
+import { getHighestPlanName, SocialPlatforms } from "../../utils";
 import { useAppContext } from "../../context/AuthContext";
 import { abbreviateString } from "../../utils/commonUtils";
 import InfoIcon from "../svg/infoIcon";
 import Close from "../svg/Close";
 import useUserInfo from "../customHooks/useUserInfo";
 
-const DropdownClientList = ({ setOpen, isSubscribed }) => {
+const DropdownClientList = ({
+  setOpen,
+  isSubscribed,
+  openBrandModel,
+  subscription,
+  activeBrands,
+  getActiveBrands,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const { getConnections } = useConnections();
   const { getCounter } = useAppContext();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+
   const [userInfo, setUserInfo] = useState(user);
   const { getUserRefreshedData } = useUserInfo();
+  const heighrestPlanName = getHighestPlanName();
 
   const { clients_count = 0, max_clients = 0 } =
     useSelector((state) => state.user.value) || {};
@@ -36,13 +45,25 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
   const brandName = user?.brand?.brand_name || "Loading...";
   const [searchTerm, setSearchTerm] = useState("");
 
+  const allowedBrands = useMemo(
+    () => max_clients - activeBrands.length,
+    [max_clients, activeBrands.length]
+  );
+
   const toggleDropdown = () => {
     if (isOpen == false) {
-      getUserRefreshedData().then((response) => {
+      let adminEmail = user?.adminEmail;
+      let adminToken = user?.adminToken;
+      let params = {
+        adminEmail,
+        adminToken,
+      };
+      getUserRefreshedData(params).then((response) => {
         if (response) {
           setUserInfo(response);
         }
       });
+      getActiveBrands();
     }
     setIsOpen(!isOpen);
   };
@@ -54,6 +75,11 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
     dispatch(setUser(data));
     getCounter(item.id);
     getConnections(item.id);
+  };
+
+  const handleOpenBrandModel = () => {
+    toggleDropdown();
+    openBrandModel();
   };
 
   return (
@@ -114,7 +140,8 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
               className="mx-4 my-5 p-3 w-80 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
             />
           )}
-          {!isSubscribed && (
+
+          {!(userInfo?.adminRole === "admin" || isSubscribed) && (
             <>
               <div
                 id="alert-4"
@@ -135,7 +162,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
               </div>
             </>
           )}
-          {isSubscribed && userInfo?.clients_count < userInfo?.max_clients ? (
+          {userInfo?.adminRole === "admin" || isSubscribed && userInfo?.clients_count < userInfo?.max_clients ? (
             <>
               <div
                 id="alert-1"
@@ -145,34 +172,66 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                 <InfoIcon />
                 <span className="sr-only">Info</span>
                 <div className="ms-3 text-sm font-medium">
-                  You have {clients_count} brands out {max_clients}.
+                  {userInfo?.adminRole === "admin"
+                    ? `You have ${clients_count} clients.`
+                    : `You have ${clients_count} ${userInfo?.adminRole !== "admin" && "brands out"} ${max_clients}.`
+                  }
                 </div>
+
               </div>
             </>
           ) : (
             <>
               {isSubscribed && (
                 <>
-                  {userInfo?.max_posts_monthly < 12000 && <div
-                    id="alert-2"
-                    className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
-                    role="alert"
-                  >
-                    <InfoIcon />
-                    <span className="sr-only">Info</span>
-                    <div className="ms-3 text-sm font-medium">
-                      You have reached the maximum numbers of brand limit. To
-                      create the more brand
-                      <Link
-                        to="/setting/price"
-                        className="font-semibold underline hover:no-underline"
+                  {allowedBrands > 0 ? (
+                    <>
+                      <div
+                        id="alert-2"
+                        className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                        role="alert"
                       >
-                        {" "}
-                        Upgrade
-                      </Link>
-                      .
-                    </div>
-                  </div>}
+                        <InfoIcon />
+                        <span className="sr-only">Info</span>
+                        <div className="ms-3 text-sm font-medium">
+                          You have a limit of {max_clients} active brands. You
+                          can activate {allowedBrands} more.
+                          <a
+                            onClick={handleOpenBrandModel}
+                            class="underline font-semibold cursor-pointer"
+                          >
+                            {" "}
+                            Make Active
+                          </a>
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {userInfo?.clients_count >= userInfo?.max_clients &&
+                        subscription?.plan?.name != heighrestPlanName && (
+                          <div
+                            id="alert-2"
+                            className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400"
+                            role="alert"
+                          >
+                            <InfoIcon />
+                            <span className="sr-only">Info</span>
+                            <div className="ms-3 text-sm font-medium">
+                              You have reached the maximum numbers of brand
+                              limit. To create the more brand
+                              <Link
+                                to="/setting/price"
+                                className="font-semibold underline hover:no-underline"
+                              >
+                                {" "}
+                                Upgrade
+                              </Link>
+                            </div>
+                          </div>
+                        )}
+                    </>
+                  )}
                 </>
               )}
             </>
@@ -207,7 +266,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
             </div>
           ) : (
             <>
-              {brands
+              {Array.isArray(brands) && brands
                 ?.filter((item) =>
                   item.brand_name
                     .toLowerCase()
@@ -221,7 +280,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                     }
                     className={` ${
                       item.is_active !== true && " opacity-20 "
-                    } w-full my-2 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
+                    } flex w-full my-2 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
                     role="menuitem"
                   >
                     <div className="flex flex-1 items-center justify-start gap-3">
@@ -230,6 +289,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                           {item?.brand_name.charAt(0)}
                         </span>
                       </div>
+
                       <div>
                         <Typography className="text-base">
                           {item?.brand_name}{" "}
@@ -240,7 +300,7 @@ const DropdownClientList = ({ setOpen, isSubscribed }) => {
                               No networks connected
                             </span>
                           )}
-                          {item.platforms.map((item) => {
+                          {Array.isArray(item?.platforms) && item.platforms.map((item) => {
                             const { platform } = item;
                             if (platform) {
                               const { coloredIcon } = SocialPlatforms[platform];

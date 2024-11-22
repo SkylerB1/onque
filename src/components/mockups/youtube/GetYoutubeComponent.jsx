@@ -13,7 +13,7 @@ function GetYoutubeComponent({
   data,
   connections,
 }) {
-  const { screenName = "" } = connections.find(
+  const { screenName = "" } = Array.isArray(connections) && connections.find(
     (item) => item.platform === YoutubePlatform
   );
   if (mediaType == "VIDEO" && viewMode) {

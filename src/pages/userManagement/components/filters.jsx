@@ -113,7 +113,7 @@ const Filters = ({ options, selectedOptions, onChange, title, identifier }) => {
         {loading ? (
           <Spinner size="sm" color="blue" className="mx-auto" />
         ) : (
-          options.map((option, index) => (
+          Array.isArray(options) && options.map((option, index) => (
             <div
               key={index}
               className="flex items-center w-full my-1 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 px-2 justify-between rounded-md hover:cursor-pointer "

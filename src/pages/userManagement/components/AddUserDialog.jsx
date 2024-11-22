@@ -81,7 +81,7 @@ const AddUserDialog = ({
     const res = await UserService.isValid(params);
 
     if (res.code === 200) {
-      const existingCollaborator = collaborators?.some(
+      const existingCollaborator = Array.isArray(collaborators) && collaborators?.some(
         (item) => item.email === email
       );
       if (existingCollaborator) {

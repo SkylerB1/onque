@@ -59,6 +59,7 @@ const RolesAndPermission = ({ collaborators }) => {
   const [search, setSearch] = useState("");
   const [data, setData] = useState(initial);
   const { value: roles, loading } = useSelector((state) => state.roles);
+  const user = useSelector((state) => state.user.value);
   const rolesData = useMemo(
     () =>
       roles?.filter((item) => {
@@ -92,7 +93,7 @@ const RolesAndPermission = ({ collaborators }) => {
   };
 
   const checkIsRoleAssigned = (roleId) => {
-    return collaborators.some((item) =>
+    return Array.isArray(collaborators) && collaborators.some((item) =>
       item.brands.some((brand) => {
         return brand.brandRole.roleId === roleId;
       })
@@ -148,7 +149,7 @@ const RolesAndPermission = ({ collaborators }) => {
       <div className="xl:mr-52 md:mr-0 sm:mr-0">
         <Card>
           <CardBody>
-            {isSubscribed == true ? (
+            {isSubscribed == true || user?.adminRole === "admin" ? (
               <>
                 <div>
                   <div className="mb-4 mt-4 flex flex-col gap-2 justify-between md:flex-row md:items-center">
@@ -177,7 +178,7 @@ const RolesAndPermission = ({ collaborators }) => {
                       <table className="w-full min-w-full  table-auto text-left">
                         <thead>
                           <tr>
-                            {tableHeaders.map((header, index) => (
+                            {Array.isArray(tableHeaders) && tableHeaders.map((header, index) => (
                               <th
                                 key={index}
                                 className="border-b border-blue-gray-100 bg-blue-gray-50 p-4"
@@ -195,7 +196,7 @@ const RolesAndPermission = ({ collaborators }) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {rolesData?.map((row, index) => {
+                          {Array.isArray(rolesData) && rolesData?.map((row, index) => {
                             const isLast = index === rolesData.length - 1;
                             const classes = isLast
                               ? "p-4"

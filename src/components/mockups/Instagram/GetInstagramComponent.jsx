@@ -11,7 +11,7 @@ function GetInstagramComponent({
   files,
   connections,
 }) {
-  const { screenName = "" } = connections.find(
+  const { screenName = "" } = Array.isArray(connections) && connections.find(
     (item) => item.platform === InstagramPlatform
   );
   if (mediaType == "POST") {

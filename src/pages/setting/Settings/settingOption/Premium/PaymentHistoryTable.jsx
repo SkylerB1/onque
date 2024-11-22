@@ -79,7 +79,7 @@ const PaymentHistoryTable = () => {
             </thead>
             <tbody className="mt-12">
               {payments &&
-                payments?.map(({ lines, hosted_invoice_url }, index) => {
+                Array.isArray(payments) && payments?.map(({ lines, hosted_invoice_url }, index) => {
                   const isLast = index === payments?.length - 1;
                   const classes = isLast
                     ? "p-4"

@@ -21,24 +21,35 @@ import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const tableHead = ["Brands", "Status"];
 
-const ModifyBrandsStatus = ({
+const EnableBrands = ({
   isOpen,
   onClose,
   toggleModal,
-  brands,
-  setBrands,
   newBrands,
   setNewBrands,
-  selectedPlanDetails,
-  existingClientCount,
-  handleSaveBrandAction,
   selectAllBrand,
   setSelectAllBrand,
-  isUpgarding,
+  activeBrands,
+  handleSaveBrandAction,
+  loading,
 }) => {
-  const [text, setText] = useState("");
   const [activeBrandCount, setActiveBrandCount] = useState(0);
-  const [loading, setLoading] = useState(false);
+
+  const user = useSelector((state) => state.user.value);
+
+  const FirstLetter = user?.firstName?.charAt(0).toUpperCase();
+  const SecondLetter = user?.firstName?.charAt(1).toUpperCase();
+  const maxClients = user?.max_clients || 0;
+
+  const allowedBrands = useMemo(
+    () => maxClients - activeBrands.length,
+    [maxClients, activeBrands.length]
+  );
+
+  const isDisabled = useMemo(
+    () => activeBrandCount > allowedBrands,
+    [activeBrandCount, allowedBrands]
+  );
 
   const checkActiveBrandsCount = () => {
     let activeBrandCount = 0;
@@ -46,13 +57,6 @@ const ModifyBrandsStatus = ({
       newBrands.map((brand) => brand.is_active == true && activeBrandCount++);
     setActiveBrandCount(activeBrandCount);
   };
-  const isDisabled = useMemo(
-    () => activeBrandCount != selectedPlanDetails?.totalClients,
-    [activeBrandCount]
-  );
-  const user = useSelector((state) => state.user.value);
-  const FirstLetter = user?.firstName?.charAt(0).toUpperCase();
-  const SecondLetter = user?.firstName?.charAt(1).toUpperCase();
 
   const handleSelectBrand = (brandId, event) => {
     setNewBrands((prev) =>
@@ -68,6 +72,7 @@ const ModifyBrandsStatus = ({
       })
     );
   };
+
   const handleSelectAllBrand = (brandId, event) => {
     setNewBrands((prev) =>
       prev.map((item) => {
@@ -79,6 +84,7 @@ const ModifyBrandsStatus = ({
     );
     setSelectAllBrand(event);
   };
+
   useEffect(() => {
     checkActiveBrandsCount();
   }, [newBrands]);
@@ -147,22 +153,10 @@ const ModifyBrandsStatus = ({
           </svg>
           <span className="sr-only">Info</span>
           <div>
-            {isUpgarding === 0 ? (
-              <>
-                <span className="font-medium">Downgrading Plan : </span>You are
-                downgrading the your subscription. Kindly select any{" "}
-                {selectedPlanDetails?.totalClients} brands to make active out of{" "}
-                {existingClientCount}.
-              </>
-            ) : (
-              <>
-                <span className="font-medium">Upgrading Plan : </span>You are
-                upgrading the your subscription. You can make active maximum{" "}
-                {selectedPlanDetails?.totalClients} brands out of{" "}
-                {existingClientCount}. So kindly select any{" "}
-                {selectedPlanDetails?.totalClients} brands to make active.
-              </>
-            )}
+            <>
+              <span className="font-medium">Note : </span>You can active any{" "}
+              {allowedBrands} brands out of {newBrands.length}.
+            </>
           </div>
         </div>
         <div
@@ -207,20 +201,17 @@ const ModifyBrandsStatus = ({
                   return (
                     <tr
                       key={index}
-                      className={
-                        newBrands[index]?.is_active == true && `opacity-50`
-                      }
+                      className={brand?.is_active == false && `opacity-50`}
                     >
                       <td className="p-4 w-30">
                         <div className="flex items-center gap-3">
                           <CustomSwitch
                             identifier={brand.id}
-                            checked={
-                              newBrands[index]?.is_active == true ? true : false
-                            }
+                            checked={brand?.is_active == true ? true : false}
                             defaultValue={false}
                             onChange={handleSelectBrand}
                           />
+
                           <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
                             <span className="font-normal text-gray-600 dark:text-gray-300">
                               {brand?.brand_name.charAt(0)}
@@ -233,9 +224,7 @@ const ModifyBrandsStatus = ({
                       </td>
                       <td>
                         <div className=" flex flex-row justify-between ml-5">
-                          {brands[index]?.is_active == true
-                            ? "Active"
-                            : "In Active"}
+                          {brand?.is_active == true ? "Active" : "In Active"}
                         </div>
                       </td>
                     </tr>
@@ -262,4 +251,4 @@ const ModifyBrandsStatus = ({
   );
 };
 
-export default ModifyBrandsStatus;
+export default EnableBrands;

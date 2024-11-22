@@ -20,9 +20,11 @@ const SocialPlatform = ({
   selectedPreview,
   setSelectedPreview,
   platform,
+  showReelOnFeedChecked,
+  setShowReelOnFeedChecked,
 }) => {
   const [open, setOpen] = useState(false);
-  const selected = selectedPlaforms.find((item) => item.platform === platform);
+  const selected = Array.isArray(selectedPlaforms) && selectedPlaforms.find((item) => item.platform === platform);
   const {
     mediaOptions,
     mediaType,
@@ -68,11 +70,22 @@ const SocialPlatform = ({
 
   const handleSelect = (type) => {
     let plaforms = [...selectedPlaforms];
-    plaforms.forEach((element) => {
+    Array.isArray(plaforms) && plaforms.forEach((element) => {
       if (element.platform == platform) {
         element.mediaType = type;
       }
     });
+    let isInstagramReelSelected = Array.isArray(plaforms) && plaforms.find((element) => {
+      if (platform == "Instagram" && type == "REEL") {
+        return true;
+      }
+    });
+
+    if (isInstagramReelSelected) {
+      setShowReelOnFeedChecked(true);
+    } else {
+      setShowReelOnFeedChecked(false);
+    }
 
     setSelectedPlatforms(plaforms);
     setSelectedPreview((prev) => ({ ...prev, mediaType: type }));
@@ -97,7 +110,7 @@ const SocialPlatform = ({
             {coloredIcon(22, 22)}
             {options.length > 0 && (
               <div className="absolute -right-1 -bottom-1 bg-white rounded-full w-4 h-4 flex justify-center items-center">
-                {options.map((item, index) => {
+                {Array.isArray(options) && options.map((item, index) => {
                   if (item.label == selected.mediaType) {
                     return <span key={index}>{item.icon()}</span>;
                   }
@@ -128,7 +141,7 @@ const SocialPlatform = ({
             </Button>
           </MenuHandler>
           <MenuList className="px-0">
-            {options?.map((item, index) => {
+            {Array.isArray(options) && options?.map((item, index) => {
               const { icon, label, description } = item;
               const selectedMediaType = isSelectedMediaType(label);
               return (

@@ -122,6 +122,7 @@ const CreatePostModal = ({
     [isEdit]
   );
 
+  const [showReelOnFeedChecked, setShowReelOnFeedChecked] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [viewMode, setViewMode] = useState(0);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -144,6 +145,7 @@ const CreatePostModal = ({
   const [submitButtonKey, setSubmitButtonKey] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
+
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
@@ -215,7 +217,7 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection, validations, blockUI, setblockUI } =
+  const { broadcastConnection, validations, blockUI, setblockUI, getCounter } =
     useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
@@ -329,7 +331,7 @@ const CreatePostModal = ({
   const uploadFiles = async () => {
     const formData = new FormData();
     const media = [];
-    files?.forEach((file) => {
+    Array.isArray(files) && files?.forEach((file) => {
       if (file instanceof File || file instanceof Blob) {
         formData.append("files", file);
       } else {
@@ -373,6 +375,7 @@ const CreatePostModal = ({
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         await getPostData();
+
         handleClose();
         handleLoading(false);
       }
@@ -384,7 +387,7 @@ const CreatePostModal = ({
       if (err.response.status === 400) {
         let error = err?.response?.data;
         if (error && Array.isArray(error)) {
-          error.map((err) => {
+          Array.isArray(error) && error.map((err) => {
             toastrError(err);
           });
         }
@@ -419,7 +422,7 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
     const data = {
-      providers: selectedPlaforms.map((item) => ({
+      providers: Array.isArray(selectedPlaforms) && selectedPlaforms.map((item) => ({
         platform: item.platform,
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
@@ -515,7 +518,7 @@ const CreatePostModal = ({
       });
     };
 
-    files.forEach((file, index) => {
+    Array.isArray(files) && files.forEach((file, index) => {
       if (!isBlob(file)) {
         updateDuration(index, 0);
         return false;
@@ -534,7 +537,7 @@ const CreatePostModal = ({
     });
 
     return () => {
-      (videoElements &&
+      (Array.isArray(videoElements) && 
         videoElements.forEach((video) => {
           video.src = "";
         })) ||
@@ -607,14 +610,15 @@ const CreatePostModal = ({
       if (postData) {
         const { platforms, socialPresets } = postData;
         const presets = {};
-        platforms.forEach((item, index) => {
+        console.log({platforms})
+        Array.isArray(platforms) && platforms.forEach((item, index) => {
           let { additionalPresets, platform } = item;
 
           if (additionalPresets) {
             presets[platform] = additionalPresets;
           } else {
             let socialPresetPlateformData =
-              socialPresets &&
+            Array.isArray(socialPresets) && 
               socialPresets.find((socialPreset) => {
                 return socialPreset.platform == platform;
               });
@@ -665,18 +669,20 @@ const CreatePostModal = ({
       submitButton === "Publish Now";
     const saveAsDraft = submitButton === "Save As Draft";
 
-    const hasImages = files.some((item) => isContainImage(item));
-    const hasVideos = files.some((item) => isContainVideo(item));
+    const hasImages = Array.isArray(files) && files.some((item) => isContainImage(item));
+    const hasVideos = Array.isArray(files) && files.some((item) => isContainVideo(item));
     const videosCount = files?.filter((item) => isContainVideo(item)).length;
     const imagesCount = files?.filter((item) => isContainImage(item)).length;
     const noFileSelected = files.length === 0;
     const noContent = caption.length === 0;
 
-    errors?.forEach((element) => {
-      if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
-        setErrors((prev) =>
-          prev.filter((item) => item.platform !== element.platform)
-        );
+    Array.isArray(errors) && errors?.forEach((element) => {
+      if (Array.isArray(selectedPlaforms)) {
+        if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
+          setErrors((prev) =>
+            prev.filter((item) => item.platform !== element.platform)
+          );
+        }
       }
     });
 
@@ -690,7 +696,7 @@ const CreatePostModal = ({
       ]);
     }
 
-    selectedPlaforms.forEach((item) => {
+    Array.isArray(selectedPlaforms) && selectedPlaforms.forEach((item) => {
       const { platform } = item;
       if (platform == InstagramPlatform) {
         if (noFileSelected) {
@@ -714,7 +720,7 @@ const CreatePostModal = ({
           ]);
         }
         if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
+          const isAnyVideoLengthExceed = Array.isArray(videoDurations) && videoDurations.some(
             (videoDuration) =>
               videoDuration > pateformPostVideosLength.instagram
           );
@@ -771,7 +777,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          dimensions?.width > 1920 && !noFileSelected
+          dimensions?.width > 1920 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -785,7 +792,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) && !noFileSelected
+          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -799,7 +807,8 @@ const CreatePostModal = ({
         if (
           (item.mediaType == "POST" || item.mediaType == "STORY") &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.duration < 0.3 || dimensions?.duration > 60) && !noFileSelected
+          (dimensions?.duration < 0.3 || dimensions?.duration > 60) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -823,7 +832,8 @@ const CreatePostModal = ({
           ]);
         } else if (
           item.mediaType == "REEL" &&
-          dimensions?.aspectRatio !== 0.5625 && !noFileSelected
+          dimensions?.aspectRatio !== 0.5625 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -882,10 +892,14 @@ const CreatePostModal = ({
             ]);
           } else {
             files.length > 0 &&
-              files.map((file) => {
+            Array.isArray(files) && files.map((file) => {
                 // check if file is image
                 if (isContainImage(file) == true) {
-                  if (!ImageMimeTypesForFbStory.includes(file?.mimetype || file?.type)) {
+                  if (
+                    !ImageMimeTypesForFbStory.includes(
+                      file?.mimetype || file?.type
+                    )
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -919,7 +933,11 @@ const CreatePostModal = ({
 
                 if (isContainVideo(file) == true) {
                   // console.log(file);
-                  if (!VideoMimeTypesForFbStory.includes(file?.type || file?.mimetype)) {
+                  if (
+                    !VideoMimeTypesForFbStory.includes(
+                      file?.type || file?.mimetype
+                    )
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -1024,7 +1042,7 @@ const CreatePostModal = ({
         }
 
         if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
+          const isAnyVideoLengthExceed = Array.isArray(videoDurations) && videoDurations.some(
             (videoDuration) => videoDuration > pateformPostVideosLength.twitter
           );
           if (isAnyVideoLengthExceed) {
@@ -1168,7 +1186,7 @@ const CreatePostModal = ({
           ]);
         }
         if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
+          const isAnyVideoLengthExceed = Array.isArray(videoDurations) && videoDurations.some(
             (videoDuration) => videoDuration > pateformPostVideosLength.tiktok
           );
           if (isAnyVideoLengthExceed) {
@@ -1194,18 +1212,18 @@ const CreatePostModal = ({
         }
         const maxVideoDuration =
           additionalPresets[platform].maxVideoPostDuration;
-        if (additionalPresets[platform].privacyLevel === "") {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "tiktok",
-              error:
-                "TikTok - Tiktok Presets - A privacy option must be selected.",
-            },
-          ]);
-        }
+        // if (additionalPresets[platform].privacyLevel === "") {
+        //   setErrors((prev) => [
+        //     ...prev,
+        //     {
+        //       id: 0,
+        //       type: "",
+        //       platform: "tiktok",
+        //       error:
+        //         "TikTok - Tiktok Presets - A privacy option must be selected.",
+        //     },
+        //   ]);
+        // }
         if (hasImages) {
           setErrors((prev) => [
             ...prev,
@@ -1551,7 +1569,7 @@ const CreatePostModal = ({
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
-                            {connections.map((item, index) => {
+                            {Array.isArray(connections) && connections.map((item, index) => {
                               const {
                                 platform = "",
                                 screenName = "",
@@ -1575,6 +1593,12 @@ const CreatePostModal = ({
                                     platform={platform}
                                     selectedPreview={selectedPreview}
                                     setSelectedPreview={setSelectedPreview}
+                                    showReelOnFeedChecked={
+                                      showReelOnFeedChecked
+                                    }
+                                    setShowReelOnFeedChecked={
+                                      setShowReelOnFeedChecked
+                                    }
                                   />
                                 </span>
                               );
@@ -1633,6 +1657,8 @@ const CreatePostModal = ({
                       setAdditionalPresets={setAdditionalPresets}
                       isDuplicating={isDuplicating}
                       brandId={brandId}
+                      showReelOnFeedChecked={showReelOnFeedChecked}
+                      setShowReelOnFeedChecked={setShowReelOnFeedChecked}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">
@@ -1647,7 +1673,7 @@ const CreatePostModal = ({
                         </div>
                         <div className="overflow-auto max-h-[72px]">
                           <ol className="list-decimal pl-5 text-xs">
-                            {errors.map((item, index) => {
+                            {Array.isArray(errors) && errors.map((item, index) => {
                               return (
                                 <li
                                   key={index}
@@ -1742,7 +1768,7 @@ const CreatePostModal = ({
                                     </button>
                                   </MenuHandler>
                                   <MenuList className="px-0">
-                                    {schdulePostBtnLabel.map((item) => {
+                                    {Array.isArray(schdulePostBtnLabel) && schdulePostBtnLabel.map((item) => {
                                       const { label, description, key } = item;
                                       return (
                                         <MenuItem

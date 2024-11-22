@@ -7,7 +7,7 @@ function TableFooter({ currentPage, totalPages, onPageChange }) {
     <div className="flex justify-center mt-4">
       <nav className="bg-white px-4 py-3 flex items-center rounded-lg shadow-lg">
         <ul className="flex space-x-2">
-          {pageNumbers.map((page) => (
+          {Array.isArray(pageNumbers) && pageNumbers.map((page) => (
             <li key={page}>
               <button
                 onClick={() => onPageChange(page)}

@@ -56,7 +56,7 @@ const UpdateRoleDialog = ({ isOpen, onClose, brands, selectedBrands }) => {
           </div>
           <div className="black p">Roles</div>
           <div className="grid gap-4 py-4">
-            {brands?.map((brand) => (
+            {Array.isArray(brands) && brands?.map((brand) => (
               <Button
                 variant="outlined"
                 key={brand}

@@ -25,7 +25,7 @@ export default function TestSortable() {
       className="list"
       draggedItemClassName="dragged"
     >
-      {items.map((item) => (
+      {Array.isArray(items) && items.map((item) => (
         <SortableItem key={item}>
           <div className="item">{item}</div>
         </SortableItem>

@@ -89,14 +89,19 @@ const PostCalendar = (props) => {
       minute: "numeric",
       hour12: true,
     };
+    const timeOptions = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    };
+    const formattedPostTime = postDate.toLocaleTimeString("en-US", timeOptions);
     const formattedPostDate = postDate.toLocaleDateString("en-US", options);
-
     return (
       <Event
         caption={abbreviateString(eventInfo.event._def.title)}
         status={status}
         dataData={dateStr}
-        eventTime={eventInfo.timeText}
+        eventTime={formattedPostTime}
         postDate={formattedPostDate}
         setIsEdit={setIsEdit}
         platformLogo={eventInfo.event._def.extendedProps.platform}
@@ -166,6 +171,7 @@ const PostCalendar = (props) => {
 
     setTextForRoleInfo(textForRoleInfo);
   }, [role]);
+ 
   return (
     <>
       <div className="md:my-2 xl:mt-24 lg:mt-24">
@@ -214,7 +220,7 @@ const PostCalendar = (props) => {
           <>
             <div className="flex items-center justify-between border-2 border-black rounded-md py-2 px-5 mb-5">
               <span className="text-sm text-black">
-                You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month. Upgrade your plan to increase the limit.
+                You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month.{validations?.max_posts_monthly < 12000 && "Upgrade your plan to increase the limit."}
               </span>
                   {validations.max_posts_monthly < 12000  && <Button
                     variant="gradient"
@@ -226,14 +232,14 @@ const PostCalendar = (props) => {
                   </Button>}
             </div>
 
-            <Button
+            {validations?.posts_count_monthly < validations?.max_posts_monthly && <Button
               size="sm"
               onClick={handleModal}
               className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
             >
               <IoMdAdd className="w-5 h-5 mr-1" />
               Create Post
-            </Button>
+            </Button>}
           </>
         )}
         <Card className="mt-2">

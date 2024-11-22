@@ -50,7 +50,7 @@ export default function AddInstagramCollaboratorDialog({
     // check name is already exist or not
     let collaborator_name = formData.collaborator_name;
     if (collaborators.length > 0) {
-      let isExist = collaborators.find(
+      let isExist = Array.isArray(collaborators) && collaborators.find(
         (item) => item.toLowerCase() === collaborator_name.toLowerCase()
       );
       if (isExist) {
@@ -87,7 +87,10 @@ export default function AddInstagramCollaboratorDialog({
             color="blue-gray"
             size="sm"
             variant="text"
-            onClick={() => handleClick("autoPublish", true)}
+            onClick={() => {
+              // handleClick("autoPublish", true);
+              handleClose();
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

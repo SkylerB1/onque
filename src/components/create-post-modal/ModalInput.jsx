@@ -59,6 +59,8 @@ const ModalInput = ({
   isDuplicating,
   brandId,
   setShowEmoji,
+  showReelOnFeedChecked,
+  setShowReelOnFeedChecked,
 }) => {
   const user = useSelector((state) => state.user.value);
   const inputRef = useRef(null);
@@ -67,7 +69,7 @@ const ModalInput = ({
   const [showNotificationPreset, setShowNotificationPreset] = useState(false);
 
   const handleNotificationPresets = () => {
-    const isSelected = selectedPlaforms.some(
+    const isSelected = Array.isArray(selectedPlaforms) && selectedPlaforms.some(
       (item) =>
         item.platform === InstagramPlatform ||
         item.platform.includes(TikTokPlatform)
@@ -262,7 +264,7 @@ const ModalInput = ({
             </div>
           </div>
         </div>
-        {selectedPlaforms.map((item, index) => {
+        {Array.isArray(selectedPlaforms.map) && selectedPlaforms.map((item, index) => {
           const { platform } = item;
           if (platform == GoogleBusinessPlatform) {
             return (
@@ -306,6 +308,8 @@ const ModalInput = ({
                 brandId={brandId}
                 mediaType={item.mediaType}
                 files={files}
+                showReelOnFeedChecked={showReelOnFeedChecked}
+                setShowReelOnFeedChecked={setShowReelOnFeedChecked}
               />
             );
           }

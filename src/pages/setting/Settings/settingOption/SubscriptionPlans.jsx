@@ -38,7 +38,7 @@ const SubscriptionPlans = () => {
         </ButtonGroup> */}
       </div>
       <div className="flex flex-1 items-center justify-between overflow-auto xs:overflow-scroll gap-4">
-        {selectedPlanList.map((item, index) => (
+        {Array.isArray(selectedPlanList) && selectedPlanList.map((item, index) => (
           <div className="" key={index}>
             <PriceCard
               selectedPlan={item}

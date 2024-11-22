@@ -9,11 +9,11 @@ import { getSource, isContainVideo } from "../../../utils";
 import { LinkedInPlatform } from "../../common/commonString";
 
 function LinkedInPost({ files, captions, viewMode, connections, date }) {
-  const { screenName = "" } = connections.find((item) =>
+  const { screenName = "" } = Array.isArray(connections) && connections.find((item) =>
     item.platform.includes(LinkedInPlatform)
   );
   const memoizedSources = useMemo(() => {
-    return files.map((file) => getSource(file));
+    return Array.isArray(files) && files.map((file) => getSource(file));
   }, [files]);
   const renderMedia = useCallback(() => {
     if (files.length === 1) {
@@ -40,7 +40,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
         />
       );
     } else if (files.length === 2) {
-      return files.map((item, index) => {
+      return Array.isArray(files) && files.map((item, index) => {
         const src = memoizedSources[index];
         return (
           <div
@@ -73,7 +73,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
     } else if (files.length === 3) {
       return (
         <div className="flex flex-1 flex-row h-full flex-wrap">
-          {files.map((item, index) => {
+          {Array.isArray(files) && files.map((item, index) => {
             const src = memoizedSources[index];
             if (index == 0) {
               return (
@@ -135,7 +135,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
     } else if (files.length === 4) {
       return (
         <div className="flex flex-1 flex-row h-full flex-wrap">
-          {files.map((item, index) => {
+          {Array.isArray(files) && files.map((item, index) => {
             const src = memoizedSources[index];
             if (index == 0) {
               return (
@@ -197,7 +197,7 @@ function LinkedInPost({ files, captions, viewMode, connections, date }) {
     } else if (files.length >= 5) {
       return (
         <div className="flex flex-1 flex-row h-full flex-wrap">
-          {files.map((item, index) => {
+          {Array.isArray(files) && files.map((item, index) => {
             const src = memoizedSources[index];
             if (index <= 1) {
               return (

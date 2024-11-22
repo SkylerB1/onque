@@ -19,6 +19,7 @@ function InputComponent({
   className,
   platform,
   handleInput,
+  checked,
 }) {
   const handleChange = (value) => {
     onChange((prev) => {
@@ -74,7 +75,7 @@ function InputComponent({
         label={label}
         onChange={(value) => handleChange(value)}
       >
-        {selectOptions.map((item, index) => {
+        {Array.isArray(selectOptions) && selectOptions.map((item, index) => {
           return (
             <Option key={index} value={item.value}>
               {item.label}
@@ -93,7 +94,11 @@ function InputComponent({
       />
     );
   } else if (inputType == "switch") {
-    return <Switch id={label} label={label} />;
+    if (checked == true) {
+      return <Switch id={label} label={label} checked onChange={onChange} />;
+    } else {
+      return <Switch id={label} label={label} onChange={onChange} />;
+    }
   } else {
     return (
       <Input

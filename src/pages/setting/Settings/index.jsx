@@ -10,6 +10,8 @@ import Account from "./settingOption/Account";
 import Access from "./settingOption/Access";
 import Price from "./settingOption/Price";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useAppContext } from "../../../context/AuthContext";
+import { useSelector } from "react-redux";
 
 const Setting = () => {
   const { tab } = useParams();
@@ -35,8 +37,13 @@ const Setting = () => {
       desc: <Price />,
     },
   ];
+  const { getCounter } = useAppContext();
+
+  const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand?.id;
 
   useEffect(() => {
+    getCounter(brandId);
     navigate("/setting/" + activeTab);
   }, [activeTab]);
 
@@ -62,7 +69,7 @@ const Setting = () => {
                 "bg-transparent border-b-2 border-gray-900 shadow-none rounded-none",
             }}
           >
-            {data.map(({ label, value }) => (
+            {Array.isArray(data) && data.map(({ label, value }) => (
               <Tab
                 key={value}
                 value={value}
@@ -75,7 +82,7 @@ const Setting = () => {
           </TabsHeader>
           <hr className="w-[90rem]" />
           <TabsBody>
-            {data.map(({ value, desc }) => (
+            {Array.isArray(data) && data.map(({ value, desc }) => (
               <TabPanel key={value} value={value}>
                 {desc}
               </TabPanel>

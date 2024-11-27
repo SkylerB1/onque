@@ -38,7 +38,7 @@ jobs:
           output_location: "dist" # Built app content directory - optional
         env:
           VITE_ORIGIN_URL: "https://gentle-mud-0f2be680f.5.azurestaticapps.net"
-          VITE_API_URL: "https://api.onqueapp.com/api"
+          VITE_API_URL: "https://api.jjmedia.appwrk.com/api/"
           VITE_CALLBACK_URL: "https://gentle-mud-0f2be680f.5.azurestaticapps.net/brands/connect"
-          VITE_POST_IMG_BASE_PATH: "https://onquemediastorage.blob.core.windows.net/onquemedia/"
+          VITE_POST_IMG_BASE_PATH: "https://onquelocalconatiner.blob.core.windows.net/onquelocalconatiner/"
           ###### End of Repository/Build Configurations ######

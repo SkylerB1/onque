@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { getSource, isContainVideo } from "../../../utils";
 import AudioMuted from "../../svg/AudioMuted";
 import UserIcon from "../../../assets/userIcon";
@@ -8,13 +8,52 @@ import CommentOutline from "../../../assets/CommentOutline";
 import SaveOutline from "../../../assets/SaveOutline";
 import HorizontalDots from "../../../assets/HorizontalDots";
 import AudioFilled from "../../../assets/AudioFilled";
+import VideoLoader from "../../loader/VideoLoader";
 
 function ReelsMobile({ files, viewMode, captions, screenName }) {
   const [muted, setMuted] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [videoSrc, setVideoSrc] = useState(null);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false); // State to track if video is loaded
+
   const src = useMemo(() => getSource(files[0]), [files]);
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
   }, [muted]);
+
+  const downloadVideo = (url) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+
+    xhr.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const percent = (e.loaded / e.total) * 100;
+        setProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const videoBlob = xhr.response;
+        const videoUrl = URL.createObjectURL(videoBlob);
+        setVideoSrc(videoUrl); // Set video URL once the download is complete
+        setIsVideoLoaded(true); // Mark video as loaded
+      }
+    };
+
+    xhr.onerror = () => {
+      console.error("Video download failed");
+    };
+
+    xhr.send();
+  };
+
+  useEffect(() => {
+    if (files?.length > 0 && isContainVideo(files[0]) && !isVideoLoaded) {
+      downloadVideo(src); // Start downloading the video only if it's not already loaded
+    }
+  }, [files, src, isVideoLoaded]);
 
   return (
     <>
@@ -33,8 +72,8 @@ function ReelsMobile({ files, viewMode, captions, screenName }) {
           )}
         </button>
       </div>
-      <div className="bg-black  w-full h-full flex justify-center items-center">
-        {files?.length == 0 || !isContainVideo(files[0]) ? (
+      <div className="bg-black w-full h-full flex justify-center items-center">
+        {files?.length === 0 || !isContainVideo(files[0]) ? (
           <>
             <h1 className="text-sm text-white text-center">
               Video not available
@@ -42,17 +81,19 @@ function ReelsMobile({ files, viewMode, captions, screenName }) {
           </>
         ) : (
           <>
-            <video
-              className={`w-full h-full ${
-                viewMode ? "object-contain" : "object-cover"
-              }`}
-              loop={true}
-              autoPlay={true}
-              muted={muted}
-              controls={false}
-              src={src}
-              draggable="false"
-            />
+            {progress < 100 && !isVideoLoaded ? (
+              <VideoLoader progress={Math.round(progress)} />  // Show the loader until 100% progress
+            ) : (
+              <video
+                className={`w-full h-full ${viewMode ? "object-contain" : "object-cover"}`}
+                loop={true}
+                autoPlay={true}
+                muted={muted}
+                controls={false}
+                src={videoSrc}
+                draggable="false"
+              />
+            )}
           </>
         )}
       </div>

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import LeftArrow from "../../svg/LeftArrow";
 import Globe from "../../svg/Globe";
 import Dots from "../../svg/horizontalDots";
@@ -9,14 +9,52 @@ import Camera from "../../svg/cameraFilled";
 import Sound from "../../svg/soundFilled";
 import SoundMuted from "../../svg/soundMuted";
 import { getSource, isContainVideo } from "../../../utils";
+import VideoLoader from "../../loader/VideoLoader";
 
 function Reels({ files, captions, screenName }) {
   const [muted, setMuted] = useState(true);
-  const src = useMemo(() => getSource(files[0]), [files]); 
+  const [progress, setProgress] = useState(0);
+  const [videoSrc, setVideoSrc] = useState(null);
+
+  const src = useMemo(() => getSource(files[0]), [files]);
 
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
   }, [muted]);
+
+  const downloadVideo = (url) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.responseType = "blob";
+
+    xhr.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const percent = (e.loaded / e.total) * 100;
+        setProgress(percent);
+      }
+    };
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const videoBlob = xhr.response;
+        const videoUrl = URL.createObjectURL(videoBlob);
+        setVideoSrc(videoUrl);
+      }
+    };
+
+    xhr.onerror = () => {
+      console.error("Video download failed");
+    };
+
+    xhr.send();
+  };
+
+  useEffect(() => {
+    if (files?.length > 0 && isContainVideo(files[0])) {
+      downloadVideo(src);  // Start downloading video when files change
+    }
+  }, [files, src]);
+
   return (
     <>
       <div className="absolute top-8 w-full px-2 z-50 flex justify-between items-center ">
@@ -27,10 +65,7 @@ function Reels({ files, captions, screenName }) {
             <p className="text-[14px] text-white ml-2 font-bold">Create</p>
           </div>
           <div className="flex flex-row px-2 py-1 rounded-2xl bg-black/10 items-center">
-            <div
-              onClick={toggleAudio}
-              className="rounded-full cursor-pointer z-50"
-            >
+            <div onClick={toggleAudio} className="rounded-full cursor-pointer z-50">
               {muted ? (
                 <SoundMuted width={18} height={18} fill="#ffffff" />
               ) : (
@@ -40,23 +75,27 @@ function Reels({ files, captions, screenName }) {
           </div>
         </div>
       </div>
-      <div className="bg-black  w-full h-full flex justify-center items-center">
-        {files?.length == 0 || !isContainVideo(files[0]) ? (
+      <div className="bg-black w-full h-full flex justify-center items-center">
+        {files?.length === 0 || !isContainVideo(files[0]) ? (
           <>
-            <h1 className="text-sm text-white text-center">
-              Video not available
-            </h1>
+            <h1 className="text-sm text-white text-center">Video not available</h1>
           </>
         ) : (
-          <video
-            className="w-full h-full object-cover brightness-[0.95] contrast-[0.95]"
-            loop={true}
-            autoPlay={true}
-            muted={muted}
-            controls={false}
-            src={src}
-            draggable="false"
-          />
+          <>
+            {progress < 100 ? (
+              <VideoLoader progress={Math.round(progress)} />  // Show loader until 100% progress
+            ) : (
+              <video
+                className="w-full h-full object-cover brightness-[0.95] contrast-[0.95]"
+                loop={true}
+                autoPlay={true}
+                muted={muted}
+                controls={false}
+                src={videoSrc}
+                draggable="false"
+              />
+            )}
+          </>
         )}
       </div>
       <div className="absolute top-80 flex flex-col justify-between right-3">
@@ -82,8 +121,8 @@ function Reels({ files, captions, screenName }) {
           <Dots width={16} height={16} fill="#ffffff" />
         </span>
       </div>
-      <div className=" absolute bottom-10 flex flex-row items-center px-2">
-        <div className="px-3 py-1  rounded-full bg-green-900">
+      <div className="absolute bottom-10 flex flex-row items-center px-2">
+        <div className="px-3 py-1 rounded-full bg-green-900">
           <h1 className="text-white text-lg">Y</h1>
         </div>
         <div className="flex flex-row w-full ml-2 justify-between items-center ">

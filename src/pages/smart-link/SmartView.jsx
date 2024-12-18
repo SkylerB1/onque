@@ -20,7 +20,7 @@ const SmartView = () => {
   const iconsData = useSelector((state) => state.smartIcons.value) || [];
   const media = useSelector((state) => state.smartLinkMedia.value) || [];
   const sectionsData = useSelector((state) => state.smartSection.value) || [];
-
+  const generalData = useSelector((state) => state.smartLinkGeneral.value) || [];
 
   // Local icon mapping
   const iconMapping = {
@@ -35,13 +35,13 @@ const SmartView = () => {
   return (
     <div>
       <div className="flex-none p-4">
-        <div className="m-10 flex flex-wrap gap-3 justify-center">
+        <div className="m-10 flex h-[80vh] flex-wrap gap-3 justify-center overflow-y-auto">
           <div className="flex items-center w-full justify-center">
             <Button
               size="sm"
               variant="outlined"
               className="flex items-center gap-2"
-            // onClick={() => navigate("/smartlink/view")}
+            onClick={() => window.open(generalData[0]?.smartLinkUrl, '_blank')}
             >
               <MdLink size={16} />
               View Live
@@ -57,9 +57,26 @@ const SmartView = () => {
                 />
               </div>
               <div className="mt-5 font-semibold text-2xl">Aston+k</div>
-              <div className="mt-10 w-[80%] space-y-5">
+              <div className="mt-10 w-[80%] space-y-5">                
                 {data?.map((item, index) => {
-                  const { bgColor, borderColor, isDisabled, text, textColor, url } = item.values;
+                  if (!item) return null;
+
+                  const values = item?.values ?? item;
+
+                  const {
+                    bgColor,
+                    borderColor,
+                    isDisabled,
+                    text,
+                    textColor,
+                    url
+                  } = values;
+
+                  // Check if any required properties are missing
+                  if (!bgColor || !bgColor.hex || !borderColor || !borderColor.hex || !text || !textColor || !textColor.hex || !url) {
+                    return null; // Skip this item if any required properties are missing
+                  }
+
                   return (
                     <div key={index}>
                       <Button
@@ -80,6 +97,8 @@ const SmartView = () => {
                     </div>
                   );
                 })}
+
+
 
                 {sectionsData?.map((item, index) => {
                   return (

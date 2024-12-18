@@ -11,12 +11,17 @@ import AddSectionComponent from "./AddSectionComponent";
 import SortableList, { SortableItem } from "react-easy-sort";
 import arrayMove from "array-move";
 import IconItems from "./IconItems";
+import { axiosInstance } from "../../../utils/Interceptor";
+import { toast } from "react-toastify";
 
 const ButtonSettings = () => {
   const data = useSelector((state) => state.smartLink.value) || [];
   const iconsData = useSelector((state) => state.smartIcons.value) || [];
   const smartSections = useSelector((state) => state.smartSection.value) || [];
+  const generalData = useSelector((state) => state.smartLinkGeneral.value) || [];
+  const smartLinkMedias = useSelector((state) => state.smartLinkMedia.value);
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const defaultValues = {
     text: "Button Text",
@@ -47,7 +52,7 @@ const ButtonSettings = () => {
   useEffect(() => {
     dispatch(addBtn(defaultButtons));
     dispatch(addIcons(defaultIcons));
-    dispatch(addSmartSection(smartSections)); // Initialize sections
+    dispatch(addSmartSection(smartSections));
   }, [dispatch]);
 
   const addButton = () => {
@@ -60,7 +65,7 @@ const ButtonSettings = () => {
   };
 
   const deleteButton = (id) => {
-    if (id <= 4) return; // Prevent deletion of default buttons
+    if (id <= 4) return;
     dispatch(addBtn(data.filter((item) => item.id !== id)));
   };
 
@@ -97,13 +102,41 @@ const ButtonSettings = () => {
     dispatch(addSmartSection(updatedSections));
   };
 
-  const saveData = async (buttonData, iconData, sectionData) => {
-    console.log("Saving data:", { buttonData, iconData, sectionData });
-    setSavedData({ buttons: buttonData, icons: iconData, sections: sectionData });
+  const saveData = async (buttonData, iconData, sectionData, generalData) => {
+    try {
+      // Show loading state
+      toast.loading('Saving changes...');
+
+      const response = await axiosInstance.post(
+        `${import.meta.env.VITE_API_URL}/smartLink/create-smart-link`,
+        { buttonData, iconData, sectionData, generalData }
+      );
+      if (response.status === 200) {
+        // Update local state with the response data
+        setSavedData({
+          buttons: buttonData,
+          icons: iconData,
+          sections: sectionData
+        });
+
+        // Update Redux state
+        dispatch(addBtn(buttonData));
+        dispatch(addIcons(iconData));
+        dispatch(addSmartSection(sectionData));
+
+        toast.dismiss(); // Remove loading toast
+        // toast.success(`${response.data.message}`);
+      }
+    } catch (error) {
+      toast.dismiss(); // Remove loading toast
+      toast.error(error.response?.data?.message || 'Failed to save changes');
+      console.error('Save Error:', error);
+    }
+    // setSavedData({ buttons: buttonData, icons: iconData, sections: sectionData });
   };
 
   const resetData = () => {
-    dispatch(addBtn(savedData.buttons)); // Reset buttons to the saved state
+    dispatch(addBtn(savedData.buttons));
     dispatch(addIcons(savedData.icons)); // Reset icons to the saved state
     dispatch(addSmartSection(savedData.sections)); // Reset sections to the saved state
   };
@@ -113,43 +146,71 @@ const ButtonSettings = () => {
       item.id === id ? { ...item, values: { ...item.values, [identifier]: value } } : item
     );
     dispatch(addBtn(updatedItems));
-    saveData(updatedItems, iconsData, smartSections); // Auto-save whenever button values are updated
   };
 
+  // const updateValues = (id, values) => {
+  //   const updatedIcons = iconsData.map((icon) =>
+  //     icon.id === id ? { ...icon, ...values } : icon
+  //   );
+  //   dispatch(addIcons(updatedIcons));
+  // };
+
+  // 2. Update the updateValues function to respect IDs
   const updateValues = (id, values) => {
-    const updatedIcons = iconsData.map((icon) =>
-      icon.id === id ? { ...icon, ...values } : icon
-    );
+    const updatedIcons = iconsData.map((icon) => {
+      // Strict equality check
+      if (icon.id === Number(id)) {
+        return {
+          ...icon,
+          ...values,
+          id: icon.id // Preserve the original ID
+        };
+      }
+      return icon;
+    });
     dispatch(addIcons(updatedIcons));
-    saveData(data, updatedIcons, smartSections); // Auto-save whenever icon values are updated
   };
 
   const onSortEnd = (oldIndex, newIndex) => {
     const newItems = arrayMove(data, oldIndex, newIndex);
     dispatch(addBtn(newItems));
-    saveData(newItems, iconsData, smartSections); // Auto-save after sorting buttons
   };
 
   const onSortEndIcons = (oldIndex, newIndex) => {
     const newIcons = arrayMove(iconsData, oldIndex, newIndex);
     dispatch(addIcons(newIcons));
-    saveData(data, newIcons, smartSections); // Auto-save after sorting icons
   };
 
   const onSortEndSections = (oldIndex, newIndex) => {
     const newSections = arrayMove(smartSections, oldIndex, newIndex);
     dispatch(addSmartSection(newSections));
-    saveData(data, iconsData, newSections); // Auto-save after sorting sections
   };
 
+  // const addIcon = () => {
+  //   const newIcon = {
+  //     id: socialIconsCount,
+  //     iconName: "twitter",
+  //     url: "https://example.com",
+  //   };
+  //   dispatch(addIcons([...iconsData, newIcon]));
+  //   setSocialIconsCount((count) => count + 1);
+  // };
+
+  // 1. First, let's modify how we track IDs
   const addIcon = () => {
+    // Ensure we start from the last used ID
+    const lastId = iconsData.length > 0
+      ? Math.max(...iconsData.map(icon => icon.id))
+      : 0;
+
     const newIcon = {
-      id: socialIconsCount,
+      id: lastId + 1,
       iconName: "twitter",
       url: "https://example.com",
+      order: iconsData.length // Add order to maintain sequence
     };
+
     dispatch(addIcons([...iconsData, newIcon]));
-    setSocialIconsCount((count) => count + 1);
   };
 
   const deleteIcon = (id) => {
@@ -207,29 +268,29 @@ const ButtonSettings = () => {
             </div>
           </SortableList>
         </div>
-        {smartSections.length !== 0 && 
-        <div className="my-5">
-          <SortableList
-            onSortEnd={onSortEndSections}
-            className="list"
-            draggedItemClassName="dragged"
-          >
-            <div className="space-y-8 mt-5">
-              {smartSections.map((section) => (
-                <SortableItem key={section.id}>
-                  <div className="my-5">
-                    <AddSectionComponent
-                      id={section.id}
-                      values={section}
-                      deleteButton={deleteSection} // Pass delete handler
-                      updateButtonValues={updateSection} // Pass update handler
-                    />
-                  </div>
-                </SortableItem>
-              ))}
-            </div>
-          </SortableList>
-        </div>
+        {smartSections.length !== 0 &&
+          <div className="my-5">
+            <SortableList
+              onSortEnd={onSortEndSections}
+              className="list"
+              draggedItemClassName="dragged"
+            >
+              <div className="space-y-8 mt-5">
+                {smartSections.map((section) => (
+                  <SortableItem key={section.id}>
+                    <div className="my-5">
+                      <AddSectionComponent
+                        id={section.id}
+                        values={section}
+                        deleteButton={deleteSection}
+                        updateButtonValues={updateSection}
+                      />
+                    </div>
+                  </SortableItem>
+                ))}
+              </div>
+            </SortableList>
+          </div>
         }
         <div className="w-full mt-2">
           <Button
@@ -249,11 +310,11 @@ const ButtonSettings = () => {
             draggedItemClassName="dragged"
           >
             <div className="space-y-8 mt-5">
-              {Array.isArray(iconsData) && iconsData.map((values) => (
-                <SortableItem key={values.id}>
-                  <div className="my-5" key={values.id}>
+              {iconsData.map((icon) => (
+                <SortableItem key={icon.id}>
+                  <div className="my-5" key={icon.id}>
                     <IconItems
-                      values={values}
+                      values={icon}
                       deleteIcon={deleteIcon}
                       updateValues={updateValues}
                     />
@@ -275,9 +336,11 @@ const ButtonSettings = () => {
         <Button
           variant="filled"
           className="flex items-center justify-center"
-          onClick={() => saveData(data, iconsData, smartSections)}
+          onClick={() => saveData(data, iconsData, smartSections, generalData)}
+          disabled={isLoading}
         >
-          Save
+          {/* Save */}
+          {isLoading ? 'Saving...' : 'Save'}
         </Button>
       </div>
     </>

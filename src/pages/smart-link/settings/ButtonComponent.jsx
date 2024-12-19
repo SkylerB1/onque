@@ -24,6 +24,7 @@ const ButtonComponent = ({
     updateButtonValues(id, identifier, value);
   };
   const handleColorChange = (identifier, value) => {
+    console.log({identifier,value})
     updateButtonValues(id, identifier, value);
   };
   const handleDisabledSwitch = (event) => {

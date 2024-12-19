@@ -132,13 +132,12 @@ const PostCalendar = (props) => {
 
   const handleEventDrop = async (info) => {
     const { event } = info;
-    let date = dayjs(event.start).startOf("minute");
-
+    const newStartDate = event.start;
     const { rowId } = event._def.extendedProps;
     const status = info.event._def.extendedProps.status;
 
     const data = {
-      scheduledDate: date,
+      scheduledDate: dayjs(newStartDate).format('YYYY-MM-DDTHH:mm:ss'),
       status
     };
 

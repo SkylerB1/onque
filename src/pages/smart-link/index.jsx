@@ -53,19 +53,20 @@ const Smartlink = () => {
 
   const handleChange = (identifier, value, type) => {
     const selectedSmartLink = allSmartLink.find((link) => link.id === Number(value));
+    console.log(selectedSmartLink, "selectedSmartLink")
     if (selectedSmartLink) {
       setBioName(
         selectedSmartLink.smart_link_name.replace(/\([^)]*\)/, "").trim()
       );
       setBioUrl(selectedSmartLink.smart_link_url);
+    
+      // Extract the slug dynamically based on the URL
+      const baseUrl = window.location.origin + "/public/smartlink/";
       setBioSlug(
-        selectedSmartLink.smart_link_url.replace(
-          /http:\/\/localhost:5173\/public\/smartlink\//,
-          ""
-        )
+        selectedSmartLink.smart_link_url.replace(baseUrl, "")
       );
-
-      const generalData =[
+    
+      const generalData = [
         {
           smartLinkName: selectedSmartLink.smart_link_name,
           smartLinkUrl: selectedSmartLink.smart_link_url,
@@ -73,7 +74,7 @@ const Smartlink = () => {
         }
       ];
       dispatch(addGeneral(generalData));
-
+    
       const mappedButtons = selectedSmartLink.SmartLinkButtonSections.map(button => ({
         id: button.button_id,
         values: {
@@ -85,9 +86,9 @@ const Smartlink = () => {
           isDisabled: button.is_disabled
         }
       }));
-
+    
       dispatch(addBtn(mappedButtons));
-
+    
       const mappedIcons = selectedSmartLink.SmartLinkIconSections.map(icon => ({
         id: icon.icon_id,                // Map icon_id to id
         iconName: icon.icon_name,         // Map icon_name to iconName
@@ -95,6 +96,7 @@ const Smartlink = () => {
       }));
       dispatch(addIcons(mappedIcons));
     }
+    
   };
 
   const handleBioNameChange = (e) => {

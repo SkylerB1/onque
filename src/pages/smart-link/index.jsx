@@ -156,20 +156,20 @@ const Smartlink = () => {
 
   useEffect(() => {
     if (brands.length > 0) {
-      // handleChange("smartLinkId", brands[0].value, "select");
       const selectedSmartLink = allSmartLink[0];
       if (selectedSmartLink) {
         setBioName(
           selectedSmartLink.smart_link_name.replace(/\([^)]*\)/, "").trim()
         );
         setBioUrl(selectedSmartLink.smart_link_url);
+  
+        // Dynamically extract the base URL for live or local environment
+        const baseUrl = window.location.origin + "/public/smartlink/";
         setBioSlug(
-          selectedSmartLink.smart_link_url.replace(
-            /http:\/\/localhost:5173\/public\/smartlink\//,
-            ""
-          )
+          selectedSmartLink.smart_link_url.replace(baseUrl, "")
         );
-        const generalData =[
+  
+        const generalData = [
           {
             smartLinkName: selectedSmartLink.smart_link_name,
             smartLinkUrl: selectedSmartLink.smart_link_url,
@@ -188,7 +188,8 @@ const Smartlink = () => {
             borderColor: { hex: button.button_border_color },
             isDisabled: button.is_disabled
           }
-        }));  
+        }));
+  
         // Dispatch the action with the mapped buttons
         dispatch(addBtn(mappedButtons));
   
@@ -196,12 +197,14 @@ const Smartlink = () => {
           id: icon.icon_id,
           iconName: icon.icon_name,
           url: icon.icon_link
-        }));      
+        }));
+  
         // Dispatch the action with the mapped icons
         dispatch(addIcons(mappedIcons));
       }
     }
   }, [brands]);
+  
 
 
   const data = [

@@ -119,7 +119,7 @@ const Smartlink = () => {
   const handleGetAllSmartLinks = async () => {
     try {
       const response = await axiosInstance.get(
-        `${import.meta.env.VITE_API_URL}/smartLink/get-smart-links`
+        `${import.meta.env.VITE_API_URL}/smartLink/get-smart-links/${user?.id}`
       );
       if (response && response.status === 200 && response.data) {
         setAllSmartLink(response.data || []);

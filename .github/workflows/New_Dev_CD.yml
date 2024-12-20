@@ -3,7 +3,7 @@ name: newdev-CD
 on:
   push:
     branches:
-      - newDev
+      - newTest
 
 jobs:
   build_and_deploy_job:

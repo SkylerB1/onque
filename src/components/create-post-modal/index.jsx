@@ -1175,7 +1175,7 @@ const CreatePostModal = ({
               },
             ]);
           }
-        } else if (item.mediaType == FBReels) {  // Check for Facebook Reels
+        } else if (item.mediaType == FBReal) {  // Check for Facebook Reels
           // Video duration check for Reels
           if (dimensions?.type?.includes("video")) {
             if (dimensions?.duration < 3 || dimensions?.duration > 60) {

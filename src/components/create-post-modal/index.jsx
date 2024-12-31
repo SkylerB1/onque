@@ -844,8 +844,175 @@ const CreatePostModal = ({
           ]);
         }
       }
+      // facebook error
+
+      // if (platform.includes(FacebookPagePlatform)) {
+      //   if (item.mediaType == FBPost) {
+      //     if (noFileSelected && noContent) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: "Facebook - Add at least 1 character or 1 media file.",
+      //         },
+      //       ]);
+      //     }
+
+      //     if (caption.length > pateformPostCharactersLength.facebook) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
+      //         },
+      //       ]);
+      //     }
+      //     if (hasImages && hasVideos) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: 0,
+      //           type: "",
+      //           platform: "facebook",
+      //           error:
+      //             "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+      //         },
+      //       ]);
+      //     }
+      //   } else if (item.mediaType == FBStory) {
+      //     if (hasImages == false && hasVideos == false) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Auto publish (story) - Add at least 1 image or video.`,
+      //         },
+      //       ]);
+      //     } else {
+      //       files.length > 0 &&
+      //         Array.isArray(files) && files.map((file) => {
+      //           // check if file is image
+      //           if (isContainImage(file) == true) {
+      //             if (
+      //               !ImageMimeTypesForFbStory.includes(
+      //                 file?.mimetype || file?.type
+      //               )
+      //             ) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only .jpeg, .bmp, .png, .gif, .tiff image are allowed.`,
+      //                 },
+      //               ]);
+      //             }
+
+      //             if (file?.type == "image/png" && file?.size > 1 * MB) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only 1 MB size Png image is allowed.`,
+      //                 },
+      //               ]);
+      //             } else if (file?.size > 4 * MB) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only 1 MB size image is allowed.`,
+      //                 },
+      //               ]);
+      //             }
+      //           }
+
+      //           if (isContainVideo(file) == true) {
+      //             // console.log(file);
+      //             if (
+      //               !VideoMimeTypesForFbStory.includes(
+      //                 file?.type || file?.mimetype
+      //               )
+      //             ) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only .mp4 video is allowed.`,
+      //                 },
+      //               ]);
+      //             }
+      //           }
+      //         });
+      //     }
+      //     // console.log(dimensions, " is dimensions");
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions?.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
+      //             1
+      //           )}s long`,
+      //         },
+      //       ]);
+      //     }
+
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       dimensions?.aspectRatio !== 0.5625
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions?.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Invalid aspect stroy for Reels, it must be 9:16. You can crop this in the editor.`,
+      //         },
+      //       ]);
+      //     }
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       !(dimensions?.width >= 540 && dimensions?.width <= 1080)
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Video width should  be between 540 px to 1080 pixels. This video width is (${dimensions.width}px).`,
+      //         },
+      //       ]);
+      //     }
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       !(dimensions?.height >= 960 && dimensions?.height <= 1920)
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Video height should  be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
+      //         },
+      //       ]);
+      //     }
+      //   }
+      // }
+
       if (platform.includes(FacebookPagePlatform)) {
         if (item.mediaType == FBPost) {
+          // Facebook Post Logic
           if (noFileSelected && noContent) {
             setErrors((prev) => [
               ...prev,
@@ -856,7 +1023,7 @@ const CreatePostModal = ({
               },
             ]);
           }
-
+      
           if (caption.length > pateformPostCharactersLength.facebook) {
             setErrors((prev) => [
               ...prev,
@@ -867,6 +1034,7 @@ const CreatePostModal = ({
               },
             ]);
           }
+      
           if (hasImages && hasVideos) {
             setErrors((prev) => [
               ...prev,
@@ -880,6 +1048,7 @@ const CreatePostModal = ({
             ]);
           }
         } else if (item.mediaType == FBStory) {
+          // Facebook Story Logic
           if (hasImages == false && hasVideos == false) {
             setErrors((prev) => [
               ...prev,
@@ -891,13 +1060,12 @@ const CreatePostModal = ({
             ]);
           } else {
             files.length > 0 &&
-              Array.isArray(files) && files.map((file) => {
-                // check if file is image
+              Array.isArray(files) &&
+              files.map((file) => {
+                // Check if file is image
                 if (isContainImage(file) == true) {
                   if (
-                    !ImageMimeTypesForFbStory.includes(
-                      file?.mimetype || file?.type
-                    )
+                    !ImageMimeTypesForFbStory.includes(file?.mimetype || file?.type)
                   ) {
                     setErrors((prev) => [
                       ...prev,
@@ -908,7 +1076,7 @@ const CreatePostModal = ({
                       },
                     ]);
                   }
-
+      
                   if (file?.type == "image/png" && file?.size > 1 * MB) {
                     setErrors((prev) => [
                       ...prev,
@@ -929,13 +1097,11 @@ const CreatePostModal = ({
                     ]);
                   }
                 }
-
+      
+                // Check if file is video
                 if (isContainVideo(file) == true) {
-                  // console.log(file);
                   if (
-                    !VideoMimeTypesForFbStory.includes(
-                      file?.type || file?.mimetype
-                    )
+                    !VideoMimeTypesForFbStory.includes(file?.type || file?.mimetype)
                   ) {
                     setErrors((prev) => [
                       ...prev,
@@ -949,7 +1115,8 @@ const CreatePostModal = ({
                 }
               });
           }
-          // console.log(dimensions, " is dimensions");
+      
+          // Video duration check for stories
           if (
             dimensions?.type?.includes("video") &&
             (dimensions?.duration < 0.3 || dimensions?.duration > 60)
@@ -959,13 +1126,12 @@ const CreatePostModal = ({
               {
                 id: dimensions?.id,
                 platform: "facebook",
-                error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
-                  1
-                )}s long`,
+                error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(1)}s long`,
               },
             ]);
           }
-
+      
+          // Video aspect ratio check for stories
           if (
             dimensions?.type?.includes("video") &&
             dimensions?.aspectRatio !== 0.5625
@@ -975,10 +1141,12 @@ const CreatePostModal = ({
               {
                 id: dimensions?.id,
                 platform: "facebook",
-                error: `Facebook - Invalid aspect stroy for Reels, it must be 9:16. You can crop this in the editor.`,
+                error: `Facebook - Invalid aspect ratio for Reels, it must be 9:16. You can crop this in the editor.`,
               },
             ]);
           }
+      
+          // Video width check for stories
           if (
             dimensions?.type?.includes("video") &&
             !(dimensions?.width >= 540 && dimensions?.width <= 1080)
@@ -992,6 +1160,8 @@ const CreatePostModal = ({
               },
             ]);
           }
+      
+          // Video height check for stories
           if (
             dimensions?.type?.includes("video") &&
             !(dimensions?.height >= 960 && dimensions?.height <= 1920)
@@ -1001,12 +1171,65 @@ const CreatePostModal = ({
               {
                 id: dimensions.id,
                 platform: "facebook",
-                error: `Facebook - Video height should  be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
+                error: `Facebook - Video height should be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
               },
             ]);
           }
+        } else if (item.mediaType == FBReal) {  // Check for Facebook Reels
+          // Video duration check for Reels
+          if (dimensions?.type?.includes("video")) {
+            if (dimensions?.duration < 3 || dimensions?.duration > 60) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video duration must be between 3s and 60s. Yours is ${dimensions?.duration.toFixed(1)}s long.`,
+                },
+              ]);
+            }
+      
+            // Aspect ratio check for Reels (9:16)
+            if (dimensions?.aspectRatio !== 0.5625) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video aspect ratio must be 9:16. Yours is ${dimensions?.aspectRatio}.`,
+                },
+              ]);
+            }
+      
+            // Video width check for Reels (540px to 1080px)
+            if (!(dimensions?.width >= 540 && dimensions?.width <= 1080)) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video width should be between 540px and 1080px. This video width is ${dimensions?.width}px.`,
+                },
+              ]);
+            }
+      
+            // Video height check for Reels (960px to 1920px)
+            if (!(dimensions?.height >= 960 && dimensions?.height <= 1920)) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video height should be between 960px and 1920px. This video height is ${dimensions?.height}px.`,
+                },
+              ]);
+            }
+          }
         }
       }
+      
+
+      //twitter
       if (platform.includes(TwitterPlatform)) {
         if (noFileSelected && noContent) {
           setErrors((prev) => [

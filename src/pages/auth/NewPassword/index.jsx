@@ -18,7 +18,7 @@ const NewPassword = () => {
     defaultValues: {
       newPassword: "",
       userId: userId,
-      createPasswordToken: token,
+      forgotPasswordToken: token,
     },
   });
 

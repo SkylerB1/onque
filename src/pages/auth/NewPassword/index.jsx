@@ -18,17 +18,17 @@ const NewPassword = () => {
     defaultValues: {
       newPassword: "",
       userId: userId,
-      forgotPasswordToken: token,
+      createPasswordToken: token,
     },
   });
 
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/user/reset-password`,
+        `${import.meta.env.VITE_API_URL}/user/create-password`,
         data
       );
-      if (response.status === 200) {
+      if (!!response.status) {
         navigate("/login");
         toast.success(response?.data?.msg);
       }

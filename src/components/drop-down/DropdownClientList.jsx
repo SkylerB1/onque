@@ -43,6 +43,7 @@ const DropdownClientList = ({
     useSelector((state) => state.user.value) || {};
   const { value: brands, loading } = useSelector((state) => state.brands);
   const brandName = user?.brand?.brand_name || "Loading...";
+  const selectedBrandId = user?.brand?.id;
   const [searchTerm, setSearchTerm] = useState("");
 
   const allowedBrands = useMemo(
@@ -97,7 +98,7 @@ const DropdownClientList = ({
             <div className="w-[14rem] rounded-md cursor-pointer">
               <div className="inline-flex justify-center w-full px-4 py-2 text-lg border-none font-medium text-gray-700 focus:outline-none active:bg-gray-200">
                 <div className="flex flex-1 items-center justify-start">
-                  <div className="relative inline-flex items-center justify-center py-2 px-4 overflow-hidden bg-gray-300 rounded-md dark:bg-gray-600  mr-3">
+                  <div className="relative inline-flex items-center justify-center py-2 px-4 overflow-hidden bg-gray-300 rounded-md dark:bg-gray-600  mr-2">
                     <span className="font-medium text-gray-600 dark:text-gray-300">
                       {brandName.charAt(0)}
                     </span>
@@ -280,7 +281,7 @@ const DropdownClientList = ({
                     }
                     className={` ${
                       item.is_active !== true && " opacity-20 "
-                    } flex w-full my-2 text-start text-sm text-gray-700 bg-white hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
+                    } flex w-full my-2 text-start text-sm text-gray-700 ${item.id===selectedBrandId?"bg-blue-gray-50":"bg-white"} hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
                     role="menuitem"
                   >
                     <div className="flex flex-1 items-center justify-start gap-3">

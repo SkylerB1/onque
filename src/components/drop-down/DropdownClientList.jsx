@@ -95,9 +95,9 @@ const DropdownClientList = ({
         <MenuHandler>
           {brandName ? (
             <div className="w-[14rem] rounded-md cursor-pointer">
-              <div className="inline-flex justify-center w-full px-4 py-2 text-lg border-none font-medium text-gray-700 focus:outline-none active:bg-gray-200 mr-1">
+              <div className="inline-flex justify-center w-full px-4 py-2 text-lg border-none font-medium text-gray-700 focus:outline-none active:bg-gray-200">
                 <div className="flex flex-1 items-center justify-start">
-                  <div className="relative inline-flex items-center justify-center py-2 px-4 overflow-hidden bg-gray-300 rounded-md dark:bg-gray-600">
+                  <div className="relative inline-flex items-center justify-center py-2 px-4 overflow-hidden bg-gray-300 rounded-md dark:bg-gray-600  mr-3">
                     <span className="font-medium text-gray-600 dark:text-gray-300">
                       {brandName.charAt(0)}
                     </span>

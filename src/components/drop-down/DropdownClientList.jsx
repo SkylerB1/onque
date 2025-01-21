@@ -95,8 +95,8 @@ const DropdownClientList = ({
         <MenuHandler>
           {brandName ? (
             <div className="w-[14rem] rounded-md cursor-pointer">
-              <div className="inline-flex justify-center w-full px-4 py-2 text-lg border-none font-medium text-gray-700 focus:outline-none active:bg-gray-200">
-                <div className="flex flex-1 items-center justify-start gap-3 ">
+              <div className="inline-flex justify-center w-full px-4 py-2 text-lg border-none font-medium text-gray-700 focus:outline-none active:bg-gray-200 mr-1">
+                <div className="flex flex-1 items-center justify-start">
                   <div className="relative inline-flex items-center justify-center py-2 px-4 overflow-hidden bg-gray-300 rounded-md dark:bg-gray-600">
                     <span className="font-medium text-gray-600 dark:text-gray-300">
                       {brandName.charAt(0)}
@@ -109,7 +109,7 @@ const DropdownClientList = ({
                     {abbreviateString(brandName)}
                   </span>
                   <svg
-                    className="-mr-1 ml-2 mt-1 h-5 w-5"
+                    className="-mr-1 mt-1 h-5 w-5"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"

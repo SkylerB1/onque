@@ -1596,7 +1596,7 @@ const CreatePostModal = ({
             },
           ]);
         }
-        if (item.mediaType === "POST") {
+        if (item.mediaType === "POST"  && additionalPresets.Google_Business?.POST) {
           const { button, buttonLink } = additionalPresets.Google_Business.POST;
 
           if (

@@ -18,8 +18,8 @@ function GbusinessPresets({
       { label: "Book", value: "BOOK" },
       { label: "Order", value: "ORDER" },
       { label: "SHOP", value: "SHOP" },
-      { label: "LEARN_MORE", value: "LEARN_MORE" },
-      { label: "SIGN_UP", value: "SIGN_UP" },
+      { label: "LEARN MORE", value: "LEARN_MORE" },
+      { label: "SIGN UP", value: "SIGN_UP" },
       { label: "CALL", value: "CALL" },
     ],
     []
@@ -57,7 +57,7 @@ function GbusinessPresets({
     ),
     POST: (
       <PostPresets
-        presets={additionalPresets?.POST}
+        presets={additionalPresets}
         handleChange={handleChange}
         buttonOptions={buttonOptions}
         type={"POST"}

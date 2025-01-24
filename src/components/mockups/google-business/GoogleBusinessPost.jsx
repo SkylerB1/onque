@@ -37,7 +37,7 @@ function GoogleBusinessPost({
             (EndTime != "" ? ", " + dayjs(EndTime).format("HH:mm") : ""))
       );
     },
-    [data?.startDate, data?.endDate, data.startTime, data.endTime]
+    [data?.startDate, data?.endDate, data?.startTime, data?.endTime]
   );
   return (
     <>

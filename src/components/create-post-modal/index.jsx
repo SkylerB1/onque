@@ -746,7 +746,7 @@ const CreatePostModal = ({
           ]);
         }
         if (
-          dimensions?.size > 100000000 &&
+          dimensions?.size > 1073741824 &&
           dimensions?.type.includes("video")
         ) {
           setErrors((prev) => [
@@ -755,7 +755,7 @@ const CreatePostModal = ({
               id: dimensions.id,
               platform: "instagram",
               error:
-                "Instagram - Your video is too large. The maximum size is 100MB.",
+                "Instagram - Your video is too large. The maximum size is 1GB.",
             },
           ]);
         } else if (

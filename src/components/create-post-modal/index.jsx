@@ -118,7 +118,8 @@ const CreatePostModal = ({
   setVideoDurations,
 }) => {
   const isDuplicating = useMemo(
-    () => isEdit === "Published" || false,
+    // () => isEdit === "Published" || false,
+    () => isEdit,
     [isEdit]
   );
 

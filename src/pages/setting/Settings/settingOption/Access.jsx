@@ -2,6 +2,12 @@ import React, { useState } from "react";
 import { Input, Button, Typography } from "@material-tailwind/react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { axiosInstance } from "../../../../utils/Interceptor";
+import {
+  API_URL,
+  toastrError,
+  toastrSuccess
+} from "../../../../utils";
 
 const Access = () => {
   const user = useSelector((state) => state.user.value);
@@ -27,7 +33,26 @@ const Access = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    if(user?.email === formData?.email){
+      const data = {
+        email: user?.email,
+        newPassword:formData.password
+      };
+      try {
+        const response = await axiosInstance.post( API_URL + `/user/change-password`, data);
+        if (response.status === 200) {
+          toastrSuccess(response?.data?.msg);
+          setFormData({
+            password:''
+          })
+        }
+      } catch (err) {
+        console.log(err);
+        toastrError(response?.data?.msg);
+      }
+    } else {
+      toastrError("This is not your registered email");
+    }
   };
 
   return (
@@ -53,6 +78,7 @@ const Access = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  disabled
                 />
               </div>
               <div className="w-1/2 mr-8 relative">
@@ -83,7 +109,7 @@ const Access = () => {
                 type="submit"
                 className="mt-6 px-5 py-3 bg-black text-white hover:bg-green-500"
                 fullWidth
-                disabled={!isSaveButtonEnabled} // Disable the button if isSaveButtonEnabled is false
+                disabled={!formData.password} // Disable the button if password field is empty is false
               >
                 SAVE
               </Button>

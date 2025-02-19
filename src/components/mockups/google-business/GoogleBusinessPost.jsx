@@ -37,7 +37,7 @@ function GoogleBusinessPost({
             (EndTime != "" ? ", " + dayjs(EndTime).format("HH:mm") : ""))
       );
     },
-    [data?.startDate, data?.endDate, data.startTime, data.endTime]
+    [data?.startDate, data?.endDate, data?.startTime, data?.endTime]
   );
   return (
     <>
@@ -142,7 +142,7 @@ function GoogleBusinessPost({
         )}
         <Share width={20} height={20} fill="#0000008a" />
       </div>
-      {data?.OFFER.couponCode && (
+      {/* {data?.OFFER.couponCode && (
         <div className="border-dashed border-2 my-2 bg-[#f8f9fa] rounded-md border-[#dadce0] flex flex-col justify-center items-center py-5 mx-2">
           <p className="text-xs text-[#5f6368]">Show this code at the shop</p>
           <p className="text-lg font-bold py-2">{data?.OFFER.couponCode}</p>
@@ -160,7 +160,7 @@ function GoogleBusinessPost({
           <p className="text-[11px] text-[#5f6368]">Terms & Conditions</p>
           <DownArrow width={20} height={20} />
         </div>
-      )}
+      )} */}
     </>
   );
 }

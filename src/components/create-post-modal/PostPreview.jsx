@@ -24,7 +24,7 @@ const PostPreview = ({
         Show post
       </Button>
       <div className="flex flex-row  my-5">
-        {selectedPlaforms?.map((item, index) => {
+        {Array.isArray(selectedPlaforms) && selectedPlaforms?.map((item, index) => {
           const { platform } = item;
           const isSelected = platform === selectedPreview.platform;
           const { coloredIcon, nonColoredIcon } = SocialPlatforms[platform];

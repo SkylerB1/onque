@@ -2,7 +2,12 @@ import { axiosInstance } from "../utils/Interceptor";
 const UserService = {};
 
 UserService.getUserInfo = async function () {
-  return await axiosInstance.get("user/user-info");
+  let result = await axiosInstance.get("user/user-info");
+  return result.data;
+};
+
+UserService.refreshToken = async function (data) {
+  return await axiosInstance.post("user/refresh-token", data);
 };
 
 UserService.isValid = async function (params) {
@@ -26,6 +31,24 @@ UserService.sendCollaboratorInvitation = async function (data) {
     "/user/collaborator/activation-link",
     data
   );
+  return result.data;
+};
+
+// Login user by admin
+UserService.getAllUsers = async function (data) {
+  let result = await axiosInstance.post("/user/get-all-users", data);
+  return result.data;
+};
+
+// Login user by admin
+UserService.loginAs = async function (data) {
+  let result = await axiosInstance.post("/user/login-as", data);
+  return result.data;
+};
+
+// Login user by admin
+UserService.backToAdmin = async function (data) {
+  let result = await axiosInstance.post("/user/back-to-admin", data);
   return result.data;
 };
 export default UserService;

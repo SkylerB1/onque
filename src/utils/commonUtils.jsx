@@ -4,13 +4,13 @@ export const abbreviateString = (str) => {
     return str; // Return the original string if it's too short to abbreviate
   }
 
-  // Get the first 6 characters
-  const firstPart = str.slice(0, 6);
+  // Get the first 13 characters
+  const firstPart = str.slice(0, 14);
   // Get the last 6 characters
   const lastPart = str.slice(-6);
 
   // Combine the parts with three dots in between
-  return `${firstPart}...${lastPart}`;
+  return `${firstPart.trim()}...`;
 };
 
 export function shortenText(text, seeMore = false, length = 150) {

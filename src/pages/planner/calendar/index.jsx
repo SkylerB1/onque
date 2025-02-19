@@ -18,7 +18,7 @@ dayjs.extend(UTC);
 
 const Calendar = () => {
   const [events, setEvents] = useState([]);
-  const { broadcastConnection, validations } = useAppContext();
+  const { broadcastConnection, validations, getCounter } = useAppContext();
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
   const { connections, getConnections } = useConnections();
@@ -38,7 +38,7 @@ const Calendar = () => {
       if (response?.status === 200) {
         const data =
           response?.data.length > 0 &&
-          response?.data?.map((item) => {
+          Array.isArray(response?.data) && response?.data?.map((item) => {
             return {
               rowId: item.id,
               userId: item.userId,
@@ -59,6 +59,7 @@ const Calendar = () => {
           });
 
         setEvents(data);
+        await getCounter(brandId);
       } else {
         console.log("Error fetching Twitter data");
       }

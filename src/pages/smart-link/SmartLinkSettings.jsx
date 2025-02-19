@@ -59,7 +59,7 @@ const SmartLinkSettings = ({
       label: "Appearance",
       value: "appearance",
       desc: <AppearanceSettings />,
-      disabled: true,
+      disabled: false,
     },
   ];
 

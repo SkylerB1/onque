@@ -28,7 +28,7 @@ const NewPassword = () => {
         `${import.meta.env.VITE_API_URL}/user/create-password`,
         data
       );
-      if (response.status === 200) {
+      if (!!response.status) {
         navigate("/login");
         toast.success(response?.data?.msg);
       }
@@ -59,7 +59,7 @@ const NewPassword = () => {
                 <img src={Image} alt="icon" width={200} height={10} />
               </div>
               <div className="mt-9">
-                <Typography variant="h5">Password recovery</Typography>
+                <Typography variant="h5">Set Password</Typography>
                 <Typography variant="h6" className="mt-6 text-gray-500">
                   Type the new password
                 </Typography>

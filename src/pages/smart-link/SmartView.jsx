@@ -1,7 +1,6 @@
 import React from "react";
 import { Button, IconButton } from "@material-tailwind/react";
 import { MdLink } from "react-icons/md";
-
 import defaultPrrofile from "../../assets/defaultProfile.jpg";
 import advanture from "../../assets/advanture.jpg";
 import advantureRiver from "../../assets/advantureRiver.jpg";
@@ -11,85 +10,159 @@ import FacebookFilled from "../../components/svg/FacebookFilled";
 import LinkedIn from "../../components/svg/LinkedIn";
 import Youtube from "../../components/svg/Youtube";
 import Email from "../../components/svg/Email";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 const SmartView = () => {
+  const navigate = useNavigate();
+  const data = useSelector((state) => state.smartLink.value);
+  const iconsData = useSelector((state) => state.smartIcons.value) || [];
+  const media = useSelector((state) => state.smartLinkMedia.value) || [];
+  const sectionsData = useSelector((state) => state.smartSection.value) || [];
+  const generalData = useSelector((state) => state.smartLinkGeneral.value) || [];
+
+  // Local icon mapping
+  const iconMapping = {
+    instagram: Instagram,
+    twitter: Twitter,
+    facebook: FacebookFilled,
+    linkedIn: LinkedIn,
+    youtube: Youtube,
+    email: Email,
+  };
+
   return (
     <div>
       <div className="flex-none p-4">
-        <div className="m-10 flex flex-wrap gap-3  justify-center">
+        <div className="m-10 flex h-[80vh] flex-wrap gap-3 justify-center overflow-y-auto">
           <div className="flex items-center w-full justify-center">
             <Button
               size="sm"
               variant="outlined"
               className="flex items-center gap-2"
+            onClick={() => window.open(generalData[0]?.smartLinkUrl, '_blank')}
             >
               <MdLink size={16} />
               View Live
             </Button>
           </div>
-          <div className="min-w-[80%] min-h-screen  border-gray-900 border-8 border-y-[36px] rounded-2xl ">
+          <div className="min-w-[80%] min-h-screen border-gray-900 border-8 border-y-[36px] rounded-2xl overflow-y-auto bg-[#e7ca9c]" style={{ maxHeight: '80vh' }}>
             <div className="p-5 flex justify-center flex-col items-center">
-              <div className="">
+              <div>
                 <img
                   className="w-36 h-36 mt-5 rounded-lg"
                   src={defaultPrrofile}
+                  alt="Profile"
                 />
               </div>
               <div className="mt-5 font-semibold text-2xl">Aston+k</div>
-              <div className="mt-10 w-[80%] space-y-5">
-                <div>
-                  <Button variant="outlined" className="" fullWidth>
-                    Website Link
-                  </Button>
-                </div>
-                <div>
-                  <Button variant="outlined" className="" fullWidth>
-                    Button Text
-                  </Button>
-                </div>
-                <div>
-                  <Button variant="outlined" className="" fullWidth>
-                    Button Text
-                  </Button>
-                </div>
-                <div>
-                  <Button variant="outlined" className="" fullWidth>
-                    Button Text
-                  </Button>
-                </div>
-                <div className="flex flex-wrap gap-4 justify-center">
-                  <IconButton variant="outlined" className="rounded-full">
-                    <Twitter width={18} height={18} />
-                  </IconButton>
-                  <IconButton variant="outlined" className="rounded-full">
-                    <FacebookFilled fill="#0095f6" width={18} height={18} />
-                  </IconButton>
-                  <IconButton variant="outlined" className="rounded-full">
-                    <Instagram width={18} height={18} />
-                  </IconButton>
-                  <IconButton variant="outlined" className="rounded-full">
-                    <LinkedIn fill="#0077B5" width={18} height={18} />
-                  </IconButton>
-                  <IconButton variant="outlined" className="rounded-full">
-                    <Youtube width={18} height={18} fill="#FF0000" />
-                  </IconButton>
-                  <IconButton variant="outlined" className="rounded-full">
-                    <Email width={18} height={18} />
-                  </IconButton>
-                </div>
-                <div className="imageBlock flex flex-row flex-wrap gap-4 justify-center cursor-pointer">
-                  <div className="">
-                    <img
-                      className="w-24 h-24 mt-5 rounded-lg"
-                      src={advanture}
-                    />
+              <div className="mt-10 w-[80%] space-y-5">                
+                {data?.map((item, index) => {
+                  if (!item) return null;
+
+                  const values = item?.values ?? item;
+
+                  const {
+                    bgColor,
+                    borderColor,
+                    isDisabled,
+                    text,
+                    textColor,
+                    url
+                  } = values;
+
+                  // Check if any required properties are missing
+                  if (!bgColor || !bgColor.hex || !borderColor || !borderColor.hex || !text || !textColor || !textColor.hex || !url) {
+                    return null; // Skip this item if any required properties are missing
+                  }
+
+                  return (
+                    <div key={index}>
+                      <Button
+                        variant="outlined"
+                        fullWidth
+                        style={{
+                          backgroundColor: bgColor.hex,
+                          borderColor: borderColor.hex,
+                          color: textColor.hex,
+                          padding: "15px",
+                          fontSize: "16px"
+                        }}
+                        disabled={isDisabled}
+                        onClick={() => window.open(url, "_blank")}
+                      >
+                        {text}
+                      </Button>
+                    </div>
+                  );
+                })}
+
+
+
+                {sectionsData?.map((item, index) => {
+                  return (
+                    <div key={index} className="text-center font-bold">
+                      {/* <Button
+                        variant="outlined"
+                        fullWidth
+                        // style={{
+                        //   backgroundColor: bgColor.hex,
+                        //   borderColor: borderColor.hex,
+                        //   color: textColor.hex,
+                        // }}
+                        // disabled={isDisabled}
+                        // onClick={() => window.open(url, "_blank")}
+                      >
+                        {text}
+                      </Button> */}
+                      {item?.text}
+
+                    </div>
+                  );
+                })}
+
+                <div className="w-96 pl-4">
+                  <div className="w-80 px-4 flex flex-wrap gap-4 justify-center">
+                    {Array.isArray(iconsData) && iconsData.map((icon, index) => {
+                      const IconComponent = iconMapping[icon.iconName];
+                      if (!IconComponent) return null; // Skip if icon component is not found
+                      return (
+                        <IconButton
+                          key={index}
+                          variant="outlined"
+                          className="rounded-full"
+                          onClick={() => window.open(icon?.url, "_blank")}
+                        >
+                          <IconComponent width={18} height={18} fill={icon.fill} />
+                        </IconButton>
+                      );
+                    })}
                   </div>
-                  <div className="">
-                    <img
-                      className="w-24 h-24 mt-5 rounded-lg"
-                      src={advantureRiver}
-                    />
-                  </div>
+                </div>
+                <div className="mediaBlock flex flex-row flex-wrap gap-4 justify-center cursor-pointer">
+                  {media.map((mediaItem, index) => (
+                    <div key={index} className="mt-5">
+                      {mediaItem.mediaType === "image" && (
+                        <img
+                          className="w-24 h-24 rounded-lg"
+                          src={mediaItem.mediaUrl}
+                          alt={`Media ${index + 1}`}
+                          onClick={() => window.open(mediaItem?.navigationUrl, "_blank")}
+                        />
+                      )}
+                      {mediaItem.mediaType === "video" && (
+                        <video
+                          className="w-24 h-24 rounded-lg"
+                          controls
+                          onClick={() => window.open(mediaItem?.navigationUrl, "_blank")}
+                        >
+                          <source src={mediaItem.mediaUrl} type="video/mp4" />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>

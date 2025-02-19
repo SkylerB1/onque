@@ -9,14 +9,18 @@ import { toastrSuccess, toastrError } from "../../../../utils/index";
 import { axiosInstance } from "../../../../utils/Interceptor";
 import { getDateFromUnix } from "../../../../utils/dateUtils";
 import { planLabel } from "../../../../utils";
+import { useSelector } from "react-redux";
 
 const Price = () => {
   const {
     subscription,
     getSubscriptions,
     loadingSub: loading,
+    getCounter,
   } = useAppContext();
   const subscriptionId = subscription?.subscriptionId || null;
+  const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand?.id;
 
   const [loadingReactivate, setLoadingReactivate] = useState(false);
   const [loadingKeepCurrentPlan, setLoadingKeepCurrentPlan] = useState(false);

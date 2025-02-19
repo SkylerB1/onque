@@ -12,16 +12,44 @@ import {
 } from "@material-tailwind/react";
 import { getSource } from "../../utils";
 import ToasterCustomConatiner from "../ToasterCustomConatiner";
+import Compressor from 'compressorjs';
 
 function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
   const src = getSource(files[index]);
   const editorRef = useRef();
+  const MAX_SIZE = 8 * 1024 * 1024; // 8MB in bytes
 
   const handleFile = async () => {
     const res = await editorRef.current.editor.processImage();
-    const prevFiles = [...files];
-    prevFiles[index] = res?.dest;
-    setFiles(prevFiles);
+    // const prevFiles = [...files];
+    // prevFiles[index] = res?.dest;
+    // setFiles(prevFiles);
+    // toggleModal();
+    if (res?.dest) {
+      const imageBlob = res.dest;
+      new Compressor(imageBlob, {
+        quality: 0.8,
+        maxHeight: 2000,
+        success(compressedBlob) {
+          if (compressedBlob.size <= MAX_SIZE) {
+            const compressedFile = new File([compressedBlob], "compressed-image.jpg", { type: compressedBlob.type });
+
+            const updatedFiles = [...files];
+            updatedFiles[index] = compressedFile;
+            setFiles(updatedFiles);
+
+            console.log('Compressed Image Size:', compressedBlob.size);
+          } else {
+            alert("The image is still too large after compression. Please try a smaller image.");
+          }
+        },
+        error(err) {
+          console.error('Compression failed:', err);
+          alert("Error compressing the image.");
+        }
+      });
+    }
+
     toggleModal();
   };
 

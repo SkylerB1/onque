@@ -118,10 +118,12 @@ const CreatePostModal = ({
   setVideoDurations,
 }) => {
   const isDuplicating = useMemo(
-    () => isEdit === "Published" || false,
+    // () => isEdit === "Published" || false,
+    () => isEdit,
     [isEdit]
   );
 
+  const [showReelOnFeedChecked, setShowReelOnFeedChecked] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [viewMode, setViewMode] = useState(0);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -133,7 +135,7 @@ const CreatePostModal = ({
   const [showAlertModal, setAlertModal] = useState(false);
   const [alertData, setAlertData] = useState({
     header: "",
-    onAccept: function () {},
+    onAccept: function () { },
   });
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
@@ -144,6 +146,7 @@ const CreatePostModal = ({
   const [submitButtonKey, setSubmitButtonKey] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
+
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
     Google_Business: {
@@ -215,7 +218,7 @@ const CreatePostModal = ({
     API_URL + `/user/delete/post/${postData?.id}?brandId=${brandId}`;
   const UPLOAD_FILE_URL = API_URL + "/files/upload";
   const [loading, setLoading] = useState(false);
-  const { broadcastConnection, validations, blockUI, setblockUI } =
+  const { broadcastConnection, validations, blockUI, setblockUI, getCounter } =
     useAppContext();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
@@ -257,7 +260,7 @@ const CreatePostModal = ({
   const handleView = (index) => {
     setViewMode(index);
   };
-  const handlePostFeed = (index) => {};
+  const handlePostFeed = (index) => { };
 
   const toggleAlertModal = () => {
     setAlertModal(!showAlertModal);
@@ -373,6 +376,7 @@ const CreatePostModal = ({
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         await getPostData();
+
         handleClose();
         handleLoading(false);
       }
@@ -419,7 +423,7 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
     const data = {
-      providers: selectedPlaforms.map((item) => ({
+      providers: Array.isArray(selectedPlaforms) && selectedPlaforms.map((item) => ({
         platform: item.platform,
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
@@ -607,7 +611,7 @@ const CreatePostModal = ({
       if (postData) {
         const { platforms, socialPresets } = postData;
         const presets = {};
-        platforms.forEach((item, index) => {
+        Array.isArray(platforms) && platforms.forEach((item, index) => {
           let { additionalPresets, platform } = item;
 
           if (additionalPresets) {
@@ -615,7 +619,7 @@ const CreatePostModal = ({
           } else {
             let socialPresetPlateformData =
               socialPresets &&
-              socialPresets.find((socialPreset) => {
+              Array.isArray(socialPresets) && socialPresets.find((socialPreset) => {
                 return socialPreset.platform == platform;
               });
 
@@ -673,10 +677,12 @@ const CreatePostModal = ({
     const noContent = caption.length === 0;
 
     errors?.forEach((element) => {
-      if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
-        setErrors((prev) =>
-          prev.filter((item) => item.platform !== element.platform)
-        );
+      if (Array.isArray(selectedPlaforms)) {
+        if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
+          setErrors((prev) =>
+            prev.filter((item) => item.platform !== element.platform)
+          );
+        }
       }
     });
 
@@ -690,7 +696,7 @@ const CreatePostModal = ({
       ]);
     }
 
-    selectedPlaforms.forEach((item) => {
+    Array.isArray(selectedPlaforms) && selectedPlaforms.forEach((item) => {
       const { platform } = item;
       if (platform == InstagramPlatform) {
         if (noFileSelected) {
@@ -741,7 +747,7 @@ const CreatePostModal = ({
           ]);
         }
         if (
-          dimensions?.size > 100000000 &&
+          dimensions?.size > 1073741824 &&
           dimensions?.type.includes("video")
         ) {
           setErrors((prev) => [
@@ -750,7 +756,7 @@ const CreatePostModal = ({
               id: dimensions.id,
               platform: "instagram",
               error:
-                "Instagram - Your video is too large. The maximum size is 100MB.",
+                "Instagram - Your video is too large. The maximum size is 1GB.",
             },
           ]);
         } else if (
@@ -771,7 +777,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          dimensions?.width > 1920 && !noFileSelected
+          dimensions?.width > 1920 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -785,7 +792,8 @@ const CreatePostModal = ({
         if (
           item.mediaType == "POST" &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) && !noFileSelected
+          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -799,7 +807,8 @@ const CreatePostModal = ({
         if (
           (item.mediaType == "POST" || item.mediaType == "STORY") &&
           dimensions?.type?.includes("video") &&
-          (dimensions?.duration < 0.3 || dimensions?.duration > 60) && !noFileSelected
+          (dimensions?.duration < 0.3 || dimensions?.duration > 60) &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -823,7 +832,8 @@ const CreatePostModal = ({
           ]);
         } else if (
           item.mediaType == "REEL" &&
-          dimensions?.aspectRatio !== 0.5625 && !noFileSelected
+          dimensions?.aspectRatio !== 0.5625 &&
+          !noFileSelected
         ) {
           setErrors((prev) => [
             ...prev,
@@ -835,8 +845,175 @@ const CreatePostModal = ({
           ]);
         }
       }
+      // facebook error
+
+      // if (platform.includes(FacebookPagePlatform)) {
+      //   if (item.mediaType == FBPost) {
+      //     if (noFileSelected && noContent) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: "Facebook - Add at least 1 character or 1 media file.",
+      //         },
+      //       ]);
+      //     }
+
+      //     if (caption.length > pateformPostCharactersLength.facebook) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
+      //         },
+      //       ]);
+      //     }
+      //     if (hasImages && hasVideos) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: 0,
+      //           type: "",
+      //           platform: "facebook",
+      //           error:
+      //             "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+      //         },
+      //       ]);
+      //     }
+      //   } else if (item.mediaType == FBStory) {
+      //     if (hasImages == false && hasVideos == false) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Auto publish (story) - Add at least 1 image or video.`,
+      //         },
+      //       ]);
+      //     } else {
+      //       files.length > 0 &&
+      //         Array.isArray(files) && files.map((file) => {
+      //           // check if file is image
+      //           if (isContainImage(file) == true) {
+      //             if (
+      //               !ImageMimeTypesForFbStory.includes(
+      //                 file?.mimetype || file?.type
+      //               )
+      //             ) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only .jpeg, .bmp, .png, .gif, .tiff image are allowed.`,
+      //                 },
+      //               ]);
+      //             }
+
+      //             if (file?.type == "image/png" && file?.size > 1 * MB) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only 1 MB size Png image is allowed.`,
+      //                 },
+      //               ]);
+      //             } else if (file?.size > 4 * MB) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only 1 MB size image is allowed.`,
+      //                 },
+      //               ]);
+      //             }
+      //           }
+
+      //           if (isContainVideo(file) == true) {
+      //             // console.log(file);
+      //             if (
+      //               !VideoMimeTypesForFbStory.includes(
+      //                 file?.type || file?.mimetype
+      //               )
+      //             ) {
+      //               setErrors((prev) => [
+      //                 ...prev,
+      //                 {
+      //                   id: dimensions.id,
+      //                   platform: "facebook",
+      //                   error: `Facebook - Only .mp4 video is allowed.`,
+      //                 },
+      //               ]);
+      //             }
+      //           }
+      //         });
+      //     }
+      //     // console.log(dimensions, " is dimensions");
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions?.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
+      //             1
+      //           )}s long`,
+      //         },
+      //       ]);
+      //     }
+
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       dimensions?.aspectRatio !== 0.5625
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions?.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Invalid aspect stroy for Reels, it must be 9:16. You can crop this in the editor.`,
+      //         },
+      //       ]);
+      //     }
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       !(dimensions?.width >= 540 && dimensions?.width <= 1080)
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Video width should  be between 540 px to 1080 pixels. This video width is (${dimensions.width}px).`,
+      //         },
+      //       ]);
+      //     }
+      //     if (
+      //       dimensions?.type?.includes("video") &&
+      //       !(dimensions?.height >= 960 && dimensions?.height <= 1920)
+      //     ) {
+      //       setErrors((prev) => [
+      //         ...prev,
+      //         {
+      //           id: dimensions.id,
+      //           platform: "facebook",
+      //           error: `Facebook - Video height should  be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
+      //         },
+      //       ]);
+      //     }
+      //   }
+      // }
+
       if (platform.includes(FacebookPagePlatform)) {
         if (item.mediaType == FBPost) {
+          // Facebook Post Logic
           if (noFileSelected && noContent) {
             setErrors((prev) => [
               ...prev,
@@ -847,7 +1024,7 @@ const CreatePostModal = ({
               },
             ]);
           }
-
+      
           if (caption.length > pateformPostCharactersLength.facebook) {
             setErrors((prev) => [
               ...prev,
@@ -858,6 +1035,7 @@ const CreatePostModal = ({
               },
             ]);
           }
+      
           if (hasImages && hasVideos) {
             setErrors((prev) => [
               ...prev,
@@ -871,6 +1049,7 @@ const CreatePostModal = ({
             ]);
           }
         } else if (item.mediaType == FBStory) {
+          // Facebook Story Logic
           if (hasImages == false && hasVideos == false) {
             setErrors((prev) => [
               ...prev,
@@ -882,10 +1061,13 @@ const CreatePostModal = ({
             ]);
           } else {
             files.length > 0 &&
+              Array.isArray(files) &&
               files.map((file) => {
-                // check if file is image
+                // Check if file is image
                 if (isContainImage(file) == true) {
-                  if (!ImageMimeTypesForFbStory.includes(file?.mimetype || file?.type)) {
+                  if (
+                    !ImageMimeTypesForFbStory.includes(file?.mimetype || file?.type)
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -895,7 +1077,7 @@ const CreatePostModal = ({
                       },
                     ]);
                   }
-
+      
                   if (file?.type == "image/png" && file?.size > 1 * MB) {
                     setErrors((prev) => [
                       ...prev,
@@ -916,10 +1098,12 @@ const CreatePostModal = ({
                     ]);
                   }
                 }
-
+      
+                // Check if file is video
                 if (isContainVideo(file) == true) {
-                  // console.log(file);
-                  if (!VideoMimeTypesForFbStory.includes(file?.type || file?.mimetype)) {
+                  if (
+                    !VideoMimeTypesForFbStory.includes(file?.type || file?.mimetype)
+                  ) {
                     setErrors((prev) => [
                       ...prev,
                       {
@@ -932,7 +1116,8 @@ const CreatePostModal = ({
                 }
               });
           }
-          // console.log(dimensions, " is dimensions");
+      
+          // Video duration check for stories
           if (
             dimensions?.type?.includes("video") &&
             (dimensions?.duration < 0.3 || dimensions?.duration > 60)
@@ -942,13 +1127,12 @@ const CreatePostModal = ({
               {
                 id: dimensions?.id,
                 platform: "facebook",
-                error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
-                  1
-                )}s long`,
+                error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(1)}s long`,
               },
             ]);
           }
-
+      
+          // Video aspect ratio check for stories
           if (
             dimensions?.type?.includes("video") &&
             dimensions?.aspectRatio !== 0.5625
@@ -958,10 +1142,12 @@ const CreatePostModal = ({
               {
                 id: dimensions?.id,
                 platform: "facebook",
-                error: `Facebook - Invalid aspect stroy for Reels, it must be 9:16. You can crop this in the editor.`,
+                error: `Facebook - Invalid aspect ratio for Reels, it must be 9:16. You can crop this in the editor.`,
               },
             ]);
           }
+      
+          // Video width check for stories
           if (
             dimensions?.type?.includes("video") &&
             !(dimensions?.width >= 540 && dimensions?.width <= 1080)
@@ -975,6 +1161,8 @@ const CreatePostModal = ({
               },
             ]);
           }
+      
+          // Video height check for stories
           if (
             dimensions?.type?.includes("video") &&
             !(dimensions?.height >= 960 && dimensions?.height <= 1920)
@@ -984,12 +1172,65 @@ const CreatePostModal = ({
               {
                 id: dimensions.id,
                 platform: "facebook",
-                error: `Facebook - Video height should  be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
+                error: `Facebook - Video height should be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
               },
             ]);
           }
+        } else if (item.mediaType == FBReal) {  // Check for Facebook Reels
+          // Video duration check for Reels
+          if (dimensions?.type?.includes("video")) {
+            if (dimensions?.duration < 3 || dimensions?.duration > 60) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video duration must be between 3s and 60s. Yours is ${dimensions?.duration.toFixed(1)}s long.`,
+                },
+              ]);
+            }
+      
+            // Aspect ratio check for Reels (9:16)
+            if (dimensions?.aspectRatio !== 0.5625) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video aspect ratio must be 9:16. Yours is ${dimensions?.aspectRatio}.`,
+                },
+              ]);
+            }
+      
+            // Video width check for Reels (540px to 1080px)
+            if (!(dimensions?.width >= 540 && dimensions?.width <= 1080)) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video width should be between 540px and 1080px. This video width is ${dimensions?.width}px.`,
+                },
+              ]);
+            }
+      
+            // Video height check for Reels (960px to 1920px)
+            if (!(dimensions?.height >= 960 && dimensions?.height <= 1920)) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Reels video height should be between 960px and 1920px. This video height is ${dimensions?.height}px.`,
+                },
+              ]);
+            }
+          }
         }
       }
+      
+
+      //twitter
       if (platform.includes(TwitterPlatform)) {
         if (noFileSelected && noContent) {
           setErrors((prev) => [
@@ -1194,18 +1435,18 @@ const CreatePostModal = ({
         }
         const maxVideoDuration =
           additionalPresets[platform].maxVideoPostDuration;
-        if (additionalPresets[platform].privacyLevel === "") {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "tiktok",
-              error:
-                "TikTok - Tiktok Presets - A privacy option must be selected.",
-            },
-          ]);
-        }
+        // if (additionalPresets[platform].privacyLevel === "") {
+        //   setErrors((prev) => [
+        //     ...prev,
+        //     {
+        //       id: 0,
+        //       type: "",
+        //       platform: "tiktok",
+        //       error:
+        //         "TikTok - Tiktok Presets - A privacy option must be selected.",
+        //     },
+        //   ]);
+        // }
         if (hasImages) {
           setErrors((prev) => [
             ...prev,
@@ -1356,7 +1597,7 @@ const CreatePostModal = ({
             },
           ]);
         }
-        if (item.mediaType === "POST") {
+        if (item.mediaType === "POST"  && additionalPresets.Google_Business?.POST) {
           const { button, buttonLink } = additionalPresets.Google_Business.POST;
 
           if (
@@ -1513,9 +1754,8 @@ const CreatePostModal = ({
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
                 {...getRootProps()}
-                className={`${
-                  handlePointerEvent() || loading ? "pointer-events-none" : ""
-                } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
+                className={`${handlePointerEvent() || loading ? "pointer-events-none" : ""
+                  } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />
 
@@ -1531,9 +1771,8 @@ const CreatePostModal = ({
                     </div>
                   )}
                   <div
-                    className={`flex flex-1 flex-col xl:w-5/12 ${
-                      !showPreview ? "" : "hidden"
-                    } `}
+                    className={`flex flex-1 flex-col xl:w-5/12 ${!showPreview ? "" : "hidden"
+                      } `}
                   >
                     <div className="p-2">
                       <div className="flex justify-between">
@@ -1551,7 +1790,7 @@ const CreatePostModal = ({
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
-                            {connections.map((item, index) => {
+                            {Array.isArray(connections) && connections.map((item, index) => {
                               const {
                                 platform = "",
                                 screenName = "",
@@ -1560,11 +1799,9 @@ const CreatePostModal = ({
                               return (
                                 <span
                                   key={id}
-                                  className={`${
-                                    index > 0 ? "ml-2" : "ml-0"
-                                  } flex items-center ${
-                                    isDuplicating && "opacity-50"
-                                  }`}
+                                  className={`${index > 0 ? "ml-2" : "ml-0"
+                                    } flex items-center ${isDuplicating && "opacity-50"
+                                    }`}
                                 >
                                   <SocialPlatform
                                     id={item.id}
@@ -1575,6 +1812,12 @@ const CreatePostModal = ({
                                     platform={platform}
                                     selectedPreview={selectedPreview}
                                     setSelectedPreview={setSelectedPreview}
+                                    showReelOnFeedChecked={
+                                      showReelOnFeedChecked
+                                    }
+                                    setShowReelOnFeedChecked={
+                                      setShowReelOnFeedChecked
+                                    }
                                   />
                                 </span>
                               );
@@ -1633,6 +1876,8 @@ const CreatePostModal = ({
                       setAdditionalPresets={setAdditionalPresets}
                       isDuplicating={isDuplicating}
                       brandId={brandId}
+                      showReelOnFeedChecked={showReelOnFeedChecked}
+                      setShowReelOnFeedChecked={setShowReelOnFeedChecked}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">
@@ -1647,7 +1892,7 @@ const CreatePostModal = ({
                         </div>
                         <div className="overflow-auto max-h-[72px]">
                           <ol className="list-decimal pl-5 text-xs">
-                            {errors.map((item, index) => {
+                            {Array.isArray(errors) && errors.map((item, index) => {
                               return (
                                 <li
                                   key={index}
@@ -1688,11 +1933,10 @@ const CreatePostModal = ({
                               <Button
                                 onClick={handleDuplicate}
                                 size="md"
-                                className={`${
-                                  loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed"
-                                    : "cursor-pointer"
-                                }`}
+                                className={`${loading || errors.length > 0
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : "cursor-pointer"
+                                  }`}
                               >
                                 {loading ? "Duplicating.." : "Duplicate"}
                               </Button>
@@ -1721,11 +1965,10 @@ const CreatePostModal = ({
                                   size="md"
                                   onClick={handlePublish}
                                   disabled={loading || errors.length > 0}
-                                  className={`rounded-r-none normal-case text-xs ${
-                                    loading || errors.length > 0
-                                      ? "opacity-50 cursor-not-allowed w-32"
-                                      : ""
-                                  }`}
+                                  className={`rounded-r-none normal-case text-xs ${loading || errors.length > 0
+                                    ? "opacity-50 cursor-not-allowed w-32"
+                                    : ""
+                                    }`}
                                   title={loading ? "Please wait" : submitButton}
                                   loading={loading}
                                   color="primary"
@@ -1742,7 +1985,7 @@ const CreatePostModal = ({
                                     </button>
                                   </MenuHandler>
                                   <MenuList className="px-0">
-                                    {schdulePostBtnLabel.map((item) => {
+                                    {Array.isArray(schdulePostBtnLabel) && schdulePostBtnLabel.map((item) => {
                                       const { label, description, key } = item;
                                       return (
                                         <MenuItem
@@ -1771,9 +2014,8 @@ const CreatePostModal = ({
                     </div>
                   </div>
                   <div
-                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${
-                      showPreview ? "" : "hidden"
-                    } rounded-lg justify-center items-center`}
+                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${showPreview ? "" : "hidden"
+                      } rounded-lg justify-center items-center`}
                   >
                     <PostPreview
                       selectedPlaforms={selectedPlaforms}

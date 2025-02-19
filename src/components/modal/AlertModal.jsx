@@ -10,6 +10,7 @@ import ToasterCustomConatiner from "../ToasterCustomConatiner";
 
 const AlertModal = ({ show, toggleModal, alertData }) => {
   const { header = "", onAccept = () => {} } = alertData;
+
   return (
     <Dialog size="sm" open={show}>
       <ToasterCustomConatiner />

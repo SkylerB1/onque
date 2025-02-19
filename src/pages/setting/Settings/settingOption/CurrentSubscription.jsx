@@ -179,7 +179,10 @@ const CurrentSubscription = ({
               )}
             </span>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-between">
+            <span className="text-black text-base">
+              Subscription Plan price
+            </span>
             <strong className="text-black text-3xl leading-none font-bold">
               {subscription?.subscriptionScheduledId != null ? (
                 <>{subscription?.scheduledPlanInfo?.price}</>

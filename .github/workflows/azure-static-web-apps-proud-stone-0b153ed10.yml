@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
 
 jobs:
   build_and_deploy_job:
@@ -44,7 +40,7 @@ jobs:
           VITE_ORIGIN_URL: "https://onqueapp.com"
           VITE_API_URL: "https://api.onqueapp.com/api"
           VITE_CALLBACK_URL: "https://onqueapp.com/brands/connect"
-          VITE_POST_IMG_BASE_PATH: "https://api.onqueapp.com/assets/"
+          VITE_POST_IMG_BASE_PATH: "https://onquemediastorage.blob.core.windows.net/onquemedia/"
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:

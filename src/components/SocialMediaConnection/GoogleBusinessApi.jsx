@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import GoogleBusiness from "../../assets/GoogleBusiness";
 import { axiosInstance } from "../../utils/Interceptor";
-import { API_URL } from "../../utils";
+import { API_URL, toastrError } from "../../utils";
 import { GoogleBusinessPlatform } from "../common/commonString";
 import { Typography } from "@material-tailwind/react";
 import { useAppContext } from "../../context/AuthContext";
@@ -58,33 +58,41 @@ function GoogleBusinessApi({
       setLoading(true);
       handleShowModal(header);
       const res = await axiosInstance.get(GET_LOCATIONS_URL);
+
       if (res.status === 200) {
         const { locations, account } = res.data;
-        const data = locations.map((item) => {
-          const { name, title, storefrontAddress = {} } = item;
-          const addressLines = storefrontAddress?.addressLines || [];
-          const postalCode = storefrontAddress?.postalCode || "";
-          const locality = storefrontAddress?.locality || "";
-          const administrativeArea =
-            storefrontAddress?.administrativeArea || "";
-          const address =
-            storefrontAddress && addressLines.length > 0
-              ? `${addressLines[0]} ${postalCode} ${locality} ${administrativeArea}`
-              : null;
-          return {
-            id: name,
-            name: title,
-            body: address,
-            account: account,
-          };
-        });
-        setModalData(data);
-        setLoading(false);
+        let data = [];
+        if (locations && locations.length > 0) {
+          data = locations.map((item) => {
+            const { name, title, storefrontAddress = {} } = item;
+            const addressLines = storefrontAddress?.addressLines || [];
+            const postalCode = storefrontAddress?.postalCode || "";
+            const locality = storefrontAddress?.locality || "";
+            const administrativeArea =
+              storefrontAddress?.administrativeArea || "";
+            const address =
+              storefrontAddress && addressLines.length > 0
+                ? `${addressLines[0]} ${postalCode} ${locality} ${administrativeArea}`
+                : null;
+            return {
+              id: name,
+              name: title,
+              body: address,
+              account: account,
+            };
+          });
+          setModalData(data);
+        } else {
+          toastrError("No google bussiness profile found.");
+          handleShowModal(header, false);
+        }
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  }, [header]);
 
   useEffect(() => {
     const handleConnection = ({ platform }) => {
@@ -95,7 +103,11 @@ function GoogleBusinessApi({
       }
     };
     broadcastConnection.addEventListener("message", handleConnection);
-  }, [broadcastConnection]);
+    // Clean up the event listener when the component unmounts or when broadcastConnection changes
+    return () => {
+      broadcastConnection.removeEventListener("message", handleConnection);
+    };
+  }, [broadcastConnection, getLocations, brandId, GoogleBusinessPlatform]);
 
   return (
     <div
@@ -106,9 +118,7 @@ function GoogleBusinessApi({
       <span className="me-8 py-3 text-sm text-white">
         <Typography className="font-bold">{label}</Typography>
       </span>
-      <span className="h-12 text-xl py-3 text-stone-600">
-        {icon}
-      </span>
+      <span className="h-12 text-xl py-3 text-stone-600">{icon}</span>
     </div>
   );
 }

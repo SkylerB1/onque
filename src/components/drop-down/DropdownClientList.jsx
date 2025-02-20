@@ -20,6 +20,7 @@ import { abbreviateString } from "../../utils/commonUtils";
 import InfoIcon from "../svg/infoIcon";
 import Close from "../svg/Close";
 import useUserInfo from "../customHooks/useUserInfo";
+import environment from "../../config/environment";
 
 const DropdownClientList = ({
   setOpen,
@@ -29,6 +30,7 @@ const DropdownClientList = ({
   activeBrands,
   getActiveBrands,
 }) => {
+  const { isTwitterEnabled } = environment;
   const [isOpen, setIsOpen] = useState(false);
   const { getConnections } = useConnections();
   const { getCounter } = useAppContext();
@@ -163,7 +165,8 @@ const DropdownClientList = ({
               </div>
             </>
           )}
-          {userInfo?.adminRole === "admin" || isSubscribed && userInfo?.clients_count < userInfo?.max_clients ? (
+          {userInfo?.adminRole === "admin" ||
+          (isSubscribed && userInfo?.clients_count < userInfo?.max_clients) ? (
             <>
               <div
                 id="alert-1"
@@ -175,10 +178,10 @@ const DropdownClientList = ({
                 <div className="ms-3 text-sm font-medium">
                   {userInfo?.adminRole === "admin"
                     ? `You have ${clients_count} clients.`
-                    : `You have ${clients_count} ${userInfo?.adminRole !== "admin" && "brands out"} ${max_clients}.`
-                  }
+                    : `You have ${clients_count} ${
+                        userInfo?.adminRole !== "admin" && "brands out"
+                      } ${max_clients}.`}
                 </div>
-
               </div>
             </>
           ) : (
@@ -281,7 +284,11 @@ const DropdownClientList = ({
                     }
                     className={` ${
                       item.is_active !== true && " opacity-20 "
-                    } flex w-full my-2 text-start text-sm text-gray-700 ${item.id===selectedBrandId?"bg-blue-gray-50":"bg-white"} hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
+                    } flex w-full my-2 text-start text-sm text-gray-700 ${
+                      item.id === selectedBrandId
+                        ? "bg-blue-gray-50"
+                        : "bg-white"
+                    } hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
                     role="menuitem"
                   >
                     <div className="flex flex-1 items-center justify-start gap-3">
@@ -301,15 +308,25 @@ const DropdownClientList = ({
                               No networks connected
                             </span>
                           )}
-                          {item.platforms.map((item) => {
-                            const { platform } = item;
-                            if (platform) {
-                              const { coloredIcon } = SocialPlatforms[platform];
-                              return (
-                                <span key={item.id}>{coloredIcon(13, 13)}</span>
-                              );
-                            }
-                          })}
+                          {item.platforms
+                            .filter((item) => {
+                              return item.platform === "Twitter" &&
+                                isTwitterEnabled === false
+                                ? false
+                                : true;
+                            })
+                            .map((item) => {
+                              const { platform } = item;
+                              if (platform) {
+                                const { coloredIcon } =
+                                  SocialPlatforms[platform];
+                                return (
+                                  <span key={item.id}>
+                                    {coloredIcon(13, 13)}
+                                  </span>
+                                );
+                              }
+                            })}
                         </div>
                       </div>
                     </div>

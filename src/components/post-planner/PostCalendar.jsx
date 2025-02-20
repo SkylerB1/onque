@@ -21,14 +21,10 @@ import {
 import StoryCarousel from "../mockups/facebook/StoryCarousel";
 import { useAppContext } from "../../context/AuthContext";
 import { axiosInstance } from "../../utils/Interceptor";
-import {
-  API_URL,
-  toastrError,
-  toastrSuccess
-} from "../../utils";
+import { API_URL, toastrError, toastrSuccess } from "../../utils";
 
 const PostCalendar = (props) => {
-  const  {validations}  = useAppContext();
+  const { validations } = useAppContext();
   const navigate = useNavigate();
   const { getPostData, events, role } = props;
   const [files, setFiles] = useState([]);
@@ -139,20 +135,23 @@ const PostCalendar = (props) => {
 
     const data = {
       scheduledDate: date,
-      status
+      status,
     };
 
     try {
-      const response = await axiosInstance.patch( API_URL + `/user/update/post-time/${rowId}`, data);
+      const response = await axiosInstance.patch(
+        API_URL + `/user/update/post-time/${rowId}`,
+        data
+      );
       if (response.status === 200) {
         getPostData();
-        toastrSuccess('Post schedule has been updated');
+        toastrSuccess("Post schedule has been updated");
       } else {
-        toastrError('Failed to update post');
+        toastrError("Failed to update post");
       }
     } catch (err) {
       console.log(err);
-      toastrError('Error updating post');
+      toastrError("Error updating post");
     }
   };
 
@@ -172,7 +171,7 @@ const PostCalendar = (props) => {
 
     setTextForRoleInfo(textForRoleInfo);
   }, [role]);
- 
+
   return (
     <>
       <div className="md:my-2 xl:mt-24 lg:mt-24">
@@ -221,26 +220,39 @@ const PostCalendar = (props) => {
           <>
             <div className="flex items-center justify-between border-2 border-black rounded-md py-2 px-5 mb-5">
               <span className="text-sm text-black">
-                You have posted <strong> {validations?.posts_count_monthly} out of your {validations?.max_posts_monthly} </strong> available posts in your plan this month.{validations?.max_posts_monthly < 12000 && "Upgrade your plan to increase the limit."}
+                You have posted{" "}
+                <strong>
+                  {" "}
+                  {validations?.posts_count_monthly} out of your{" "}
+                  {validations?.max_posts_monthly}{" "}
+                </strong>{" "}
+                available posts in your plan this month.
+                {validations?.max_posts_monthly < 12000 &&
+                  "Upgrade your plan to increase the limit."}
               </span>
-                  {validations.max_posts_monthly < 12000  && <Button
-                    variant="gradient"
-                    size="sm"
-                    className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
-                    onClick={() => navigate("/setting/price")}
-                  >
-                    Upgrade
-                  </Button>}
+              {validations.max_posts_monthly < 12000 && (
+                <Button
+                  variant="gradient"
+                  size="sm"
+                  className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
+                  onClick={() => navigate("/setting/price")}
+                >
+                  Upgrade
+                </Button>
+              )}
             </div>
 
-            {validations?.posts_count_monthly < validations?.max_posts_monthly && <Button
-              size="sm"
-              onClick={handleModal}
-              className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
-            >
-              <IoMdAdd className="w-5 h-5 mr-1" />
-              Create Post
-            </Button>}
+            {validations?.posts_count_monthly <
+              validations?.max_posts_monthly && (
+              <Button
+                size="sm"
+                onClick={handleModal}
+                className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
+              >
+                <IoMdAdd className="w-5 h-5 mr-1" />
+                Create Post
+              </Button>
+            )}
           </>
         )}
         <Card className="mt-2">

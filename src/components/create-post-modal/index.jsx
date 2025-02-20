@@ -79,6 +79,7 @@ import {
 import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
+import environment from "../../config/environment";
 
 const schdulePostBtnLabel = [
   {
@@ -97,7 +98,7 @@ const schdulePostBtnLabel = [
     key: "publishNow",
   },
 ];
-
+const { isTwitterEnabled } = environment;
 const CreatePostModal = ({
   openModal,
   setModal,
@@ -135,7 +136,7 @@ const CreatePostModal = ({
   const [showAlertModal, setAlertModal] = useState(false);
   const [alertData, setAlertData] = useState({
     header: "",
-    onAccept: function () { },
+    onAccept: function () {},
   });
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
@@ -260,7 +261,7 @@ const CreatePostModal = ({
   const handleView = (index) => {
     setViewMode(index);
   };
-  const handlePostFeed = (index) => { };
+  const handlePostFeed = (index) => {};
 
   const toggleAlertModal = () => {
     setAlertModal(!showAlertModal);
@@ -423,11 +424,13 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
     const data = {
-      providers: Array.isArray(selectedPlaforms) && selectedPlaforms.map((item) => ({
-        platform: item.platform,
-        mediaType: item.mediaType,
-        additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
-      })),
+      providers:
+        Array.isArray(selectedPlaforms) &&
+        selectedPlaforms.map((item) => ({
+          platform: item.platform,
+          mediaType: item.mediaType,
+          additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
+        })),
       caption,
       scheduledDate,
       files: media,
@@ -611,37 +614,46 @@ const CreatePostModal = ({
       if (postData) {
         const { platforms, socialPresets } = postData;
         const presets = {};
-        Array.isArray(platforms) && platforms.forEach((item, index) => {
-          let { additionalPresets, platform } = item;
+        Array.isArray(platforms) &&
+          platforms.forEach((item, index) => {
+            let { additionalPresets, platform } = item;
 
-          if (additionalPresets) {
-            presets[platform] = additionalPresets;
-          } else {
-            let socialPresetPlateformData =
-              socialPresets &&
-              Array.isArray(socialPresets) && socialPresets.find((socialPreset) => {
-                return socialPreset.platform == platform;
-              });
+            if (additionalPresets) {
+              presets[platform] = additionalPresets;
+            } else {
+              let socialPresetPlateformData =
+                socialPresets &&
+                Array.isArray(socialPresets) &&
+                socialPresets.find((socialPreset) => {
+                  return socialPreset.platform == platform;
+                });
 
-            if (socialPresetPlateformData) {
-              presets[platform] = socialPresetPlateformData.additionalPresets;
-              platforms[index] = {
-                ...platforms[index],
-                mediaType: socialPresetPlateformData.mediaType,
-              };
+              if (socialPresetPlateformData) {
+                presets[platform] = socialPresetPlateformData.additionalPresets;
+                platforms[index] = {
+                  ...platforms[index],
+                  mediaType: socialPresetPlateformData.mediaType,
+                };
+              }
             }
-          }
-        });
+          });
 
         setAdditionalPresets((prev) => ({ ...prev, ...presets }));
 
         setSelectedPlatforms(platforms);
         setSelectedPreview(platforms[0]);
       } else {
-        const savedPlatforms = useLocalStorage(
+        // create post case
+        let savedPlatforms = useLocalStorage(
           `brand.${brandId}.planner.networks`,
           "get"
         );
+
+        savedPlatforms = savedPlatforms.filter((item) => {
+          return item.platform === "Twitter" && isTwitterEnabled === false
+            ? false
+            : true;
+        });
         if (savedPlatforms && savedPlatforms.length > 0) {
           setSelectedPlatforms(savedPlatforms);
           setSelectedPreview(savedPlatforms[0]);
@@ -678,7 +690,9 @@ const CreatePostModal = ({
 
     errors?.forEach((element) => {
       if (Array.isArray(selectedPlaforms)) {
-        if (!selectedPlaforms.some((item) => item.platform == element.platform)) {
+        if (
+          !selectedPlaforms.some((item) => item.platform == element.platform)
+        ) {
           setErrors((prev) =>
             prev.filter((item) => item.platform !== element.platform)
           );
@@ -696,1023 +710,1043 @@ const CreatePostModal = ({
       ]);
     }
 
-    Array.isArray(selectedPlaforms) && selectedPlaforms.forEach((item) => {
-      const { platform } = item;
-      if (platform == InstagramPlatform) {
-        if (noFileSelected) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error: "Instagram - Add at least 1 image or video.",
-            },
-          ]);
-        }
-        if (caption.length > pateformPostCharactersLength.instagram) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error: `Instagram - Maximum characters limit is ${pateformPostCharactersLength.instagram}`,
-            },
-          ]);
-        }
-        if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
-            (videoDuration) =>
-              videoDuration > pateformPostVideosLength.instagram
-          );
-          if (isAnyVideoLengthExceed) {
+    Array.isArray(selectedPlaforms) &&
+      selectedPlaforms.forEach((item) => {
+        const { platform } = item;
+        if (platform == InstagramPlatform) {
+          if (noFileSelected) {
             setErrors((prev) => [
               ...prev,
               {
                 id: dimensions.id,
                 platform: "instagram",
-                error: `Instagram - Maximum video length is ${pateformPostVideosLength.instagram} seconds`,
+                error: "Instagram - Add at least 1 image or video.",
+              },
+            ]);
+          }
+          if (caption.length > pateformPostCharactersLength.instagram) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error: `Instagram - Maximum characters limit is ${pateformPostCharactersLength.instagram}`,
+              },
+            ]);
+          }
+          if (videosCount > 0) {
+            const isAnyVideoLengthExceed = videoDurations.some(
+              (videoDuration) =>
+                videoDuration > pateformPostVideosLength.instagram
+            );
+            if (isAnyVideoLengthExceed) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "instagram",
+                  error: `Instagram - Maximum video length is ${pateformPostVideosLength.instagram} seconds`,
+                },
+              ]);
+            }
+          }
+          if (
+            dimensions?.size > 8000000 &&
+            dimensions?.type.includes("image")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error:
+                  "Instagram - Your image is too large. The maximum size is 8MB.",
+              },
+            ]);
+          }
+          if (
+            dimensions?.size > 1073741824 &&
+            dimensions?.type.includes("video")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error:
+                  "Instagram - Your video is too large. The maximum size is 1GB.",
+              },
+            ]);
+          } else if (
+            item.mediaType == "POST" &&
+            (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.91) &&
+            dimensions?.type.includes("image")
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error:
+                  "Instagram - Invalid aspect ratio for image, it must be between 4:5 and 1.91:1. You can crop this in the editor.",
+              },
+            ]);
+          }
+          if (
+            item.mediaType == "POST" &&
+            dimensions?.type?.includes("video") &&
+            dimensions?.width > 1920 &&
+            !noFileSelected
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error: `Instagram - Video width can't be larger than 1920 pixels. This video don't meet the requirements (${dimensions.width}px).`,
+              },
+            ]);
+          }
+          if (
+            item.mediaType == "POST" &&
+            dimensions?.type?.includes("video") &&
+            (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) &&
+            !noFileSelected
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error: `Instagram - Invalid aspect ratio for video, it must be between 4:5 and 16:9. You can crop this in the editor.`,
+              },
+            ]);
+          }
+          if (
+            (item.mediaType == "POST" || item.mediaType == "STORY") &&
+            dimensions?.type?.includes("video") &&
+            (dimensions?.duration < 0.3 || dimensions?.duration > 60) &&
+            !noFileSelected
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions?.id,
+                platform: "instagram",
+                error: `Instagram - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
+                  1
+                )}s long`,
+              },
+            ]);
+          }
+          if (item.mediaType == "REEL" && dimensions?.type?.includes("image")) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "instagram",
+                error: `Instagram - Images are not supported as Reels, Please upload a 9:16 video.`,
+              },
+            ]);
+          } else if (
+            item.mediaType == "REEL" &&
+            dimensions?.aspectRatio !== 0.5625 &&
+            !noFileSelected
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions?.id,
+                platform: "instagram",
+                error: `Instagram - Invalid aspect ratio for Reels, it must be 9:16. You can crop this in the editor.`,
               },
             ]);
           }
         }
-        if (dimensions?.size > 8000000 && dimensions?.type.includes("image")) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error:
-                "Instagram - Your image is too large. The maximum size is 8MB.",
-            },
-          ]);
-        }
-        if (
-          dimensions?.size > 1073741824 &&
-          dimensions?.type.includes("video")
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error:
-                "Instagram - Your video is too large. The maximum size is 1GB.",
-            },
-          ]);
-        } else if (
-          item.mediaType == "POST" &&
-          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.91) &&
-          dimensions?.type.includes("image")
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error:
-                "Instagram - Invalid aspect ratio for image, it must be between 4:5 and 1.91:1. You can crop this in the editor.",
-            },
-          ]);
-        }
-        if (
-          item.mediaType == "POST" &&
-          dimensions?.type?.includes("video") &&
-          dimensions?.width > 1920 &&
-          !noFileSelected
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error: `Instagram - Video width can't be larger than 1920 pixels. This video don't meet the requirements (${dimensions.width}px).`,
-            },
-          ]);
-        }
-        if (
-          item.mediaType == "POST" &&
-          dimensions?.type?.includes("video") &&
-          (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.78) &&
-          !noFileSelected
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error: `Instagram - Invalid aspect ratio for video, it must be between 4:5 and 16:9. You can crop this in the editor.`,
-            },
-          ]);
-        }
-        if (
-          (item.mediaType == "POST" || item.mediaType == "STORY") &&
-          dimensions?.type?.includes("video") &&
-          (dimensions?.duration < 0.3 || dimensions?.duration > 60) &&
-          !noFileSelected
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions?.id,
-              platform: "instagram",
-              error: `Instagram - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
-                1
-              )}s long`,
-            },
-          ]);
-        }
-        if (item.mediaType == "REEL" && dimensions?.type?.includes("image")) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "instagram",
-              error: `Instagram - Images are not supported as Reels, Please upload a 9:16 video.`,
-            },
-          ]);
-        } else if (
-          item.mediaType == "REEL" &&
-          dimensions?.aspectRatio !== 0.5625 &&
-          !noFileSelected
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions?.id,
-              platform: "instagram",
-              error: `Instagram - Invalid aspect ratio for Reels, it must be 9:16. You can crop this in the editor.`,
-            },
-          ]);
-        }
-      }
-      // facebook error
+        // facebook error
 
-      // if (platform.includes(FacebookPagePlatform)) {
-      //   if (item.mediaType == FBPost) {
-      //     if (noFileSelected && noContent) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: dimensions.id,
-      //           platform: "facebook",
-      //           error: "Facebook - Add at least 1 character or 1 media file.",
-      //         },
-      //       ]);
-      //     }
+        // if (platform.includes(FacebookPagePlatform)) {
+        //   if (item.mediaType == FBPost) {
+        //     if (noFileSelected && noContent) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: dimensions.id,
+        //           platform: "facebook",
+        //           error: "Facebook - Add at least 1 character or 1 media file.",
+        //         },
+        //       ]);
+        //     }
 
-      //     if (caption.length > pateformPostCharactersLength.facebook) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: dimensions.id,
-      //           platform: "facebook",
-      //           error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
-      //         },
-      //       ]);
-      //     }
-      //     if (hasImages && hasVideos) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: 0,
-      //           type: "",
-      //           platform: "facebook",
-      //           error:
-      //             "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
-      //         },
-      //       ]);
-      //     }
-      //   } else if (item.mediaType == FBStory) {
-      //     if (hasImages == false && hasVideos == false) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: dimensions.id,
-      //           platform: "facebook",
-      //           error: `Facebook - Auto publish (story) - Add at least 1 image or video.`,
-      //         },
-      //       ]);
-      //     } else {
-      //       files.length > 0 &&
-      //         Array.isArray(files) && files.map((file) => {
-      //           // check if file is image
-      //           if (isContainImage(file) == true) {
-      //             if (
-      //               !ImageMimeTypesForFbStory.includes(
-      //                 file?.mimetype || file?.type
-      //               )
-      //             ) {
-      //               setErrors((prev) => [
-      //                 ...prev,
-      //                 {
-      //                   id: dimensions.id,
-      //                   platform: "facebook",
-      //                   error: `Facebook - Only .jpeg, .bmp, .png, .gif, .tiff image are allowed.`,
-      //                 },
-      //               ]);
-      //             }
+        //     if (caption.length > pateformPostCharactersLength.facebook) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: dimensions.id,
+        //           platform: "facebook",
+        //           error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
+        //         },
+        //       ]);
+        //     }
+        //     if (hasImages && hasVideos) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: 0,
+        //           type: "",
+        //           platform: "facebook",
+        //           error:
+        //             "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+        //         },
+        //       ]);
+        //     }
+        //   } else if (item.mediaType == FBStory) {
+        //     if (hasImages == false && hasVideos == false) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: dimensions.id,
+        //           platform: "facebook",
+        //           error: `Facebook - Auto publish (story) - Add at least 1 image or video.`,
+        //         },
+        //       ]);
+        //     } else {
+        //       files.length > 0 &&
+        //         Array.isArray(files) && files.map((file) => {
+        //           // check if file is image
+        //           if (isContainImage(file) == true) {
+        //             if (
+        //               !ImageMimeTypesForFbStory.includes(
+        //                 file?.mimetype || file?.type
+        //               )
+        //             ) {
+        //               setErrors((prev) => [
+        //                 ...prev,
+        //                 {
+        //                   id: dimensions.id,
+        //                   platform: "facebook",
+        //                   error: `Facebook - Only .jpeg, .bmp, .png, .gif, .tiff image are allowed.`,
+        //                 },
+        //               ]);
+        //             }
 
-      //             if (file?.type == "image/png" && file?.size > 1 * MB) {
-      //               setErrors((prev) => [
-      //                 ...prev,
-      //                 {
-      //                   id: dimensions.id,
-      //                   platform: "facebook",
-      //                   error: `Facebook - Only 1 MB size Png image is allowed.`,
-      //                 },
-      //               ]);
-      //             } else if (file?.size > 4 * MB) {
-      //               setErrors((prev) => [
-      //                 ...prev,
-      //                 {
-      //                   id: dimensions.id,
-      //                   platform: "facebook",
-      //                   error: `Facebook - Only 1 MB size image is allowed.`,
-      //                 },
-      //               ]);
-      //             }
-      //           }
+        //             if (file?.type == "image/png" && file?.size > 1 * MB) {
+        //               setErrors((prev) => [
+        //                 ...prev,
+        //                 {
+        //                   id: dimensions.id,
+        //                   platform: "facebook",
+        //                   error: `Facebook - Only 1 MB size Png image is allowed.`,
+        //                 },
+        //               ]);
+        //             } else if (file?.size > 4 * MB) {
+        //               setErrors((prev) => [
+        //                 ...prev,
+        //                 {
+        //                   id: dimensions.id,
+        //                   platform: "facebook",
+        //                   error: `Facebook - Only 1 MB size image is allowed.`,
+        //                 },
+        //               ]);
+        //             }
+        //           }
 
-      //           if (isContainVideo(file) == true) {
-      //             // console.log(file);
-      //             if (
-      //               !VideoMimeTypesForFbStory.includes(
-      //                 file?.type || file?.mimetype
-      //               )
-      //             ) {
-      //               setErrors((prev) => [
-      //                 ...prev,
-      //                 {
-      //                   id: dimensions.id,
-      //                   platform: "facebook",
-      //                   error: `Facebook - Only .mp4 video is allowed.`,
-      //                 },
-      //               ]);
-      //             }
-      //           }
-      //         });
-      //     }
-      //     // console.log(dimensions, " is dimensions");
-      //     if (
-      //       dimensions?.type?.includes("video") &&
-      //       (dimensions?.duration < 0.3 || dimensions?.duration > 60)
-      //     ) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: dimensions?.id,
-      //           platform: "facebook",
-      //           error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
-      //             1
-      //           )}s long`,
-      //         },
-      //       ]);
-      //     }
+        //           if (isContainVideo(file) == true) {
+        //             // console.log(file);
+        //             if (
+        //               !VideoMimeTypesForFbStory.includes(
+        //                 file?.type || file?.mimetype
+        //               )
+        //             ) {
+        //               setErrors((prev) => [
+        //                 ...prev,
+        //                 {
+        //                   id: dimensions.id,
+        //                   platform: "facebook",
+        //                   error: `Facebook - Only .mp4 video is allowed.`,
+        //                 },
+        //               ]);
+        //             }
+        //           }
+        //         });
+        //     }
+        //     // console.log(dimensions, " is dimensions");
+        //     if (
+        //       dimensions?.type?.includes("video") &&
+        //       (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+        //     ) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: dimensions?.id,
+        //           platform: "facebook",
+        //           error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
+        //             1
+        //           )}s long`,
+        //         },
+        //       ]);
+        //     }
 
-      //     if (
-      //       dimensions?.type?.includes("video") &&
-      //       dimensions?.aspectRatio !== 0.5625
-      //     ) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: dimensions?.id,
-      //           platform: "facebook",
-      //           error: `Facebook - Invalid aspect stroy for Reels, it must be 9:16. You can crop this in the editor.`,
-      //         },
-      //       ]);
-      //     }
-      //     if (
-      //       dimensions?.type?.includes("video") &&
-      //       !(dimensions?.width >= 540 && dimensions?.width <= 1080)
-      //     ) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: dimensions.id,
-      //           platform: "facebook",
-      //           error: `Facebook - Video width should  be between 540 px to 1080 pixels. This video width is (${dimensions.width}px).`,
-      //         },
-      //       ]);
-      //     }
-      //     if (
-      //       dimensions?.type?.includes("video") &&
-      //       !(dimensions?.height >= 960 && dimensions?.height <= 1920)
-      //     ) {
-      //       setErrors((prev) => [
-      //         ...prev,
-      //         {
-      //           id: dimensions.id,
-      //           platform: "facebook",
-      //           error: `Facebook - Video height should  be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
-      //         },
-      //       ]);
-      //     }
-      //   }
-      // }
+        //     if (
+        //       dimensions?.type?.includes("video") &&
+        //       dimensions?.aspectRatio !== 0.5625
+        //     ) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: dimensions?.id,
+        //           platform: "facebook",
+        //           error: `Facebook - Invalid aspect stroy for Reels, it must be 9:16. You can crop this in the editor.`,
+        //         },
+        //       ]);
+        //     }
+        //     if (
+        //       dimensions?.type?.includes("video") &&
+        //       !(dimensions?.width >= 540 && dimensions?.width <= 1080)
+        //     ) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: dimensions.id,
+        //           platform: "facebook",
+        //           error: `Facebook - Video width should  be between 540 px to 1080 pixels. This video width is (${dimensions.width}px).`,
+        //         },
+        //       ]);
+        //     }
+        //     if (
+        //       dimensions?.type?.includes("video") &&
+        //       !(dimensions?.height >= 960 && dimensions?.height <= 1920)
+        //     ) {
+        //       setErrors((prev) => [
+        //         ...prev,
+        //         {
+        //           id: dimensions.id,
+        //           platform: "facebook",
+        //           error: `Facebook - Video height should  be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
+        //         },
+        //       ]);
+        //     }
+        //   }
+        // }
 
-      if (platform.includes(FacebookPagePlatform)) {
-        if (item.mediaType == FBPost) {
-          // Facebook Post Logic
+        if (platform.includes(FacebookPagePlatform)) {
+          if (item.mediaType == FBPost) {
+            // Facebook Post Logic
+            if (noFileSelected && noContent) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: "Facebook - Add at least 1 character or 1 media file.",
+                },
+              ]);
+            }
+
+            if (caption.length > pateformPostCharactersLength.facebook) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
+                },
+              ]);
+            }
+
+            if (hasImages && hasVideos) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: 0,
+                  type: "",
+                  platform: "facebook",
+                  error:
+                    "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+                },
+              ]);
+            }
+          } else if (item.mediaType == FBStory) {
+            // Facebook Story Logic
+            if (hasImages == false && hasVideos == false) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Auto publish (story) - Add at least 1 image or video.`,
+                },
+              ]);
+            } else {
+              files.length > 0 &&
+                Array.isArray(files) &&
+                files.map((file) => {
+                  // Check if file is image
+                  if (isContainImage(file) == true) {
+                    if (
+                      !ImageMimeTypesForFbStory.includes(
+                        file?.mimetype || file?.type
+                      )
+                    ) {
+                      setErrors((prev) => [
+                        ...prev,
+                        {
+                          id: dimensions.id,
+                          platform: "facebook",
+                          error: `Facebook - Only .jpeg, .bmp, .png, .gif, .tiff image are allowed.`,
+                        },
+                      ]);
+                    }
+
+                    if (file?.type == "image/png" && file?.size > 1 * MB) {
+                      setErrors((prev) => [
+                        ...prev,
+                        {
+                          id: dimensions.id,
+                          platform: "facebook",
+                          error: `Facebook - Only 1 MB size Png image is allowed.`,
+                        },
+                      ]);
+                    } else if (file?.size > 4 * MB) {
+                      setErrors((prev) => [
+                        ...prev,
+                        {
+                          id: dimensions.id,
+                          platform: "facebook",
+                          error: `Facebook - Only 1 MB size image is allowed.`,
+                        },
+                      ]);
+                    }
+                  }
+
+                  // Check if file is video
+                  if (isContainVideo(file) == true) {
+                    if (
+                      !VideoMimeTypesForFbStory.includes(
+                        file?.type || file?.mimetype
+                      )
+                    ) {
+                      setErrors((prev) => [
+                        ...prev,
+                        {
+                          id: dimensions.id,
+                          platform: "facebook",
+                          error: `Facebook - Only .mp4 video is allowed.`,
+                        },
+                      ]);
+                    }
+                  }
+                });
+            }
+
+            // Video duration check for stories
+            if (
+              dimensions?.type?.includes("video") &&
+              (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+            ) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions?.id,
+                  platform: "facebook",
+                  error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(
+                    1
+                  )}s long`,
+                },
+              ]);
+            }
+
+            // Video aspect ratio check for stories
+            if (
+              dimensions?.type?.includes("video") &&
+              dimensions?.aspectRatio !== 0.5625
+            ) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions?.id,
+                  platform: "facebook",
+                  error: `Facebook - Invalid aspect ratio for Reels, it must be 9:16. You can crop this in the editor.`,
+                },
+              ]);
+            }
+
+            // Video width check for stories
+            if (
+              dimensions?.type?.includes("video") &&
+              !(dimensions?.width >= 540 && dimensions?.width <= 1080)
+            ) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Video width should  be between 540 px to 1080 pixels. This video width is (${dimensions.width}px).`,
+                },
+              ]);
+            }
+
+            // Video height check for stories
+            if (
+              dimensions?.type?.includes("video") &&
+              !(dimensions?.height >= 960 && dimensions?.height <= 1920)
+            ) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "facebook",
+                  error: `Facebook - Video height should be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
+                },
+              ]);
+            }
+          } else if (item.mediaType == FBReal) {
+            // Check for Facebook Reels
+            // Video duration check for Reels
+            if (dimensions?.type?.includes("video")) {
+              if (dimensions?.duration < 3 || dimensions?.duration > 60) {
+                setErrors((prev) => [
+                  ...prev,
+                  {
+                    id: dimensions.id,
+                    platform: "facebook",
+                    error: `Facebook - Reels video duration must be between 3s and 60s. Yours is ${dimensions?.duration.toFixed(
+                      1
+                    )}s long.`,
+                  },
+                ]);
+              }
+
+              // Aspect ratio check for Reels (9:16)
+              if (dimensions?.aspectRatio !== 0.5625) {
+                setErrors((prev) => [
+                  ...prev,
+                  {
+                    id: dimensions.id,
+                    platform: "facebook",
+                    error: `Facebook - Reels video aspect ratio must be 9:16. Yours is ${dimensions?.aspectRatio}.`,
+                  },
+                ]);
+              }
+
+              // Video width check for Reels (540px to 1080px)
+              if (!(dimensions?.width >= 540 && dimensions?.width <= 1080)) {
+                setErrors((prev) => [
+                  ...prev,
+                  {
+                    id: dimensions.id,
+                    platform: "facebook",
+                    error: `Facebook - Reels video width should be between 540px and 1080px. This video width is ${dimensions?.width}px.`,
+                  },
+                ]);
+              }
+
+              // Video height check for Reels (960px to 1920px)
+              if (!(dimensions?.height >= 960 && dimensions?.height <= 1920)) {
+                setErrors((prev) => [
+                  ...prev,
+                  {
+                    id: dimensions.id,
+                    platform: "facebook",
+                    error: `Facebook - Reels video height should be between 960px and 1920px. This video height is ${dimensions?.height}px.`,
+                  },
+                ]);
+              }
+            }
+          }
+        }
+
+        //twitter
+        if (platform.includes(TwitterPlatform) && isTwitterEnabled === true) {
           if (noFileSelected && noContent) {
             setErrors((prev) => [
               ...prev,
               {
                 id: dimensions.id,
-                platform: "facebook",
-                error: "Facebook - Add at least 1 character or 1 media file.",
+                platform: "twitter",
+                error: "Twitter - Add at least 1 character or 1 media file.",
               },
             ]);
           }
-      
-          if (caption.length > pateformPostCharactersLength.facebook) {
+          if (caption.length > pateformPostCharactersLength.twitter) {
             setErrors((prev) => [
               ...prev,
               {
                 id: dimensions.id,
-                platform: "facebook",
-                error: `Facebook - Maximum characters limit is ${pateformPostCharactersLength.facebook}`,
+                platform: "twitter",
+                error: `Twitter - Maximum characters limit is ${pateformPostCharactersLength.twitter}`,
               },
             ]);
           }
-      
+
+          if (videosCount > 1) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "twitter",
+                error: "Twitter - Max videos allowed 1.",
+              },
+            ]);
+          }
+
+          if (videosCount > 0) {
+            const isAnyVideoLengthExceed = videoDurations.some(
+              (videoDuration) =>
+                videoDuration > pateformPostVideosLength.twitter
+            );
+            if (isAnyVideoLengthExceed) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "twitter",
+                  error: `Twitter - Maximum video length is ${pateformPostVideosLength.twitter} seconds`,
+                },
+              ]);
+            }
+          }
+          if ((hasImages && hasVideos) || videosCount > 1) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "twitter",
+                error:
+                  "Twitter - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+              },
+            ]);
+          }
+          if (imagesCount > 4) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "twitter",
+                error: "Twitter - Max 4 images are allowed.",
+              },
+            ]);
+          }
+          if (
+            dimensions?.type?.includes("image") &&
+            dimensions?.size > 5000000
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "twitter",
+                error:
+                  "Twitter - Your image is too large. The maximum size is 5MB.",
+              },
+            ]);
+          }
+          if (
+            dimensions?.type?.includes("video") &&
+            dimensions?.size > 536870912
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "twitter",
+                error:
+                  "Twitter - Your video is too large. The maximum size is 512MB.",
+              },
+            ]);
+          }
+        }
+        if (platform.includes(YoutubePlatform)) {
+          if (noFileSelected) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "youtube",
+                error: "Youtube - Add at least 1 video.",
+              },
+            ]);
+          }
+          if (caption.length > pateformPostCharactersLength.youtube) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "youtube",
+                error: `Youtube - Maximum characters limit is ${pateformPostCharactersLength.youtube}`,
+              },
+            ]);
+          }
+          if (videosCount > 1) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "youtube",
+                error: "Youtube - Max videos allowed 1.",
+              },
+            ]);
+          }
+          if (hasImages) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "youtube",
+                error: "Youtube - Images are not supported.",
+              },
+            ]);
+          }
+          if (additionalPresets.YouTube.title == "") {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "youtube",
+                error:
+                  "Youtube - Video or short title is required and must be shorter than 100 characters. The characters < or > are not allowed.",
+              },
+            ]);
+          }
+          if (additionalPresets.YouTube.madeForKids === "") {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "youtube",
+                error:
+                  "Youtube - It is necessary to select the audience of the video.",
+              },
+            ]);
+          }
+        }
+        if (platform.includes(TikTokPlatform)) {
+          if (noFileSelected) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "tiktok",
+                error: "TikTok - Add at least 1 video.",
+              },
+            ]);
+          }
+          if (videosCount > 0) {
+            const isAnyVideoLengthExceed = videoDurations.some(
+              (videoDuration) => videoDuration > pateformPostVideosLength.tiktok
+            );
+            if (isAnyVideoLengthExceed) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: dimensions.id,
+                  platform: "tiktok",
+                  error: `TikTok - Maximum video length is ${pateformPostVideosLength.tiktok} seconds`,
+                },
+              ]);
+            }
+          }
+          if (caption.length > pateformPostCharactersLength.tiktok) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "tiktok",
+                error: `TikTok - Maximum characters limit is ${pateformPostCharactersLength.tiktok}`,
+              },
+            ]);
+          }
+          const maxVideoDuration =
+            additionalPresets[platform].maxVideoPostDuration;
+          // if (additionalPresets[platform].privacyLevel === "") {
+          //   setErrors((prev) => [
+          //     ...prev,
+          //     {
+          //       id: 0,
+          //       type: "",
+          //       platform: "tiktok",
+          //       error:
+          //         "TikTok - Tiktok Presets - A privacy option must be selected.",
+          //     },
+          //   ]);
+          // }
+          if (hasImages) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "tiktok",
+                error: "TikTok - Only 1 video is allowed.",
+              },
+            ]);
+          }
+          if (
+            dimensions.duration &&
+            maxVideoDuration &&
+            dimensions.duration > maxVideoDuration
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "tiktok",
+                error: `TikTok - Video length cannot exceed ${maxVideoDuration} sec.`,
+              },
+            ]);
+          }
+          // if (item.mediaType === "PHOTO" && isContainVideo) {
+          //   setErrors((prev) => [
+          //     ...prev,
+          //     {
+          //       id: 0,
+          //       type: "",
+          //       platform: "tiktok",
+          //       error:
+          //         "TikTok - Please select images or change the media type to VIDEO.",
+          //     },
+          //   ]);
+          // }
+          // if (isContainImage && isContainVideo) {
+          //   setErrors((prev) => [
+          //     ...prev,
+          //     {
+          //       id: 0,
+          //       type: "",
+          //       platform: "tiktok",
+          //       error:
+          //         "TikTok - Mixing images/videos is not allowed nor selecting more than 1 video.",
+          //     },
+          //   ]);
+          // } else if (isContainImage) {
+          //   if (files.length > 35) {
+          //     setErrors((prev) => [
+          //       ...prev,
+          //       {
+          //         id: 0,
+          //         type: "",
+          //         platform: "tiktok",
+          //         error: "TikTok - Max images supported 35.",
+          //       },
+          //     ]);
+          //   }
+          // } else if (isContainVideo) {
+          //   if (files.length > 1) {
+          //     setErrors((prev) => [
+          //       ...prev,
+          //       {
+          //         id: 0,
+          //         type: "",
+          //         platform: "tiktok",
+          //         error: "TikTok - Max video supported 1.",
+          //       },
+          //     ]);
+          //   }
+          // } else {
+          //   if (
+          //     dimensions.duration &&
+          //     maxVideoDuration &&
+          //     dimensions.duration > maxVideoDuration
+          //   ) {
+          //     setErrors((prev) => [
+          //       ...prev,
+          //       {
+          //         id: 0,
+          //         type: "",
+          //         platform: "tiktok",
+          //         error: `TikTok - Video length cannot exceed ${maxVideoDuration} sec.`,
+          //       },
+          //     ]);
+          //   }
+          // }
+        }
+        if (platform.includes(GoogleBusinessPlatform)) {
+          if (noFileSelected && noContent) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "google_business",
+                error:
+                  "Google Business - Add at least 1 character or 1 media file.",
+              },
+            ]);
+          }
+          if (
+            caption.length > pateformPostCharactersLength.googleBusinessProfile
+          ) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "google_business",
+                error: `Google Business - Maximum characters limit is ${pateformPostCharactersLength.googleBusinessProfile}`,
+              },
+            ]);
+          }
+          if (hasVideos) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error: "Google Business - Videos are not supported.",
+              },
+            ]);
+          }
+          if (caption == "") {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error:
+                  "Google Business - The post content length should be longer than 1 characters.",
+              },
+            ]);
+          }
           if (hasImages && hasVideos) {
             setErrors((prev) => [
               ...prev,
               {
                 id: 0,
                 type: "",
-                platform: "facebook",
+                platform: "google_business",
                 error:
-                  "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+                  "Google Business - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
               },
             ]);
           }
-        } else if (item.mediaType == FBStory) {
-          // Facebook Story Logic
-          if (hasImages == false && hasVideos == false) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: dimensions.id,
-                platform: "facebook",
-                error: `Facebook - Auto publish (story) - Add at least 1 image or video.`,
-              },
-            ]);
-          } else {
-            files.length > 0 &&
-              Array.isArray(files) &&
-              files.map((file) => {
-                // Check if file is image
-                if (isContainImage(file) == true) {
-                  if (
-                    !ImageMimeTypesForFbStory.includes(file?.mimetype || file?.type)
-                  ) {
-                    setErrors((prev) => [
-                      ...prev,
-                      {
-                        id: dimensions.id,
-                        platform: "facebook",
-                        error: `Facebook - Only .jpeg, .bmp, .png, .gif, .tiff image are allowed.`,
-                      },
-                    ]);
-                  }
-      
-                  if (file?.type == "image/png" && file?.size > 1 * MB) {
-                    setErrors((prev) => [
-                      ...prev,
-                      {
-                        id: dimensions.id,
-                        platform: "facebook",
-                        error: `Facebook - Only 1 MB size Png image is allowed.`,
-                      },
-                    ]);
-                  } else if (file?.size > 4 * MB) {
-                    setErrors((prev) => [
-                      ...prev,
-                      {
-                        id: dimensions.id,
-                        platform: "facebook",
-                        error: `Facebook - Only 1 MB size image is allowed.`,
-                      },
-                    ]);
-                  }
-                }
-      
-                // Check if file is video
-                if (isContainVideo(file) == true) {
-                  if (
-                    !VideoMimeTypesForFbStory.includes(file?.type || file?.mimetype)
-                  ) {
-                    setErrors((prev) => [
-                      ...prev,
-                      {
-                        id: dimensions.id,
-                        platform: "facebook",
-                        error: `Facebook - Only .mp4 video is allowed.`,
-                      },
-                    ]);
-                  }
-                }
-              });
-          }
-      
-          // Video duration check for stories
           if (
-            dimensions?.type?.includes("video") &&
-            (dimensions?.duration < 0.3 || dimensions?.duration > 60)
+            item.mediaType === "POST" &&
+            additionalPresets.Google_Business?.POST
           ) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: dimensions?.id,
-                platform: "facebook",
-                error: `Facebook - Invalid video length, it must be 3s minimum and 60s maximum. Yours is ${dimensions?.duration.toFixed(1)}s long`,
-              },
-            ]);
-          }
-      
-          // Video aspect ratio check for stories
-          if (
-            dimensions?.type?.includes("video") &&
-            dimensions?.aspectRatio !== 0.5625
-          ) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: dimensions?.id,
-                platform: "facebook",
-                error: `Facebook - Invalid aspect ratio for Reels, it must be 9:16. You can crop this in the editor.`,
-              },
-            ]);
-          }
-      
-          // Video width check for stories
-          if (
-            dimensions?.type?.includes("video") &&
-            !(dimensions?.width >= 540 && dimensions?.width <= 1080)
-          ) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: dimensions.id,
-                platform: "facebook",
-                error: `Facebook - Video width should  be between 540 px to 1080 pixels. This video width is (${dimensions.width}px).`,
-              },
-            ]);
-          }
-      
-          // Video height check for stories
-          if (
-            dimensions?.type?.includes("video") &&
-            !(dimensions?.height >= 960 && dimensions?.height <= 1920)
-          ) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: dimensions.id,
-                platform: "facebook",
-                error: `Facebook - Video height should be between 960 px to 1920 pixels. This height width is (${dimensions.height}px).`,
-              },
-            ]);
-          }
-        } else if (item.mediaType == FBReal) {  // Check for Facebook Reels
-          // Video duration check for Reels
-          if (dimensions?.type?.includes("video")) {
-            if (dimensions?.duration < 3 || dimensions?.duration > 60) {
+            const { button, buttonLink } =
+              additionalPresets.Google_Business.POST;
+
+            if (
+              (button !== "" && buttonLink === "") ||
+              (button === "" && buttonLink !== "")
+            ) {
               setErrors((prev) => [
                 ...prev,
                 {
-                  id: dimensions.id,
-                  platform: "facebook",
-                  error: `Facebook - Reels video duration must be between 3s and 60s. Yours is ${dimensions?.duration.toFixed(1)}s long.`,
+                  id: 0,
+                  type: "",
+                  platform: "google_business",
+                  error:
+                    "Google Business - Please set a button and button link for Google Business Profile.",
                 },
               ]);
             }
-      
-            // Aspect ratio check for Reels (9:16)
-            if (dimensions?.aspectRatio !== 0.5625) {
+          }
+
+          if (item.mediaType === "OFFER") {
+            const { title, startDate, endDate } =
+              additionalPresets.Google_Business.OFFER;
+            if (title === "" || startDate === "" || endDate === "") {
               setErrors((prev) => [
                 ...prev,
                 {
-                  id: dimensions.id,
-                  platform: "facebook",
-                  error: `Facebook - Reels video aspect ratio must be 9:16. Yours is ${dimensions?.aspectRatio}.`,
+                  id: 0,
+                  type: "",
+                  platform: "google_business",
+                  error:
+                    "Google Business - Please add the required presets for Google Business Profile.",
                 },
               ]);
             }
-      
-            // Video width check for Reels (540px to 1080px)
-            if (!(dimensions?.width >= 540 && dimensions?.width <= 1080)) {
+          }
+
+          if (item.mediaType === "EVENT") {
+            const {
+              title,
+              startDate,
+              endDate,
+              button,
+              buttonLink,
+              startTime,
+              endTime,
+            } = additionalPresets.Google_Business.EVENT;
+            if (title === "" || startDate === "" || endDate === "") {
               setErrors((prev) => [
                 ...prev,
                 {
-                  id: dimensions.id,
-                  platform: "facebook",
-                  error: `Facebook - Reels video width should be between 540px and 1080px. This video width is ${dimensions?.width}px.`,
+                  id: 0,
+                  type: "",
+                  platform: "google_business",
+                  error:
+                    "Google Business - Please add the required presets for Google Business Profile.",
                 },
               ]);
             }
-      
-            // Video height check for Reels (960px to 1920px)
-            if (!(dimensions?.height >= 960 && dimensions?.height <= 1920)) {
+
+            if (
+              (button !== "" && buttonLink === "") ||
+              (button === "" && buttonLink !== "")
+            ) {
               setErrors((prev) => [
                 ...prev,
                 {
-                  id: dimensions.id,
-                  platform: "facebook",
-                  error: `Facebook - Reels video height should be between 960px and 1920px. This video height is ${dimensions?.height}px.`,
+                  id: 0,
+                  type: "",
+                  platform: "google_business",
+                  error:
+                    "Google Business - Please set a button and button link for Google Business Profile.",
+                },
+              ]);
+            }
+
+            if (
+              (startTime !== "" && endTime === "") ||
+              (startTime === "" && endTime !== "")
+            ) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: 0,
+                  type: "",
+                  platform: "google_business",
+                  error:
+                    "Google Business - Please set a start and end time for Google Business Profile.",
                 },
               ]);
             }
           }
         }
-      }
-      
-
-      //twitter
-      if (platform.includes(TwitterPlatform)) {
-        if (noFileSelected && noContent) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "twitter",
-              error: "Twitter - Add at least 1 character or 1 media file.",
-            },
-          ]);
-        }
-        if (caption.length > pateformPostCharactersLength.twitter) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "twitter",
-              error: `Twitter - Maximum characters limit is ${pateformPostCharactersLength.twitter}`,
-            },
-          ]);
-        }
-
-        if (videosCount > 1) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "twitter",
-              error: "Twitter - Max videos allowed 1.",
-            },
-          ]);
-        }
-
-        if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
-            (videoDuration) => videoDuration > pateformPostVideosLength.twitter
-          );
-          if (isAnyVideoLengthExceed) {
+        if (platform.includes(LinkedInPlatform)) {
+          if (noFileSelected && noContent) {
             setErrors((prev) => [
               ...prev,
               {
                 id: dimensions.id,
-                platform: "twitter",
-                error: `Twitter - Maximum video length is ${pateformPostVideosLength.twitter} seconds`,
+                platform: "linkedin",
+                error: "LinkedIn - Add at least 1 character or 1 media file.",
               },
             ]);
           }
-        }
-        if ((hasImages && hasVideos) || videosCount > 1) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "twitter",
-              error:
-                "Twitter - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
-            },
-          ]);
-        }
-        if (imagesCount > 4) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "twitter",
-              error: "Twitter - Max 4 images are allowed.",
-            },
-          ]);
-        }
-        if (dimensions?.type?.includes("image") && dimensions?.size > 5000000) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "twitter",
-              error:
-                "Twitter - Your image is too large. The maximum size is 5MB.",
-            },
-          ]);
-        }
-        if (
-          dimensions?.type?.includes("video") &&
-          dimensions?.size > 536870912
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "twitter",
-              error:
-                "Twitter - Your video is too large. The maximum size is 512MB.",
-            },
-          ]);
-        }
-      }
-      if (platform.includes(YoutubePlatform)) {
-        if (noFileSelected) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "youtube",
-              error: "Youtube - Add at least 1 video.",
-            },
-          ]);
-        }
-        if (caption.length > pateformPostCharactersLength.youtube) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "youtube",
-              error: `Youtube - Maximum characters limit is ${pateformPostCharactersLength.youtube}`,
-            },
-          ]);
-        }
-        if (videosCount > 1) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "youtube",
-              error: "Youtube - Max videos allowed 1.",
-            },
-          ]);
-        }
-        if (hasImages) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "youtube",
-              error: "Youtube - Images are not supported.",
-            },
-          ]);
-        }
-        if (additionalPresets.YouTube.title == "") {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "youtube",
-              error:
-                "Youtube - Video or short title is required and must be shorter than 100 characters. The characters < or > are not allowed.",
-            },
-          ]);
-        }
-        if (additionalPresets.YouTube.madeForKids === "") {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "youtube",
-              error:
-                "Youtube - It is necessary to select the audience of the video.",
-            },
-          ]);
-        }
-      }
-      if (platform.includes(TikTokPlatform)) {
-        if (noFileSelected) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "tiktok",
-              error: "TikTok - Add at least 1 video.",
-            },
-          ]);
-        }
-        if (videosCount > 0) {
-          const isAnyVideoLengthExceed = videoDurations.some(
-            (videoDuration) => videoDuration > pateformPostVideosLength.tiktok
-          );
-          if (isAnyVideoLengthExceed) {
+          if (caption.length > pateformPostCharactersLength.linkedIn) {
             setErrors((prev) => [
               ...prev,
               {
                 id: dimensions.id,
-                platform: "tiktok",
-                error: `TikTok - Maximum video length is ${pateformPostVideosLength.tiktok} seconds`,
+                platform: "linkedin",
+                error: `LinkedIn - Maximum characters limit is ${pateformPostCharactersLength.linkedIn}`,
               },
             ]);
           }
         }
-        if (caption.length > pateformPostCharactersLength.tiktok) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "tiktok",
-              error: `TikTok - Maximum characters limit is ${pateformPostCharactersLength.tiktok}`,
-            },
-          ]);
-        }
-        const maxVideoDuration =
-          additionalPresets[platform].maxVideoPostDuration;
-        // if (additionalPresets[platform].privacyLevel === "") {
-        //   setErrors((prev) => [
-        //     ...prev,
-        //     {
-        //       id: 0,
-        //       type: "",
-        //       platform: "tiktok",
-        //       error:
-        //         "TikTok - Tiktok Presets - A privacy option must be selected.",
-        //     },
-        //   ]);
-        // }
-        if (hasImages) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "tiktok",
-              error: "TikTok - Only 1 video is allowed.",
-            },
-          ]);
-        }
-        if (
-          dimensions.duration &&
-          maxVideoDuration &&
-          dimensions.duration > maxVideoDuration
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "tiktok",
-              error: `TikTok - Video length cannot exceed ${maxVideoDuration} sec.`,
-            },
-          ]);
-        }
-        // if (item.mediaType === "PHOTO" && isContainVideo) {
-        //   setErrors((prev) => [
-        //     ...prev,
-        //     {
-        //       id: 0,
-        //       type: "",
-        //       platform: "tiktok",
-        //       error:
-        //         "TikTok - Please select images or change the media type to VIDEO.",
-        //     },
-        //   ]);
-        // }
-        // if (isContainImage && isContainVideo) {
-        //   setErrors((prev) => [
-        //     ...prev,
-        //     {
-        //       id: 0,
-        //       type: "",
-        //       platform: "tiktok",
-        //       error:
-        //         "TikTok - Mixing images/videos is not allowed nor selecting more than 1 video.",
-        //     },
-        //   ]);
-        // } else if (isContainImage) {
-        //   if (files.length > 35) {
-        //     setErrors((prev) => [
-        //       ...prev,
-        //       {
-        //         id: 0,
-        //         type: "",
-        //         platform: "tiktok",
-        //         error: "TikTok - Max images supported 35.",
-        //       },
-        //     ]);
-        //   }
-        // } else if (isContainVideo) {
-        //   if (files.length > 1) {
-        //     setErrors((prev) => [
-        //       ...prev,
-        //       {
-        //         id: 0,
-        //         type: "",
-        //         platform: "tiktok",
-        //         error: "TikTok - Max video supported 1.",
-        //       },
-        //     ]);
-        //   }
-        // } else {
-        //   if (
-        //     dimensions.duration &&
-        //     maxVideoDuration &&
-        //     dimensions.duration > maxVideoDuration
-        //   ) {
-        //     setErrors((prev) => [
-        //       ...prev,
-        //       {
-        //         id: 0,
-        //         type: "",
-        //         platform: "tiktok",
-        //         error: `TikTok - Video length cannot exceed ${maxVideoDuration} sec.`,
-        //       },
-        //     ]);
-        //   }
-        // }
-      }
-      if (platform.includes(GoogleBusinessPlatform)) {
-        if (noFileSelected && noContent) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "google_business",
-              error:
-                "Google Business - Add at least 1 character or 1 media file.",
-            },
-          ]);
-        }
-        if (
-          caption.length > pateformPostCharactersLength.googleBusinessProfile
-        ) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "google_business",
-              error: `Google Business - Maximum characters limit is ${pateformPostCharactersLength.googleBusinessProfile}`,
-            },
-          ]);
-        }
-        if (hasVideos) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "google_business",
-              error: "Google Business - Videos are not supported.",
-            },
-          ]);
-        }
-        if (caption == "") {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "google_business",
-              error:
-                "Google Business - The post content length should be longer than 1 characters.",
-            },
-          ]);
-        }
-        if (hasImages && hasVideos) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: 0,
-              type: "",
-              platform: "google_business",
-              error:
-                "Google Business - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
-            },
-          ]);
-        }
-        if (item.mediaType === "POST"  && additionalPresets.Google_Business?.POST) {
-          const { button, buttonLink } = additionalPresets.Google_Business.POST;
-
-          if (
-            (button !== "" && buttonLink === "") ||
-            (button === "" && buttonLink !== "")
-          ) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: 0,
-                type: "",
-                platform: "google_business",
-                error:
-                  "Google Business - Please set a button and button link for Google Business Profile.",
-              },
-            ]);
-          }
-        }
-
-        if (item.mediaType === "OFFER") {
-          const { title, startDate, endDate } =
-            additionalPresets.Google_Business.OFFER;
-          if (title === "" || startDate === "" || endDate === "") {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: 0,
-                type: "",
-                platform: "google_business",
-                error:
-                  "Google Business - Please add the required presets for Google Business Profile.",
-              },
-            ]);
-          }
-        }
-
-        if (item.mediaType === "EVENT") {
-          const {
-            title,
-            startDate,
-            endDate,
-            button,
-            buttonLink,
-            startTime,
-            endTime,
-          } = additionalPresets.Google_Business.EVENT;
-          if (title === "" || startDate === "" || endDate === "") {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: 0,
-                type: "",
-                platform: "google_business",
-                error:
-                  "Google Business - Please add the required presets for Google Business Profile.",
-              },
-            ]);
-          }
-
-          if (
-            (button !== "" && buttonLink === "") ||
-            (button === "" && buttonLink !== "")
-          ) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: 0,
-                type: "",
-                platform: "google_business",
-                error:
-                  "Google Business - Please set a button and button link for Google Business Profile.",
-              },
-            ]);
-          }
-
-          if (
-            (startTime !== "" && endTime === "") ||
-            (startTime === "" && endTime !== "")
-          ) {
-            setErrors((prev) => [
-              ...prev,
-              {
-                id: 0,
-                type: "",
-                platform: "google_business",
-                error:
-                  "Google Business - Please set a start and end time for Google Business Profile.",
-              },
-            ]);
-          }
-        }
-      }
-      if (platform.includes(LinkedInPlatform)) {
-        if (noFileSelected && noContent) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "linkedin",
-              error: "LinkedIn - Add at least 1 character or 1 media file.",
-            },
-          ]);
-        }
-        if (caption.length > pateformPostCharactersLength.linkedIn) {
-          setErrors((prev) => [
-            ...prev,
-            {
-              id: dimensions.id,
-              platform: "linkedin",
-              error: `LinkedIn - Maximum characters limit is ${pateformPostCharactersLength.linkedIn}`,
-            },
-          ]);
-        }
-      }
-    });
+      });
 
     return () => {
       broadcastConnection.removeEventListener("message");
@@ -1754,8 +1788,9 @@ const CreatePostModal = ({
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
                 {...getRootProps()}
-                className={`${handlePointerEvent() || loading ? "pointer-events-none" : ""
-                  } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
+                className={`${
+                  handlePointerEvent() || loading ? "pointer-events-none" : ""
+                } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />
 
@@ -1771,8 +1806,9 @@ const CreatePostModal = ({
                     </div>
                   )}
                   <div
-                    className={`flex flex-1 flex-col xl:w-5/12 ${!showPreview ? "" : "hidden"
-                      } `}
+                    className={`flex flex-1 flex-col xl:w-5/12 ${
+                      !showPreview ? "" : "hidden"
+                    } `}
                   >
                     <div className="p-2">
                       <div className="flex justify-between">
@@ -1790,38 +1826,56 @@ const CreatePostModal = ({
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
-                            {Array.isArray(connections) && connections.map((item, index) => {
-                              const {
-                                platform = "",
-                                screenName = "",
-                                id,
-                              } = item;
-                              return (
-                                <span
-                                  key={id}
-                                  className={`${index > 0 ? "ml-2" : "ml-0"
-                                    } flex items-center ${isDuplicating && "opacity-50"
-                                    }`}
-                                >
-                                  <SocialPlatform
-                                    id={item.id}
-                                    brandId={brandId}
-                                    selectedPlaforms={selectedPlaforms}
-                                    screenName={screenName}
-                                    setSelectedPlatforms={setSelectedPlatforms}
-                                    platform={platform}
-                                    selectedPreview={selectedPreview}
-                                    setSelectedPreview={setSelectedPreview}
-                                    showReelOnFeedChecked={
-                                      showReelOnFeedChecked
-                                    }
-                                    setShowReelOnFeedChecked={
-                                      setShowReelOnFeedChecked
-                                    }
-                                  />
-                                </span>
-                              );
-                            })}
+                            {Array.isArray(connections) &&
+                              connections
+                                .filter((item, index) => {
+                                  const {
+                                    platform = "",
+                                    screenName = "",
+                                    id,
+                                  } = item;
+                                  return platform === "Twitter" &&
+                                    isTwitterEnabled === false
+                                    ? false
+                                    : true;
+                                })
+                                .map((item, index) => {
+                                  const {
+                                    platform = "",
+                                    screenName = "",
+                                    id,
+                                  } = item;
+
+                                  return (
+                                    <span
+                                      key={id}
+                                      className={`${
+                                        index > 0 ? "ml-2" : "ml-0"
+                                      } flex items-center ${
+                                        isDuplicating && "opacity-50"
+                                      }`}
+                                    >
+                                      <SocialPlatform
+                                        id={item.id}
+                                        brandId={brandId}
+                                        selectedPlaforms={selectedPlaforms}
+                                        screenName={screenName}
+                                        setSelectedPlatforms={
+                                          setSelectedPlatforms
+                                        }
+                                        platform={platform}
+                                        selectedPreview={selectedPreview}
+                                        setSelectedPreview={setSelectedPreview}
+                                        showReelOnFeedChecked={
+                                          showReelOnFeedChecked
+                                        }
+                                        setShowReelOnFeedChecked={
+                                          setShowReelOnFeedChecked
+                                        }
+                                      />
+                                    </span>
+                                  );
+                                })}
                           </div>
 
                           {brandAccess && (
@@ -1892,16 +1946,17 @@ const CreatePostModal = ({
                         </div>
                         <div className="overflow-auto max-h-[72px]">
                           <ol className="list-decimal pl-5 text-xs">
-                            {Array.isArray(errors) && errors.map((item, index) => {
-                              return (
-                                <li
-                                  key={index}
-                                  className="text-[0.7rem] text-red-600"
-                                >
-                                  {item.error}
-                                </li>
-                              );
-                            })}
+                            {Array.isArray(errors) &&
+                              errors.map((item, index) => {
+                                return (
+                                  <li
+                                    key={index}
+                                    className="text-[0.7rem] text-red-600"
+                                  >
+                                    {item.error}
+                                  </li>
+                                );
+                              })}
                           </ol>
                         </div>
                       </div>
@@ -1933,10 +1988,11 @@ const CreatePostModal = ({
                               <Button
                                 onClick={handleDuplicate}
                                 size="md"
-                                className={`${loading || errors.length > 0
-                                  ? "opacity-50 cursor-not-allowed"
-                                  : "cursor-pointer"
-                                  }`}
+                                className={`${
+                                  loading || errors.length > 0
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                }`}
                               >
                                 {loading ? "Duplicating.." : "Duplicate"}
                               </Button>
@@ -1965,10 +2021,11 @@ const CreatePostModal = ({
                                   size="md"
                                   onClick={handlePublish}
                                   disabled={loading || errors.length > 0}
-                                  className={`rounded-r-none normal-case text-xs ${loading || errors.length > 0
-                                    ? "opacity-50 cursor-not-allowed w-32"
-                                    : ""
-                                    }`}
+                                  className={`rounded-r-none normal-case text-xs ${
+                                    loading || errors.length > 0
+                                      ? "opacity-50 cursor-not-allowed w-32"
+                                      : ""
+                                  }`}
                                   title={loading ? "Please wait" : submitButton}
                                   loading={loading}
                                   color="primary"
@@ -1985,26 +2042,28 @@ const CreatePostModal = ({
                                     </button>
                                   </MenuHandler>
                                   <MenuList className="px-0">
-                                    {Array.isArray(schdulePostBtnLabel) && schdulePostBtnLabel.map((item) => {
-                                      const { label, description, key } = item;
-                                      return (
-                                        <MenuItem
-                                          className="rounded-none"
-                                          onClick={() =>
-                                            handleSubmitButton(label, key)
-                                          }
-                                        >
-                                          <div>
-                                            <div className="font-bold uppercase mb-1 text-black">
-                                              {label}
+                                    {Array.isArray(schdulePostBtnLabel) &&
+                                      schdulePostBtnLabel.map((item) => {
+                                        const { label, description, key } =
+                                          item;
+                                        return (
+                                          <MenuItem
+                                            className="rounded-none"
+                                            onClick={() =>
+                                              handleSubmitButton(label, key)
+                                            }
+                                          >
+                                            <div>
+                                              <div className="font-bold uppercase mb-1 text-black">
+                                                {label}
+                                              </div>
+                                              <div className="text-xs text-muted">
+                                                {description}
+                                              </div>
                                             </div>
-                                            <div className="text-xs text-muted">
-                                              {description}
-                                            </div>
-                                          </div>
-                                        </MenuItem>
-                                      );
-                                    })}
+                                          </MenuItem>
+                                        );
+                                      })}
                                   </MenuList>
                                 </Menu>
                               </div>
@@ -2014,8 +2073,9 @@ const CreatePostModal = ({
                     </div>
                   </div>
                   <div
-                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${showPreview ? "" : "hidden"
-                      } rounded-lg justify-center items-center`}
+                    className={`xl:flex bg-gray-100 h-full w-full xl:w-5/12 ${
+                      showPreview ? "" : "hidden"
+                    } rounded-lg justify-center items-center`}
                   >
                     <PostPreview
                       selectedPlaforms={selectedPlaforms}

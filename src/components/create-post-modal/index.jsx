@@ -75,6 +75,7 @@ import {
   shortenText,
   socialPlateFormCharactersLength,
   socialPlateFormVideosLength,
+  filterConnections,
 } from "../../utils/commonUtils.jsx";
 import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
@@ -98,7 +99,7 @@ const schdulePostBtnLabel = [
     key: "publishNow",
   },
 ];
-const { isTwitterEnabled } = environment;
+const { isTwitterDisabled } = environment;
 const CreatePostModal = ({
   openModal,
   setModal,
@@ -612,10 +613,14 @@ const CreatePostModal = ({
       !selectedPreview
     ) {
       if (postData) {
-        const { platforms, socialPresets } = postData;
+        let { platforms, socialPresets } = postData;
         const presets = {};
+        // remove the twitter from connections if existing post has multiple platforms
+        if (platforms.length > 1) {
+          platforms = filterConnections(platforms);
+        }
         Array.isArray(platforms) &&
-          platforms.forEach((item, index) => {
+          platforms?.forEach((item, index) => {
             let { additionalPresets, platform } = item;
 
             if (additionalPresets) {
@@ -641,7 +646,7 @@ const CreatePostModal = ({
         setAdditionalPresets((prev) => ({ ...prev, ...presets }));
 
         setSelectedPlatforms(platforms);
-        setSelectedPreview(platforms[0]);
+        platforms[0] && setSelectedPreview(platforms[0]);
       } else {
         // create post case
         let savedPlatforms = useLocalStorage(
@@ -649,15 +654,14 @@ const CreatePostModal = ({
           "get"
         );
 
-        savedPlatforms = savedPlatforms.filter((item) => {
-          return item.platform === "Twitter" && isTwitterEnabled === false
-            ? false
-            : true;
-        });
+        savedPlatforms = filterConnections(savedPlatforms);
         if (savedPlatforms && savedPlatforms.length > 0) {
           setSelectedPlatforms(savedPlatforms);
           setSelectedPreview(savedPlatforms[0]);
         } else {
+          // remove the twitter from connections
+          connections = filterConnections(connections);
+
           const { platform, screenName } = connections[0];
           const { mediaType } = SocialPlatforms[platform];
           const initialPlatform = {
@@ -1257,7 +1261,7 @@ const CreatePostModal = ({
         }
 
         //twitter
-        if (platform.includes(TwitterPlatform) && isTwitterEnabled === true) {
+        if (platform.includes(TwitterPlatform) && isTwitterDisabled === false) {
           if (noFileSelected && noContent) {
             setErrors((prev) => [
               ...prev,
@@ -1827,19 +1831,8 @@ const CreatePostModal = ({
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
                             {Array.isArray(connections) &&
-                              connections
-                                .filter((item, index) => {
-                                  const {
-                                    platform = "",
-                                    screenName = "",
-                                    id,
-                                  } = item;
-                                  return platform === "Twitter" &&
-                                    isTwitterEnabled === false
-                                    ? false
-                                    : true;
-                                })
-                                .map((item, index) => {
+                              filterConnections(connections)?.map(
+                                (item, index) => {
                                   const {
                                     platform = "",
                                     screenName = "",
@@ -1875,7 +1868,8 @@ const CreatePostModal = ({
                                       />
                                     </span>
                                   );
-                                })}
+                                }
+                              )}
                           </div>
 
                           {brandAccess && (

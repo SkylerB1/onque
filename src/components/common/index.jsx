@@ -16,7 +16,7 @@ import TiktokBusiness from "../SocialMediaConnection/TiktokBusiness";
 import ConnectInstagram from "../SocialMediaConnection/ConnectInstagram";
 import environment from "../../config/environment";
 
-const { isTwitterEnabled } = environment;
+const { isTwitterDisabled } = environment;
 
 let socialMediaList = [
   {
@@ -124,7 +124,7 @@ let socialMediaList = [
     screenName: "",
   },
 ];
-if (isTwitterEnabled === true) {
+if (isTwitterDisabled === false) {
   socialMediaList.push({
     icon: (color, width = 24, height = 24) => (
       <Twitter fill={color ?? "#828487"} width={width} height={height} />

@@ -5,7 +5,7 @@ import ButtonGroup from "../button-group";
 import { SocialPlatforms } from "../../utils";
 import { Button } from "@material-tailwind/react";
 import environment from "../../config/environment";
-
+import { filterConnections } from "../../utils/commonUtils.jsx";
 const PostPreview = ({
   selectedPlaforms,
   viewMode,
@@ -16,7 +16,8 @@ const PostPreview = ({
   handleView,
   togglePreview,
 }) => {
-  const { isTwitterEnabled } = environment;
+  selectedPlaforms = filterConnections(selectedPlaforms);
+
   return (
     <div className="bg-gray-100 w-[620px] h-full flex flex-col rounded-r-md items-center relative pointer-events-auto">
       <Button
@@ -27,29 +28,22 @@ const PostPreview = ({
       </Button>
       <div className="flex flex-row  my-5">
         {Array.isArray(selectedPlaforms) &&
-          selectedPlaforms
-            ?.filter((item, index) => {
-              const { platform } = item;
-              return platform === "Twitter" && isTwitterEnabled === false
-                ? false
-                : true;
-            })
-            ?.map((item, index) => {
-              const { platform } = item;
-              const isSelected = platform === selectedPreview.platform;
-              const { coloredIcon, nonColoredIcon } = SocialPlatforms[platform];
-              return (
-                <div
-                  key={index}
-                  onClick={() => handlePlatformPreview(item)}
-                  className={` rounded-xl px-3 py-1 ${index > 0 && "ml-1"} ${
-                    isSelected && "bg-[#D3D3D3]"
-                  }  rounded cursor-pointer hover:bg-gray-100`}
-                >
-                  {isSelected ? coloredIcon(22, 22) : nonColoredIcon(22, 22)}
-                </div>
-              );
-            })}
+          selectedPlaforms?.map((item, index) => {
+            const { platform } = item;
+            const isSelected = platform === selectedPreview.platform;
+            const { coloredIcon, nonColoredIcon } = SocialPlatforms[platform];
+            return (
+              <div
+                key={index}
+                onClick={() => handlePlatformPreview(item)}
+                className={` rounded-xl px-3 py-1 ${index > 0 && "ml-1"} ${
+                  isSelected && "bg-[#D3D3D3]"
+                }  rounded cursor-pointer hover:bg-gray-100`}
+              >
+                {isSelected ? coloredIcon(22, 22) : nonColoredIcon(22, 22)}
+              </div>
+            );
+          })}
       </div>
 
       <div className="h-[620px] w-full overflow-x-hidden overflow-y-auto">

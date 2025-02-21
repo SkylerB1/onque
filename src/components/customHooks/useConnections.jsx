@@ -7,10 +7,9 @@ import { API_URL, toastrError } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import environment from "../../config/environment";
+import { filterConnections } from "../../utils/commonUtils.jsx";
 
 const useConnections = () => {
-  const { isTwitterEnabled } = environment;
   const connections = useSelector((state) => state.connections.value);
   const isConnLoading = useSelector((state) => state.connections.loading);
   const user = useSelector((state) => state.user.value);
@@ -26,11 +25,7 @@ const useConnections = () => {
       );
       if (response.status === 200) {
         let { data } = response;
-        // data = data.filter((item) => {
-        //   return item.platform === "Twitter" && isTwitterEnabled === false
-        //     ? false
-        //     : true;
-        // });
+        // data = filterConnections(data);
 
         dispatch(initialiseConnections(data));
         dispatch(addPlatformsByBrandId({ id, data }));

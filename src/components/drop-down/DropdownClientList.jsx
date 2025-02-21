@@ -20,7 +20,7 @@ import { abbreviateString } from "../../utils/commonUtils";
 import InfoIcon from "../svg/infoIcon";
 import Close from "../svg/Close";
 import useUserInfo from "../customHooks/useUserInfo";
-import environment from "../../config/environment";
+import { filterConnections } from "../../utils/commonUtils.jsx";
 
 const DropdownClientList = ({
   setOpen,
@@ -30,7 +30,6 @@ const DropdownClientList = ({
   activeBrands,
   getActiveBrands,
 }) => {
-  const { isTwitterEnabled } = environment;
   const [isOpen, setIsOpen] = useState(false);
   const { getConnections } = useConnections();
   const { getCounter } = useAppContext();
@@ -276,46 +275,41 @@ const DropdownClientList = ({
                     .toLowerCase()
                     .includes(searchTerm.toLowerCase())
                 )
-                ?.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() =>
-                      item.is_active == true ? handleItemClick(item) : null
-                    }
-                    className={` ${
-                      item.is_active !== true && " opacity-20 "
-                    } flex w-full my-2 text-start text-sm text-gray-700 ${
-                      item.id === selectedBrandId
-                        ? "bg-blue-gray-50"
-                        : "bg-white"
-                    } hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
-                    role="menuitem"
-                  >
-                    <div className="flex flex-1 items-center justify-start gap-3">
-                      <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
-                        <span className="font-normal text-gray-600 dark:text-gray-300">
-                          {item?.brand_name.charAt(0)}
-                        </span>
-                      </div>
+                ?.map((item) => {
+                  let platforms = filterConnections(item.platforms);
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() =>
+                        item.is_active == true ? handleItemClick(item) : null
+                      }
+                      className={` ${
+                        item.is_active !== true && " opacity-20 "
+                      } flex w-full my-2 text-start text-sm text-gray-700 ${
+                        item.id === selectedBrandId
+                          ? "bg-blue-gray-50"
+                          : "bg-white"
+                      } hover:bg-gray-200 focus:outline-none focus:bg-gray-200 `}
+                      role="menuitem"
+                    >
+                      <div className="flex flex-1 items-center justify-start gap-3">
+                        <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-300 rounded-full dark:bg-gray-600">
+                          <span className="font-normal text-gray-600 dark:text-gray-300">
+                            {item?.brand_name.charAt(0)}
+                          </span>
+                        </div>
 
-                      <div>
-                        <Typography className="text-base">
-                          {item?.brand_name}{" "}
-                        </Typography>
-                        <div className="flex flex-1 items-center justify-start gap-2 mt-1">
-                          {item.platforms.length === 0 && (
-                            <span className="text-muted text-sm italic">
-                              No networks connected
-                            </span>
-                          )}
-                          {item.platforms
-                            .filter((item) => {
-                              return item.platform === "Twitter" &&
-                                isTwitterEnabled === false
-                                ? false
-                                : true;
-                            })
-                            .map((item) => {
+                        <div>
+                          <Typography className="text-base">
+                            {item?.brand_name}{" "}
+                          </Typography>
+                          <div className="flex flex-1 items-center justify-start gap-2 mt-1">
+                            {platforms.length === 0 && (
+                              <span className="text-muted text-sm italic">
+                                No networks connected
+                              </span>
+                            )}
+                            {platforms.map((item) => {
                               const { platform } = item;
                               if (platform) {
                                 const { coloredIcon } =
@@ -327,11 +321,12 @@ const DropdownClientList = ({
                                 );
                               }
                             })}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  );
+                })}
             </>
           )}
         </MenuList>

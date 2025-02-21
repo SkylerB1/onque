@@ -151,10 +151,10 @@ export default function Header({ children }) {
         className={`font-bold text-base rounded-lg `}
       >
         <div className="group relative flex justify-center">
-          <Link className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default">
+          {/* <Link className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default">
             <TbDeviceDesktopAnalytics className="w-5 h-5" />
             Analytics
-          </Link>
+          </Link> */}
           <span className="absolute top-16 scale-0 transition-all w-[150px] text-center rounded bg-gray-500 p-2 text-xs text-white group-hover:scale-100">
             Coming Soon
           </span>
@@ -187,8 +187,8 @@ export default function Header({ children }) {
       >
         <div className="group relative flex justify-center">
           <Link
-          to="/smartLink"
-          className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default"
+            to="/smartLink"
+            className="flex flex-col items-center gap-1 text-white hover:text-white p-2 px-3 cursor-default"
           >
             <FaLink className="w-5 h-5" />
             SmartLinks

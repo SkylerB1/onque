@@ -7,6 +7,7 @@ import { API_URL, toastrError } from "../../utils";
 import { axiosInstance } from "../../utils/Interceptor";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { filterConnections } from "../../utils/commonUtils.jsx";
 
 const useConnections = () => {
   const connections = useSelector((state) => state.connections.value);
@@ -23,7 +24,9 @@ const useConnections = () => {
         connectionsUrl + `?brandId=${id}`
       );
       if (response.status === 200) {
-        const { data } = response;
+        let { data } = response;
+        // data = filterConnections(data);
+
         dispatch(initialiseConnections(data));
         dispatch(addPlatformsByBrandId({ id, data }));
       }

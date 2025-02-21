@@ -1,3 +1,7 @@
+import environment from "../config/environment";
+import { TwitterPlatform } from "../components/common/commonString";
+const { isTwitterDisabled } = environment;
+
 export const abbreviateString = (str) => {
   // Ensure the string is at least 12 characters long
   if (str.length <= 12) {
@@ -107,3 +111,17 @@ export function getTextForRoleInfo(role) {
         return response;
       });
 }
+
+export const filterConnections = (connections) => {
+  if (Array.isArray(connections) && connections.length > 0) {
+    // Removing the twitter from connections list
+    return connections?.filter((item) => {
+      const { platform } = item;
+      return platform === TwitterPlatform && isTwitterDisabled === true
+        ? false
+        : true;
+    });
+  } else {
+    return connections;
+  }
+};

@@ -14,21 +14,11 @@ import FacebookApi from "../SocialMediaConnection/FacebookApi";
 import TiktokPersonal from "../SocialMediaConnection/TiktokPersonal";
 import TiktokBusiness from "../SocialMediaConnection/TiktokBusiness";
 import ConnectInstagram from "../SocialMediaConnection/ConnectInstagram";
+import environment from "../../config/environment";
 
-export const socialMediaList = [
-  {
-    icon: (color, width = 24, height = 24) => (
-      <Twitter fill={color ?? "#828487"} width={width} height={height} />
-    ),
-    title: "Twitter",
-    label: "CONNECT ACCOUNT",
-    platform: "Twitter",
-    key: "twitter",
-    color: "#0F141A",
-    component: TwitterApi,
-    isConnected: "false",
-    screenName: "",
-  },
+const { isTwitterDisabled } = environment;
+
+let socialMediaList = [
   {
     icon: (color, width = 24, height = 24) => (
       <FacebookFilled fill={color ?? "#828487"} width={width} height={height} />
@@ -134,3 +124,20 @@ export const socialMediaList = [
     screenName: "",
   },
 ];
+if (isTwitterDisabled === false) {
+  socialMediaList.push({
+    icon: (color, width = 24, height = 24) => (
+      <Twitter fill={color ?? "#828487"} width={width} height={height} />
+    ),
+    title: "Twitter",
+    label: "CONNECT ACCOUNT",
+    platform: "Twitter",
+    key: "twitter",
+    color: "#0F141A",
+    component: TwitterApi,
+    isConnected: "false",
+    screenName: "",
+  });
+}
+
+export { socialMediaList };

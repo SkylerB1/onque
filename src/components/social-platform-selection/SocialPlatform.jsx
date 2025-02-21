@@ -24,7 +24,10 @@ const SocialPlatform = ({
   setShowReelOnFeedChecked,
 }) => {
   const [open, setOpen] = useState(false);
-  const selected = Array.isArray(selectedPlaforms) && selectedPlaforms.find((item) => item.platform === platform);
+  const selected =
+    Array.isArray(selectedPlaforms) &&
+    selectedPlaforms.find((item) => item.platform === platform);
+
   const {
     mediaOptions,
     mediaType,
@@ -70,11 +73,12 @@ const SocialPlatform = ({
 
   const handleSelect = (type) => {
     let plaforms = [...selectedPlaforms];
-    Array.isArray(plaforms) && plaforms.forEach((element) => {
-      if (element.platform == platform) {
-        element.mediaType = type;
-      }
-    });
+    Array.isArray(plaforms) &&
+      plaforms.forEach((element) => {
+        if (element.platform == platform) {
+          element.mediaType = type;
+        }
+      });
     let isInstagramReelSelected = plaforms.find((element) => {
       if (platform == "Instagram" && type == "REEL") {
         return true;
@@ -110,11 +114,12 @@ const SocialPlatform = ({
             {coloredIcon(22, 22)}
             {options.length > 0 && (
               <div className="absolute -right-1 -bottom-1 bg-white rounded-full w-4 h-4 flex justify-center items-center">
-                {Array.isArray(options) && options.map((item, index) => {
-                  if (item.label == selected.mediaType) {
-                    return <span key={index}>{item.icon()}</span>;
-                  }
-                })}
+                {Array.isArray(options) &&
+                  options.map((item, index) => {
+                    if (item.label == selected.mediaType) {
+                      return <span key={index}>{item.icon()}</span>;
+                    }
+                  })}
               </div>
             )}
           </div>
@@ -141,37 +146,38 @@ const SocialPlatform = ({
             </Button>
           </MenuHandler>
           <MenuList className="px-0">
-            {Array.isArray(options) && options?.map((item, index) => {
-              const { icon, label, description } = item;
-              const selectedMediaType = isSelectedMediaType(label);
-              return (
-                <MenuItem
-                  key={index}
-                  onClick={() => handleSelect(label)}
-                  className={`flex items-center gap-4 py-2 pl-2 pr-8 rounded-none ${
-                    selectedMediaType ? "bg-[#eee]" : "bg-white"
-                  }`}
-                >
-                  {icon(15, 15)}
-                  <div>
-                    <Typography
-                      className={`text-xs ${
-                        selectedMediaType ? "font-bold" : "font-normal"
-                      }`}
-                    >
-                      {label}
-                    </Typography>
-                    <Typography
-                      className={`text-[0.72rem] ${
-                        selectedMediaType ? "font-bold" : "font-normal"
-                      }`}
-                    >
-                      {description}
-                    </Typography>
-                  </div>
-                </MenuItem>
-              );
-            })}
+            {Array.isArray(options) &&
+              options?.map((item, index) => {
+                const { icon, label, description } = item;
+                const selectedMediaType = isSelectedMediaType(label);
+                return (
+                  <MenuItem
+                    key={index}
+                    onClick={() => handleSelect(label)}
+                    className={`flex items-center gap-4 py-2 pl-2 pr-8 rounded-none ${
+                      selectedMediaType ? "bg-[#eee]" : "bg-white"
+                    }`}
+                  >
+                    {icon(15, 15)}
+                    <div>
+                      <Typography
+                        className={`text-xs ${
+                          selectedMediaType ? "font-bold" : "font-normal"
+                        }`}
+                      >
+                        {label}
+                      </Typography>
+                      <Typography
+                        className={`text-[0.72rem] ${
+                          selectedMediaType ? "font-bold" : "font-normal"
+                        }`}
+                      >
+                        {description}
+                      </Typography>
+                    </div>
+                  </MenuItem>
+                );
+              })}
           </MenuList>
         </Menu>
       )}

@@ -73,7 +73,8 @@ const PostCalendar = (props) => {
   const renderEventContent = (eventInfo) => {
     const images_arr = eventInfo.event._def.extendedProps.files;
     const status = eventInfo.event._def.extendedProps.status;
-    // console.log({ status });
+    const rowId = eventInfo.event._def.extendedProps.rowId;
+
     const publishDate = eventInfo.event._context.dateProfileGenerator.nowDate;
     let dateStr = EventDateFormat(publishDate);
     let postDate = new Date(eventInfo.event._def.extendedProps.postdate);
@@ -94,7 +95,7 @@ const PostCalendar = (props) => {
     const formattedPostDate = postDate.toLocaleDateString("en-US", options);
     return (
       <Event
-        caption={abbreviateString(eventInfo.event._def.title)}
+        caption={eventInfo.event._def.title}
         status={status}
         dataData={dateStr}
         eventTime={formattedPostTime}
@@ -104,6 +105,7 @@ const PostCalendar = (props) => {
         eventContentType={renderContentType(
           eventInfo.event._def.extendedProps.contentType
         )}
+        postId={rowId}
         files={images_arr}
       />
     );

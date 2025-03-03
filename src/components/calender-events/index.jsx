@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Tooltip } from "@material-tailwind/react";
 import VideoThumbnail from "react-video-thumbnail";
 import PlayFilled from "../svg/PlayFilled";
@@ -12,6 +13,9 @@ import { ParseData } from "../../utils/ParseData";
 import Tiktok from "../svg/Tiktok";
 import { isContainVideo } from "../../utils";
 import { postStatuses } from "../common/commonString";
+import InfoModal from "../modal/InfoModal";
+import { Alert } from "@material-tailwind/react";
+import { abbreviateString } from "../../utils/commonUtils";
 
 const platformIcons = {
   LinkedIn: <LinkedIn fill="#0077B5" width={12} height={12} />,
@@ -23,11 +27,15 @@ const platformIcons = {
   Instagram: <Instagram width={12} height={12} />,
   Instagram_Error: <Instagram fill="#FF0000" width={12} height={12} />,
   Facebook_Page: <FacebookFilled fill={"#0095f6"} width={12} height={12} />,
-  Facebook_Page_Error: <FacebookFilled fill={"#FF0000"} width={12} height={12} />,
+  Facebook_Page_Error: (
+    <FacebookFilled fill={"#FF0000"} width={12} height={12} />
+  ),
   YouTube: <Youtube width={12} height={12} fill="#FF0000" />,
   YouTube_Error: <Youtube width={12} height={12} fill="#FF4500" />,
   Google_Business: <GoogleBusiness fill="#0077B5" width={12} height={12} />,
-  Google_Business_Error: <GoogleBusiness fill="#FF0000" width={12} height={12} />,
+  Google_Business_Error: (
+    <GoogleBusiness fill="#FF0000" width={12} height={12} />
+  ),
   TikTok_Personal: <Tiktok width={12} height={12} />,
   TikTok_Personal_Error: <Tiktok width={12} height={12} fill="#FF0000" />,
   TikTok_Business: <Tiktok width={12} height={12} />,
@@ -44,6 +52,7 @@ const Event = ({
   files,
   dataData,
   postDate,
+  postId,
 }) => {
   const statusClasses = {
     [postStatuses.published]: "",
@@ -58,86 +67,146 @@ const Event = ({
 
   const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
 
-  const iconsToShowOnPlatfroms = Array.isArray(platforms) && platforms.map((item) => {
-    const platformName = item.platform;
-    const errorIconName = `${platformName}_Error`;
-    const platformIcon = item?.status === postStatuses.error
-      ? platformIcons[errorIconName]
-      : platformIcons[platformName];
+  const iconsToShowOnPlatfroms =
+    Array.isArray(platforms) &&
+    platforms.map((item) => {
+      const platformName = item.platform;
+      const errorIconName = `${platformName}_Error`;
+      const platformIcon =
+        item?.status === postStatuses.error
+          ? platformIcons[errorIconName]
+          : platformIcons[platformName];
 
-    return platformIcon ? (
-      <div key={platformName} className="mr-1">
-        {platformIcon}
-      </div>
-    ) : null;
-  });
+      return platformIcon ? (
+        <div key={platformName} className="mr-1">
+          {platformIcon}
+        </div>
+      ) : null;
+    });
 
   const handleEditPost = () => {
     setIsEdit(status);
   };
 
+  const [openTooltip, setOpenTooltip] = useState(false);
+  const [openTooltipId, setOpenTooltipId] = useState(null);
+
+  // Handles tooltip open/close based on hover
+  const handleMouseEnter = () => setOpenTooltip(true);
+  const handleMouseLeave = () => setOpenTooltip(false);
+
+  const [showInfoModal, setInfoModal] = useState(false);
+  const [infoData, setInfoData] = useState({
+    content: "",
+  });
+  const toggleInfoModal = (errorMessage) => {
+    if (errorMessage?.error?.status === "UNAUTHENTICATED") {
+      setInfoData({
+        content: (
+          <Alert color="red">
+            You account is unauthenticated for this platform.Kindly go to
+            connection page and reset the connection for this platform.
+          </Alert>
+        ),
+      });
+    }
+    setInfoModal(!showInfoModal);
+  };
+
   const tooltipContent = (
-    <div className="w-80 h-auto px-2  cursor-pointer border-l-slate-600 bottom-2 ">
+    <div
+      className="w-80 h-auto px-2  cursor-pointer border-l-slate-600 bottom-2 "
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="flex flex-wrap justify-between">
         <span className="flex font-bold text-xs"></span>
         <span className="font-bold text-xs">{postDate}</span>
       </div>
       <div className="mt-1 flex flex-col gap-1">
         <div class="flex flex-grow-1 gap-3 flex-wrap">
-          {Array.isArray(platforms) && platforms?.map((item, index) => {
-            const platformName = item.platform;
-            const errorIconName = `${platformName}_Error`;
-            const platformIcon = item?.status === postStatuses.error
-              ? platformIcons[errorIconName]
-              : platformIcons[platformName];
+          {Array.isArray(platforms) &&
+            platforms?.map((item, index) => {
+              const platformName = item.platform;
+              const errorIconName = `${platformName}_Error`;
+              const platformIcon =
+                item?.status === postStatuses.error
+                  ? platformIcons[errorIconName]
+                  : platformIcons[platformName];
 
-            const platformIconShow = platformIcon ? (
-              <div key={platformName} className="mr-1">
-                {platformIcon}
-              </div>
-            ) : null;
-            return <span className={`mb-3 flex-shrink-0 flex-col rounded-lg ${statusClasses[status === 'Pending' ? status : status === 'Ongoing' ?  status : status === 'SaveAsDraft' ? '' : item?.status]}`}>
-
-              {item?.status === postStatuses.published ? (
-                <Badges platformIconsToShow={platformIconShow} status={item?.status} platforms={platforms} />
-              ) : status === postStatuses.pending ? (
-                index === 0 && <span className="px-4">Pending</span>
-              ) : status === postStatuses.saveAsDraft ? (
-                <>
-                  <div>
-                    <Badges
-                      platformIconsToShow={platformIconShow}
-                      status={status}
-                    />
-                  </div>
-                  {index === 0 && <div class="flex items-center justify-start mt-2">
-                    <div class="w-3 h-3 bg-gray-600 rounded-full"></div>{" "}
-                    <div className="ml-2">Draft</div>
-                  </div>}
-                </>
-              ) : status === postStatuses.ongoing ? (
-                <>
-                  <div class="flex items-center justify-start mt-2">
-                    <div class="w-3 h-3 bg-green-100 rounded-full"></div>{" "}
-                    <div className="ml-2">Ongoing</div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex">
+              const platformIconShow = platformIcon ? (
+                <div key={platformName} className="mr-1">
+                  {platformIcon}
+                </div>
+              ) : null;
+              let errorMessage = {};
+              if (item?.status === postStatuses.error) {
+                errorMessage = item?.message;
+              }
+              return (
+                <span
+                  className={`mb-3 flex-shrink-0 flex-col rounded-lg ${
+                    statusClasses[
+                      status === "Pending"
+                        ? status
+                        : status === "Ongoing"
+                        ? status
+                        : status === "SaveAsDraft"
+                        ? ""
+                        : item?.status
+                    ]
+                  }`}
+                >
+                  {item?.status === postStatuses.published ? (
                     <Badges
                       platformIconsToShow={platformIconShow}
                       status={item?.status}
+                      platforms={platforms}
                     />
-                  </div>
-                </>
-              )}
-            </span>
-          })}
+                  ) : status === postStatuses.pending ? (
+                    index === 0 && <span className="px-4">Pending</span>
+                  ) : status === postStatuses.saveAsDraft ? (
+                    <>
+                      <div>
+                        <Badges
+                          platformIconsToShow={platformIconShow}
+                          status={status}
+                        />
+                      </div>
+                      {index === 0 && (
+                        <div class="flex items-center justify-start mt-2">
+                          <div class="w-3 h-3 bg-gray-600 rounded-full"></div>{" "}
+                          <div className="ml-2">Draft</div>
+                        </div>
+                      )}
+                    </>
+                  ) : status === postStatuses.ongoing ? (
+                    <>
+                      <div class="flex items-center justify-start mt-2">
+                        <div class="w-3 h-3 bg-green-100 rounded-full"></div>{" "}
+                        <div className="ml-2">Ongoing</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        className="flex"
+                        /*  onClick={() => toggleInfoModal(errorMessage)} */
+                      >
+                        <Badges
+                          platformIconsToShow={platformIconShow}
+                          status={item?.status}
+                        />
+                      </div>
+                    </>
+                  )}
+                </span>
+              );
+            })}
         </div>
         <hr className="flex-grow-1" />
 
-        <div class="flex-grow-1 flex">{caption}</div>
+        <div class="flex-grow-1 flex">{abbreviateString(caption, 100)}</div>
       </div>
       <div className="flex h-12 overflow-hidden pointer-events-none mt-2">
         <span className="flex ">
@@ -171,55 +240,69 @@ const Event = ({
   );
 
   return (
-    <Tooltip
-      className="w-auto justify-between bg-white text-black border-gray-300 border-2"
-      content={tooltipContent}
-    >
-      <div
-        onClick={handleEditPost}
-        className={`h-auto py-1 px-2 bg-white cursor-pointer border-l-4 rounded-md ${status === postStatuses.saveAsDraft ? statusClasses[status] : 'border-l-green-400'
-          }`}
+    <div postId={postId}>
+      <Tooltip
+        className="w-auto justify-between bg-white text-black border-gray-300 border-2"
+        content={tooltipContent}
+        open={openTooltip}
+        handler={setOpenTooltip}
       >
-        <div className="flex flex-wrap gap-1 justify-between">
-          <p className="flex font-bold text-xs">{iconsToShowOnPlatfroms}</p>
-          <p className="font-bold text-xs">{eventTime}</p>
-        </div>
-        <div className="mt-1 mb-1 overflow-hidden">
-          <p className="text-xs">{caption}</p>
-        </div>
-        <div className="flex flex-wrap pointer-events-none">
-          {files?.map((file, index) => {
-            return isContainVideo(file) ? (
-              <div className="relative">
-                <div
-                  key={index}
-                  className=" w-9 h-9 m-1 rounded-md overflow-hidden thumbnailImg"
-                >
-                  <VideoThumbnail
-                    videoUrl={POST_IMG_BASE_PATH + file.filename}
-                  />
-                </div>
-                <div className="absolute left-2 top-2 flex justify-center">
-                  <div className="drop-shadow-2xl w-2 h-2">
-                    <PlayFilled width={30} height={30} fill="#ffffff" />
+        <div
+          onClick={handleEditPost}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          className={`h-auto py-1 px-2 bg-white cursor-pointer border-l-4 rounded-md ${
+            status === postStatuses.saveAsDraft
+              ? statusClasses[status]
+              : "border-l-green-400"
+          }`}
+        >
+          <div className="flex flex-wrap gap-1 justify-between">
+            <p className="flex font-bold text-xs">{iconsToShowOnPlatfroms}</p>
+            <p className="font-bold text-xs">{eventTime}</p>
+          </div>
+          <div className="mt-1 mb-1 overflow-hidden">
+            <p className="text-xs">{abbreviateString(caption, 20)}</p>
+          </div>
+          <div className="flex flex-wrap pointer-events-none">
+            {files?.map((file, index) => {
+              return isContainVideo(file) ? (
+                <div className="relative">
+                  <div
+                    key={index}
+                    className=" w-9 h-9 m-1 rounded-md overflow-hidden thumbnailImg"
+                  >
+                    <VideoThumbnail
+                      videoUrl={POST_IMG_BASE_PATH + file.filename}
+                    />
+                  </div>
+                  <div className="absolute left-2 top-2 flex justify-center">
+                    <div className="drop-shadow-2xl w-2 h-2">
+                      <PlayFilled width={30} height={30} fill="#ffffff" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <div
-                key={index}
-                className="w-9 h-9 m-1 rounded-md overflow-hidden"
-              >
-                <img
-                  className="rounded-md w-full h-full object-cover"
-                  src={POST_IMG_BASE_PATH + file.filename}
-                />
-              </div>
-            );
-          })}
+              ) : (
+                <div
+                  key={index}
+                  className="w-9 h-9 m-1 rounded-md overflow-hidden"
+                >
+                  <img
+                    className="rounded-md w-full h-full object-cover"
+                    src={POST_IMG_BASE_PATH + file.filename}
+                  />
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </Tooltip>
+      </Tooltip>
+      <InfoModal
+        show={showInfoModal}
+        toggleModal={toggleInfoModal}
+        infoData={infoData}
+      />
+    </div>
   );
 };
 

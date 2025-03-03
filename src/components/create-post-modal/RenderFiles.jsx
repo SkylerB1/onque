@@ -102,49 +102,57 @@ const RenderFiles = ({
                               src={src}
                               className="w-full h-full rounded-md object-cover"
                             />
-                            {loadingStates[index] && <VideoLoader />} {/* Show loader */}
+                            {loadingStates[index] && <VideoLoader />}{" "}
+                            {/* Show loader */}
                             <div className="absolute right-0 left-0 flex justify-center">
                               <div className="drop-shadow-2xl">
-                                <PlayFilled width={50} height={50} fill="#ffffff" />
+                                <PlayFilled
+                                  width={50}
+                                  height={50}
+                                  fill="#ffffff"
+                                />
                               </div>
                             </div>
                           </>
                         ) : (
-                          <img
-                            alt=""
-                            key={index}
-                            className="w-full h-full object-cover rounded-md"
-                            width={16}
-                            height={16}
-                            onLoadStart={() => handleLoadStart(index)} // Start loader when image starts loading
-                            onLoad={(image) => {
-                              handleimgError(image, index, file.size);
-                              handleLoadEnd(index); // Stop loader when image is fully loaded
-                            }}
-                            loader={() => src}
-                            src={src}
-                          />
-                        )}
-                        {!isDuplicating && (
                           <>
-                            <div
-                              onClick={() => {
-                                removeimg(index);
+                            <img
+                              alt=""
+                              key={index}
+                              className="w-full h-full object-cover rounded-md"
+                              width={16}
+                              height={16}
+                              onLoadStart={() => handleLoadStart(index)} // Start loader when image starts loading
+                              onLoad={(image) => {
+                                handleimgError(image, index, file.size);
+                                handleLoadEnd(index); // Stop loader when image is fully loaded
                               }}
-                              className="absolute -top-2 -right-2 w-5 h-5 rounded-full border-2 bg-white items-center flex cursor-pointer"
-                            >
-                              <Cross width={22} height={22} />
-                            </div>
-                            {isContainImage(file) && (
-                              <div
-                                onClick={() => onClickEdit(index)}
-                                className="absolute rounded-full border bg-white right-1 bottom-1 cursor-pointer"
-                              >
-                                <Edit width={22} height={22} />
-                              </div>
-                            )}
+                              loader={() => src}
+                              src={src}
+                            />
                           </>
                         )}
+                        {/* {!isDuplicating && ( */}
+                        <>
+                          <div
+                            onClick={() => {
+                              removeimg(index);
+                            }}
+                            className="absolute -top-2 -right-2 w-5 h-5 rounded-full border-2 bg-white items-center flex cursor-pointer"
+                          >
+                            <Cross width={22} height={22} />
+                          </div>
+
+                          {isContainImage(file) && (
+                            <div
+                              onClick={() => onClickEdit(index)}
+                              className="absolute rounded-full border bg-white right-1 bottom-1 cursor-pointer"
+                            >
+                              <Edit width={22} height={22} />
+                            </div>
+                          )}
+                        </>
+                        {/* )} */}
                       </div>
                     )}
                   </Draggable>
@@ -160,8 +168,7 @@ const RenderFiles = ({
 
 export default RenderFiles;
 
-
- // Optional spinner library for better visual
+// Optional spinner library for better visual
 export function VideoLoader({ progress }) {
   return (
     <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-10">

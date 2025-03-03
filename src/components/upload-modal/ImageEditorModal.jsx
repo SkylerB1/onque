@@ -12,7 +12,7 @@ import {
 } from "@material-tailwind/react";
 import { getSource } from "../../utils";
 import ToasterCustomConatiner from "../ToasterCustomConatiner";
-import Compressor from 'compressorjs';
+import Compressor from "compressorjs";
 
 function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
   const src = getSource(files[index]);
@@ -32,21 +32,27 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
         maxHeight: 2000,
         success(compressedBlob) {
           if (compressedBlob.size <= MAX_SIZE) {
-            const compressedFile = new File([compressedBlob], "compressed-image.jpg", { type: compressedBlob.type });
+            const compressedFile = new File(
+              [compressedBlob],
+              "compressed-image.jpg",
+              { type: compressedBlob.type }
+            );
 
             const updatedFiles = [...files];
             updatedFiles[index] = compressedFile;
             setFiles(updatedFiles);
 
-            console.log('Compressed Image Size:', compressedBlob.size);
+            console.log("Compressed Image Size:", compressedBlob.size);
           } else {
-            alert("The image is still too large after compression. Please try a smaller image.");
+            alert(
+              "The image is still too large after compression. Please try a smaller image."
+            );
           }
         },
         error(err) {
-          console.error('Compression failed:', err);
+          console.error("Compression failed:", err);
           alert("Error compressing the image.");
-        }
+        },
       });
     }
 
@@ -57,6 +63,9 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
     <Dialog size={"xl"} open={show}>
       <ToasterCustomConatiner />
       <DialogHeader>Image Editor</DialogHeader>
+      <div className="ml-5 font-semibold">
+        Note: For quick cropping or resizing, use the "Crop Shape" option.
+      </div>
       <DialogBody>
         <div style={{ height: "600px" }}>
           <PinturaEditor
@@ -67,11 +76,13 @@ function ImgEditorModal({ show, files, setFiles, toggleModal, index }) {
             cropSelectPresetOptions={[
               [undefined, "Custom"],
               [1, "1:1 Square Cutout"],
+              // shown when cropSelectPresetFilter is set to 'landscape'
               [1.91 / 1, "1.91:1 Instagram Landscape"],
               [16 / 9, "16:9 Facebook Landscape"],
               [16 / 9, "16:9 Twitter Landscape"],
               [16 / 9, "16:9 LinkedIn Landscape"],
               [4 / 3, "4:3 Google Business Landscape"],
+              // shown when cropSelectPresetFilter is set to 'portrait'
               [4 / 5, "4:5 Instagram Portrait"],
               [9 / 16, "9:16 Instagram Story"],
               [2 / 3, "2:3 Facebook Story"],

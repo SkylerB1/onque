@@ -69,11 +69,13 @@ const ModalInput = ({
   const [showNotificationPreset, setShowNotificationPreset] = useState(false);
 
   const handleNotificationPresets = () => {
-    const isSelected = Array.isArray(selectedPlaforms) && selectedPlaforms.some(
-      (item) =>
-        item.platform === InstagramPlatform ||
-        item.platform.includes(TikTokPlatform)
-    );
+    const isSelected =
+      Array.isArray(selectedPlaforms) &&
+      selectedPlaforms.some(
+        (item) =>
+          item.platform === InstagramPlatform ||
+          item.platform.includes(TikTokPlatform)
+      );
 
     const isManualPublish =
       !additionalPresets.Instagram.autoPublish ||
@@ -264,67 +266,68 @@ const ModalInput = ({
             </div>
           </div>
         </div>
-        {Array.isArray(selectedPlaforms) && selectedPlaforms.map((item, index) => {
-          const { platform } = item;
-          if (platform == GoogleBusinessPlatform) {
-            return (
-              <GbusinessPresets
-                key={index}
-                mediaType={selectedPreview?.mediaType}
-                additionalPresets={additionalPresets.Google_Business}
-                setAdditionalPresets={setAdditionalPresets}
-              />
-            );
-          }
-          if (platform === YoutubePlatform) {
-            return (
-              <YoutubePresets
-                key={index}
-                user={user}
-                mediaType={selectedPreview?.mediaType}
-                additionalPresets={additionalPresets.YouTube}
-                setAdditionalPresets={setAdditionalPresets}
-              />
-            );
-          }
-          if (platform.includes(TikTokPlatform)) {
-            return (
-              <TikTokPresets
-                key={index}
-                user={user}
-                platform={platform}
-                additionalPresets={additionalPresets[platform]}
-                setAdditionalPresets={setAdditionalPresets}
-              />
-            );
-          }
-          if (platform.includes(InstagramPlatform)) {
-            return (
-              <InstagramPresets
-                key={index}
-                platform={platform}
-                additionalPresets={additionalPresets[platform]}
-                setAdditionalPresets={setAdditionalPresets}
-                brandId={brandId}
-                mediaType={item.mediaType}
-                files={files}
-                showReelOnFeedChecked={showReelOnFeedChecked}
-                setShowReelOnFeedChecked={setShowReelOnFeedChecked}
-              />
-            );
-          }
-          if (platform === InstagramPlatform && item.mediaType === "REEL") {
-            return (
-              <InstagramPresets
-                key={index}
-                additionalPresets={additionalPresets.Instagram}
-                setAdditionalPresets={setAdditionalPresets}
-                mediaType={item.mediaType}
-                files={files}
-              />
-            );
-          }
-        })}
+        {Array.isArray(selectedPlaforms) &&
+          selectedPlaforms.map((item, index) => {
+            const { platform } = item;
+            if (platform == GoogleBusinessPlatform) {
+              return (
+                <GbusinessPresets
+                  key={index}
+                  mediaType={selectedPreview?.mediaType}
+                  additionalPresets={additionalPresets.Google_Business}
+                  setAdditionalPresets={setAdditionalPresets}
+                />
+              );
+            }
+            if (platform === YoutubePlatform) {
+              return (
+                <YoutubePresets
+                  key={index}
+                  user={user}
+                  mediaType={selectedPreview?.mediaType}
+                  additionalPresets={additionalPresets.YouTube}
+                  setAdditionalPresets={setAdditionalPresets}
+                />
+              );
+            }
+            if (platform.includes(TikTokPlatform)) {
+              return (
+                <TikTokPresets
+                  key={index}
+                  user={user}
+                  platform={platform}
+                  additionalPresets={additionalPresets[platform]}
+                  setAdditionalPresets={setAdditionalPresets}
+                />
+              );
+            }
+            if (platform.includes(InstagramPlatform)) {
+              return (
+                <InstagramPresets
+                  key={index}
+                  platform={platform}
+                  additionalPresets={additionalPresets[platform]}
+                  setAdditionalPresets={setAdditionalPresets}
+                  brandId={brandId}
+                  mediaType={item.mediaType}
+                  files={files}
+                  showReelOnFeedChecked={showReelOnFeedChecked}
+                  setShowReelOnFeedChecked={setShowReelOnFeedChecked}
+                />
+              );
+            }
+            if (platform === InstagramPlatform && item.mediaType === "REEL") {
+              return (
+                <InstagramPresets
+                  key={index}
+                  additionalPresets={additionalPresets.Instagram}
+                  setAdditionalPresets={setAdditionalPresets}
+                  mediaType={item.mediaType}
+                  files={files}
+                />
+              );
+            }
+          })}
         {showNotificationPreset && <NotificationPreset />}
       </div>
     </div>

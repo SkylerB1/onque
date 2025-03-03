@@ -42,10 +42,7 @@ export function Badges({ platformIconsToShow, status }) {
           ) : status === postStatuses.error ? (
             <BsExclamation className="h-3 w-3 text-white" strokeWidth={0.5} />
           ) : (
-            <MdOutlineDrafts
-              className="h-3 w-3 text-white"
-              strokeWidth={0.5}
-            />
+            <MdOutlineDrafts className="h-3 w-3 text-white" strokeWidth={0.5} />
           )
         }
         className={statusClasses[status]}

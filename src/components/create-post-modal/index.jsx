@@ -783,9 +783,12 @@ const CreatePostModal = ({
             ]);
           } else if (
             item.mediaType == "POST" &&
-            (dimensions?.aspectRatio < 0.8 || dimensions?.aspectRatio > 1.91) &&
+            (dimensions?.aspectRatio < 0.8 - 0.01 ||
+              dimensions?.aspectRatio > 1.91 + 0.01) &&
             dimensions?.type.includes("image")
           ) {
+            // Adding a Small Tolerance for value 0.7992895204262878
+            // console.log(dimensions?.aspectRatio);
             setErrors((prev) => [
               ...prev,
               {
@@ -1797,7 +1800,6 @@ const CreatePostModal = ({
                 } fixed inset-0 py-10 px-20 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm`}
               >
                 <input {...getInputProps()} />
-
                 <BlockUIComponent />
                 <div className="relative bg-white flex flex-1 flex-row rounded-lg h-[90vh]">
                   {isDragActive && (
@@ -1809,6 +1811,7 @@ const CreatePostModal = ({
                       </div>
                     </div>
                   )}
+
                   <div
                     className={`flex flex-1 flex-col xl:w-5/12 ${
                       !showPreview ? "" : "hidden"
@@ -1827,6 +1830,7 @@ const CreatePostModal = ({
                           Show Preview
                         </Button>
                       </div>
+
                       <div className="flex flex-row  justify-between items-center mt-6">
                         <div className="flex flex-row items-center">
                           <div className="relative flex items-center">
@@ -1899,6 +1903,7 @@ const CreatePostModal = ({
                         )}
                       </div>
                     </div>
+                    {/* Modal input text area */}
                     <ModalInput
                       toggleimgUploadModal={toggleimgUploadModal}
                       toggleVideoUploadModal={toggleVideoUploadModal}

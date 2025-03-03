@@ -2,14 +2,14 @@ import environment from "../config/environment";
 import { TwitterPlatform } from "../components/common/commonString";
 const { isTwitterDisabled } = environment;
 
-export const abbreviateString = (str) => {
+export const abbreviateString = (str, length = 12) => {
   // Ensure the string is at least 12 characters long
-  if (str.length <= 12) {
+  if (str.length <= length) {
     return str; // Return the original string if it's too short to abbreviate
   }
 
   // Get the first 13 characters
-  const firstPart = str.slice(0, 14);
+  const firstPart = str.slice(0, length);
   // Get the last 6 characters
   const lastPart = str.slice(-6);
 

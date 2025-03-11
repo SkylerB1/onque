@@ -1445,6 +1445,16 @@ const CreatePostModal = ({
               },
             ]);
           }
+          if (videosCount > 1) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: dimensions.id,
+                platform: "tiktok",
+                error: `TikTok - Max video supported is 1`,
+              },
+            ]);
+          }
           if (videosCount > 0) {
             const isAnyVideoLengthExceed = videoDurations.some(
               (videoDuration) => videoDuration > pateformPostVideosLength.tiktok

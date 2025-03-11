@@ -93,6 +93,7 @@ const PostCalendar = (props) => {
     };
     const formattedPostTime = postDate.toLocaleTimeString("en-US", timeOptions);
     const formattedPostDate = postDate.toLocaleDateString("en-US", options);
+
     return (
       <Event
         caption={eventInfo.event._def.title}
@@ -101,7 +102,7 @@ const PostCalendar = (props) => {
         eventTime={formattedPostTime}
         postDate={formattedPostDate}
         setIsEdit={setIsEdit}
-        platformLogo={eventInfo.event._def.extendedProps.platform}
+        platformsData={eventInfo.event._def.extendedProps.platform}
         eventContentType={renderContentType(
           eventInfo.event._def.extendedProps.contentType
         )}

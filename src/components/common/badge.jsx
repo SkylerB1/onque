@@ -33,7 +33,7 @@ export function Badges({ platformIconsToShow, status }) {
   buttonBgClasses[postStatuses.error] = "bg-red-200";
 
   return (
-    <div className="flex flex-1 gap-2">
+    <div className="flex flex-1 gap-2" title={status}>
       <Badge
         color="green"
         content={

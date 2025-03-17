@@ -8,3 +8,4 @@ dist
 .eslintrc.json
 .eslintignore
 package-lock.json
+.vscode/settings.json

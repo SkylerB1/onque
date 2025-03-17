@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Tooltip } from "@material-tailwind/react";
 import VideoThumbnail from "react-video-thumbnail";
 import PlayFilled from "../svg/PlayFilled";
@@ -12,10 +13,17 @@ import { Badges } from "../common/badge";
 import { ParseData } from "../../utils/ParseData";
 import Tiktok from "../svg/Tiktok";
 import { isContainVideo } from "../../utils";
-import { postStatuses } from "../common/commonString";
+import {
+  postStatuses,
+  TikTokPersonal,
+  TikTokBusiness,
+  GoogleBusinessPlatform,
+} from "../common/commonString";
 import InfoModal from "../modal/InfoModal";
 import { Alert } from "@material-tailwind/react";
 import { abbreviateString } from "../../utils/commonUtils";
+import PostsService from "../../services/PostsService";
+import { Link } from "react-router-dom";
 
 const platformIcons = {
   LinkedIn: <LinkedIn fill="#0077B5" width={12} height={12} />,
@@ -48,12 +56,15 @@ const Event = ({
   status,
   eventContentType,
   eventTime,
-  platformLogo,
+  platformsData,
   files,
   dataData,
   postDate,
   postId,
 }) => {
+  const user = useSelector((state) => state.user.value);
+  const brandId = user?.brand?.id || "";
+
   const statusClasses = {
     [postStatuses.published]: "",
     [postStatuses.pending]: "bg-[#688FA4]",
@@ -61,19 +72,20 @@ const Event = ({
     [postStatuses.saveAsDraft]: "bg-gray-200",
   };
 
-  const platforms = Array.isArray(ParseData(platformLogo))
-    ? ParseData(platformLogo)
+  const platforms = Array.isArray(ParseData(platformsData))
+    ? ParseData(platformsData)
     : [];
 
   const POST_IMG_BASE_PATH = import.meta.env.VITE_POST_IMG_BASE_PATH;
 
+  // get the plateform icon to show
   const iconsToShowOnPlatfroms =
     Array.isArray(platforms) &&
     platforms.map((item) => {
       const platformName = item.platform;
       const errorIconName = `${platformName}_Error`;
       const platformIcon =
-        item?.status === postStatuses.error
+        !item?.status || item?.status === postStatuses.error
           ? platformIcons[errorIconName]
           : platformIcons[platformName];
 
@@ -99,20 +111,109 @@ const Event = ({
   const [infoData, setInfoData] = useState({
     content: "",
   });
-  const toggleInfoModal = (errorMessage) => {
-    if (errorMessage?.error?.status === "UNAUTHENTICATED") {
-      setInfoData({
-        content: (
-          <Alert color="red">
-            You account is unauthenticated for this platform.Kindly go to
-            connection page and reset the connection for this platform.
-          </Alert>
-        ),
-      });
+
+  const openInfoModal = (platformName, errorMessage) => {
+    switch (platformName) {
+      case GoogleBusinessPlatform:
+        if (errorMessage?.error?.status === "UNAUTHENTICATED") {
+          setInfoData({
+            content: (
+              <Alert variant="outlined">
+                You account is unauthenticated for this platform.Kindly go to
+                connection page and reset the connection for this platform.
+              </Alert>
+            ),
+          });
+          setInfoModal(true);
+        }
+
+        break;
+      case TikTokPersonal:
+        console.log(errorMessage, TikTokPersonal);
+        if (errorMessage?.error?.message || typeof errorMessage === "string") {
+          setInfoData({
+            content: (
+              <Alert color="red" variant="outlined">
+                {errorMessage?.error?.message || errorMessage}
+              </Alert>
+            ),
+          });
+          setInfoModal(true);
+        }
+        break;
+      // ... more cases ...
+      default:
+        // Statements executed when none of the cases match the expression
+        break; // Optional, but recommended
     }
-    setInfoModal(!showInfoModal);
   };
 
+  const closeInfoModal = () => {
+    setInfoModal(false);
+  };
+
+  const checkSuccessReponse = async (platformName, item) => {
+    switch (platformName) {
+      case TikTokPersonal:
+      case TikTokBusiness:
+        let { publish_id } = item.message.data;
+
+        if (!publish_id) return;
+
+        const result = await PostsService.getTiktokPostStatus(
+          brandId,
+          postId,
+          platformName,
+          publish_id
+        );
+
+        const status = result?.data?.status;
+        const failReason = result?.data?.fail_reason;
+        const errorMessage =
+          result?.error?.message ||
+          (status === "FAILED" && `Post failed. Reason: ${failReason}`) ||
+          (status === "PROCESSING_DOWNLOAD" && "File is being uploaded.") ||
+          (status &&
+            status !== "PUBLISH_COMPLETE" &&
+            `Post status is ${status}`);
+
+        if (status === "PUBLISH_COMPLETE") {
+          const postIds = result?.data?.publicaly_available_post_id;
+          const username = result?.tiktok_username;
+          if (postIds && username) {
+            let contents = postIds.map((postId, index) => {
+              const tiktokUrl = `https://www.tiktok.com/@${username}/video/${postId}`;
+              let content = (
+                <Link to={tiktokUrl} target="_blank">
+                  Preview Post {postIds.length > 1 ? index : ""}
+                </Link>
+              );
+              return content;
+            });
+
+            setInfoData({
+              content: contents,
+            });
+            setInfoModal(true);
+          }
+        } else if (errorMessage) {
+          setInfoData({
+            content: (
+              <Alert color="red" variant="outlined">
+                {errorMessage}
+              </Alert>
+            ),
+          });
+          setInfoModal(true);
+        }
+
+        break;
+      // ... more cases ...
+      default:
+        // Statements executed when none of the cases match the expression
+        break; // Optional, but recommended
+    }
+  };
   const tooltipContent = (
     <div
       className="w-80 h-auto px-2  cursor-pointer border-l-slate-600 bottom-2 "
@@ -130,7 +231,7 @@ const Event = ({
               const platformName = item.platform;
               const errorIconName = `${platformName}_Error`;
               const platformIcon =
-                item?.status === postStatuses.error
+                !item?.status || item?.status === postStatuses.error
                   ? platformIcons[errorIconName]
                   : platformIcons[platformName];
 
@@ -139,10 +240,12 @@ const Event = ({
                   {platformIcon}
                 </div>
               ) : null;
+
               let errorMessage = {};
               if (item?.status === postStatuses.error) {
                 errorMessage = item?.message;
               }
+
               return (
                 <span
                   className={`mb-3 flex-shrink-0 flex-col rounded-lg ${
@@ -158,11 +261,18 @@ const Event = ({
                   }`}
                 >
                   {item?.status === postStatuses.published ? (
-                    <Badges
-                      platformIconsToShow={platformIconShow}
-                      status={item?.status}
-                      platforms={platforms}
-                    />
+                    <>
+                      {/* Success Case */}
+                      <div
+                        onClick={() => checkSuccessReponse(platformName, item)}
+                      >
+                        <Badges
+                          platformIconsToShow={platformIconShow}
+                          status={item?.status}
+                          platforms={platforms}
+                        />
+                      </div>
+                    </>
                   ) : status === postStatuses.pending ? (
                     index === 0 && <span className="px-4">Pending</span>
                   ) : status === postStatuses.saveAsDraft ? (
@@ -189,9 +299,12 @@ const Event = ({
                     </>
                   ) : (
                     <>
+                      {/* Error case */}
                       <div
                         className="flex"
-                        /*  onClick={() => toggleInfoModal(errorMessage)} */
+                        onClick={() =>
+                          openInfoModal(platformName, errorMessage)
+                        }
                       >
                         <Badges
                           platformIconsToShow={platformIconShow}
@@ -263,6 +376,7 @@ const Event = ({
           </div>
           <div className="mt-1 mb-1 overflow-hidden">
             <p className="text-xs">{abbreviateString(caption, 20)}</p>
+            <div postId={postId}></div>
           </div>
           <div className="flex flex-wrap pointer-events-none">
             {files?.map((file, index) => {
@@ -299,7 +413,7 @@ const Event = ({
       </Tooltip>
       <InfoModal
         show={showInfoModal}
-        toggleModal={toggleInfoModal}
+        closeInfoModal={closeInfoModal}
         infoData={infoData}
       />
     </div>

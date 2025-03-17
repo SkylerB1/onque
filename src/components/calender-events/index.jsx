@@ -85,7 +85,7 @@ const Event = ({
       const platformName = item.platform;
       const errorIconName = `${platformName}_Error`;
       const platformIcon =
-        item?.status === postStatuses.error
+        !item?.status || item?.status === postStatuses.error
           ? platformIcons[errorIconName]
           : platformIcons[platformName];
 
@@ -155,6 +155,7 @@ const Event = ({
   const checkSuccessReponse = async (platformName, item) => {
     switch (platformName) {
       case TikTokPersonal:
+      case TikTokBusiness:
         let { publish_id } = item.message.data;
 
         if (!publish_id) return;
@@ -230,7 +231,7 @@ const Event = ({
               const platformName = item.platform;
               const errorIconName = `${platformName}_Error`;
               const platformIcon =
-                item?.status === postStatuses.error
+                !item?.status || item?.status === postStatuses.error
                   ? platformIcons[errorIconName]
                   : platformIcons[platformName];
 

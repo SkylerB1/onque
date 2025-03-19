@@ -85,7 +85,7 @@ const Event = ({
       const platformName = item.platform;
       const errorIconName = `${platformName}_Error`;
       const platformIcon =
-        !item?.status || item?.status === postStatuses.error
+        item?.status === postStatuses.error
           ? platformIcons[errorIconName]
           : platformIcons[platformName];
 
@@ -231,7 +231,7 @@ const Event = ({
               const platformName = item.platform;
               const errorIconName = `${platformName}_Error`;
               const platformIcon =
-                !item?.status || item?.status === postStatuses.error
+                item?.status === postStatuses.error
                   ? platformIcons[errorIconName]
                   : platformIcons[platformName];
 

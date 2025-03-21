@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { getSource } from "../../../utils";
+import { getSource, isContainVideo } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
 
 import FacebookShareFilled from "../../../assets/FacebookShareFilled";
@@ -8,13 +8,14 @@ import FacebookLikeFilled from "../../../assets/FacebookLikeFilled";
 
 function ShortsMobile({ files, captions, screenName }) {
   const src = useMemo(() => getSource(files[0]), [files]);
+
   return (
     <>
       {/* <div className="absolute w-full p-4 pt-6 z-50 flex justify-start ">
         <Youtube fill="#ffffff" />
       </div> */}
       <div className="bg-black  w-full h-full flex justify-center items-center">
-        {files?.length == 0 || files[0]?.type != "video/mp4" ? (
+        {files?.length == 0 || !isContainVideo(files[0]) ? (
           <>
             <h1 className="text-sm text-white text-center">
               Video not available

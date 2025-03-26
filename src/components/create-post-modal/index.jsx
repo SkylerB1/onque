@@ -1609,6 +1609,17 @@ const CreatePostModal = ({
               },
             ]);
           }
+          if (imagesCount > 1) {
+            setErrors((prev) => [
+              ...prev,
+              {
+                id: 0,
+                type: "",
+                platform: "google_business",
+                error: "Google Business - Only one image is allowed.",
+              },
+            ]);
+          }
           if (hasVideos) {
             setErrors((prev) => [
               ...prev,

@@ -68,11 +68,12 @@ export function ChangePlanModel({
 
       if (response?.status === 200) {
         let userInfo = await UserService.getUserInfo();
-        setExistingClientCount(userInfo.data.clientsCount);
+        let { clientsCount } = userInfo;
+        setExistingClientCount(clientsCount);
         if (response?.data?.data?.isPlanUpgrade === false) {
           setUpgrading(0);
           // Downgrading the plan
-          if (userInfo.data.clientsCount > newPlanAllowedClients) {
+          if (clientsCount > newPlanAllowedClients) {
             // Open step 2 model
             openBrandModel();
           } else {
@@ -82,7 +83,7 @@ export function ChangePlanModel({
           }
         } else if (response?.data?.data?.isPlanUpgrade === true) {
           setUpgrading(1);
-          if (userInfo.data.clientsCount > newPlanAllowedClients) {
+          if (clientsCount > newPlanAllowedClients) {
             // Open step 2 model
             openBrandModel();
           } else {

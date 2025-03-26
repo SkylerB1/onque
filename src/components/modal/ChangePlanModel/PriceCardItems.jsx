@@ -63,7 +63,7 @@ const PriceCardItems = ({
               from{" "}
               {selectedOption === "monthly"
                 ? selectedPlan.monthly_price
-                : selectedPlan.annualy_price}
+                : selectedPlan.annualy_price}{" "}
               GBP{" "}
               <span className="text-xl font-medium text-gray-900">
                 {selectedOption === "monthly" ? "Monthly" : "Annually"}
@@ -99,7 +99,7 @@ const PriceCardItems = ({
             <p className="text-lg font-bold text-gray-900 dark:text-white">
               {selectedOption === "monthly"
                 ? selectedPlan.monthly_price
-                : selectedPlan.annualy_price}
+                : selectedPlan.annualy_price}{" "}
               GBP
             </p>
           </div>

@@ -312,7 +312,7 @@ export const plansList = () => {
       title: "Starter Plan",
       color: "#95C1D5",
       bgClass: "bg_starter_plan",
-      monthly_price: 85,
+      monthly_price: 25,
       annualy_price: 850,
       savingWithAnnualPlan: 170,
       period: "Monthly",
@@ -321,9 +321,9 @@ export const plansList = () => {
         "Up to 10 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
-        "Client review access",
-        "OQ-Links",
-        "AI Caption assistant",
+        // "Client review access",
+        // "OQ-Links",
+        // "AI Caption assistant",
       ],
       recommended: false,
       totalClients: 10,
@@ -334,7 +334,7 @@ export const plansList = () => {
       title: "Advanced Plan",
       color: "#F9DC77",
       bgClass: "bg_advance_plan",
-      monthly_price: 145,
+      monthly_price: 50,
       annualy_price: 1450,
       savingWithAnnualPlan: 290,
       period: "Monthly",
@@ -343,9 +343,9 @@ export const plansList = () => {
         "Up to 30 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
-        "Client review access",
-        "OQ-Links",
-        "AI Caption assistant",
+        // "Client review access",
+        // "OQ-Links",
+        // "AI Caption assistant",
       ],
       recommended: true,
       totalClients: 30,
@@ -356,7 +356,7 @@ export const plansList = () => {
       title: "Enterprise Plan",
       color: "#ED94B6",
       bgClass: "bg_enterprise_plan",
-      monthly_price: 225,
+      monthly_price: 90,
       annualy_price: 2250,
       savingWithAnnualPlan: 450,
       period: "Monthly",
@@ -365,9 +365,9 @@ export const plansList = () => {
         "Up to 50 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
-        "Client review access",
-        "OQ-Links",
-        "AI Caption assistant",
+        // "Client review access",
+        // "OQ-Links",
+        // "AI Caption assistant",
       ],
       recommended: false,
       totalClients: 50,
@@ -380,25 +380,28 @@ export const findPlan = (key) => {
 };
 export const lookupKeys = {
   starter: {
-    monthly: "starter_plan_gbp",
+    monthly: "starter_plan_gbp_25",
     yearly: "starter_plan_gbp_yearly",
   },
   advanced: {
-    monthly: "advanced_plan_gbp",
+    monthly: "advanced_plan_gbp_50",
     yearly: "advanced_plan_gbp_yearly",
   },
   enterprise: {
-    monthly: "enterprise_plan_gbp",
+    monthly: "enterprise_plan_gbp_90",
     yearly: "enterprise_plan_gbp_yearly",
   },
 };
 
 export const planLabel = {
   starter_plan_gbp: "Starter Plan - Monthly",
+  starter_plan_gbp_25: "Starter Plan - Monthly",
   starter_plan_gbp_yearly: "Starter Plan - Yearly",
   advanced_plan_gbp: "Advance Plan - Monthly",
+  advanced_plan_gbp_50: "Advance Plan - Monthly",
   advanced_plan_gbp_yearly: "Advance Plan - Yearly",
   enterprise_plan_gbp: "Enterprise Plan - Monthly",
+  enterprise_plan_gbp_90: "Enterprise Plan - Monthly",
   enterprise_plan_gbp_yearly: "Enterprise Plan - Yearly",
 };
 export const paymentFailedStatuses = [
@@ -411,6 +414,7 @@ export const getCurrentPlan = (plan) => {
   let currentPlan, planDuration;
   switch (plan) {
     case "starter_plan_gbp":
+    case "starter_plan_gbp_25":
       currentPlan = "starter";
       planDuration = "monthly";
       break;
@@ -419,6 +423,7 @@ export const getCurrentPlan = (plan) => {
       planDuration = "yearly";
       break;
     case "advanced_plan_gbp":
+    case "advanced_plan_gbp_50":
       currentPlan = "advanced";
       planDuration = "monthly";
       break;
@@ -427,6 +432,7 @@ export const getCurrentPlan = (plan) => {
       planDuration = "yearly";
       break;
     case "enterprise_plan_gbp":
+    case "enterprise_plan_gbp_90":
       currentPlan = "enterprise";
       planDuration = "monthly";
       break;

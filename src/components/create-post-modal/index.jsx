@@ -558,7 +558,6 @@ const CreatePostModal = ({
   const handleSubmitButton = (value, key) => {
     if (value === "Publish Now") {
       setScheduledDate(dayjs());
-      console.log("ok", dayjs());
     }
     setSubmitButton(value);
     setSubmitButtonKey(key);
@@ -568,6 +567,14 @@ const CreatePostModal = ({
     if (selectedPreview) {
       const { platform = "", mediaType = "" } = selectedPreview;
       // console.log(selectedPreview);
+
+      // Check , is platform exist in connection
+      let connection = connections.find((item) =>
+        item.platform.includes(platform)
+      );
+      if (!connection) {
+        return <></>;
+      }
 
       const Component = platformComponentMap[platform];
 
@@ -691,6 +698,17 @@ const CreatePostModal = ({
     const imagesCount = files?.filter((item) => isContainImage(item)).length;
     const noFileSelected = files.length === 0;
     const noContent = caption.length === 0;
+
+    // Filter the selected platforms based on the connections
+    if (Array.isArray(selectedPlaforms)) {
+      let filteredPlatform = selectedPlaforms.filter((item) => {
+        let { platform } = item;
+        return connections.find(
+          (connection) => connection.platform == platform
+        );
+      });
+      setSelectedPlatforms(filteredPlatform);
+    }
 
     errors?.forEach((element) => {
       if (Array.isArray(selectedPlaforms)) {

@@ -127,6 +127,10 @@ const ChangePlanStep2 = ({
                     </div>
                   </>
                 )}
+                <div>
+                  <strong>Note:</strong> Tax will applied if it is applicable in
+                  your region.
+                </div>
               </>
             )}
             {subscription?.status == "trialing" && (

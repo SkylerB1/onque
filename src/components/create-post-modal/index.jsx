@@ -683,6 +683,19 @@ const CreatePostModal = ({
     }
   }, [connections, postData]);
 
+  // Filter the selected platforms based on the connections
+  useEffect(() => {
+    if (Array.isArray(selectedPlaforms)) {
+      let filteredPlatform = selectedPlaforms.filter((item) => {
+        let { platform } = item;
+        return connections.find(
+          (connection) => connection.platform == platform
+        );
+      });
+      setSelectedPlatforms(filteredPlatform);
+    }
+  }, [connections]);
+
   // if any thing change . validate and show error if
   useEffect(() => {
     setErrors([]);
@@ -698,17 +711,6 @@ const CreatePostModal = ({
     const imagesCount = files?.filter((item) => isContainImage(item)).length;
     const noFileSelected = files.length === 0;
     const noContent = caption.length === 0;
-
-    // Filter the selected platforms based on the connections
-    if (Array.isArray(selectedPlaforms)) {
-      let filteredPlatform = selectedPlaforms.filter((item) => {
-        let { platform } = item;
-        return connections.find(
-          (connection) => connection.platform == platform
-        );
-      });
-      setSelectedPlatforms(filteredPlatform);
-    }
 
     errors?.forEach((element) => {
       if (Array.isArray(selectedPlaforms)) {

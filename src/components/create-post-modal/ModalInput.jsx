@@ -25,6 +25,7 @@ import EmojiPicker from "emoji-picker-react";
 import { Textarea } from "@material-tailwind/react";
 import NotificationPreset from "../mockups/notification/NotificationPreset";
 import Cross from "../svg/Cross";
+import { removeNonExistingConnectionsFromSelectedPlatforms } from "../../utils/commonUtils";
 
 // Debounce function to limit the rate at which a function can fire.
 const debounce = (func, wait) => {
@@ -61,6 +62,7 @@ const ModalInput = ({
   setShowEmoji,
   showReelOnFeedChecked,
   setShowReelOnFeedChecked,
+  connections,
 }) => {
   const user = useSelector((state) => state.user.value);
   const inputRef = useRef(null);
@@ -137,6 +139,10 @@ const ModalInput = ({
   const closeEmojiPicker = () => {
     setShowEmoji(false);
   };
+  selectedPlaforms = removeNonExistingConnectionsFromSelectedPlatforms(
+    selectedPlaforms,
+    connections
+  );
 
   return (
     <div className="bg-white flex flex-col flex-1 w-65 rounded-l-md p-2 overflow-y-auto">
@@ -269,6 +275,7 @@ const ModalInput = ({
         {Array.isArray(selectedPlaforms) &&
           selectedPlaforms.map((item, index) => {
             const { platform } = item;
+
             if (platform == GoogleBusinessPlatform) {
               return (
                 <GbusinessPresets

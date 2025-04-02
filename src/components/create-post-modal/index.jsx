@@ -76,6 +76,7 @@ import {
   socialPlateFormCharactersLength,
   socialPlateFormVideosLength,
   filterConnections,
+  removeNonExistingConnectionsFromSelectedPlatforms,
 } from "../../utils/commonUtils.jsx";
 import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
@@ -424,14 +425,21 @@ const CreatePostModal = ({
     if (files?.length > 0) {
       media = await uploadFiles();
     }
+
+    let filteredSelectedPlatforms =
+      removeNonExistingConnectionsFromSelectedPlatforms(
+        selectedPlaforms,
+        connections
+      );
+    let providers =
+      Array.isArray(filteredSelectedPlatforms) &&
+      filteredSelectedPlatforms.map((item) => ({
+        platform: item.platform,
+        mediaType: item.mediaType,
+        additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
+      }));
     const data = {
-      providers:
-        Array.isArray(selectedPlaforms) &&
-        selectedPlaforms.map((item) => ({
-          platform: item.platform,
-          mediaType: item.mediaType,
-          additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
-        })),
+      providers: providers,
       caption,
       scheduledDate,
       files: media,
@@ -566,7 +574,6 @@ const CreatePostModal = ({
   const handlePreview = useCallback(() => {
     if (selectedPreview) {
       const { platform = "", mediaType = "" } = selectedPreview;
-      // console.log(selectedPreview);
 
       // Check , is platform exist in connection
       let connection = connections.find((item) =>
@@ -682,19 +689,6 @@ const CreatePostModal = ({
       }
     }
   }, [connections, postData]);
-
-  // Filter the selected platforms based on the connections
-  useEffect(() => {
-    if (Array.isArray(selectedPlaforms)) {
-      let filteredPlatform = selectedPlaforms.filter((item) => {
-        let { platform } = item;
-        return connections.find(
-          (connection) => connection.platform == platform
-        );
-      });
-      setSelectedPlatforms(filteredPlatform);
-    }
-  }, [connections]);
 
   // if any thing change . validate and show error if
   useEffect(() => {
@@ -1972,6 +1966,7 @@ const CreatePostModal = ({
                       brandId={brandId}
                       showReelOnFeedChecked={showReelOnFeedChecked}
                       setShowReelOnFeedChecked={setShowReelOnFeedChecked}
+                      connections={connections}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">
@@ -2126,6 +2121,7 @@ const CreatePostModal = ({
                       handlePreview={handlePreview}
                       handleView={handleView}
                       togglePreview={togglePreview}
+                      connections={connections}
                     />
                   </div>
                 </div>

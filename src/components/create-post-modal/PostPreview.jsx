@@ -5,7 +5,10 @@ import ButtonGroup from "../button-group";
 import { SocialPlatforms } from "../../utils";
 import { Button } from "@material-tailwind/react";
 import environment from "../../config/environment";
-import { filterConnections } from "../../utils/commonUtils.jsx";
+import {
+  filterConnections,
+  removeNonExistingConnectionsFromSelectedPlatforms,
+} from "../../utils/commonUtils.jsx";
 const PostPreview = ({
   selectedPlaforms,
   viewMode,
@@ -15,8 +18,13 @@ const PostPreview = ({
   handlePreview,
   handleView,
   togglePreview,
+  connections,
 }) => {
   selectedPlaforms = filterConnections(selectedPlaforms);
+  selectedPlaforms = removeNonExistingConnectionsFromSelectedPlatforms(
+    selectedPlaforms,
+    connections
+  );
 
   return (
     <div className="bg-gray-100 w-[620px] h-full flex flex-col rounded-r-md items-center relative pointer-events-auto">

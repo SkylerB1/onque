@@ -125,3 +125,15 @@ export const filterConnections = (connections) => {
     return connections;
   }
 };
+export const removeNonExistingConnectionsFromSelectedPlatforms = (
+  selectedPlaforms,
+  connections
+) => {
+  return (
+    Array.isArray(selectedPlaforms) &&
+    (selectedPlaforms?.filter(({ platform }) =>
+      connections.some((connection) => connection.platform === platform)
+    ) ||
+      [])
+  );
+};

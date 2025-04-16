@@ -839,7 +839,7 @@ const CreatePostModal = ({
               {
                 id: dimensions.id,
                 platform: "instagram",
-                error: `Instagram - Invalid aspect ratio for video, it must be between 4:5 and 16:9. You can crop this in the editor.`,
+                error: `Instagram - Invalid aspect ratio for video, it must be between 4:5 and 16:9. try posting this as a reel`,
               },
             ]);
           }

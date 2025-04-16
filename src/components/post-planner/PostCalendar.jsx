@@ -36,6 +36,7 @@ const PostCalendar = (props) => {
   const [openModal, setModal] = useState(false);
   const [textForRoleInfo, setTextForRoleInfo] = useState(null);
   const [draggingEvent, setDraggingEvent] = useState(false);
+  const [showAlert, setShowAlert] = useState(true); // Add state to control visibility
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
 
@@ -179,11 +180,11 @@ const PostCalendar = (props) => {
     <>
       <div className="md:my-2 xl:mt-24 lg:mt-24">
         {/* Role Info Section */}
-        {textForRoleInfo != null && textForRoleInfo.length != 0 && (
+        {textForRoleInfo != null && textForRoleInfo.length != 0 && showAlert && (
           <>
             <div
               id="alert-additional-content-1"
-              className="p-4 mb-4 mt-8 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+              className="relative p-4 mb-4 mt-8 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
               role="alert"
             >
               <div className="flex items-center">
@@ -205,6 +206,26 @@ const PostCalendar = (props) => {
                         (textForRoleInfo.length - 1 < index ? " , " : "")
                     )}
                 </h3>
+                <button
+                type="button"
+                className="absolute top-2 right-2 text-blue-800 bg-transparent hover:bg-blue-200 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white"
+                onClick={() => setShowAlert(false)} // Hide the alert
+              >
+                <svg
+                  aria-hidden="true"
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+                <span className="sr-only">Close</span>
+              </button>
               </div>
               <div className="mt-2 mb-4 text-sm">
                 {textForRoleInfo &&

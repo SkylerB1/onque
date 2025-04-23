@@ -11,7 +11,7 @@ import ErrorConnectionDialog from "../dialog/ErrorConnectionDialog.jsx";
 import { useAppContext } from "../../context/AuthContext.jsx";
 import { Alert, Typography } from "@material-tailwind/react";
 import InfoIcon from "../../assets/InfoIcon.jsx";
-import { Planner } from "../common/Images.js";
+import { Planner2 } from "../common/Images.js";
 
 const initialHeader = {
   title: "",
@@ -186,7 +186,7 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
               </div>
 
               <div className="xl:w-4/6 lg:block md:hidden flex justify-center">
-                <img src={Planner} height="auto" />
+                <img src={Planner2} height="auto" />
               </div>
             </div>
           </div>

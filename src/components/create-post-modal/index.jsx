@@ -149,6 +149,8 @@ const CreatePostModal = ({
   const [submitButtonKey, setSubmitButtonKey] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
+const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];  
+const videoTimeData = useSelector((state) => state.videoSlider);
 
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
@@ -419,6 +421,7 @@ const CreatePostModal = ({
   };
 
   const handlePublish = async () => {
+    console.log('hrehherrhehrr');
     handleLoading(true);
 
     let media = [];
@@ -426,11 +429,13 @@ const CreatePostModal = ({
       media = await uploadFiles();
     }
 
+
     let filteredSelectedPlatforms =
       removeNonExistingConnectionsFromSelectedPlatforms(
         selectedPlaforms,
         connections
       );
+
     let providers =
       Array.isArray(filteredSelectedPlatforms) &&
       filteredSelectedPlatforms.map((item) => ({
@@ -438,12 +443,33 @@ const CreatePostModal = ({
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
       }));
+
+
+      let thumbnailData = filteredSelectedPlatforms.map((item) => {    
+        const thumbnail = thumbnailMedia.find(
+          (file) => file?.clickedOnFileName === files[0]?.name 
+        );
+        return {
+          platform: item.platform,
+          mediaType: item.mediaType,
+          thumbnail: thumbnail
+            ? {
+                imageName: thumbnail.file?.name || null,
+                mediaUrl: thumbnail.mediaUrl || null,
+              }
+            : null,
+          thumbnailTimeRange: videoTimeData?.fileName === files[0]?.name 
+            ? videoTimeData?.timeInSeconds
+            : null,
+        };
+      });
     const data = {
       providers: providers,
       caption,
       scheduledDate,
       files: media,
       submitButtonKey: submitButtonKey,
+      thumbnailData: thumbnailData,
     };
 
     if (isEdit && postData) {

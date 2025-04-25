@@ -64,6 +64,7 @@ const ModalInput = ({
   setShowReelOnFeedChecked,
   connections,
 }) => {
+  console.log(selectedPlaforms,"selectedPlaforms");
   const user = useSelector((state) => state.user.value);
   const inputRef = useRef(null);
   const emojiWrapperRef = useRef(null);
@@ -245,7 +246,7 @@ const ModalInput = ({
               </div>
               <Textarea
                 ref={inputRef}
-                rows={1}
+                rows={2}
                 resize={true}
                 placeholder="Write your captions here..."
                 className="min-h-full !border-0 focus:border-transparent"
@@ -268,6 +269,7 @@ const ModalInput = ({
                 handleEdit={handleEdit}
                 OpenEditor={OpenEditor}
                 isDuplicating={isDuplicating}
+                selectedPlaforms={selectedPlaforms}
               />
             </div>
           </div>

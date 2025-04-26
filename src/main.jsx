@@ -205,7 +205,7 @@ const router = createBrowserRouter([
 ]);
 const stripePromise = loadStripe(stripeKey);
 
-console.log("ok-main");
+console.log("ok-main1");
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>

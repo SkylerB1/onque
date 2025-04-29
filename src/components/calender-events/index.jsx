@@ -320,6 +320,8 @@ const Event = ({
         <hr className="flex-grow-1" />
 
         <div class="flex-grow-1 flex">{abbreviateString(caption, 100)}</div>
+        <br />
+        <div>Total Likes : 0 , Total comments: 0</div>
       </div>
       <div className="flex h-12 overflow-hidden pointer-events-none mt-2">
         <span className="flex ">

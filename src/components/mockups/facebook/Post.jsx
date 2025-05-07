@@ -16,8 +16,17 @@ import { getSource, isContainImage } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
 import { useSelector } from "react-redux";
 
-function Post({ files, captions, viewMode, screenName, date }) {
+function Post({
+  files,
+  captions,
+  viewMode,
+  screenName,
+  date,
+  likeCount = 0,
+  commentCount = 0,
+}) {
   const [play, setPlay] = useState([false, false, false, false, false]);
+
   const videoRef = useRef([]);
   const [filteredFiles, setFilteredFiles] = useState([]);
   const memoizedSources = useMemo(() => {
@@ -270,13 +279,13 @@ function Post({ files, captions, viewMode, screenName, date }) {
         <div className="flex flex-row items-center">
           <Like width={20} height={20} fill="#65676B" />
           <p className="text-[#65676B] ml-2 text-sm font-bold font-['sans-serif','Arial','Helvetica']">
-            Like
+            {likeCount > 0 ? likeCount : "Like"}
           </p>
         </div>
         <div className="flex flex-row items-center">
           <Comment width={16} height={15} fill="#65676B" />
           <p className="text-[#65676B] ml-2  text-sm font-bold font-['sans-serif','Arial','Helvetica']">
-            Comment
+            {commentCount > 0 ? commentCount : "Comment"}
           </p>
         </div>
         <div className="flex flex-row items-center">

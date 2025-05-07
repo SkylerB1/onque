@@ -15,7 +15,15 @@ import { getSource, isContainImage } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
 import FacebookPlay from "../../../assets/facebook-play.svg?react";
 
-export default function Story({ files, captions, viewMode, screenName, date }) {
+export default function Story({
+  files,
+  captions,
+  viewMode,
+  screenName,
+  date,
+  like = "Like",
+  comment = "Comment",
+}) {
   const [play, setPlay] = useState([false, false, false, false, false]);
   const [carouselkey, setCarouselKey] = useState(1);
   const videoRef = useRef([]);

@@ -597,6 +597,24 @@ const videoTimeData = useSelector((state) => state.videoSlider);
     setSubmitButtonKey(key);
   };
 
+  const getPostLikesComment = (platform, mediaType) => {
+    let { postInsights = [] } = postData || {};
+    let likeCount = 0;
+    let commentCount = 0;
+    Array.isArray(postInsights) &&
+      postInsights.find((insight) => {
+        if (
+          insight.mediaType == "POST" &&
+          insight.mediaType === mediaType &&
+          insight.platform === platform
+        ) {
+          likeCount = insight.likes;
+          commentCount = insight.comments;
+        }
+      });
+
+    return { likeCount, commentCount };
+  };
   const handlePreview = useCallback(() => {
     if (selectedPreview) {
       const { platform = "", mediaType = "" } = selectedPreview;
@@ -608,7 +626,10 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       if (!connection) {
         return <></>;
       }
-
+      let { likeCount, commentCount } = getPostLikesComment(
+        platform,
+        mediaType
+      );
       const Component = platformComponentMap[platform];
 
       const presets = additionalPresets[platform];
@@ -623,6 +644,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
           date,
           data: presets,
           mediaType: mediaType,
+          likeCount,
+          commentCount,
         });
 
         return component;

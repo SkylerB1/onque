@@ -17,10 +17,11 @@ function GetFacebookComponent({
   files,
   connections,
   date,
+  likeCount = 0,
+  commentCount = 0,
 }) {
-  const { screenName = "" } = connections.find(
-    (item) => item.platform === FacebookPagePlatform
-  );
+  const { screenName = "" } =
+    connections.find((item) => item.platform === FacebookPagePlatform) || {};
 
   if (mediaType == FBPost) {
     return (
@@ -30,6 +31,8 @@ function GetFacebookComponent({
         files={files}
         screenName={screenName}
         date={date}
+        likeCount={likeCount}
+        commentCount={commentCount}
       />
     );
   } else if (mediaType == FBStory) {
@@ -40,15 +43,29 @@ function GetFacebookComponent({
         files={files}
         screenName={screenName}
         date={date}
+        likeCount={likeCount}
+        commentCount={commentCount}
       />
     );
   } else if (mediaType == FBReal && viewMode == 1) {
     return (
-      <ReelsDesktop captions={caption} files={files} screenName={screenName} />
+      <ReelsDesktop
+        captions={caption}
+        files={files}
+        screenName={screenName}
+        likeCount={likeCount}
+        commentCount={commentCount}
+      />
     );
   } else {
     return (
-      <ReelsMobile captions={caption} files={files} screenName={screenName} />
+      <ReelsMobile
+        captions={caption}
+        files={files}
+        screenName={screenName}
+        likeCount={likeCount}
+        commentCount={commentCount}
+      />
     );
   }
 }

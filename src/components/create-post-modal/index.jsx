@@ -20,6 +20,7 @@ import { axiosInstance } from "../../utils/Interceptor";
 import {
   API_URL,
   SocialPlatforms,
+  getSource,
   isContainImage,
   isContainVideo,
   toastrError,
@@ -82,6 +83,7 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
+import { t } from "i18next";
 
 const schdulePostBtnLabel = [
   {
@@ -150,6 +152,7 @@ const CreatePostModal = ({
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
 const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];  
+console.log(thumbnailMedia, "thumbnailMedia");
 const videoTimeData = useSelector((state) => state.videoSlider);
 
   const [showPreview, setShowPreview] = useState(false);
@@ -344,6 +347,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         media.push(file);
       }
     });
+    console.log(Array.from(formData.keys()), "formData1");
     const formDataLength = Array.from(formData.keys()).length;
     if (formDataLength > 0) {
       try {
@@ -356,6 +360,35 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       return media;
     }
   };
+
+  const uploadThumbnailFiles = async (thumbnailMedia) => {
+    const formData = new FormData();
+    const media = []; // ✅ define media here
+  
+    thumbnailMedia.forEach((item) => {
+      if (item.file instanceof File) {
+        formData.append("files", item.file);
+      } else {
+        media.push(item); // if no File, keep it as-is
+      }
+    });
+    console.log(Array.from(formData.keys()), "formData");
+  
+    if (Array.from(formData.keys()).length > 0) {
+      try {
+        const response = await axiosInstance.post(UPLOAD_FILE_URL, formData);
+        return [...media, ...response.data?.files];
+      } catch (err) {
+        console.error("Thumbnail upload failed", err);
+        return [];
+      }
+    } else {
+      return media;
+    }
+  };
+  
+  
+  
 
   const handleClose = () => {
     setModal(false);
@@ -421,15 +454,16 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   };
 
   const handlePublish = async () => {
-    console.log('hrehherrhehrr');
     handleLoading(true);
 
-    let media = [];
+    let media  = [];
     if (files?.length > 0) {
       media = await uploadFiles();
     }
-
-
+    let thumbnailImage = [];
+    if (thumbnailMedia?.length > 0) {
+      thumbnailImage = await uploadThumbnailFiles(thumbnailMedia);
+    }
     let filteredSelectedPlatforms =
       removeNonExistingConnectionsFromSelectedPlatforms(
         selectedPlaforms,
@@ -443,7 +477,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
       }));
-
 
       let thumbnailData = filteredSelectedPlatforms.map((item) => {    
         const thumbnail = thumbnailMedia.find(
@@ -470,8 +503,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       files: media,
       submitButtonKey: submitButtonKey,
       thumbnailData: thumbnailData,
+      thumbnailFiles: thumbnailImage,
     };
-
     if (isEdit && postData) {
       updatePost(data);
     } else {

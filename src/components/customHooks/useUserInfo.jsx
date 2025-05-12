@@ -67,7 +67,6 @@ const useUserInfo = () => {
         return userInfo;
       } else {
         const message = response?.data?.message;
-        console.log(response);
         message && toastrError(message);
         return false;
       }

@@ -64,7 +64,6 @@ const ModalInput = ({
   setShowReelOnFeedChecked,
   connections,
 }) => {
-  console.log(selectedPlaforms,"selectedPlaforms");
   const user = useSelector((state) => state.user.value);
   const inputRef = useRef(null);
   const emojiWrapperRef = useRef(null);

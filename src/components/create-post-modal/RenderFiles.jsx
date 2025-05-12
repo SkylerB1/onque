@@ -81,7 +81,7 @@ const RenderFiles = ({
           mediaType: mediaType,
           mediaUrl: mediaUrl,
           navigationUrl: "https://example.com",
-          file: file ? { name: file.name, type: file.type } : null,
+          file: file,
           clickedOnFileName: clickedFile?.name || null, // Store only serializable data
         }));
       };

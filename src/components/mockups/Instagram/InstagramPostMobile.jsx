@@ -22,7 +22,6 @@ import { useSelector } from "react-redux";
 function InstagramPostMobile({ files, captions, viewMode, screenName }) {
   const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
   const videoTimeData = useSelector((state) => state.videoSlider); 
-   console.log(videoTimeData, "videoTimeData");
   const [muted, setMuted] = useState(false);
   const memoizedSources = useMemo(() => {
     return files.map((file) => getSource(file));
@@ -49,7 +48,6 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
         videoTimeData?.fileName === files[0]?.name &&
         typeof videoTimeData?.timeInSeconds === "number"
       ) {
-        console.log('object2332545464646');
         videoRef.current.currentTime = videoTimeData.timeInSeconds;
       }
     }, [videoTimeData, files]);

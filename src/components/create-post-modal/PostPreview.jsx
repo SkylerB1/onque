@@ -25,7 +25,6 @@ const PostPreview = ({
     selectedPlaforms,
     connections
   );
-
   return (
     <div className="bg-gray-100 w-[620px] h-full flex flex-col rounded-r-md items-center relative pointer-events-auto">
       <Button

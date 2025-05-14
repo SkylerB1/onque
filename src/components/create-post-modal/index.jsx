@@ -152,7 +152,6 @@ const CreatePostModal = ({
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
 const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];  
-console.log(thumbnailMedia, "thumbnailMedia");
 const videoTimeData = useSelector((state) => state.videoSlider);
 
   const [showPreview, setShowPreview] = useState(false);
@@ -347,7 +346,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         media.push(file);
       }
     });
-    console.log(Array.from(formData.keys()), "formData1");
     const formDataLength = Array.from(formData.keys()).length;
     if (formDataLength > 0) {
       try {
@@ -372,7 +370,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         media.push(item); // if no File, keep it as-is
       }
     });
-    console.log(Array.from(formData.keys()), "formData");
   
     if (Array.from(formData.keys()).length > 0) {
       try {

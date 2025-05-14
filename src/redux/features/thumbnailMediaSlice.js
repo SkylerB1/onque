@@ -17,13 +17,10 @@ export const thumbnailMediaSlice = createSlice({
       state.loading = action.payload;
     },
     addMedia: (state, action) => {
-      if (state.value) {
-        state.value = [...state.value, action.payload];
-      } else {
-        state.value = [action.payload];
-      }
+      // Always replace the previous media with new one
+      state.value = [action.payload];
       state.loading = false;
-    },
+    },    
     updateMedia: (state, action) => {
       const { id, identifier, value } = action.payload;
       if (state.value) {

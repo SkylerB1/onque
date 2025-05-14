@@ -8,8 +8,9 @@ const PopoverMenu = ({
   anchorEl,
   open,
   onClose,
-  onDelete,
   onThumbnailUpload,
+  removeimg,
+  index,
   onOpenVideoSlider
 }) => {
   const handleClose = () => {
@@ -41,7 +42,7 @@ const PopoverMenu = ({
           <FaFileImage width={20} height={20} />
           Upload Video Thumbnail
         </MenuItem>
-        <MenuItem
+        {/* <MenuItem
           className="gap-3"
           onClick={() => {
             onOpenVideoSlider();
@@ -50,11 +51,11 @@ const PopoverMenu = ({
         >
           <RxSlider width={20} height={20} />
           Preview & Scrub
-        </MenuItem>
+        </MenuItem> */}
         <MenuItem
           className="gap-3"
           onClick={() => {
-            onDelete();
+           removeimg(index);
             handleClose();
           }}
         >

@@ -37,7 +37,6 @@ const SocialPlatform = ({
   const options = mediaOptions || [];
 
   const handlePlatform = () => {
-    console.log('object');
     const newPlatform = {
       platform,
       screenName,

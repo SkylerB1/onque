@@ -54,18 +54,14 @@ const RenderFiles = ({
     setFiles(reorderedFiles);
   };
 
-    const handleFile = (files, mediaType) => {
-      setimgUploadModal(false);
-      files.forEach((item) => {
-        const mediaUrl = getSource(item);
-        addMediaItem(mediaType, mediaUrl, item);
-        // setFiles((prevFiles) => [...prevFiles, ...files]);
-      });
-      Array.isArray(files) && files.map((item) => {
-        let mediaUrl = getSource(item);
-        addMedia(mediaType, mediaUrl, item);
-      });
-    };
+const handleFile = (files, mediaType) => {
+  setimgUploadModal(false);
+  files.forEach((item) => {
+    const mediaUrl = getSource(item);
+    addMediaItem(mediaType, mediaUrl, item); // ✅ This is all you need
+  });
+};
+
   
     const toggleimgUploadModal = () => {
       setimgUploadModal(!showimgUploadModal);
@@ -209,6 +205,16 @@ const RenderFiles = ({
                           onClickEdit={onClickEdit}
                           removeimg={removeimg}
                           selectedPlaforms={selectedPlaforms}
+                          filesCount={files.length}
+                        />
+                        <PopoverMenu
+                          anchorEl={anchorEl}
+                          open={openPopover}
+                          onClose={handlePopoverClose}
+                          onThumbnailUpload={openImageModel}
+                          removeimg={removeimg}
+                          index={index}
+                          onOpenVideoSlider={() => openVideoSliderPopover(clickedFile)}
                         />
                       </div>
                     )}
@@ -219,14 +225,6 @@ const RenderFiles = ({
           </div>
         )}
       </Droppable>
-      <PopoverMenu
-        anchorEl={anchorEl}
-        open={openPopover}
-        onClose={handlePopoverClose}
-        onThumbnailUpload={openImageModel}
-        onDelete={(console.log('object2222222222'))}
-        onOpenVideoSlider={() => openVideoSliderPopover(clickedFile)}
-      />
       {showVideoSlider && (
         <VideoSliderPopover
           videoFile={currentVideo}

@@ -4,8 +4,15 @@ import Edit from "../svg/Edit";
 import PlayFilled from "../svg/PlayFilled";
 import { getSource, isContainImage, isContainVideo } from "../../utils";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
+import { useDispatch, useSelector } from 'react-redux';
 import { Oval } from "react-loader-spinner";
+import MenuItems from "../svg/menu-items";
+import PopoverMenu from "../modal/PopoverMenu";
+import ImgUploadModal from "../upload-modal/ImageUploadModal";
+
+import { addMedia } from "../../redux/features/thumbnailMediaSlice";
+import OnFileClickableAction from "../FileClickable/FileClickableAction";
+import VideoSliderPopover from "../videoSliderPopover/videoSliderPopover";
 
 const RenderFiles = ({
   files,
@@ -16,13 +23,23 @@ const RenderFiles = ({
   handleEdit,
   isDuplicating,
   setFiles,
+  selectedPlaforms,
 }) => {
   const memoizedSources = useMemo(() => {
     return Array.isArray(files) && files.map((file) => getSource(file));
   }, [files]);
-
+  const dispatch = useDispatch();
   const videoRef = useRef();
-  const [loadingStates, setLoadingStates] = useState({}); // State to track loading state of each file
+  const [loadingStates, setLoadingStates] = useState({}); 
+  const [anchorEl, setAnchorEl] = useState(null); 
+  const [openPopover, setOpenPopover] = useState(false);
+  const [showimgUploadModal, setimgUploadModal] = useState(false);
+  const [droppableId, setDroppableId] = useState("");
+  const media = useSelector((state) => state.thumbnailMedia.value) || [];
+  const sliderTime = useSelector((state) => state.videoSlider);
+  const [clickedFile, setClickedFile] = useState(null);
+  const [showVideoSlider, setShowVideoSlider] = useState(false);
+  const [currentVideo, setCurrentVideo] = useState(null);
 
   const onClickEdit = (index) => {
     handleEdit(index);
@@ -37,7 +54,40 @@ const RenderFiles = ({
     setFiles(reorderedFiles);
   };
 
-  const [droppableId, setDroppableId] = useState("");
+const handleFile = (files, mediaType) => {
+  setimgUploadModal(false);
+  files.forEach((item) => {
+    const mediaUrl = getSource(item);
+    addMediaItem(mediaType, mediaUrl, item); // ✅ This is all you need
+  });
+};
+
+  
+    const toggleimgUploadModal = () => {
+      setimgUploadModal(!showimgUploadModal);
+    };
+  
+    const openImageModel = () => {
+      setimgUploadModal(true);
+    };
+
+      const addMediaItem = (mediaType, mediaUrl = "", file = null) => {
+        dispatch(addMedia({
+          id: media.length + 1,
+          mediaType: mediaType,
+          mediaUrl: mediaUrl,
+          navigationUrl: "https://example.com",
+          file: file,
+          clickedOnFileName: clickedFile?.name || null, // Store only serializable data
+        }));
+      };
+  
+  const openVideoSliderPopover = (file) => {
+    setCurrentVideo(file);
+    setShowVideoSlider(true);
+  };
+      
+
 
   useEffect(() => {
     if (files.length) {
@@ -48,6 +98,18 @@ const RenderFiles = ({
   // Handle image load and video load
   const handleLoadStart = (index) => {
     setLoadingStates((prev) => ({ ...prev, [index]: true }));
+  };
+
+  const handlePopoverClick = (event, file) => {
+    setAnchorEl(event.currentTarget);
+    setOpenPopover(true);
+    setClickedFile(file); // 👈 Save clicked file
+  };
+  
+
+  const handlePopoverClose = () => {
+    setOpenPopover(false);
+    setAnchorEl(null);
   };
 
   const handleLoadEnd = (index) => {
@@ -85,6 +147,7 @@ const RenderFiles = ({
                         {isContainVideo(file) ? (
                           <>
                             <video
+                            key={`${file.name}-${sliderTime.timeInSeconds}`}
                               ref={videoRef}
                               autoPlay={false}
                               muted={true}
@@ -96,6 +159,9 @@ const RenderFiles = ({
                                   videoRef.current?.duration,
                                   file.size
                                 );
+                                if (videoRef.current && sliderTime.fileName === file.name) {
+                                  videoRef.current.currentTime = sliderTime.timeInSeconds;
+                                }
                               }}
                               onLoadStart={() => handleLoadStart(index)} // Start loader when video starts loading
                               onLoadedData={() => handleLoadEnd(index)} // Stop loader when video is ready
@@ -132,27 +198,24 @@ const RenderFiles = ({
                             />
                           </>
                         )}
-                        {/* {!isDuplicating && ( */}
-                        <>
-                          <div
-                            onClick={() => {
-                              removeimg(index);
-                            }}
-                            className="absolute -top-2 -right-2 w-5 h-5 rounded-full border-2 bg-white items-center flex cursor-pointer"
-                          >
-                            <Cross width={22} height={22} />
-                          </div>
-
-                          {isContainImage(file) && (
-                            <div
-                              onClick={() => onClickEdit(index)}
-                              className="absolute rounded-full border bg-white right-1 bottom-1 cursor-pointer"
-                            >
-                              <Edit width={22} height={22} />
-                            </div>
-                          )}
-                        </>
-                        {/* )} */}
+                        <OnFileClickableAction
+                          file={file}
+                          index={index}
+                          handlePopoverClick={handlePopoverClick}
+                          onClickEdit={onClickEdit}
+                          removeimg={removeimg}
+                          selectedPlaforms={selectedPlaforms}
+                          filesCount={files.length}
+                        />
+                        <PopoverMenu
+                          anchorEl={anchorEl}
+                          open={openPopover}
+                          onClose={handlePopoverClose}
+                          onThumbnailUpload={openImageModel}
+                          removeimg={removeimg}
+                          index={index}
+                          onOpenVideoSlider={() => openVideoSliderPopover(clickedFile)}
+                        />
                       </div>
                     )}
                   </Draggable>
@@ -162,6 +225,18 @@ const RenderFiles = ({
           </div>
         )}
       </Droppable>
+      {showVideoSlider && (
+        <VideoSliderPopover
+          videoFile={currentVideo}
+          onClose={() => setShowVideoSlider(false)}
+        />
+      )}
+
+      <ImgUploadModal
+        show={showimgUploadModal}
+        onChange={handleFile}
+        toggleModal={toggleimgUploadModal}
+      />
     </DragDropContext>
   );
 };

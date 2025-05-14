@@ -20,6 +20,7 @@ import { axiosInstance } from "../../utils/Interceptor";
 import {
   API_URL,
   SocialPlatforms,
+  getSource,
   isContainImage,
   isContainVideo,
   toastrError,
@@ -82,7 +83,6 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
-
 const schdulePostBtnLabel = [
   {
     label: "Save As Draft",
@@ -149,6 +149,8 @@ const CreatePostModal = ({
   const [submitButtonKey, setSubmitButtonKey] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
+const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];  
+const videoTimeData = useSelector((state) => state.videoSlider);
 
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
@@ -355,6 +357,34 @@ const CreatePostModal = ({
     }
   };
 
+  const uploadThumbnailFiles = async (thumbnailMedia) => {
+    const formData = new FormData();
+    const media = []; // ✅ define media here
+  
+    thumbnailMedia.forEach((item) => {
+      if (item.file instanceof File) {
+        formData.append("files", item.file);
+      } else {
+        media.push(item); // if no File, keep it as-is
+      }
+    });
+  
+    if (Array.from(formData.keys()).length > 0) {
+      try {
+        const response = await axiosInstance.post(UPLOAD_FILE_URL, formData);
+        return [...media, ...response.data?.files];
+      } catch (err) {
+        console.error("Thumbnail upload failed", err);
+        return [];
+      }
+    } else {
+      return media;
+    }
+  };
+  
+  
+  
+
   const handleClose = () => {
     setModal(false);
     setIsEdit(null);
@@ -421,16 +451,20 @@ const CreatePostModal = ({
   const handlePublish = async () => {
     handleLoading(true);
 
-    let media = [];
+    let media  = [];
     if (files?.length > 0) {
       media = await uploadFiles();
     }
-
+    let thumbnailImage = [];
+    if (thumbnailMedia?.length > 0) {
+      thumbnailImage = await uploadThumbnailFiles(thumbnailMedia);
+    }
     let filteredSelectedPlatforms =
       removeNonExistingConnectionsFromSelectedPlatforms(
         selectedPlaforms,
         connections
       );
+
     let providers =
       Array.isArray(filteredSelectedPlatforms) &&
       filteredSelectedPlatforms.map((item) => ({
@@ -438,14 +472,34 @@ const CreatePostModal = ({
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
       }));
+
+      let thumbnailData = filteredSelectedPlatforms.map((item) => {    
+        const thumbnail = thumbnailMedia.find(
+          (file) => file?.clickedOnFileName === files[0]?.name 
+        );
+        return {
+          platform: item.platform,
+          mediaType: item.mediaType,
+          thumbnail: thumbnail
+            ? {
+                imageName: thumbnail.file?.name || null,
+                mediaUrl: thumbnail.mediaUrl || null,
+              }
+            : null,
+          thumbnailTimeRange: videoTimeData?.fileName === files[0]?.name 
+            ? videoTimeData?.timeInSeconds
+            : null,
+        };
+      });
     const data = {
       providers: providers,
       caption,
       scheduledDate,
       files: media,
       submitButtonKey: submitButtonKey,
+      thumbnailData: thumbnailData,
+      thumbnailFiles: thumbnailImage,
     };
-
     if (isEdit && postData) {
       updatePost(data);
     } else {

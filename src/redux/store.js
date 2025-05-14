@@ -9,7 +9,8 @@ import smartIconsSlice from "./features/smartIcons";
 import smartLinkMediaSlice  from "./features/smartLinkMediaSlice";
 import addSmartSection  from "./features/AddSectionSlice";
 import smartLinkAppearance from "./features/smartLinkAppearanceSlice";
-
+import thumbnailMediaSlice from "./features/thumbnailMediaSlice";
+import videoSliderSlice from "./features/videoSliderSlice";
 export const store = configureStore({
   reducer: {
     connections: connectionSlice,
@@ -22,5 +23,7 @@ export const store = configureStore({
     smartLinkMedia:smartLinkMediaSlice,
     smartSection:addSmartSection,
     smartAppearance:smartLinkAppearance,
+    thumbnailMedia:thumbnailMediaSlice,
+    videoSlider: videoSliderSlice,
   },
 });

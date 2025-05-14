@@ -14,6 +14,7 @@ import VideoComponent from "../../video/VideoComponent";
 import ImageComponent from "../../Image/ImageComponent";
 import { getSource, isContainImage } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
+import { useSelector } from "react-redux";
 
 function Post({
   files,
@@ -31,6 +32,7 @@ function Post({
   const memoizedSources = useMemo(() => {
     return filteredFiles.map((file) => getSource(file));
   }, [filteredFiles]);
+  const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
 
   const togglePlay = useCallback(
     (index) => {
@@ -41,6 +43,22 @@ function Post({
     },
     [play]
   );
+
+  const thumbnailSrc = useMemo(() => {
+    const mediaType = isContainImage(files[0]) ? "image" : "video";
+    if (files[0] && files[0]?.name === thumbnailMedia[0]?.clickedOnFileName && mediaType === "video") {
+      return thumbnailMedia[0]?.mediaUrl;
+    }
+  }, [thumbnailMedia, files]);
+
+  useEffect(() => {
+    const videoEl = videoRef.current?.[0];
+    if (videoEl && typeof videoEl.load === "function" && thumbnailSrc) {
+      videoEl.load();
+    }
+  }, [thumbnailSrc]);
+  
+
 
   useEffect(() => {
     if (files?.length > 0) {
@@ -64,7 +82,7 @@ function Post({
     const src = memoizedSources[index];
     return (
       <VideoComponent
-        ref={(el) => (videoRef.current[0] = el)}
+        ref={(el) => (videoRef.current[index] = el)}
         className={"w-full h-full object-cover"}
         key={index}
         index={index}
@@ -77,6 +95,7 @@ function Post({
         onTogglePlay={togglePlay}
         icon={<FacebookPlay width={40} height={40} />}
         draggable="false"
+        poster={thumbnailSrc}
       />
     );
   };

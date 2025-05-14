@@ -15,7 +15,7 @@ function GetYoutubeComponent({
 }) {
   const { screenName = "" } = connections.find(
     (item) => item.platform === YoutubePlatform
-  );
+  );  
   if (mediaType == "VIDEO" && viewMode) {
     return (
       <VideoDesktop

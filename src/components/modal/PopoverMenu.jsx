@@ -39,7 +39,7 @@ const PopoverMenu = ({
           }}
         >
           <FaFileImage width={20} height={20} />
-          Upload Video Thumbnail for Youtube
+          Upload Video Thumbnail
         </MenuItem>
         <MenuItem
           className="gap-3"

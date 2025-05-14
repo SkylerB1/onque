@@ -83,8 +83,6 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
-import { t } from "i18next";
-
 const schdulePostBtnLabel = [
   {
     label: "Save As Draft",

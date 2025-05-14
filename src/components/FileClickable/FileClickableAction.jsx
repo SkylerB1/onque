@@ -13,7 +13,6 @@ const OnFileClickableAction = ({
   selectedPlaforms,
   filesCount
 }) => {
-  console.log(selectedPlaforms, "selectedPlaforms");
   const platformCondition = selectedPlaforms.some(
     (item) =>
       (item.platform === "YouTube" && item.mediaType === "SHORTS") ||

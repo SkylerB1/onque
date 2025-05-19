@@ -48,7 +48,6 @@ const RenderFiles = ({
   };
 
   const onDragEnd = (result) => {
-    console.log(result,"redddddddddddddd");
     if (!result.destination) return;
     const reorderedFiles = Array.from(files);
     const [movedFile] = reorderedFiles.splice(result.source.index, 1);

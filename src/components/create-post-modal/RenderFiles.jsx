@@ -24,6 +24,7 @@ const RenderFiles = ({
   isDuplicating,
   setFiles,
   selectedPlaforms,
+  setModelImageForThumbnail,
 }) => {
   const memoizedSources = useMemo(() => {
     return Array.isArray(files) && files.map((file) => getSource(file));
@@ -47,15 +48,20 @@ const RenderFiles = ({
   };
 
   const onDragEnd = (result) => {
+    console.log(result,"redddddddddddddd");
     if (!result.destination) return;
     const reorderedFiles = Array.from(files);
     const [movedFile] = reorderedFiles.splice(result.source.index, 1);
     reorderedFiles.splice(result.destination.index, 0, movedFile);
-    setFiles(reorderedFiles);
+    reorderedFiles.forEach((file, index) => {
+      const mediaUrl = getSource(file);
+      addMediaItem(file.type, mediaUrl, file);
+    });
   };
 
 const handleFile = (files, mediaType) => {
   setimgUploadModal(false);
+  setModelImageForThumbnail(true);
   files.forEach((item) => {
     const mediaUrl = getSource(item);
     addMediaItem(mediaType, mediaUrl, item); // ✅ This is all you need
@@ -65,9 +71,11 @@ const handleFile = (files, mediaType) => {
   
     const toggleimgUploadModal = () => {
       setimgUploadModal(!showimgUploadModal);
+      setModelImageForThumbnail(true);
     };
   
     const openImageModel = () => {
+      setModelImageForThumbnail(true);
       setimgUploadModal(true);
     };
 
@@ -80,6 +88,7 @@ const handleFile = (files, mediaType) => {
           file: file,
           clickedOnFileName: clickedFile?.name || null, // Store only serializable data
         }));
+        setModelImageForThumbnail(false);
       };
   
   const openVideoSliderPopover = (file) => {
@@ -215,6 +224,7 @@ const handleFile = (files, mediaType) => {
                           removeimg={removeimg}
                           index={index}
                           onOpenVideoSlider={() => openVideoSliderPopover(clickedFile)}
+                          selectedPlaforms={selectedPlaforms}
                         />
                       </div>
                     )}

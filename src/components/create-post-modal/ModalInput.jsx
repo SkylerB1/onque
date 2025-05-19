@@ -63,6 +63,7 @@ const ModalInput = ({
   showReelOnFeedChecked,
   setShowReelOnFeedChecked,
   connections,
+  setModelImageForThumbnail
 }) => {
   const user = useSelector((state) => state.user.value);
   const inputRef = useRef(null);
@@ -269,6 +270,7 @@ const ModalInput = ({
                 OpenEditor={OpenEditor}
                 isDuplicating={isDuplicating}
                 selectedPlaforms={selectedPlaforms}
+                setModelImageForThumbnail={setModelImageForThumbnail}
               />
             </div>
           </div>

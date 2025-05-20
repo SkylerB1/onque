@@ -29,7 +29,7 @@ const VideoSliderPopover = ({ videoFile, onClose }) => {
   };
 
   return (
-    <div className="fixed top-1/4 left-1/4 bg-white rounded-xl shadow-xl p-4 z-50">
+    <div className="fixed top-[12%] left-[12%] bg-white rounded-xl shadow-xl p-4 z-50">
       <video
         ref={videoRef}
         src={getSource(videoFile)}

@@ -143,6 +143,7 @@ const CreatePostModal = ({
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
+  const [modelImageForThumbnail, setModelImageForThumbnail] = useState(false);
   const [submitButton, setSubmitButton] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "Save As Draft" : "Schedule"
   );
@@ -558,6 +559,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   };
 
   const handleFile = (file) => {
+
     setimgUploadModal(false);
     setVideoUploadModal(false);
     setFiles((prevFiles) => [...prevFiles, ...file]);
@@ -1901,8 +1903,9 @@ const videoTimeData = useSelector((state) => state.videoSlider);
           <Dropzone
             noClick={true}
             onDrop={(file) => {
-              handleFile(file);
-            }}
+              if (!modelImageForThumbnail) {
+                handleFile(file);
+              }}}
           >
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
@@ -2044,6 +2047,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                       showReelOnFeedChecked={showReelOnFeedChecked}
                       setShowReelOnFeedChecked={setShowReelOnFeedChecked}
                       connections={connections}
+                      setModelImageForThumbnail={setModelImageForThumbnail}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">

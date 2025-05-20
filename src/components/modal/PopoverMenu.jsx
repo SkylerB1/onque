@@ -11,8 +11,13 @@ const PopoverMenu = ({
   onThumbnailUpload,
   removeimg,
   index,
-  onOpenVideoSlider
+  onOpenVideoSlider,
+  selectedPlaforms,
 }) => {
+  const platformCondition = selectedPlaforms.some(
+    (item) =>
+      (item.platform === "Instagram")
+  );
   const handleClose = () => {
     onClose();
   };
@@ -42,16 +47,19 @@ const PopoverMenu = ({
           <FaFileImage width={20} height={20} />
           Upload Video Thumbnail
         </MenuItem>
-        {/* <MenuItem
-          className="gap-3"
-          onClick={() => {
-            onOpenVideoSlider();
-            handleClose();
-          }}
-        >
-          <RxSlider width={20} height={20} />
-          Preview & Scrub
-        </MenuItem> */}
+        {platformCondition && (
+        <MenuItem
+        className="gap-3"
+        onClick={() => {
+          onOpenVideoSlider();
+          handleClose();
+        }}
+      >
+        <RxSlider width={20} height={20} />
+        Preview & Scrub
+      </MenuItem>
+        )}
+
         <MenuItem
           className="gap-3"
           onClick={() => {

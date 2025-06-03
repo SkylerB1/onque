@@ -20,8 +20,8 @@ const OnFileClickableAction = ({
   const platformCondition = selectedPlaforms.some(
     (item) =>
       (item.platform === "YouTube" && item.mediaType === "SHORTS") ||
-      item.platform === "LinkedIn" || filesCount > 1 || (item.platform === "TikTok_Personal" && item.mediaType === "VIDEO") ||
-      item.platform === "TikTok_Business" && item.mediaType === "VIDEO" || item.platform === "Google_Business" || item.platform === "LinkedIn_Page"
+      item.platform === "LinkedIn" || filesCount > 1 || 
+      item.platform === "Google_Business" || item.platform === "LinkedIn_Page"
       // || (item.platform === "Instagram" && item.mediaType === "STORY") || (item.platform === "Facebook_Page" && item.mediaType === "STORY")
   );
   const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];

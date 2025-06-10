@@ -16,8 +16,9 @@ const PopoverMenu = ({
 }) => {
   const platformCondition = selectedPlaforms.some(
     (item) =>
-      (item.platform === "Instagram")
+      (item.platform === "Instagram" || item.platform === "TikTok_Personal" || item.platform === "TikTok_Business")
   );
+
   const handleClose = () => {
     onClose();
   };

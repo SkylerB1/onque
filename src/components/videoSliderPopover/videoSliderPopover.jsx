@@ -29,11 +29,11 @@ const VideoSliderPopover = ({ videoFile, onClose }) => {
   };
 
   return (
-    <div className="fixed top-[5%] left-[5%] bg-white rounded-xl shadow-xl p-4 z-50 w-[90%] h-[90%] flex flex-col items-center">
+    <div className="fixed top-[5%] left-[18%] bg-white rounded-xl shadow-xl p-4 z-50">
       <video
         ref={videoRef}
         src={getSource(videoFile)}
-        className="w-[90%] h-[90%] rounded-md object-cover"
+        className="w-96 h-[20]"
         onLoadedMetadata={() => {
           if (videoRef.current) {
             setDuration(videoRef.current.duration);

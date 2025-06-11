@@ -52,7 +52,7 @@ const PostCalendar = (props) => {
   const updatePostData = async (eventInfo) => {
     const { title = "", extendedProps = {} } = eventInfo.event._def;
 
-    const { rowId, files, platform, postdate, status, socialPresets } =
+    const { rowId, files, platform, postdate, status, socialPresets, thumbnailPresets, thumbnailFiles } =
       extendedProps;
 
     if (!platform || platform.length == 0) return false;
@@ -72,6 +72,8 @@ const PostCalendar = (props) => {
       status: status,
       socialPresets: socialPresets ? JSON.parse(socialPresets) : null,
       postInsights,
+      thumbnailPresets: thumbnailPresets ? JSON.parse(thumbnailPresets) : null,
+      thumbnailFiles: thumbnailFiles ? thumbnailFiles : [],
     };
 
     setPostData(data);

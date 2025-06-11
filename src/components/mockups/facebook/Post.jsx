@@ -48,6 +48,9 @@ function Post({
     const mediaType = isContainImage(files[0]) ? "image" : "video";
     if (files[0] && files[0]?.name === thumbnailMedia[0]?.clickedOnFileName && mediaType === "video") {
       return thumbnailMedia[0]?.mediaUrl;
+    } else if(thumbnailMedia?.length > 0 && thumbnailMedia[0]?.via === "editPost"){
+          const mediaUrl = getSource(thumbnailMedia[0]?.file);
+          return mediaUrl;
     }
   }, [thumbnailMedia, files]);
 

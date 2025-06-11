@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Cross from "../svg/Cross";
 import Edit from "../svg/Edit";
 import MenuItems from "../svg/menu-items";
-import { isContainImage } from "../../utils";
+import { getSource, isContainImage } from "../../utils";
 import { useSelector } from "react-redux";
 import { deleteMedia } from "../../redux/features/thumbnailMediaSlice";
 import { useDispatch } from "react-redux";
@@ -25,11 +25,13 @@ const OnFileClickableAction = ({
       // || (item.platform === "Instagram" && item.mediaType === "STORY") || (item.platform === "Facebook_Page" && item.mediaType === "STORY")
   );
   const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
-
   const thumbnailSrc = useMemo(() => {
     const mediaType = isContainImage(file) ? "image" : "video";
     if (file && file?.name === thumbnailMedia[0]?.clickedOnFileName && mediaType === "video") {
       return thumbnailMedia[0]?.mediaUrl;
+    } else if(thumbnailMedia?.length > 0 && thumbnailMedia[0]?.via === "editPost"){
+      const mediaUrl = getSource(thumbnailMedia[0]?.file);
+      return mediaUrl;
     }
   }, [thumbnailMedia, file]);
 

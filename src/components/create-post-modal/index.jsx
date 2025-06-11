@@ -83,6 +83,8 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
+import { addMedia } from "../../redux/features/thumbnailMediaSlice.js";
+import { useDispatch } from "react-redux";
 const schdulePostBtnLabel = [
   {
     label: "Save As Draft",
@@ -125,7 +127,6 @@ const CreatePostModal = ({
     () => isEdit,
     [isEdit]
   );
-
   const [showReelOnFeedChecked, setShowReelOnFeedChecked] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [viewMode, setViewMode] = useState(0);
@@ -226,6 +227,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   const [loading, setLoading] = useState(false);
   const { broadcastConnection, validations, blockUI, setblockUI, getCounter } =
     useAppContext();
+  const dispatch = useDispatch();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
     () => validations && (!role || role?.fullAccessPlanner),
@@ -324,6 +326,24 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       size: size,
     });
   };
+
+  useEffect(() => {
+    if (postData?.thumbnailPresets?.length > 0 && postData?.thumbnailFiles?.length > 0) {
+      postData.thumbnailPresets.forEach((preset) => {
+        dispatch(
+          addMedia({
+            id: Math.random(), // Generate a unique ID for each media item
+            mediaType: preset.mediaType,
+            mediaUrl: preset.thumbnail?.mediaUrl || "",
+            navigationUrl: "https://example.com", // Example navigation URL
+            file: postData?.thumbnailFiles[0],// Pass the matched file or null
+            clickedOnFileName: null, // Use the filename from the matched 
+            via:"editPost",
+          })
+        );
+      });
+    }
+  }, [postData?.thumbnailPresets, postData?.thumbnailFiles]);
 
   const calculateAspectRatio = (width, height) => {
     return width / height;

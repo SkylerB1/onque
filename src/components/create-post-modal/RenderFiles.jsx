@@ -10,7 +10,7 @@ import MenuItems from "../svg/menu-items";
 import PopoverMenu from "../modal/PopoverMenu";
 import ImgUploadModal from "../upload-modal/ImageUploadModal";
 
-import { addMedia } from "../../redux/features/thumbnailMediaSlice";
+import { addMedia, deleteMedia } from "../../redux/features/thumbnailMediaSlice";
 import OnFileClickableAction from "../FileClickable/FileClickableAction";
 import VideoSliderPopover from "../videoSliderPopover/videoSliderPopover";
 
@@ -52,6 +52,7 @@ const RenderFiles = ({
     const reorderedFiles = Array.from(files);
     const [movedFile] = reorderedFiles.splice(result.source.index, 1);
     reorderedFiles.splice(result.destination.index, 0, movedFile);
+    dispatch(deleteMedia());
     reorderedFiles.forEach((file, index) => {
       const mediaUrl = getSource(file);
       addMediaItem(file.type, mediaUrl, file);
@@ -61,6 +62,7 @@ const RenderFiles = ({
 const handleFile = (files, mediaType) => {
   setimgUploadModal(false);
   setModelImageForThumbnail(true);
+  dispatch(deleteMedia());
   files.forEach((item) => {
     const mediaUrl = getSource(item);
     addMediaItem(mediaType, mediaUrl, item); // ✅ This is all you need

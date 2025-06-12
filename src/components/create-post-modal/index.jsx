@@ -83,7 +83,7 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
-import { addMedia } from "../../redux/features/thumbnailMediaSlice.js";
+import { addMedia, deleteMedia } from "../../redux/features/thumbnailMediaSlice.js";
 import { useDispatch } from "react-redux";
 const schdulePostBtnLabel = [
   {
@@ -275,10 +275,12 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   };
   const toggleimgUploadModal = () => {
     setimgUploadModal(!showimgUploadModal);
+    dispatch(deleteMedia());
     closeEmoji();
   };
   const toggleVideoUploadModal = () => {
     setVideoUploadModal(!showVideoUploadModal);
+    dispatch(deleteMedia());
     closeEmoji();
   };
   const toggleImageEditorModal = () => {

@@ -32,7 +32,7 @@ export const thumbnailMediaSlice = createSlice({
     },
     deleteMedia: (state, action) => {
       if (!action.payload) {
-        state.value = null; // Clear all media
+        state.value = [];
       } else if (state.value) {
         state.value = state.value.filter((item) => item.id !== action.payload);
       }

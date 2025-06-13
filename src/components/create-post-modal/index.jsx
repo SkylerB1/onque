@@ -2070,6 +2070,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                       setShowReelOnFeedChecked={setShowReelOnFeedChecked}
                       connections={connections}
                       setModelImageForThumbnail={setModelImageForThumbnail}
+                      activeId={postData?.id}
+                      isEdit={isEdit}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">

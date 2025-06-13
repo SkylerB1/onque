@@ -25,6 +25,8 @@ const RenderFiles = ({
   setFiles,
   selectedPlaforms,
   setModelImageForThumbnail,
+  activeId,
+  isEdit
 }) => {
   const memoizedSources = useMemo(() => {
     return Array.isArray(files) && files.map((file) => getSource(file));
@@ -216,6 +218,8 @@ const handleFile = (files, mediaType) => {
                           removeimg={removeimg}
                           selectedPlaforms={selectedPlaforms}
                           filesCount={files.length}
+                          activeId={activeId}
+                          isEdit={isEdit}
                         />
                         <PopoverMenu
                           anchorEl={anchorEl}

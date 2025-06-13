@@ -2,10 +2,11 @@ import React, { useMemo } from "react";
 import Cross from "../svg/Cross";
 import Edit from "../svg/Edit";
 import MenuItems from "../svg/menu-items";
-import { getSource, isContainImage } from "../../utils";
+import { API_URL, getSource, isContainImage } from "../../utils";
 import { useSelector } from "react-redux";
 import { deleteMedia } from "../../redux/features/thumbnailMediaSlice";
 import { useDispatch } from "react-redux";
+import { axiosInstance } from "../../utils/Interceptor";
 
 const OnFileClickableAction = ({
   file,
@@ -14,7 +15,9 @@ const OnFileClickableAction = ({
   onClickEdit,
   removeimg,
   selectedPlaforms,
-  filesCount
+  filesCount,
+  activeId,
+  isEdit
 }) => {
   const dispatch = useDispatch();
   const platformCondition = selectedPlaforms.some(
@@ -34,6 +37,25 @@ const OnFileClickableAction = ({
       return mediaUrl;
     }
   }, [thumbnailMedia, file]);
+
+    const user = useSelector((state) => state.user.value);
+    const brandId = user?.brand?.id;
+    const UPDATE_POST_URL =
+      API_URL + `/user/update/thumbnail/post/${activeId}?brandId=${brandId}`;
+
+  const removethumbnailImage = async () => { 
+      let data = {
+        thumbnailPresets: null,
+        thumbnailFiles: null,
+      }
+      if(isEdit) {
+        dispatch(deleteMedia())
+        const response = await axiosInstance.put(UPDATE_POST_URL, data);
+      } else {
+        dispatch(deleteMedia())
+      }
+  }
+
 
   return (
     <>
@@ -60,7 +82,7 @@ const OnFileClickableAction = ({
             alt="Thumbnail"
           />
           <div
-            onClick={() => dispatch(deleteMedia())}
+            onClick={() => removethumbnailImage()}
             className="absolute -top-2 -right-2 w-5 h-5 hidden group-hover:flex items-center justify-center cursor-pointer transition"
           >
             <Cross width={12} height={12} />

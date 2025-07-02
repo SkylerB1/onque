@@ -14,14 +14,25 @@ import VideoComponent from "../../video/VideoComponent";
 import ImageComponent from "../../Image/ImageComponent";
 import { getSource, isContainImage } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
+import { useSelector } from "react-redux";
 
-function Post({ files, captions, viewMode, screenName, date }) {
+function Post({
+  files,
+  captions,
+  viewMode,
+  screenName,
+  date,
+  likeCount = 0,
+  commentCount = 0,
+}) {
   const [play, setPlay] = useState([false, false, false, false, false]);
+
   const videoRef = useRef([]);
   const [filteredFiles, setFilteredFiles] = useState([]);
   const memoizedSources = useMemo(() => {
     return filteredFiles.map((file) => getSource(file));
   }, [filteredFiles]);
+  const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
 
   const togglePlay = useCallback(
     (index) => {
@@ -32,6 +43,25 @@ function Post({ files, captions, viewMode, screenName, date }) {
     },
     [play]
   );
+
+  const thumbnailSrc = useMemo(() => {
+    const mediaType = isContainImage(files[0]) ? "image" : "video";
+    if (files[0] && files[0]?.name === thumbnailMedia[0]?.clickedOnFileName && mediaType === "video") {
+      return thumbnailMedia[0]?.mediaUrl;
+    } else if(thumbnailMedia?.length > 0 && thumbnailMedia[0]?.via === "editPost"){
+          const mediaUrl = getSource(thumbnailMedia[0]?.file);
+          return mediaUrl;
+    }
+  }, [thumbnailMedia, files]);
+
+  useEffect(() => {
+    const videoEl = videoRef.current?.[0];
+    if (videoEl && typeof videoEl.load === "function" && thumbnailSrc) {
+      videoEl.load();
+    }
+  }, [thumbnailSrc]);
+  
+
 
   useEffect(() => {
     if (files?.length > 0) {
@@ -55,7 +85,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
     const src = memoizedSources[index];
     return (
       <VideoComponent
-        ref={(el) => (videoRef.current[0] = el)}
+        ref={(el) => (videoRef.current[index] = el)}
         className={"w-full h-full object-cover"}
         key={index}
         index={index}
@@ -68,6 +98,7 @@ function Post({ files, captions, viewMode, screenName, date }) {
         onTogglePlay={togglePlay}
         icon={<FacebookPlay width={40} height={40} />}
         draggable="false"
+        poster={thumbnailSrc}
       />
     );
   };
@@ -251,13 +282,13 @@ function Post({ files, captions, viewMode, screenName, date }) {
         <div className="flex flex-row items-center">
           <Like width={20} height={20} fill="#65676B" />
           <p className="text-[#65676B] ml-2 text-sm font-bold font-['sans-serif','Arial','Helvetica']">
-            Like
+            {likeCount > 0 ? likeCount : "Like"}
           </p>
         </div>
         <div className="flex flex-row items-center">
           <Comment width={16} height={15} fill="#65676B" />
           <p className="text-[#65676B] ml-2  text-sm font-bold font-['sans-serif','Arial','Helvetica']">
-            Comment
+            {commentCount > 0 ? commentCount : "Comment"}
           </p>
         </div>
         <div className="flex flex-row items-center">

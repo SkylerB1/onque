@@ -55,10 +55,13 @@ const Calendar = () => {
               platform: item.platform,
               contentType: "post",
               socialPresets: item?.socialPresets,
+              thumbnailPresets: item?.thumbnailPresets,
+              thumbnailFiles: typeof item.thumbnailFiles === "string"
+                ? JSON.parse(item.thumbnailFiles)
+                : item.thumbnailFiles,
             };
           });
-
-        setEvents(data);
+          setEvents(data);
         await getCounter(brandId);
       } else {
         console.log("Error fetching Twitter data");

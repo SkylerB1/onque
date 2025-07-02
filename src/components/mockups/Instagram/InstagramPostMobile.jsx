@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper";
 import Save from "../../../assets/save.svg?react";
@@ -11,14 +11,17 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "./styles.css";
-import { getSource, isContainVideo } from "../../../utils";
+import { getSource, isContainImage, isContainVideo } from "../../../utils";
 import UserIcon from "../../../assets/userIcon";
 import HeartOutline from "../../../assets/HeartOutline";
 import InstaShareOutline from "../../../assets/InstaShareOutline";
 import CommentOutline from "../../../assets/CommentOutline";
 import HorizontalDots from "../../../assets/HorizontalDots";
+import { useSelector } from "react-redux";
 
 function InstagramPostMobile({ files, captions, viewMode, screenName }) {
+  const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
+  const videoTimeData = useSelector((state) => state.videoSlider); 
   const [muted, setMuted] = useState(false);
   const memoizedSources = useMemo(() => {
     return files.map((file) => getSource(file));
@@ -27,6 +30,36 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
   }, [muted]);
+
+    const videoRef = useRef(null);
+
+    const thumbnailSrc = useMemo(() => {
+      const mediaType = isContainImage(files[0]) ? "image" : "video";
+      if (files[0] && files[0]?.name === thumbnailMedia[0]?.clickedOnFileName && mediaType === "video") {
+        return thumbnailMedia[0]?.mediaUrl;
+      } else if(thumbnailMedia?.length > 0 && thumbnailMedia[0].via === "editPost"){
+            const mediaUrl = getSource(thumbnailMedia[0].file);
+            return mediaUrl;
+      }
+    }, [thumbnailMedia, files]);
+
+
+
+    useEffect(() => {
+      if (
+        videoRef.current &&
+        videoTimeData?.fileName === files[0]?.name &&
+        typeof videoTimeData?.timeInSeconds === "number"
+      ) {
+        videoRef.current.currentTime = videoTimeData.timeInSeconds;
+      }
+    }, [videoTimeData, files]);
+  
+    useEffect(() => {
+      if (videoRef.current && thumbnailSrc) {
+        videoRef.current.load();
+      }
+    }, [thumbnailSrc]);
 
   return (
     <>
@@ -52,13 +85,15 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                   <>
                     <video
                       key={key}
+                      ref={videoRef}
                       className=" w-full h-full object-contain"
                       loop={true}
-                      autoPlay={true}
+                      autoPlay={false}
                       muted={muted}
-                      controls={false}
+                      controls={true}
                       src={src}
                       draggable="false"
+                      poster={thumbnailSrc}
                     />
 
                     <div
@@ -107,13 +142,15 @@ function InstagramPostMobile({ files, captions, viewMode, screenName }) {
                     <SwiperSlide key={key}>
                       <video
                         key={key}
+                        ref={videoRef}
                         className="w-full h-full object-contain"
                         loop={true}
-                        autoPlay={true}
+                        autoPlay={false}
                         muted={muted}
-                        controls={false}
+                        controls={true}
                         src={src}
                         draggable="false"
+                        poster={thumbnailSrc}
                       />
 
                       <div

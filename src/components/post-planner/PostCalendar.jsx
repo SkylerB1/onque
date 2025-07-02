@@ -22,6 +22,7 @@ import StoryCarousel from "../mockups/facebook/StoryCarousel";
 import { useAppContext } from "../../context/AuthContext";
 import { axiosInstance } from "../../utils/Interceptor";
 import { API_URL, toastrError, toastrSuccess } from "../../utils";
+import PostsService from "../../services/PostsService";
 
 const PostCalendar = (props) => {
   const { validations } = useAppContext();
@@ -51,10 +52,18 @@ const PostCalendar = (props) => {
   const updatePostData = async (eventInfo) => {
     const { title = "", extendedProps = {} } = eventInfo.event._def;
 
-    const { rowId, files, platform, postdate, status, socialPresets } =
+    const { rowId, files, platform, postdate, status, socialPresets, thumbnailPresets, thumbnailFiles } =
       extendedProps;
 
     if (!platform || platform.length == 0) return false;
+
+    // get the post insights data
+    let result = await PostsService.getPostInsights(rowId);
+    let postInsights = [];
+    if (result.status === true) {
+      postInsights = result.data.postInsights;
+    }
+
     const data = {
       caption: title,
       id: rowId,
@@ -62,6 +71,9 @@ const PostCalendar = (props) => {
       platforms: isJSON(platform) ? JSON.parse(platform) : platform,
       status: status,
       socialPresets: socialPresets ? JSON.parse(socialPresets) : null,
+      postInsights,
+      thumbnailPresets: thumbnailPresets ? JSON.parse(thumbnailPresets) : null,
+      thumbnailFiles: thumbnailFiles ? thumbnailFiles : [],
     };
 
     setPostData(data);
@@ -180,65 +192,67 @@ const PostCalendar = (props) => {
     <>
       <div className="md:my-2 xl:mt-24 lg:mt-24">
         {/* Role Info Section */}
-        {textForRoleInfo != null && textForRoleInfo.length != 0 && showAlert && (
-          <>
-            <div
-              id="alert-additional-content-1"
-              className="relative p-4 mb-4 mt-8 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
-              role="alert"
-            >
-              <div className="flex items-center">
-                <svg
-                  className="flex-shrink-0 w-4 h-4 me-2"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                </svg>
-                <span className="sr-only">Info</span>
-                <h3 className="text-lg font-medium">
-                  {textForRoleInfo &&
-                    textForRoleInfo?.map(
-                      (value, index) =>
-                        value.title +
-                        (textForRoleInfo.length - 1 < index ? " , " : "")
-                    )}
-                </h3>
-                <button
-                type="button"
-                className="absolute top-2 right-2 text-blue-800 bg-transparent hover:bg-blue-200 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white"
-                onClick={() => setShowAlert(false)} // Hide the alert
+        {textForRoleInfo != null &&
+          textForRoleInfo.length != 0 &&
+          showAlert && (
+            <>
+              <div
+                id="alert-additional-content-1"
+                className="relative p-4 mb-4 mt-8 text-blue-800 border border-blue-300 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400 dark:border-blue-800"
+                role="alert"
               >
-                <svg
-                  aria-hidden="true"
-                  className="w-5 h-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-                <span className="sr-only">Close</span>
-              </button>
+                <div className="flex items-center">
+                  <svg
+                    className="flex-shrink-0 w-4 h-4 me-2"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                  </svg>
+                  <span className="sr-only">Info</span>
+                  <h3 className="text-lg font-medium">
+                    {textForRoleInfo &&
+                      textForRoleInfo?.map(
+                        (value, index) =>
+                          value.title +
+                          (textForRoleInfo.length - 1 < index ? " , " : "")
+                      )}
+                  </h3>
+                  <button
+                    type="button"
+                    className="absolute top-2 right-2 text-blue-800 bg-transparent hover:bg-blue-200 rounded-lg text-sm p-1.5 inline-flex items-center dark:hover:bg-gray-700 dark:hover:text-white"
+                    onClick={() => setShowAlert(false)} // Hide the alert
+                  >
+                    <svg
+                      aria-hidden="true"
+                      className="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      ></path>
+                    </svg>
+                    <span className="sr-only">Close</span>
+                  </button>
+                </div>
+                <div className="mt-2 mb-4 text-sm">
+                  {textForRoleInfo &&
+                    textForRoleInfo?.map((value, index) => (
+                      <React.Fragment key={index}>
+                        {value.description}
+                        <br />
+                      </React.Fragment>
+                    ))}
+                </div>
               </div>
-              <div className="mt-2 mb-4 text-sm">
-                {textForRoleInfo &&
-                  textForRoleInfo?.map((value, index) => (
-                    <React.Fragment key={index}>
-                      {value.description}
-                      <br />
-                    </React.Fragment>
-                  ))}
-              </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
         {/* Role Info Section End Here */}
         {fullAccess && (
           <>

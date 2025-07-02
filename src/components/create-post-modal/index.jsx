@@ -20,6 +20,7 @@ import { axiosInstance } from "../../utils/Interceptor";
 import {
   API_URL,
   SocialPlatforms,
+  getSource,
   isContainImage,
   isContainVideo,
   toastrError,
@@ -82,7 +83,8 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
-
+import { addMedia, deleteMedia } from "../../redux/features/thumbnailMediaSlice.js";
+import { useDispatch } from "react-redux";
 const schdulePostBtnLabel = [
   {
     label: "Save As Draft",
@@ -125,7 +127,6 @@ const CreatePostModal = ({
     () => isEdit,
     [isEdit]
   );
-
   const [showReelOnFeedChecked, setShowReelOnFeedChecked] = useState(false);
   const [openSubscriptionModal, setOpenSubscriptionModal] = useState(false);
   const [viewMode, setViewMode] = useState(0);
@@ -143,12 +144,15 @@ const CreatePostModal = ({
   const [selectedPlaforms, setSelectedPlatforms] = useState([]);
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
+  const [modelImageForThumbnail, setModelImageForThumbnail] = useState(false);
   const [submitButton, setSubmitButton] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "Save As Draft" : "Schedule"
   );
   const [submitButtonKey, setSubmitButtonKey] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
+const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];  
+const videoTimeData = useSelector((state) => state.videoSlider);
 
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
@@ -223,6 +227,7 @@ const CreatePostModal = ({
   const [loading, setLoading] = useState(false);
   const { broadcastConnection, validations, blockUI, setblockUI, getCounter } =
     useAppContext();
+  const dispatch = useDispatch();
   const role = useMemo(() => validations?.brandRole?.role, [validations]);
   const editAccess = useMemo(
     () => validations && (!role || role?.fullAccessPlanner),
@@ -270,10 +275,12 @@ const CreatePostModal = ({
   };
   const toggleimgUploadModal = () => {
     setimgUploadModal(!showimgUploadModal);
+    dispatch(deleteMedia());
     closeEmoji();
   };
   const toggleVideoUploadModal = () => {
     setVideoUploadModal(!showVideoUploadModal);
+    dispatch(deleteMedia());
     closeEmoji();
   };
   const toggleImageEditorModal = () => {
@@ -322,6 +329,24 @@ const CreatePostModal = ({
     });
   };
 
+  useEffect(() => {
+    if (postData?.thumbnailPresets?.length > 0 && postData?.thumbnailFiles?.length > 0) {
+      postData.thumbnailPresets.forEach((preset) => {
+        dispatch(
+          addMedia({
+            id: Math.random(), // Generate a unique ID for each media item
+            mediaType: preset.mediaType,
+            mediaUrl: preset.thumbnail?.mediaUrl || "",
+            navigationUrl: "https://example.com", // Example navigation URL
+            file: postData?.thumbnailFiles[0],// Pass the matched file or null
+            clickedOnFileName: null, // Use the filename from the matched 
+            via:"editPost",
+          })
+        );
+      });
+    }
+  }, [postData?.thumbnailPresets, postData?.thumbnailFiles]);
+
   const calculateAspectRatio = (width, height) => {
     return width / height;
   };
@@ -354,6 +379,34 @@ const CreatePostModal = ({
       return media;
     }
   };
+
+  const uploadThumbnailFiles = async (thumbnailMedia) => {
+    const formData = new FormData();
+    const media = []; // ✅ define media here
+  
+    thumbnailMedia.forEach((item) => {
+      if (item.file instanceof File) {
+        formData.append("files", item.file);
+      } else {
+        media.push(item); // if no File, keep it as-is
+      }
+    });
+  
+    if (Array.from(formData.keys()).length > 0) {
+      try {
+        const response = await axiosInstance.post(UPLOAD_FILE_URL, formData);
+        return [...media, ...response.data?.files];
+      } catch (err) {
+        console.error("Thumbnail upload failed", err);
+        return [];
+      }
+    } else {
+      return media;
+    }
+  };
+  
+  
+  
 
   const handleClose = () => {
     setModal(false);
@@ -421,16 +474,20 @@ const CreatePostModal = ({
   const handlePublish = async () => {
     handleLoading(true);
 
-    let media = [];
+    let media  = [];
     if (files?.length > 0) {
       media = await uploadFiles();
     }
-
+    let thumbnailImage = [];
+    if (thumbnailMedia?.length > 0) {
+      thumbnailImage = await uploadThumbnailFiles(thumbnailMedia);
+    }
     let filteredSelectedPlatforms =
       removeNonExistingConnectionsFromSelectedPlatforms(
         selectedPlaforms,
         connections
       );
+
     let providers =
       Array.isArray(filteredSelectedPlatforms) &&
       filteredSelectedPlatforms.map((item) => ({
@@ -438,14 +495,34 @@ const CreatePostModal = ({
         mediaType: item.mediaType,
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
       }));
+
+      let thumbnailData = filteredSelectedPlatforms.map((item) => {    
+        const thumbnail = thumbnailMedia.find(
+          (file) => file?.clickedOnFileName === files[0]?.name 
+        );
+        return {
+          platform: item.platform,
+          mediaType: item.mediaType,
+          thumbnail: thumbnail
+            ? {
+                imageName: thumbnail.file?.name || null,
+                mediaUrl: thumbnail.mediaUrl || null,
+              }
+            : null,
+          thumbnailTimeRange: videoTimeData?.fileName === files[0]?.name 
+            ? videoTimeData?.timeInSeconds
+            : null,
+        };
+      });
     const data = {
       providers: providers,
       caption,
       scheduledDate,
       files: media,
       submitButtonKey: submitButtonKey,
+      thumbnailData: thumbnailData,
+      thumbnailFiles: thumbnailImage,
     };
-
     if (isEdit && postData) {
       updatePost(data);
     } else {
@@ -504,6 +581,7 @@ const CreatePostModal = ({
   };
 
   const handleFile = (file) => {
+
     setimgUploadModal(false);
     setVideoUploadModal(false);
     setFiles((prevFiles) => [...prevFiles, ...file]);
@@ -571,6 +649,24 @@ const CreatePostModal = ({
     setSubmitButtonKey(key);
   };
 
+  const getPostLikesComment = (platform, mediaType) => {
+    let { postInsights = [] } = postData || {};
+    let likeCount = 0;
+    let commentCount = 0;
+    Array.isArray(postInsights) &&
+      postInsights.find((insight) => {
+        if (
+          insight.mediaType == "POST" &&
+          insight.mediaType === mediaType &&
+          insight.platform === platform
+        ) {
+          likeCount = insight.likes;
+          commentCount = insight.comments;
+        }
+      });
+
+    return { likeCount, commentCount };
+  };
   const handlePreview = useCallback(() => {
     if (selectedPreview) {
       const { platform = "", mediaType = "" } = selectedPreview;
@@ -582,7 +678,10 @@ const CreatePostModal = ({
       if (!connection) {
         return <></>;
       }
-
+      let { likeCount, commentCount } = getPostLikesComment(
+        platform,
+        mediaType
+      );
       const Component = platformComponentMap[platform];
 
       const presets = additionalPresets[platform];
@@ -597,6 +696,8 @@ const CreatePostModal = ({
           date,
           data: presets,
           mediaType: mediaType,
+          likeCount,
+          commentCount,
         });
 
         return component;
@@ -1824,8 +1925,9 @@ const CreatePostModal = ({
           <Dropzone
             noClick={true}
             onDrop={(file) => {
-              handleFile(file);
-            }}
+              if (!modelImageForThumbnail) {
+                handleFile(file);
+              }}}
           >
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
@@ -1967,6 +2069,9 @@ const CreatePostModal = ({
                       showReelOnFeedChecked={showReelOnFeedChecked}
                       setShowReelOnFeedChecked={setShowReelOnFeedChecked}
                       connections={connections}
+                      setModelImageForThumbnail={setModelImageForThumbnail}
+                      activeId={postData?.id}
+                      isEdit={isEdit}
                     />
                     {errors.length > 0 && (
                       <div className="border border-red-600 rounded-md p-2 mx-2 max-h-32 relative text-red">

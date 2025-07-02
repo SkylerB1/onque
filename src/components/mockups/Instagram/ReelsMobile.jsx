@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState, useEffect } from "react";
-import { getSource, isContainVideo } from "../../../utils";
+import { getSource, isContainImage, isContainVideo } from "../../../utils";
 import AudioMuted from "../../svg/AudioMuted";
 import UserIcon from "../../../assets/userIcon";
 import HeartOutline from "../../../assets/HeartOutline";
@@ -9,13 +9,16 @@ import SaveOutline from "../../../assets/SaveOutline";
 import HorizontalDots from "../../../assets/HorizontalDots";
 import AudioFilled from "../../../assets/AudioFilled";
 import VideoLoader from "../../loader/VideoLoader";
+import { useSelector } from "react-redux";
+import { useRef } from "react";
 
 function ReelsMobile({ files, viewMode, captions, screenName }) {
+  const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
   const [muted, setMuted] = useState(true);
   const [progress, setProgress] = useState(0);
   const [videoSrc, setVideoSrc] = useState(null);
   const [isVideoLoaded, setIsVideoLoaded] = useState(false); // State to track if video is loaded
-
+  const videoRef = useRef(null);
   const src = useMemo(() => getSource(files[0]), [files]);
   const toggleAudio = useCallback(() => {
     setMuted(!muted);
@@ -48,7 +51,24 @@ function ReelsMobile({ files, viewMode, captions, screenName }) {
 
     xhr.send();
   };
+  
+    const thumbnailSrc = useMemo(() => {
+      const mediaType = isContainImage(files[0]) ? "image" : "video";
+      if (files[0] && files[0]?.name === thumbnailMedia[0]?.clickedOnFileName && mediaType === "video") {
+        return thumbnailMedia[0]?.mediaUrl;
+      } else if(thumbnailMedia?.length > 0 && thumbnailMedia[0]?.via === "editPost"){
+            const mediaUrl = getSource(thumbnailMedia[0]?.file);
+            return mediaUrl;
+      }
+    }, [thumbnailMedia, files]);
+  
+    useEffect(() => {
+      if (videoRef.current && thumbnailSrc) {
+        videoRef.current.load();
+      }
+    }, [thumbnailSrc]);
 
+  
   useEffect(() => {
     if (files?.length > 0 && isContainVideo(files[0]) && !isVideoLoaded) {
       downloadVideo(src); // Start downloading the video only if it's not already loaded
@@ -92,6 +112,7 @@ function ReelsMobile({ files, viewMode, captions, screenName }) {
                 controls={false}
                 src={videoSrc}
                 draggable="false"
+                poster={thumbnailSrc}
               />
             )}
           </>

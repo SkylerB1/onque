@@ -9,6 +9,12 @@ PostsService.createPost = async function (brandId, data) {
   return response;
 };
 
+PostsService.getPostInsights = async function (postId) {
+  let data = { postId };
+  const response = await axiosInstance.post(`/user/get-post-insights`, data);
+  return response.data;
+};
+
 PostsService.getPostData = async function (brandId) {
   const response = await axiosInstance.get(`user/getPostData/${brandId}`);
   return response;

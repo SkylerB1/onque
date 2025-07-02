@@ -59,11 +59,12 @@ export const ConnectUrlFn = (pageName, brandId) => {
   return ConnectUrl[pageName];
 };
 export const getSource = (file) => {
+  let fileName = file?.name || file?.filename;
   if (file) {
     if (file instanceof File || file instanceof Blob) {
       return URL.createObjectURL(file);
     } else {
-      return POST_IMG_BASE_PATH + file?.filename;
+      return POST_IMG_BASE_PATH + fileName;
     }
   } else {
     return "";

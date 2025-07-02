@@ -27,7 +27,6 @@ const SocialPlatform = ({
   const selected =
     Array.isArray(selectedPlaforms) &&
     selectedPlaforms.find((item) => item.platform === platform);
-
   const {
     mediaOptions,
     mediaType,

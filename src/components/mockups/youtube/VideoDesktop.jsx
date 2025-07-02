@@ -13,11 +13,15 @@ import Fullscreen from "../../../assets/fullscreen.svg?react";
 import { getSource, isContainVideo } from "../../../utils";
 import HorizontalDots from "../../../assets/HorizontalDots";
 import AudioFilled from "../../../assets/AudioFilled";
+import { useSelector } from "react-redux";
 
 function VideoDesktop({ data, files, screenName }) {
+
+  const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
   const { title } = data;
   const [play, setPlay] = useState(false);
   const src = useMemo(() => getSource(files[0]), [files]);
+
   const videoRef = useRef(null);
 
   const handlePlay = () => {
@@ -32,6 +36,24 @@ function VideoDesktop({ data, files, screenName }) {
     }
   }, [play]);
 
+  const thumbnailSrc = useMemo(() => {
+    if (files[0] && files[0]?.name === thumbnailMedia[0]?.clickedOnFileName) {
+      return thumbnailMedia[0]?.mediaUrl;
+    }
+    else if(thumbnailMedia?.length > 0 && thumbnailMedia[0]?.via === "editPost"){
+                const mediaUrl = getSource(thumbnailMedia[0]?.file);
+                return mediaUrl;
+          }
+  }, [thumbnailMedia, files]);
+
+  useEffect(() => {
+    if (videoRef.current && thumbnailSrc) {
+      videoRef.current.load();
+    }
+  }, [thumbnailSrc]);
+
+  
+
   return (
     <>
       <div className="relative bg-black  w-full h-96 flex justify-center items-center">
@@ -45,6 +67,7 @@ function VideoDesktop({ data, files, screenName }) {
           <>
             <video
               draggable="false"
+              poster={thumbnailSrc}
               className="w-full h-full object-cover"
               muted
               ref={videoRef}

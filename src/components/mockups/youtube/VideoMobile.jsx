@@ -10,8 +10,11 @@ import { Typography } from "@material-tailwind/react";
 import PlayPrevious from "../../../assets/PlayPrevious";
 import PlayNext from "../../../assets/PlayNext";
 import { getSource, isContainVideo } from "../../../utils";
+import { useSelector } from "react-redux";
 
 function VideoMobile({ files, data, screenName }) {
+
+  const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];
   const { title = "" } = data;
   const [play, setPlay] = useState(false);
   const src = useMemo(() => getSource(files[0]), [files]);
@@ -21,6 +24,22 @@ function VideoMobile({ files, data, screenName }) {
   const handlePlay = () => {
     setPlay(!play);
   };
+
+  const thumbnailSrc = useMemo(() => {
+    if (files[0] && files[0]?.name === thumbnailMedia[0]?.clickedOnFileName) {
+      return thumbnailMedia[0]?.mediaUrl;
+    }
+    else if(thumbnailMedia?.length > 0 && thumbnailMedia[0]?.via === "editPost"){
+                const mediaUrl = getSource(thumbnailMedia[0]?.file);
+                return mediaUrl;
+          }
+  }, [thumbnailMedia, files]);
+
+  useEffect(() => {
+    if (videoRef.current && thumbnailSrc) {
+      videoRef.current.load();
+    }
+  }, [thumbnailSrc]);
 
   useEffect(() => {
     if (play) {
@@ -59,6 +78,7 @@ function VideoMobile({ files, data, screenName }) {
               onEnded={handlePlay}
               controls={true}
               src={src}
+              poster={thumbnailSrc}
             />
             <div
               className={`absolute ${

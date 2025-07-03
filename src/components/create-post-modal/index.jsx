@@ -83,7 +83,10 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
-import { addMedia, deleteMedia } from "../../redux/features/thumbnailMediaSlice.js";
+import {
+  addMedia,
+  deleteMedia,
+} from "../../redux/features/thumbnailMediaSlice.js";
 import { useDispatch } from "react-redux";
 const schdulePostBtnLabel = [
   {
@@ -151,8 +154,9 @@ const CreatePostModal = ({
   const [submitButtonKey, setSubmitButtonKey] = useState(
     postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
   );
-const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];  
-const videoTimeData = useSelector((state) => state.videoSlider);
+  const thumbnailMedia =
+    useSelector((state) => state.thumbnailMedia.value) || [];
+  const videoTimeData = useSelector((state) => state.videoSlider);
 
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
@@ -330,7 +334,10 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   };
 
   useEffect(() => {
-    if (postData?.thumbnailPresets?.length > 0 && postData?.thumbnailFiles?.length > 0) {
+    if (
+      postData?.thumbnailPresets?.length > 0 &&
+      postData?.thumbnailFiles?.length > 0
+    ) {
       postData.thumbnailPresets.forEach((preset) => {
         dispatch(
           addMedia({
@@ -338,9 +345,9 @@ const videoTimeData = useSelector((state) => state.videoSlider);
             mediaType: preset.mediaType,
             mediaUrl: preset.thumbnail?.mediaUrl || "",
             navigationUrl: "https://example.com", // Example navigation URL
-            file: postData?.thumbnailFiles[0],// Pass the matched file or null
-            clickedOnFileName: null, // Use the filename from the matched 
-            via:"editPost",
+            file: postData?.thumbnailFiles[0], // Pass the matched file or null
+            clickedOnFileName: null, // Use the filename from the matched
+            via: "editPost",
           })
         );
       });
@@ -383,7 +390,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   const uploadThumbnailFiles = async (thumbnailMedia) => {
     const formData = new FormData();
     const media = []; // ✅ define media here
-  
+
     thumbnailMedia.forEach((item) => {
       if (item.file instanceof File) {
         formData.append("files", item.file);
@@ -391,7 +398,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         media.push(item); // if no File, keep it as-is
       }
     });
-  
+
     if (Array.from(formData.keys()).length > 0) {
       try {
         const response = await axiosInstance.post(UPLOAD_FILE_URL, formData);
@@ -404,9 +411,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       return media;
     }
   };
-  
-  
-  
 
   const handleClose = () => {
     setModal(false);
@@ -474,7 +478,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   const handlePublish = async () => {
     handleLoading(true);
 
-    let media  = [];
+    let media = [];
     if (files?.length > 0) {
       media = await uploadFiles();
     }
@@ -496,24 +500,25 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
       }));
 
-      let thumbnailData = filteredSelectedPlatforms.map((item) => {    
-        const thumbnail = thumbnailMedia.find(
-          (file) => file?.clickedOnFileName === files[0]?.name 
-        );
-        return {
-          platform: item.platform,
-          mediaType: item.mediaType,
-          thumbnail: thumbnail
-            ? {
-                imageName: thumbnail.file?.name || null,
-                mediaUrl: thumbnail.mediaUrl || null,
-              }
-            : null,
-          thumbnailTimeRange: videoTimeData?.fileName === files[0]?.name 
+    let thumbnailData = filteredSelectedPlatforms.map((item) => {
+      const thumbnail = thumbnailMedia.find(
+        (file) => file?.clickedOnFileName === files[0]?.name
+      );
+      return {
+        platform: item.platform,
+        mediaType: item.mediaType,
+        thumbnail: thumbnail
+          ? {
+              imageName: thumbnail.file?.name || null,
+              mediaUrl: thumbnail.mediaUrl || null,
+            }
+          : null,
+        thumbnailTimeRange:
+          videoTimeData?.fileName === files[0]?.name
             ? videoTimeData?.timeInSeconds
             : null,
-        };
-      });
+      };
+    });
     const data = {
       providers: providers,
       caption,
@@ -581,7 +586,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   };
 
   const handleFile = (file) => {
-
     setimgUploadModal(false);
     setVideoUploadModal(false);
     setFiles((prevFiles) => [...prevFiles, ...file]);
@@ -1185,6 +1189,18 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                   platform: "facebook",
                   error:
                     "Facebook - Mixing images/gifs/videos/documents is not allowed nor selecting more than 1 gif/video/document.",
+                },
+              ]);
+            }
+
+            if (videosCount > 1) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: 0,
+                  type: "",
+                  platform: "facebook",
+                  error: "Facebook -  Max videos allowed 1.",
                 },
               ]);
             }
@@ -1927,7 +1943,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
             onDrop={(file) => {
               if (!modelImageForThumbnail) {
                 handleFile(file);
-              }}}
+              }
+            }}
           >
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div

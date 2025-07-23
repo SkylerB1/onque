@@ -59,6 +59,7 @@ const RenderFiles = ({
       const mediaUrl = getSource(file);
       addMediaItem(file.type, mediaUrl, file);
     });
+    setFiles(reorderedFiles);
   };
 
 const handleFile = (files, mediaType) => {

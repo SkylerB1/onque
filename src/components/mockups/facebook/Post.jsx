@@ -83,11 +83,12 @@ function Post({
 
   const renderVideoComponent = (index = 0) => {
     const src = memoizedSources[index];
+    const fileKey = filteredFiles[index]?.name || src || index;
     return (
       <VideoComponent
         ref={(el) => (videoRef.current[index] = el)}
         className={"w-full h-full object-cover"}
-        key={index}
+        key={fileKey}
         index={index}
         loop={true}
         autoPlay={false}

@@ -308,6 +308,25 @@ export const SocialPlatforms = {
 export const plansList = () => {
   return [
     {
+      key: "single",
+      icon: StarterPlanPng, // You can use a unique icon if available
+      title: "Single Plan",
+      color: "#6EC1E4",
+      bgClass: "bg_single_plan",
+      monthly_price: 4.99,
+      annualy_price: 0, // Set to 0 or define if yearly pricing is available
+      savingWithAnnualPlan: 0,
+      period: "Monthly",
+      priceBody: [
+        "1 client",
+        "Management of all your client’s social media accounts.",
+        "Team member access",
+        // "30-day free trial included",
+      ],
+      recommended: false,
+      totalClients: 1,
+    },
+    {
       key: "starter",
       icon: StarterPlanPng,
       title: "Starter Plan",
@@ -318,7 +337,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 170,
       period: "Monthly",
       priceBody: [
-        "Plan up to 2000 posts per month",
+        // "Plan up to 2000 posts per month",
         "Up to 10 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
@@ -340,7 +359,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 290,
       period: "Monthly",
       priceBody: [
-        "Plan up to 6000 posts per month",
+        // "Plan up to 6000 posts per month",
         "Up to 30 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
@@ -362,7 +381,7 @@ export const plansList = () => {
       savingWithAnnualPlan: 450,
       period: "Monthly",
       priceBody: [
-        "Plan up to 12000 posts per month",
+        // "Plan up to 12000 posts per month",
         "Up to 50 clients",
         "Management of all your clients’ social media accounts.",
         "Team member access",
@@ -380,6 +399,10 @@ export const findPlan = (key) => {
   return plansList().find((item) => item.key == key);
 };
 export const lookupKeys = {
+  single: {
+    monthly: "single_plan_gbp_499",
+    yearly: "", // No yearly for single plan
+  },
   starter: {
     monthly: "starter_plan_gbp_25",
     yearly: "starter_plan_gbp_yearly",
@@ -395,13 +418,11 @@ export const lookupKeys = {
 };
 
 export const planLabel = {
-  starter_plan_gbp: "Starter Plan - Monthly",
+  single_plan_gbp_499: "Single Plan - Monthly",
   starter_plan_gbp_25: "Starter Plan - Monthly",
   starter_plan_gbp_yearly: "Starter Plan - Yearly",
-  advanced_plan_gbp: "Advance Plan - Monthly",
   advanced_plan_gbp_50: "Advance Plan - Monthly",
   advanced_plan_gbp_yearly: "Advance Plan - Yearly",
-  enterprise_plan_gbp: "Enterprise Plan - Monthly",
   enterprise_plan_gbp_90: "Enterprise Plan - Monthly",
   enterprise_plan_gbp_yearly: "Enterprise Plan - Yearly",
 };
@@ -414,6 +435,11 @@ export const paymentFailedStatuses = [
 export const getCurrentPlan = (plan) => {
   let currentPlan, planDuration;
   switch (plan) {
+    case "single_plan_gbp":
+    case "single_plan_gbp_499":
+      currentPlan = "single";
+      planDuration = "monthly";
+      break;
     case "starter_plan_gbp":
     case "starter_plan_gbp_25":
       currentPlan = "starter";
@@ -432,8 +458,8 @@ export const getCurrentPlan = (plan) => {
       currentPlan = "advanced";
       planDuration = "yearly";
       break;
-    case "enterprise_plan_gbp":
     case "enterprise_plan_gbp_90":
+    case "enterprise_plan_gbp":
       currentPlan = "enterprise";
       planDuration = "monthly";
       break;

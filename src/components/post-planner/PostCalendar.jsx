@@ -11,7 +11,8 @@ import Grid from "../../assets/Grid";
 import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import { Card, CardBody, Button } from "@material-tailwind/react";
-import { IoMdAdd } from "react-icons/io";
+import { IoMdAdd, IoMdClose } from "react-icons/io";
+import {FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   abbreviateString,
@@ -21,10 +22,14 @@ import {
 import StoryCarousel from "../mockups/facebook/StoryCarousel";
 import { useAppContext } from "../../context/AuthContext";
 import { axiosInstance } from "../../utils/Interceptor";
-import { API_URL, toastrError, toastrSuccess } from "../../utils";
+import { API_URL, SocialPlatforms, toastrError, toastrSuccess } from "../../utils";
 import PostsService from "../../services/PostsService";
+import SocialPreviews from "../social-previews/SocialPreviews";
+import PostStatusIcon from "../common/PostStatusIcon";
+import PostStatusFilterDropdown from "../common/PostStatusFilterDropdown";
 
 const PostCalendar = (props) => {
+  const [statusFilter, setStatusFilter] = React.useState([]);
   const { validations } = useAppContext();
   const navigate = useNavigate();
   const { getPostData, events, role } = props;
@@ -38,6 +43,8 @@ const PostCalendar = (props) => {
   const [textForRoleInfo, setTextForRoleInfo] = useState(null);
   const [draggingEvent, setDraggingEvent] = useState(false);
   const [showAlert, setShowAlert] = useState(true); // Add state to control visibility
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedConnection, setSelectedConnection] = useState(null);
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
 
@@ -170,7 +177,7 @@ const PostCalendar = (props) => {
       toastrError("Error updating post");
     }
   };
-
+console.log(connections,"connections");
   const eventDragStart = (info) => {
     const status = info.event._def.extendedProps.status;
     setDraggingEvent(status === "SaveAsDraft" || status === "Pending");
@@ -188,9 +195,15 @@ const PostCalendar = (props) => {
     setTextForRoleInfo(textForRoleInfo);
   }, [role]);
 
+  useEffect(() => {
+    if (connections && connections.length > 0) {
+      setSelectedConnection(connections[0]);
+    }
+  }, [connections]);
+
   return (
     <>
-      <div className="md:my-2 xl:mt-24 lg:mt-24">
+      <div className="md:my-2 xl:mt-24 lg:mt-24 relative">
         {/* Role Info Section */}
         {textForRoleInfo != null &&
           textForRoleInfo.length != 0 &&
@@ -282,79 +295,136 @@ const PostCalendar = (props) => {
 
             {validations?.posts_count_monthly <
               validations?.max_posts_monthly && (
-              <Button
-                size="sm"
-                onClick={handleModal}
-                className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
-              >
-                <IoMdAdd className="w-5 h-5 mr-1" />
-                Create Post
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  onClick={handleModal}
+                  className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
+                >
+                  <IoMdAdd className="w-5 h-5 mr-1" />
+                  Create Post
+                </Button>
+              </>
             )}
           </>
         )}
-        <Card className="mt-2">
-          <CardBody>
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
-              firstDay={1}
-              weekends={true}
-              allDaySlot={false}
-              events={events}
-              nowIndicator={true}
-              eventContent={renderEventContent}
-              eventMinHeight={80}
-              eventBackgroundColor="transparent"
-              eventBorderColor="transparent"
-              eventTextColor="#000000"
-              eventMouseEnter={(e) => {
-                const x = e.el;
-                x.parentNode.style.zIndex = 999;
-              }}
-              eventMouseLeave={(e) => {
-                const x = e.el;
-                x.parentNode.style.zIndex = 1;
-              }}
-              eventClick={function (info) {
-                updatePostData(info);
-              }}
-              dateClick={function (info) {
-                if (info.date >= new Date()) {
-                  selectData(info);
-                }
-              }}
-              height="76vh"
-              editable={true}
-              droppable={true}
-              eventDrop={handleEventDrop}
-              eventDragStart={eventDragStart}
-              eventAllow={eventAllow}
-            />
-
-            {openModal && (
-              <CreatePostModal
-                openModal={openModal}
-                isEdit={isEdit}
-                setIsEdit={setIsEdit}
-                setModal={setModal}
-                handleModal={handleModal}
-                connections={connections}
-                postData={postData}
-                clearPostData={clearPostData}
-                files={files}
-                setFiles={setFiles}
-                videoDurations={videoDurations}
-                setVideoDurations={setVideoDurations}
-                setCaption={setCaption}
-                caption={caption}
-                getPostData={getPostData}
-                scheduledDate={scheduledDate}
-                setScheduledDate={setScheduledDate}
-              />
+        {/* Drawer Trigger Icon at end of container */}
+        <div className="absolute top-14 right-4 z-50">
+          <button
+            className="p-2 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition"
+            onClick={() => setDrawerOpen((prev) => !prev)}
+          >
+            {drawerOpen ? (
+              <FaArrowRight className="w-6 h-6" />
+            ) : (
+              <FaArrowLeft className="w-6 h-6" />
             )}
-          </CardBody>
-        </Card>
+          </button>
+        </div>
+        {/* Main content: calendar and drawer side by side */}
+        <div className="flex w-full transition-all duration-300">
+          <div className={`flex-1 transition-all duration-300 ${drawerOpen ? "mr-88" : ""}`}>
+            <Card className="mt-2">
+              <CardBody>
+                <FullCalendar
+                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                  initialView="timeGridWeek"
+                  firstDay={1}
+                  weekends={true}
+                  allDaySlot={false}
+                  events={events}
+                  nowIndicator={true}
+                  eventContent={renderEventContent}
+                  eventMinHeight={80}
+                  eventBackgroundColor="transparent"
+                  eventBorderColor="transparent"
+                  eventTextColor="#000000"
+                  eventMouseEnter={(e) => {
+                    const x = e.el;
+                    x.parentNode.style.zIndex = 999;
+                  }}
+                  eventMouseLeave={(e) => {
+                    const x = e.el;
+                    x.parentNode.style.zIndex = 1;
+                  }}
+                  eventClick={function (info) {
+                    updatePostData(info);
+                  }}
+                  dateClick={function (info) {
+                    if (info.date >= new Date()) {
+                      selectData(info);
+                    }
+                  }}
+                  height="76vh"
+                  editable={true}
+                  droppable={true}
+                  eventDrop={handleEventDrop}
+                  eventDragStart={eventDragStart}
+                  eventAllow={eventAllow}
+                />
+
+                {openModal && (
+                  <CreatePostModal
+                    openModal={openModal}
+                    isEdit={isEdit}
+                    setIsEdit={setIsEdit}
+                    setModal={setModal}
+                    handleModal={handleModal}
+                    connections={connections}
+                    postData={postData}
+                    clearPostData={clearPostData}
+                    files={files}
+                    setFiles={setFiles}
+                    videoDurations={videoDurations}
+                    setVideoDurations={setVideoDurations}
+                    setCaption={setCaption}
+                    caption={caption}
+                    getPostData={getPostData}
+                    scheduledDate={scheduledDate}
+                    setScheduledDate={setScheduledDate}
+                  />
+                )}
+              </CardBody>
+            </Card>
+          </div>
+          {/* Drawer as a sibling, not fixed */}
+          <div
+            className={`transition-all duration-300 ${
+              drawerOpen ? "w-88" : "w-0"
+            } bg-white shadow-xl overflow-hidden border-l border-gray-200`}
+            style={{ minWidth: drawerOpen ? "22rem" : "0", maxWidth: "22rem" }}
+          >
+            {drawerOpen && (
+              <div className="h-full flex flex-col">
+                <PostStatusFilterDropdown onStatusChange={setStatusFilter} />
+                {/* Only show icons for connections */}
+                <div className="flex gap-3 px-4 py-2 border-b">
+                  {connections &&
+                    connections.map((conn, idx) => {
+                      const platformObj = SocialPlatforms[conn.platform];
+                      if (!platformObj) return null;
+                      const isSelected = selectedConnection && selectedConnection.id === conn.id;
+                      return (
+                        <div
+                          key={conn.id}
+                          className={`cursor-pointer rounded-full p-1 border ${isSelected ? "border-blue-500 bg-blue-50" : "border-transparent"}`}
+                          onClick={() => setSelectedConnection(conn)}
+                          title={conn.screenName}
+                        >
+                          {isSelected
+                            ? platformObj.coloredIcon(28, 28)
+                            : platformObj.nonColoredIcon(28, 28)}
+                        </div>
+                      );
+                    })}
+                </div>
+                <div className="p-4 flex-1">
+                  <SocialPreviews connection={selectedConnection} statusFilter={statusFilter || []} />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </>
   );

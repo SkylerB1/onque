@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import CreatePostModal from "../create-post-modal";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -47,13 +47,17 @@ const PostCalendar = (props) => {
   const [selectedConnection, setSelectedConnection] = useState(null);
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
-
+  const calendarRef = useRef(null);
   const renderContentType = (type) => {
     if (type === "reels") {
       return <InstaReel height={12} width={12} />;
     } else if (type === "post") {
       return <Grid height={12} width={12} />;
     }
+  };
+  const onDrawerTransitionEnd = () => {
+    calendarRef.current?.getApi().updateSize();
+    window.dispatchEvent(new Event('resize'));
   };
 
   const updatePostData = async (eventInfo) => {
@@ -148,6 +152,12 @@ const PostCalendar = (props) => {
     setFiles([]);
     setIsEdit(false);
   };
+
+  useEffect(() => {
+    if (calendarRef.current) {
+      calendarRef.current.getApi().updateSize();
+    }
+  }, [drawerOpen]);
 
   const handleEventDrop = async (info) => {
     const { event } = info;
@@ -308,27 +318,34 @@ console.log(connections,"connections");
             )}
           </>
         )}
-        {/* Drawer Trigger Icon at end of container */}
-        <div className="absolute top-14 right-4 z-50">
-          <button
-            className="p-2 rounded-full bg-blue-600 text-white shadow-lg hover:bg-blue-700 transition"
-            onClick={() => setDrawerOpen((prev) => !prev)}
-          >
-            {drawerOpen ? (
-              <FaArrowRight className="w-6 h-6" />
-            ) : (
-              <FaArrowLeft className="w-6 h-6" />
-            )}
-          </button>
-        </div>
+
         {/* Main content: calendar and drawer side by side */}
         <div className="flex w-full transition-all duration-300">
-          <div className={`flex-1 transition-all duration-300 ${drawerOpen ? "mr-88" : ""}`}>
+        <div className="flex-1 min-w-0 transition-all duration-300">
             <Card className="mt-2">
               <CardBody>
                 <FullCalendar
+                  key={`calendar-${drawerOpen}`}
+                  ref={calendarRef}
                   plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                   initialView="timeGridWeek"
+                  headerToolbar={{
+                    right: `today prev,next${!drawerOpen ? ' feedPreview' : ' closePreview'}`,
+                    left: 'title'
+                  }}
+                  customButtons={{
+                    feedPreview: {
+                      text: 'Feed Preview',
+                      click: () => setDrawerOpen(true)
+                    },
+                    closePreview: {
+                      text: 'Close Preview',
+                      click: () => setDrawerOpen(false)
+                    }
+                  }}
+                  buttonText={{
+                    today: 'Today'
+                  }}
                   firstDay={1}
                   weekends={true}
                   allDaySlot={false}
@@ -389,10 +406,9 @@ console.log(connections,"connections");
           </div>
           {/* Drawer as a sibling, not fixed */}
           <div
-            className={`transition-all duration-300 ${
-              drawerOpen ? "w-88" : "w-0"
-            } bg-white shadow-xl overflow-hidden border-l border-gray-200`}
-            style={{ minWidth: drawerOpen ? "22rem" : "0", maxWidth: "22rem" }}
+            onTransitionEnd={onDrawerTransitionEnd}
+            className={`transition-all duration-300 ${drawerOpen ? "w-88" : "w-0"} ...`}
+            style={{ width: drawerOpen ? "22rem" : 0 }}
           >
             {drawerOpen && (
               <div className="h-full flex flex-col">

@@ -13,8 +13,8 @@ const statusOptions = [
 function PostStatusFilterDropdown({ onStatusChange }) {
   const [showCard, setShowCard] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
-  // Default: all unchecked
-  const [selected, setSelected] = React.useState([]);
+  // Default: all statuses selected (shows 'All Posts')
+  const [selected, setSelected] = React.useState(statusOptions.filter(opt => opt.value !== 'all').map(opt => opt.value));
   const dropdownRef = useRef(null);
 
   React.useEffect(() => {

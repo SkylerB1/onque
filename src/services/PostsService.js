@@ -20,6 +20,13 @@ PostsService.getPostData = async function (brandId) {
   return response;
 };
 
+
+
+PostsService.getInstagramFeed = async function (brandId) {
+  const response = await axiosInstance.get(`auth/instagram/feed?brandId=${brandId}`);
+  return response.data;
+};
+
 PostsService.getTiktokPostStatus = async function (
   brandId,
   post_id,

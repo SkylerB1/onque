@@ -4,8 +4,8 @@ import { FiFilter } from "react-icons/fi";
 
 const statusOptions = [
   { label: "All Posts", value: "all", icon: null },
-  { label: "Drafts", value: "Drafts", icon: <PostStatusIcon status="Drafts" /> },
-  { label: "Scheduled", value: "Scheduled", icon: <PostStatusIcon status="Scheduled" /> },
+  { label: "Draft", value: "SaveAsDraft", icon: <PostStatusIcon status="Drafts" /> },
+  { label: "Scheduled", value: "Pending", icon: <PostStatusIcon status="Scheduled" /> },
   { label: "Published", value: "Published", icon: <PostStatusIcon status="Published" /> },
   { label: "Failed to Post", value: "Failed to Post", icon: <PostStatusIcon status="Error" /> },
 ];

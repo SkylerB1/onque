@@ -153,7 +153,7 @@ const SocialPreviews = ({ connection, ...props }) => {
                 : p.mediaType === selectedType;
               return isMatchingPlatform && isMatchingType;
             });
-          }).sort((a, b) => new Date(a.scheduledDate || a.createdAt) - new Date(b.scheduledDate || b.createdAt));
+          }).sort((a, b) => new Date(b.scheduledDate || b.createdAt) - new Date(a.scheduledDate || a.createdAt));
           console.log(filtered, "Filtered Posts");
           setPosts(filtered);
         } else {

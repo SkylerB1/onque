@@ -4,12 +4,17 @@ import { AiOutlineClockCircle, AiOutlineCheckCircle, AiOutlineWarning } from "re
 
 // Usage: <PostStatusIcon status="Drafts" />
 const statusIconMap = {
-  Drafts: {
+  SaveAsDrafts: {
     icon: <FiEdit color="#6c757d" size={22} />, // Gray pen
     bg: "#f8f9fa", // Light gray rectangle
     shape: "rect"
   },
   Scheduled: {
+    icon: <AiOutlineClockCircle color="#007bff" size={22} />, // Blue clock
+    bg: "#e9f5ff", // Light blue circle
+    shape: "circle"
+  },
+  Pending: {
     icon: <AiOutlineClockCircle color="#007bff" size={22} />, // Blue clock
     bg: "#e9f5ff", // Light blue circle
     shape: "circle"
@@ -27,7 +32,7 @@ const statusIconMap = {
 };
 
 const PostStatusIcon = ({ status }) => {
-  const conf = statusIconMap[status] || statusIconMap["Drafts"];
+  const conf = statusIconMap[status];
   if (conf.shape === "rect") {
     return (
       <span style={{

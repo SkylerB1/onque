@@ -1,6 +1,6 @@
 import React from "react";
 import { FiEdit } from "react-icons/fi"; // Draft (rectangle with pen)
-import { AiOutlineClockCircle, AiOutlineCheckCircle, AiOutlineWarning } from "react-icons/ai"; // Scheduled, Published, Failed
+import { AiOutlineClockCircle, AiOutlineCheckCircle, AiOutlineWarning, AiFillCloseCircle } from "react-icons/ai"; // Scheduled, Published, Failed
 
 // Usage: <PostStatusIcon status="Drafts" />
 const statusIconMap = {
@@ -28,11 +28,16 @@ const statusIconMap = {
     icon: <AiOutlineWarning color="#dc3545" size={22} />, // Red triangle
     bg: "#fdecea", // Light red
     shape: "none"
+  },
+  Ongoing: {
+    icon: <AiFillCloseCircle color="#007bff" size={22} />, // Blue clock
+    bg: "#e9f5ff", // Light blue circle
+    shape: "circle"
   }
 };
 
 const PostStatusIcon = ({ status }) => {
-  const conf = statusIconMap[status];
+  const conf = statusIconMap[status] || statusIconMap["Ongoing"]; 
   if (conf.shape === "rect") {
     return (
       <span style={{

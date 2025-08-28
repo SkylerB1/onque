@@ -3,158 +3,156 @@ import { SocialPlatforms } from "../../utils";
 import { Typography, Button } from "@material-tailwind/react";
 import PostsService from "../../services/PostsService";
 import { useSelector } from "react-redux";
-import Post from "../mockups/facebook/Post";
 import { getSource, isContainImage, isContainVideo } from "../../utils";
 import PostStatusIcon from "../common/PostStatusIcon";
 import CreatePostModal from "../create-post-modal";
 import dayjs from "dayjs";
 import { isJSON } from "../../utils/commonUtils";
+import useConnections from "../customHooks/useConnections";
 
 const SocialPreviews = ({ connection, ...props }) => {
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
+
   const [selectedType, setSelectedType] = useState(null);
   const [posts, setPosts] = useState([]);
   const [files, setFiles] = useState([]);
+  const [selectedPlatformForModal, setSelectedPlatformForModal] = useState(null);
+
   const [caption, setCaption] = useState("");
   const [postData, setPostData] = useState(null);
   const [scheduledDate, setScheduledDate] = useState(dayjs());
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
-  
+
+  // 🔥 state for grid pagination
+  const [currentPage, setCurrentPage] = useState(0);
+
+  // 🔥 state for per-post slider (tracks active file index per post)
+  const [activeFileIndexes, setActiveFileIndexes] = useState({});
+
+  const { connections } = useConnections();
+
   const handleModal = () => setModal(!openModal);
-  
+
   const updatePostData = async (post) => {
     try {
-      const { id, files: postFiles, platform, scheduledDate, status, socialPresets, thumbnailPresets, thumbnailFiles, text } = post;
+      const {
+        id,
+        files: postFiles,
+        platform,
+        scheduledDate,
+        status,
+        socialPresets,
+        text,
+        thumbnailPresets,
+        thumbnailFiles,
+      } = post;
 
       if (!platform || platform.length === 0) return false;
 
-      // Get the post insights data
-      let result = await PostsService.getPostInsights(id);
       let postInsights = [];
+      const result = await PostsService.getPostInsights(id);
       if (result.status === true) {
         postInsights = result.data.postInsights;
       }
 
-      // Parse files if they're in string format
-      const filesArray = typeof postFiles === 'string' ? JSON.parse(postFiles) : (Array.isArray(postFiles) ? postFiles : []);
-      
-      // Parse platforms if they're in string format
-      let platformsArray = [];
-      try {
-        platformsArray = isJSON(platform) ? JSON.parse(platform) : (Array.isArray(platform) ? platform : [platform]);
-        // Ensure platforms have the correct structure
-        platformsArray = platformsArray.map(p => ({
-          platform: typeof p === 'string' ? p : p.platform,
-          ...(typeof p === 'object' && p !== null ? p : {})
-        }));
-      } catch (e) {
-        console.error('Error parsing platforms:', e);
-        platformsArray = [];
+      const filesArray =
+        typeof postFiles === "string"
+          ? JSON.parse(postFiles)
+          : Array.isArray(postFiles)
+          ? postFiles
+          : [];
+
+      const platformsArray = isJSON(platform)
+        ? JSON.parse(platform)
+        : Array.isArray(platform)
+        ? platform
+        : [platform];
+
+      if (platformsArray.length > 0) {
+        const matched =
+          platformsArray.find((p) => p.platform === connection.platform) ||
+          platformsArray[0];
+        setSelectedPlatformForModal(matched);
       }
 
-      // Get the first platform for preview
-      const firstPlatform = platformsArray[0]?.platform || platformsArray[0] || '';
-      const platformType = firstPlatform?.includes('_') ? firstPlatform.split('_')[1] : firstPlatform;
-      
-      // Format the data for CreatePostModal
       const data = {
+        id,
         _id: id,
-        id: id,
-        caption: text || '',
-        text: text || '',
+        caption: text || "",
+        text: text || "",
         files: filesArray,
-        file: filesArray[0] || null,
         platforms: platformsArray,
-        platform: firstPlatform,
-        status: status || 'draft',
-        socialPresets: socialPresets ? (typeof socialPresets === 'string' ? JSON.parse(socialPresets) : socialPresets) : [],
-        postInsights: postInsights || [],
-        thumbnailPresets: thumbnailPresets ? (typeof thumbnailPresets === 'string' ? JSON.parse(thumbnailPresets) : thumbnailPresets) : null,
-        thumbnailFiles: thumbnailFiles || [],
+        platform: platformsArray[0]?.platform || platformsArray[0] || "",
+        status: status || "draft",
         scheduledDate: scheduledDate || new Date().toISOString(),
-        postdate: scheduledDate || new Date().toISOString(),
-        // Set initial values for preview
-        selectedPlatform: firstPlatform,
-        mediaType: platformsArray[0]?.mediaType || 'POST',
-        // Set up the preview data structure
-        previewData: {
-          [firstPlatform]: {
-            mediaType: platformsArray[0]?.mediaType || 'POST',
-            additionalPresets: {}
-          }
-        }
+  socialPresets: socialPresets
+    ? typeof socialPresets === "string"
+      ? JSON.parse(socialPresets)
+      : socialPresets
+    : [],
+        postInsights,
+  thumbnailPresets: thumbnailPresets
+    ? (typeof thumbnailPresets === "string"
+        ? JSON.parse(thumbnailPresets)
+        : thumbnailPresets)
+    : null,
+        thumbnailFiles: thumbnailFiles || [],
       };
 
-      console.log('Formatted post data:', data);
-      
-      // Set the state
       setPostData(data);
-      setCaption(text || '');
+      setCaption(text || "");
       setFiles(filesArray);
       setScheduledDate(dayjs(scheduledDate || new Date()));
-      
-      // Set the selectedPreview after a small delay to ensure the modal is mounted
-      setTimeout(() => {
-        if (platformsArray.length > 0) {
-          // This will trigger the preview to update
-          setSelectedPreview({
-            platform: firstPlatform,
-            platformType: platformType,
-            mediaType: platformsArray[0]?.mediaType || 'POST'
-          });
-        }
-      }, 100);
-      
       setIsEdit(true);
       setModal(true);
-      
     } catch (error) {
-      console.error('Error in updatePostData:', error);
-      // You might want to show an error toast here
+      console.error("Error in updatePostData:", error);
     }
   };
 
-  // Set default selectedType on mount or when platform changes
+  // Set default selectedType
   useEffect(() => {
     if (!connection || !SocialPlatforms[connection.platform]) return;
     const { mediaOptions } = SocialPlatforms[connection.platform];
     if (mediaOptions && mediaOptions.length > 0) {
-     
-      // For Facebook, Instagram, or fallback: pick first
       setSelectedType(mediaOptions[0].label);
     }
   }, [connection]);
 
+  // Fetch posts
   useEffect(() => {
     const fetchPosts = async () => {
       if (!connection) return;
-      // if(connection.platform === "Instagram") {
-      //   const response = await PostsService.getInstagramFeed(brandId);
-      //   console.log(response, "Instagram Feed Response");
-      // }
       try {
         const response = await PostsService.getPostData(brandId);
-        console.log(response, "Post Data Response");
         if (response?.status === 200 && Array.isArray(response?.data)) {
-          console.log(selectedType, "Selected Type");
-          console.log(connection, "Selected Connection");
-          // Filter posts: only those with matching platform+type in socialPresets (not Instagram)
-          const filtered = response.data.filter(item => {
-            let presets = [];
-            try {
-              presets = Array.isArray(item.socialPresets) ? item.socialPresets : JSON.parse(item.socialPresets || '[]');
-            } catch (e) { presets = []; }
-              return presets.some(p => {
-              const isMatchingPlatform = p.platform === connection.platform;
-              const isMatchingType = (['Facebook_Page', 'Instagram'].includes(connection.platform) && selectedType === 'POST')
-                ? ['POST', 'REEL'].includes(p.mediaType)
-                : p.mediaType === selectedType;
-              return isMatchingPlatform && isMatchingType;
-            });
-          }).sort((a, b) => new Date(b.scheduledDate || b.createdAt) - new Date(a.scheduledDate || a.createdAt));
-          console.log(filtered, "Filtered Posts");
+          const filtered = response.data
+            .filter((item) => {
+              let presets = [];
+              try {
+                presets = Array.isArray(item.socialPresets)
+                  ? item.socialPresets
+                  : JSON.parse(item.socialPresets || "[]");
+              } catch (e) {
+                presets = [];
+              }
+              return presets.some((p) => {
+                const isMatchingPlatform = p.platform === connection.platform;
+                const isMatchingType =
+                  ["Facebook_Page", "Instagram"].includes(connection.platform) &&
+                  selectedType === "POST"
+                    ? ["POST", "REEL"].includes(p.mediaType)
+                    : p.mediaType === selectedType;
+                return isMatchingPlatform && isMatchingType;
+              });
+            })
+            .sort(
+              (a, b) =>
+                new Date(b.scheduledDate || b.createdAt) -
+                new Date(a.scheduledDate || a.createdAt)
+            );
           setPosts(filtered);
         } else {
           setPosts([]);
@@ -170,7 +168,21 @@ const SocialPreviews = ({ connection, ...props }) => {
     return <div>Select a social site to preview.</div>;
   }
 
-  const { mediaOptions, coloredIcon } = SocialPlatforms[connection.platform];
+  const { mediaOptions } = SocialPlatforms[connection.platform];
+
+  // 🔥 Pagination logic (post-wise, not file-wise)
+  const postsPerPage = 9;
+  const totalPages = Math.ceil(posts.length / postsPerPage);
+  const pagedPosts = posts.slice(
+    currentPage * postsPerPage,
+    (currentPage + 1) * postsPerPage
+  );
+
+  // 🔥 chunk posts into 3 per row
+  const chunked = [];
+  for (let i = 0; i < pagedPosts.length; i += 3) {
+    chunked.push(pagedPosts.slice(i, i + 3));
+  }
 
   return (
     <div>
@@ -195,97 +207,116 @@ const SocialPreviews = ({ connection, ...props }) => {
         <Typography variant="h6" className="mb-2">
           Posts ({posts.length})
         </Typography>
-        {/* Collect all files from filtered posts for the selected platform/type */}
-        {(() => {
-          let allFiles = [];
-          posts.forEach(post => {
-            let files = [];
-            try {
-              files = Array.isArray(post.files) ? post.files : JSON.parse(post.files || '[]');
-            } catch (e) { files = []; }
-            // Attach post info to each file for rendering
-            files.forEach(file => allFiles.push({ ...file, post }));
-          });
 
-          // Filter files by statusFilter (from prop)
-          let filteredFiles = allFiles;
-          if (props.statusFilter && props.statusFilter.length > 0) {
-            filteredFiles = allFiles.filter(file => props.statusFilter.includes(file.post.status));
-          }
+        {chunked.map((row, ridx) => (
+          <div key={ridx} className="flex gap-3 mb-3">
+            {row.map((post) => {
+              let postFiles = [];
+              try {
+                postFiles = Array.isArray(post.files)
+                  ? post.files
+                  : JSON.parse(post.files || "[]");
+              } catch (e) {
+                postFiles = [];
+              }
 
-          // Pagination logic: 9 files per page
-          const [currentPage, setCurrentPage] = React.useState(0);
-          const filesPerPage = 9;
-          const totalPages = Math.ceil(filteredFiles.length / filesPerPage);
-          const pagedFiles = filteredFiles.slice(currentPage * filesPerPage, (currentPage + 1) * filesPerPage);
+              const activeIndex = activeFileIndexes[post.id] || 0;
+              const currentFile = postFiles[activeIndex] || null;
 
-          // Chunk current page files into rows of 3
-          const chunked = [];
-          for (let i = 0; i < pagedFiles.length; i += 3) {
-            chunked.push(pagedFiles.slice(i, i + 3));
-          }
-
-          return (
-            <>
-              {chunked.map((row, ridx) => (
-                <div key={ridx} className="flex gap-3 mb-3">
-                  {row.map((file, fidx) => (
-                    <div 
-                      key={file.post.id + '-' + fidx} 
-                      className="relative bg-white flex flex-col items-center w-40 h-40 group cursor-pointer"
-                      onClick={() => updatePostData(file.post)}
-                    >
-                      {/* Status Icon */}
-                      <div className="absolute top-2 right-2 z-10">
-                        <PostStatusIcon status={file.post.status} />
-                      </div>
-                      {/* Hover Overlay with Date */}
-                      <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center text-center justify-center rounded">
-                        <span className="text-white text-sm font-medium">
-                          {file.post.scheduledDate ? (
-                            <>
-                              {new Date(file.post.scheduledDate).toLocaleString()}
-                              <div className="text-xs mt-1">
-                                {Intl.DateTimeFormat().resolvedOptions().timeZone}
-                              </div>
-                            </>
-                          ) : 'No date'}
-                        </span>
-                      </div>
-                      {isContainImage(file) ? (
-                        <img
-                          src={getSource(file)}
-                          alt={file.post.text || 'File'}
-                          className="w-full h-40 object-cover rounded mb-2"
-                        />
-                      ) : isContainVideo(file) ? (
-                        <video
-                          src={getSource(file)}
-                          className="w-full h-40 object-cover rounded mb-2"
-                        />
-                      ) : null}
+              return (
+                <div key={post.id} className="flex flex-col items-center">
+                  {/* Post Card */}
+                  <div
+                    className="relative bg-white flex flex-col items-center w-35 h-40 group cursor-pointer"
+                    onClick={() => updatePostData(post)}
+                  >
+                    {/* Status Icon */}
+                    <div className="absolute top-2 right-2 z-10">
+                      <PostStatusIcon status={post.status} />
                     </div>
-                  ))}
+
+                    {/* Hover Overlay with Date */}
+                    <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center text-center justify-center rounded">
+                      <span className="text-white text-sm font-medium">
+                        {post.scheduledDate ? (
+                          <>
+                            {new Date(post.scheduledDate).toLocaleString()}
+                            <div className="text-xs mt-1">
+                              {Intl.DateTimeFormat().resolvedOptions().timeZone}
+                            </div>
+                          </>
+                        ) : (
+                          "No date"
+                        )}
+                      </span>
+                    </div>
+
+                    {/* Show single or first slider file */}
+                    {currentFile ? (
+                      isContainImage(currentFile) ? (
+                        <img
+                          src={getSource(currentFile)}
+                          alt={post.text || "File"}
+                          className="w-full h-40 object-cover rounded mb-2"
+                        />
+                      ) : isContainVideo(currentFile) ? (
+                        <video
+                          src={getSource(currentFile)}
+                          className="w-full h-40 object-cover rounded mb-2"
+                        />
+                      ) : null
+                    ) : (
+                      <div className="text-xs text-gray-500">No media</div>
+                    )}
+                  </div>
+
+                  {/* 🔥 Dots (below card, not inside card) */}
+                  {postFiles.length > 1 && (
+                    <div className="flex justify-center mt-1 gap-1">
+                      {postFiles.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() =>
+                            setActiveFileIndexes((prev) => ({
+                              ...prev,
+                              [post.id]: idx,
+                            }))
+                          }
+                          className={`w-2 h-2 rounded-full ${
+                            idx === activeIndex
+                              ? "bg-blue-500"
+                              : "bg-blue-200"
+                          } transition border-0 p-0`}
+                          style={{ minWidth: "8px", minHeight: "8px" }}
+                          aria-label={`Go to file ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
-              ))}
-              {/* Scrollable Dot Slider Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center mt-4 overflow-x-auto gap-1 max-w-xs mx-auto">
-                  {Array.from({ length: totalPages }).map((_, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setCurrentPage(idx)}
-                      className={`w-2 h-2 rounded-full ${idx === currentPage ? 'bg-blue-500' : 'bg-blue-200'} transition border-0 p-0`}
-                      style={{ minWidth: '8px', minHeight: '8px' }}
-                      aria-label={`Go to page ${idx + 1}`}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          );
-        })()}
+              );
+            })}
+          </div>
+        ))}
+
+        {/* 🔥 Existing pagination dots (unchanged) */}
+        {totalPages > 1 && (
+          <div className="flex justify-center mt-4 overflow-x-auto gap-1 max-w-xs mx-auto">
+            {Array.from({ length: totalPages }).map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentPage(idx)}
+                className={`w-2 h-2 rounded-full ${
+                  idx === currentPage ? "bg-blue-500" : "bg-blue-200"
+                } transition border-0 p-0`}
+                style={{ minWidth: "8px", minHeight: "8px" }}
+                aria-label={`Go to page ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
+
       <CreatePostModal
         openModal={openModal}
         isEdit={isEdit}
@@ -302,6 +333,8 @@ const SocialPreviews = ({ connection, ...props }) => {
         scheduledDate={scheduledDate}
         setScheduledDate={setScheduledDate}
         caption={caption}
+        connections={connections}
+        selectedPlatformForModal={selectedPlatformForModal}
       />
     </div>
   );

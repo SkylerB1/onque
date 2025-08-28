@@ -471,6 +471,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
     setOpenSubscriptionModal(!openSubscriptionModal);
   };
 
+  console.log(connections,"connections");
+
   const handlePublish = async () => {
     handleLoading(true);
 
@@ -728,6 +730,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       !selectedPreview
     ) {
       if (postData) {
+        console.log(postData,"postData");
         let { platforms, socialPresets } = postData;
         const presets = {};
         // remove the twitter from connections if existing post has multiple platforms

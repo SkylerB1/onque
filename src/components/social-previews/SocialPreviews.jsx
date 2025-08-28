@@ -24,7 +24,8 @@ const SocialPreviews = ({ connection, ...props }) => {
   const [scheduledDate, setScheduledDate] = useState(dayjs());
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
-
+  const [showPosts, setShowPosts] = useState(true);
+  const [showReels, setShowReels] = useState(true);
   // 🔥 state for grid pagination
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -140,11 +141,15 @@ const SocialPreviews = ({ connection, ...props }) => {
               }
               return presets.some((p) => {
                 const isMatchingPlatform = p.platform === connection.platform;
-                const isMatchingType =
-                  ["Facebook_Page", "Instagram"].includes(connection.platform) &&
-                  selectedType === "POST"
-                    ? ["POST", "REEL"].includes(p.mediaType)
-                    : p.mediaType === selectedType;
+                let isMatchingType = false;
+                if (p.mediaType === "POST" && showPosts) isMatchingType = true;
+                if (p.mediaType === "REEL" && showReels) isMatchingType = true;
+
+                // keep old selectedType logic also
+                if (selectedType && p.mediaType === selectedType) {
+                  isMatchingType = true;
+                }
+
                 return isMatchingPlatform && isMatchingType;
               });
             })
@@ -162,7 +167,7 @@ const SocialPreviews = ({ connection, ...props }) => {
       }
     };
     fetchPosts();
-  }, [connection, selectedType]);
+  }, [connection, selectedType, showPosts, showReels]);
 
   if (!connection || !SocialPlatforms[connection.platform]) {
     return <div>Select a social site to preview.</div>;
@@ -170,7 +175,6 @@ const SocialPreviews = ({ connection, ...props }) => {
 
   const { mediaOptions } = SocialPlatforms[connection.platform];
 
-  // 🔥 Pagination logic (post-wise, not file-wise)
   const postsPerPage = 9;
   const totalPages = Math.ceil(posts.length / postsPerPage);
   const pagedPosts = posts.slice(
@@ -178,7 +182,6 @@ const SocialPreviews = ({ connection, ...props }) => {
     (currentPage + 1) * postsPerPage
   );
 
-  // 🔥 chunk posts into 3 per row
   const chunked = [];
   for (let i = 0; i < pagedPosts.length; i += 3) {
     chunked.push(pagedPosts.slice(i, i + 3));
@@ -202,8 +205,26 @@ const SocialPreviews = ({ connection, ...props }) => {
             </Button>
           ))}
       </div>
-
+      <div className="flex gap-4 mb-4">
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={showPosts}
+            onChange={() => setShowPosts(!showPosts)}
+          />
+          <span>Posts</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={showReels}
+            onChange={() => setShowReels(!showReels)}
+          />
+          <span>Reels</span>
+        </label>
+      </div>
       <div>
+
         <Typography variant="h6" className="mb-2">
           Posts ({posts.length})
         </Typography>
@@ -224,10 +245,10 @@ const SocialPreviews = ({ connection, ...props }) => {
               const currentFile = postFiles[activeIndex] || null;
 
               return (
-                <div key={post.id} className="flex flex-col items-center">
+                <div key={post.id} className="flex flex-col items-center post-card-box">
                   {/* Post Card */}
                   <div
-                    className="relative bg-white flex flex-col items-center w-35 h-40 group cursor-pointer"
+                    className="relative bg-white flex flex-col items-center w-full h-40 group cursor-pointer"
                     onClick={() => updatePostData(post)}
                   >
                     {/* Status Icon */}
@@ -257,12 +278,12 @@ const SocialPreviews = ({ connection, ...props }) => {
                         <img
                           src={getSource(currentFile)}
                           alt={post.text || "File"}
-                          className="w-full h-40 object-cover rounded mb-2"
+                          className="w-full h-full object-cover rounded"
                         />
                       ) : isContainVideo(currentFile) ? (
                         <video
                           src={getSource(currentFile)}
-                          className="w-full h-40 object-cover rounded mb-2"
+                          className="w-full h-full object-cover rounded"
                         />
                       ) : null
                     ) : (

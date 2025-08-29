@@ -44,10 +44,10 @@ const PostStatusIcon = ({ status }) => {
         display: "inline-flex",
         alignItems: "center",
         justifyContent: "center",
-        width: 32,
-        height: 22,
+        width: 28,
+        height: 28,
         background: conf.bg,
-        borderRadius: 4,
+        borderRadius: 20,
         border: "1px solid #dee2e6"
       }}>
         {conf.icon}
@@ -76,9 +76,11 @@ const PostStatusIcon = ({ status }) => {
       display: "inline-flex",
       alignItems: "center",
       justifyContent: "center",
+      width: 28,
+      height: 28,
       background: conf.bg,
-      borderRadius: 4,
-      padding: 2
+      borderRadius: 20,
+      padding: 0
     }}>
       {conf.icon}
     </span>

@@ -74,7 +74,10 @@ const OnFileClickableAction = ({
           <Cross width={22} height={22} />
         </div>
       )}
-      {thumbnailSrc && (
+      {thumbnailSrc && 
+        typeof thumbnailSrc === "string" &&
+        thumbnailSrc.trim() !== "" &&
+        !thumbnailSrc.includes("undefined") && (
         <div className="absolute bottom-[52px] -left-2 w-10 h-10 group">
           <img
             src={thumbnailSrc}

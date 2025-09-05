@@ -85,6 +85,7 @@ import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
 import { addMedia, deleteMedia } from "../../redux/features/thumbnailMediaSlice.js";
 import { useDispatch } from "react-redux";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 const schdulePostBtnLabel = [
   {
     label: "Save As Draft",
@@ -121,6 +122,11 @@ const CreatePostModal = ({
   setFiles,
   videoDurations,
   setVideoDurations,
+  setRefreshPreview,
+    onPrev,
+  onNext,
+  canPrev,
+  canNext
 }) => {
   const isDuplicating = useMemo(
     // () => isEdit === "Published" || false,
@@ -410,7 +416,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
 
   const handleClose = () => {
     setModal(false);
-    setIsEdit(null);
+    setIsEdit(false); // always reset to false, not null
     clearPostData();
   };
   const handleLoading = (state) => {
@@ -432,9 +438,10 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         await getPostData();
-
+        setRefreshPreview(prev => !prev);
         handleClose();
         handleLoading(false);
+        dispatch(deleteMedia());
       }
     } catch (err) {
       if (err.response.status === 403) {
@@ -460,6 +467,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         getPostData();
         handleClose();
         handleLoading(false);
+        dispatch(deleteMedia());
       }
     } catch (err) {
       console.log(err);
@@ -687,7 +695,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       const Component = platformComponentMap[platform];
 
       const presets = additionalPresets[platform];
-      const date = dayjs(scheduledDate).format("DD MMM");
+      const date = dayjs(scheduledDate).format("ddd, DD/MM/YYYY hh:mm A");
 
       if (Component) {
         let component = Component({
@@ -1969,6 +1977,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                         >
                           Show Preview
                         </Button>
+                        
                       </div>
 
                       <div className="flex flex-row  justify-between items-center mt-6">
@@ -2037,6 +2046,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                             disablePast
                             timeSteps={{ hours: 1, minutes: 1, seconds: 5 }}
                             onChange={handleDateChange}
+                            format="ddd, DD/MM/YYYY hh:mm A"
                             className={`${isDuplicating && "opacity-50"}`}
                             disabled={loading}
                           />
@@ -2237,6 +2247,26 @@ const videoTimeData = useSelector((state) => state.videoSlider);
             )}
           </Dropzone>
         </DialogBody>
+        {/* Navigation Arrows */}
+          {isEdit && (
+            <div className="absolute inset-y-0 left-0 right-0 flex justify-between items-center pointer-events-none z-50">
+              <button
+                className="pointer-events-auto bg-white rounded-full shadow p-2 ml-4"
+                onClick={(e) => { e.stopPropagation(); onPrev?.(e); }}
+                disabled={!canPrev}
+              >
+                <FaArrowLeft size={24} />
+              </button>
+              <button
+                className="pointer-events-auto bg-white rounded-full shadow p-2 mr-4"
+                onClick={(e) => { e.stopPropagation(); onNext?.(e); }}
+                disabled={!canNext}
+              >
+                <FaArrowRight size={24} />
+              </button>
+            </div>
+          )}
+
         <ImgUploadModal
           show={showimgUploadModal}
           onChange={handleFile}

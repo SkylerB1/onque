@@ -10,11 +10,11 @@ import dayjs from "dayjs";
 import { isJSON } from "../../utils/commonUtils";
 import useConnections from "../customHooks/useConnections";
 
-const SocialPreviews = ({ connection, ...props }) => {
+const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPreview }) => {
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
 
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedTypes, setSelectedTypes] = useState(['POST', 'REEL']); // Default both Post and Reel selected
   const [posts, setPosts] = useState([]);
   const [files, setFiles] = useState([]);
   const [selectedPlatformForModal, setSelectedPlatformForModal] = useState(null);
@@ -24,8 +24,6 @@ const SocialPreviews = ({ connection, ...props }) => {
   const [scheduledDate, setScheduledDate] = useState(dayjs());
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setModal] = useState(false);
-  const [showPosts, setShowPosts] = useState(true);
-  const [showReels, setShowReels] = useState(true);
   // 🔥 state for grid pagination
   const [currentPage, setCurrentPage] = useState(0);
 
@@ -113,15 +111,6 @@ const SocialPreviews = ({ connection, ...props }) => {
     }
   };
 
-  // Set default selectedType
-  useEffect(() => {
-    if (!connection || !SocialPlatforms[connection.platform]) return;
-    const { mediaOptions } = SocialPlatforms[connection.platform];
-    if (mediaOptions && mediaOptions.length > 0) {
-      setSelectedType(mediaOptions[0].label);
-    }
-  }, [connection]);
-
   // Fetch posts
   useEffect(() => {
     const fetchPosts = async () => {
@@ -142,11 +131,8 @@ const SocialPreviews = ({ connection, ...props }) => {
               return presets.some((p) => {
                 const isMatchingPlatform = p.platform === connection.platform;
                 let isMatchingType = false;
-                if (p.mediaType === "POST" && showPosts) isMatchingType = true;
-                if (p.mediaType === "REEL" && showReels) isMatchingType = true;
-
-                // keep old selectedType logic also
-                if (selectedType && p.mediaType === selectedType) {
+                // Check if the media type is in selectedTypes array
+                if (selectedTypes.includes(p.mediaType)) {
                   isMatchingType = true;
                 }
 
@@ -167,7 +153,7 @@ const SocialPreviews = ({ connection, ...props }) => {
       }
     };
     fetchPosts();
-  }, [connection, selectedType, showPosts, showReels]);
+  }, [connection, selectedTypes, refreshPreview]);
 
   if (!connection || !SocialPlatforms[connection.platform]) {
     return <div>Select a social site to preview.</div>;
@@ -191,40 +177,32 @@ const SocialPreviews = ({ connection, ...props }) => {
     <div>
       <div className="flex gap-2 mb-4">
         {mediaOptions &&
-          mediaOptions.map((option) => (
-            <Button
-              key={option.label}
-              size="sm"
-              variant={selectedType === option.label ? "filled" : "outlined"}
-              color="blue"
-              className="flex items-center gap-2"
-              onClick={() => setSelectedType(option.label)}
-            >
-              {option.icon(18, 18)}
-              <Typography className="text-xs">{option.label}</Typography>
-            </Button>
-          ))}
-      </div>
-      <div className="flex gap-4 mb-4">
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={showPosts}
-            onChange={() => setShowPosts(!showPosts)}
-          />
-          <span>Posts</span>
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={showReels}
-            onChange={() => setShowReels(!showReels)}
-          />
-          <span>Reels</span>
-        </label>
+          mediaOptions.map((option) => {
+            const isSelected = selectedTypes.includes(option.label);
+            return (
+              <Button
+                key={option.label}
+                size="sm"
+                variant={isSelected ? "filled" : "outlined"}
+                color={isSelected ? "blue" : "gray"}
+                className="flex items-center gap-2"
+                onClick={() => {
+                  if (isSelected) {
+                    // Remove from selected types
+                    setSelectedTypes(selectedTypes.filter(type => type !== option.label));
+                  } else {
+                    // Add to selected types
+                    setSelectedTypes([...selectedTypes, option.label]);
+                  }
+                }}
+              >
+                {option.icon(18, 18)}
+                <Typography className="text-xs">{option.label}</Typography>
+              </Button>
+            );
+          })}
       </div>
       <div>
-
         <Typography variant="h6" className="mb-2">
           Posts ({posts.length})
         </Typography>
@@ -356,6 +334,7 @@ const SocialPreviews = ({ connection, ...props }) => {
         caption={caption}
         connections={connections}
         selectedPlatformForModal={selectedPlatformForModal}
+        setRefreshPreview={setRefreshPreview}
       />
     </div>
   );

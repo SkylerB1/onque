@@ -95,7 +95,7 @@ const FacebookOptions = [
   },
   {
     icon: (width = 10, height = 10) => (
-      <GridSvg width={width} height={height} fill="#000000" />
+        <StorySvg width={width} height={height} fill="#000000" />
     ),
     label: FBStory,
     description: "Automatic posting",

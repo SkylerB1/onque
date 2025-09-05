@@ -45,6 +45,8 @@ const PostCalendar = (props) => {
   const [showAlert, setShowAlert] = useState(true); // Add state to control visibility
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedConnection, setSelectedConnection] = useState(null);
+  const [refreshPreview, setRefreshPreview] = useState(false);
+  const [selectedPostIndex, setSelectedPostIndex] = useState(null);
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
   const calendarRef = useRef(null);
@@ -60,39 +62,74 @@ const PostCalendar = (props) => {
     window.dispatchEvent(new Event('resize'));
   };
 
-  const updatePostData = async (eventInfo) => {
-    const { title = "", extendedProps = {} } = eventInfo.event._def;
+const updatePostData = async (eventInfo, openModalOverride = true, indexOverride = null) => {
+  let eventDef, extendedProps;
 
-    const { rowId, files, platform, postdate, status, socialPresets, thumbnailPresets, thumbnailFiles } =
-      extendedProps;
+  // Handle both FullCalendar eventInfo and raw event object
+  if (eventInfo.event) {
+    eventDef = eventInfo.event._def;
+    extendedProps = eventInfo.event._def.extendedProps;
+  } else {
+    eventDef = eventInfo; // raw event
+    extendedProps = eventInfo.extendedProps || {};
+  }
 
-    if (!platform || platform.length == 0) return false;
-
-    // get the post insights data
-    let result = await PostsService.getPostInsights(rowId);
-    let postInsights = [];
-    if (result.status === true) {
-      postInsights = result.data.postInsights;
-    }
-
-    const data = {
-      caption: title,
-      id: rowId,
-      files: files,
-      platforms: isJSON(platform) ? JSON.parse(platform) : platform,
-      status: status,
-      socialPresets: socialPresets ? JSON.parse(socialPresets) : null,
-      postInsights,
-      thumbnailPresets: thumbnailPresets ? JSON.parse(thumbnailPresets) : null,
-      thumbnailFiles: thumbnailFiles ? thumbnailFiles : [],
-    };
-
-    setPostData(data);
-    setCaption(title);
-    setFiles((prev) => [...prev, ...files]);
-    setScheduledDate(dayjs(postdate));
-    handleModal();
+  const { title = "", rowId, files, platform, postdate, status, socialPresets, thumbnailPresets, thumbnailFiles } = {
+    ...eventDef,
+    ...extendedProps
   };
+
+  if (!platform || platform.length === 0) return false;
+
+  let result = await PostsService.getPostInsights(rowId);
+  let postInsights = [];
+  if (result.status === true) {
+    postInsights = result.data.postInsights;
+  }
+
+  const data = {
+    caption: title,
+    id: rowId,
+    files: files,
+    platforms: isJSON(platform) ? JSON.parse(platform) : platform,
+    status: status,
+    socialPresets: socialPresets ? JSON.parse(socialPresets) : null,
+    postInsights,
+    thumbnailPresets: thumbnailPresets ? JSON.parse(thumbnailPresets) : null,
+    thumbnailFiles: thumbnailFiles ? thumbnailFiles : [],
+  };
+
+  setPostData(data);
+  setCaption(title);
+  setFiles([...files]);
+  setScheduledDate(dayjs(postdate));
+  setIsEdit(true);
+
+  let idx = indexOverride !== null
+    ? indexOverride
+    : events.findIndex(ev => ev.extendedProps && ev.extendedProps.rowId === rowId);
+
+  setSelectedPostIndex(idx !== -1 ? idx : null);
+
+  if (openModalOverride) setModal(true);
+};
+
+const handlePrevPost = async (e) => {
+  if (e) e.stopPropagation();
+  if (selectedPostIndex > 0) {
+    const prevEvent = events[selectedPostIndex - 1];
+    await updatePostData(prevEvent, true, selectedPostIndex - 1);
+  }
+};
+
+const handleNextPost = async (e) => {
+  if (e) e.stopPropagation();
+  if (selectedPostIndex < events.length - 1) {
+    const nextEvent = events[selectedPostIndex + 1];
+    await updatePostData(nextEvent, true, selectedPostIndex + 1);
+  }
+};
+
 
   const renderEventContent = (eventInfo) => {
     const images_arr = eventInfo.event._def.extendedProps.files;
@@ -137,7 +174,14 @@ const PostCalendar = (props) => {
   };
 
   const handleModal = () => {
-    setModal(!openModal);
+    if (openModal) {
+      setModal(false);
+      setIsEdit(false);
+      setSelectedPostIndex(null);
+      clearPostData();
+    } else {
+      setModal(true);
+    }
   };
 
   const selectData = (info) => {
@@ -151,6 +195,7 @@ const PostCalendar = (props) => {
     setCaption("");
     setFiles([]);
     setIsEdit(false);
+    setSelectedPostIndex(null);
   };
 
   useEffect(() => {
@@ -232,6 +277,8 @@ console.log(connections,"connections");
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
+                    viewBox="0 0 20 20"
+                  >
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                   </svg>
                   <span className="sr-only">Info</span>
@@ -281,7 +328,7 @@ console.log(connections,"connections");
           <>
             <div className="flex items-center justify-between border-2 border-black rounded-md py-2 px-5 mb-5">
               <span className="text-sm text-black">
-                You have posted{" "}
+                {/* You have posted{" "}
                 <strong>
                   {" "}
                   {validations?.posts_count_monthly} out of your{" "}
@@ -289,9 +336,10 @@ console.log(connections,"connections");
                 </strong>{" "}
                 available posts in your plan this month.
                 {validations?.max_posts_monthly < 12000 &&
-                  "Upgrade your plan to increase the limit."}
+                  "Upgrade your plan to increase the limit."} */}
+                  Easily upgrade and downgrade your OnQue subscription to suite your clients needs.
               </span>
-              {validations.max_posts_monthly < 12000 && (
+              {/* {validations.max_posts_monthly < 12000 && ( */}
                 <Button
                   variant="gradient"
                   size="sm"
@@ -300,11 +348,11 @@ console.log(connections,"connections");
                 >
                   Upgrade
                 </Button>
-              )}
+              {/* )} */}
             </div>
 
-            {validations?.posts_count_monthly <
-              validations?.max_posts_monthly && (
+            {/* {validations?.posts_count_monthly <
+              validations?.max_posts_monthly && ( */}
               <>
                 <Button
                   size="sm"
@@ -315,7 +363,7 @@ console.log(connections,"connections");
                   Create Post
                 </Button>
               </>
-            )}
+            {/* )} */}
           </>
         )}
 
@@ -365,7 +413,7 @@ console.log(connections,"connections");
                     x.parentNode.style.zIndex = 1;
                   }}
                   eventClick={function (info) {
-                    updatePostData(info);
+                    updatePostData(info, true); // always open modal on calendar click
                   }}
                   dateClick={function (info) {
                     if (info.date >= new Date()) {
@@ -379,7 +427,6 @@ console.log(connections,"connections");
                   eventDragStart={eventDragStart}
                   eventAllow={eventAllow}
                 />
-
                 {openModal && (
                   <CreatePostModal
                     openModal={openModal}
@@ -399,6 +446,11 @@ console.log(connections,"connections");
                     getPostData={getPostData}
                     scheduledDate={scheduledDate}
                     setScheduledDate={setScheduledDate}
+                    setRefreshPreview={setRefreshPreview}
+                    onPrev={handlePrevPost}
+                    onNext={handleNextPost}
+                    canPrev={selectedPostIndex > 0}
+                    canNext={selectedPostIndex < events.length - 1}
                   />
                 )}
               </CardBody>
@@ -435,7 +487,7 @@ console.log(connections,"connections");
                     })}
                 </div>
                 <div className="p-4 flex-1">
-                  <SocialPreviews connection={selectedConnection} statusFilter={statusFilter || []} />
+                  <SocialPreviews connection={selectedConnection} statusFilter={statusFilter || []} refreshPreview={refreshPreview} setRefreshPreview={setRefreshPreview} />
                 </div>
               </div>
             )}

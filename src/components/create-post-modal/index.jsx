@@ -83,7 +83,10 @@ import PostsService from "../../services/PostsService.js";
 import LoadingButton from "../button/LoadingButton.jsx";
 import BlockUIComponent from "../BlockUIComponent.jsx";
 import environment from "../../config/environment";
-import { addMedia, deleteMedia } from "../../redux/features/thumbnailMediaSlice.js";
+import {
+  addMedia,
+  deleteMedia,
+} from "../../redux/features/thumbnailMediaSlice.js";
 import { useDispatch } from "react-redux";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 const schdulePostBtnLabel = [
@@ -123,10 +126,10 @@ const CreatePostModal = ({
   videoDurations,
   setVideoDurations,
   setRefreshPreview,
-    onPrev,
+  onPrev,
   onNext,
   canPrev,
-  canNext
+  canNext,
 }) => {
   const isDuplicating = useMemo(
     // () => isEdit === "Published" || false,
@@ -151,14 +154,24 @@ const CreatePostModal = ({
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
   const [modelImageForThumbnail, setModelImageForThumbnail] = useState(false);
-  const [submitButton, setSubmitButton] = useState(
-    postData?.status == postStatuses?.saveAsDraft ? "Save As Draft" : "Schedule"
-  );
-  const [submitButtonKey, setSubmitButtonKey] = useState(
-    postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
-  );
-const thumbnailMedia = useSelector((state) => state.thumbnailMedia.value) || [];  
-const videoTimeData = useSelector((state) => state.videoSlider);
+
+  const getSubmitButtonLabel = () => {
+    return postData?.status === postStatuses?.saveAsDraft
+      ? "Save As Draft"
+      : "Schedule";
+  };
+
+  const [submitButton, setSubmitButton] = useState(getSubmitButtonLabel());
+
+  const getSubmitButtonKey = () => {
+    return postData?.status === postStatuses?.saveAsDraft
+      ? "saveAsDraft"
+      : "schedule";
+  };
+  const [submitButtonKey, setSubmitButtonKey] = useState(getSubmitButtonKey());
+  const thumbnailMedia =
+    useSelector((state) => state.thumbnailMedia.value) || [];
+  const videoTimeData = useSelector((state) => state.videoSlider);
 
   const [showPreview, setShowPreview] = useState(false);
   const [additionalPresets, setAdditionalPresets] = useState({
@@ -336,7 +349,10 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   };
 
   useEffect(() => {
-    if (postData?.thumbnailPresets?.length > 0 && postData?.thumbnailFiles?.length > 0) {
+    if (
+      postData?.thumbnailPresets?.length > 0 &&
+      postData?.thumbnailFiles?.length > 0
+    ) {
       postData.thumbnailPresets.forEach((preset) => {
         dispatch(
           addMedia({
@@ -344,9 +360,9 @@ const videoTimeData = useSelector((state) => state.videoSlider);
             mediaType: preset.mediaType,
             mediaUrl: preset.thumbnail?.mediaUrl || "",
             navigationUrl: "https://example.com", // Example navigation URL
-            file: postData?.thumbnailFiles[0],// Pass the matched file or null
-            clickedOnFileName: null, // Use the filename from the matched 
-            via:"editPost",
+            file: postData?.thumbnailFiles[0], // Pass the matched file or null
+            clickedOnFileName: null, // Use the filename from the matched
+            via: "editPost",
           })
         );
       });
@@ -389,7 +405,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   const uploadThumbnailFiles = async (thumbnailMedia) => {
     const formData = new FormData();
     const media = []; // ✅ define media here
-  
+
     thumbnailMedia.forEach((item) => {
       if (item.file instanceof File) {
         formData.append("files", item.file);
@@ -397,7 +413,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         media.push(item); // if no File, keep it as-is
       }
     });
-  
+
     if (Array.from(formData.keys()).length > 0) {
       try {
         const response = await axiosInstance.post(UPLOAD_FILE_URL, formData);
@@ -410,9 +426,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       return media;
     }
   };
-  
-  
-  
 
   const handleClose = () => {
     setModal(false);
@@ -438,7 +451,7 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         await getPostData();
-        setRefreshPreview(prev => !prev);
+        setRefreshPreview((prev) => !prev);
         handleClose();
         handleLoading(false);
         dispatch(deleteMedia());
@@ -479,12 +492,10 @@ const videoTimeData = useSelector((state) => state.videoSlider);
     setOpenSubscriptionModal(!openSubscriptionModal);
   };
 
-  console.log(connections,"connections");
-
   const handlePublish = async () => {
     handleLoading(true);
 
-    let media  = [];
+    let media = [];
     if (files?.length > 0) {
       media = await uploadFiles();
     }
@@ -506,24 +517,25 @@ const videoTimeData = useSelector((state) => state.videoSlider);
         additionalPresets: getAdditionalPreset(item.platform, item.mediaType),
       }));
 
-      let thumbnailData = filteredSelectedPlatforms.map((item) => {    
-        const thumbnail = thumbnailMedia.find(
-          (file) => file?.clickedOnFileName === files[0]?.name 
-        );
-        return {
-          platform: item.platform,
-          mediaType: item.mediaType,
-          thumbnail: thumbnail
-            ? {
-                imageName: thumbnail.file?.name || null,
-                mediaUrl: thumbnail.mediaUrl || null,
-              }
-            : null,
-          thumbnailTimeRange: videoTimeData?.fileName === files[0]?.name 
+    let thumbnailData = filteredSelectedPlatforms.map((item) => {
+      const thumbnail = thumbnailMedia.find(
+        (file) => file?.clickedOnFileName === files[0]?.name
+      );
+      return {
+        platform: item.platform,
+        mediaType: item.mediaType,
+        thumbnail: thumbnail
+          ? {
+              imageName: thumbnail.file?.name || null,
+              mediaUrl: thumbnail.mediaUrl || null,
+            }
+          : null,
+        thumbnailTimeRange:
+          videoTimeData?.fileName === files[0]?.name
             ? videoTimeData?.timeInSeconds
             : null,
-        };
-      });
+      };
+    });
     const data = {
       providers: providers,
       caption,
@@ -591,7 +603,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
   };
 
   const handleFile = (file) => {
-
     setimgUploadModal(false);
     setVideoUploadModal(false);
     setFiles((prevFiles) => [...prevFiles, ...file]);
@@ -731,6 +742,10 @@ const videoTimeData = useSelector((state) => state.videoSlider);
 
   // It updates  when connection and post data changed
   useEffect(() => {
+    // Update the submit button labels on post changed
+    setSubmitButton(getSubmitButtonLabel());
+    setSubmitButtonKey(getSubmitButtonKey());
+
     if (
       selectedPlaforms.length == 0 &&
       connections &&
@@ -738,8 +753,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
       !selectedPreview
     ) {
       if (postData) {
-        console.log(postData,"postData");
         let { platforms, socialPresets } = postData;
+
         const presets = {};
         // remove the twitter from connections if existing post has multiple platforms
         if (platforms.length > 1) {
@@ -1938,7 +1953,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
             onDrop={(file) => {
               if (!modelImageForThumbnail) {
                 handleFile(file);
-              }}}
+              }
+            }}
           >
             {({ getRootProps, getInputProps, isDragActive }) => (
               <div
@@ -1977,7 +1993,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                         >
                           Show Preview
                         </Button>
-                        
                       </div>
 
                       <div className="flex flex-row  justify-between items-center mt-6">
@@ -2135,7 +2150,6 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                               <DeleteIconFilled />
                             </IconButton>
                           )}
-
                           {editAccess && isDuplicating && (
                             <div className="flex flex-row mx-2">
                               <Button
@@ -2153,8 +2167,8 @@ const videoTimeData = useSelector((state) => state.videoSlider);
                           )}
 
                           {editAccess &&
-                            (isEdit == "SaveAsDraft" ||
-                              isEdit == "Pending" ||
+                            (postData?.status === "SaveAsDraft" ||
+                              postData?.status == "Pending" ||
                               isEdit == false ||
                               isEdit == null) && (
                               <div className="flex flex-row mr-2">
@@ -2248,24 +2262,30 @@ const videoTimeData = useSelector((state) => state.videoSlider);
           </Dropzone>
         </DialogBody>
         {/* Navigation Arrows */}
-          {isEdit && (
-            <div className="absolute inset-y-0 left-0 right-0 flex justify-between items-center pointer-events-none z-50">
-              <button
-                className="pointer-events-auto bg-white rounded-full shadow p-2 ml-4"
-                onClick={(e) => { e.stopPropagation(); onPrev?.(e); }}
-                disabled={!canPrev}
-              >
-                <FaArrowLeft size={24} />
-              </button>
-              <button
-                className="pointer-events-auto bg-white rounded-full shadow p-2 mr-4"
-                onClick={(e) => { e.stopPropagation(); onNext?.(e); }}
-                disabled={!canNext}
-              >
-                <FaArrowRight size={24} />
-              </button>
-            </div>
-          )}
+        {isEdit && (
+          <div className="absolute inset-y-0 left-0 right-0 flex justify-between items-center pointer-events-none z-50">
+            <button
+              className="pointer-events-auto bg-white rounded-full shadow p-2 ml-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                onPrev?.(e);
+              }}
+              disabled={!canPrev}
+            >
+              <FaArrowLeft size={24} />
+            </button>
+            <button
+              className="pointer-events-auto bg-white rounded-full shadow p-2 mr-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                onNext?.(e);
+              }}
+              disabled={!canNext}
+            >
+              <FaArrowRight size={24} />
+            </button>
+          </div>
+        )}
 
         <ImgUploadModal
           show={showimgUploadModal}

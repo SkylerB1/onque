@@ -48,10 +48,10 @@ const PaymentHistoryTable = () => {
         <div className="flex items-center justify-between gap-8">
           <div>
             <Typography variant="h5" color="blue-gray">
-              Payments History
+              Invoices History
             </Typography>
             <Typography color="gray" className="my-1 font-normal">
-              See information about all your payments
+              See information about all your payment invoices
             </Typography>
           </div>
         </div>

@@ -154,12 +154,21 @@ const CreatePostModal = ({
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
   const [modelImageForThumbnail, setModelImageForThumbnail] = useState(false);
-  const [submitButton, setSubmitButton] = useState(
-    postData?.status == postStatuses?.saveAsDraft ? "Save As Draft" : "Schedule"
-  );
-  const [submitButtonKey, setSubmitButtonKey] = useState(
-    postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
-  );
+
+  const getSubmitButtonLabel = () => {
+    return postData?.status === postStatuses?.saveAsDraft
+      ? "Save As Draft"
+      : "Schedule";
+  };
+
+  const [submitButton, setSubmitButton] = useState(getSubmitButtonLabel());
+
+  const getSubmitButtonKey = () => {
+    return postData?.status === postStatuses?.saveAsDraft
+      ? "saveAsDraft"
+      : "schedule";
+  };
+  const [submitButtonKey, setSubmitButtonKey] = useState(getSubmitButtonKey());
   const thumbnailMedia =
     useSelector((state) => state.thumbnailMedia.value) || [];
   const videoTimeData = useSelector((state) => state.videoSlider);
@@ -733,6 +742,10 @@ const CreatePostModal = ({
 
   // It updates  when connection and post data changed
   useEffect(() => {
+    // Update the submit button labels on post changed
+    setSubmitButton(getSubmitButtonLabel());
+    setSubmitButtonKey(getSubmitButtonKey());
+
     if (
       selectedPlaforms.length == 0 &&
       connections &&
@@ -741,6 +754,7 @@ const CreatePostModal = ({
     ) {
       if (postData) {
         let { platforms, socialPresets } = postData;
+
         const presets = {};
         // remove the twitter from connections if existing post has multiple platforms
         if (platforms.length > 1) {
@@ -2136,7 +2150,6 @@ const CreatePostModal = ({
                               <DeleteIconFilled />
                             </IconButton>
                           )}
-
                           {editAccess && isDuplicating && (
                             <div className="flex flex-row mx-2">
                               <Button
@@ -2154,8 +2167,8 @@ const CreatePostModal = ({
                           )}
 
                           {editAccess &&
-                            (isEdit == "SaveAsDraft" ||
-                              isEdit == "Pending" ||
+                            (postData?.status === "SaveAsDraft" ||
+                              postData?.status == "Pending" ||
                               isEdit == false ||
                               isEdit == null) && (
                               <div className="flex flex-row mr-2">

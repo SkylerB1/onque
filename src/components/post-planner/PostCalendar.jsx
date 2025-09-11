@@ -12,7 +12,7 @@ import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import { Card, CardBody, Button } from "@material-tailwind/react";
 import { IoMdAdd, IoMdClose } from "react-icons/io";
-import {FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   abbreviateString,
@@ -22,7 +22,12 @@ import {
 import StoryCarousel from "../mockups/facebook/StoryCarousel";
 import { useAppContext } from "../../context/AuthContext";
 import { axiosInstance } from "../../utils/Interceptor";
-import { API_URL, SocialPlatforms, toastrError, toastrSuccess } from "../../utils";
+import {
+  API_URL,
+  SocialPlatforms,
+  toastrError,
+  toastrSuccess,
+} from "../../utils";
 import PostsService from "../../services/PostsService";
 import SocialPreviews from "../social-previews/SocialPreviews";
 import PostStatusIcon from "../common/PostStatusIcon";
@@ -59,77 +64,92 @@ const PostCalendar = (props) => {
   };
   const onDrawerTransitionEnd = () => {
     calendarRef.current?.getApi().updateSize();
-    window.dispatchEvent(new Event('resize'));
+    window.dispatchEvent(new Event("resize"));
   };
 
-const updatePostData = async (eventInfo, openModalOverride = true, indexOverride = null) => {
-  let eventDef, extendedProps;
+  const updatePostData = async (
+    eventInfo,
+    openModalOverride = true,
+    indexOverride = null
+  ) => {
+    let eventDef, extendedProps;
 
-  // Handle both FullCalendar eventInfo and raw event object
-  if (eventInfo.event) {
-    eventDef = eventInfo.event._def;
-    extendedProps = eventInfo.event._def.extendedProps;
-  } else {
-    eventDef = eventInfo; // raw event
-    extendedProps = eventInfo.extendedProps || {};
-  }
+    // Handle both FullCalendar eventInfo and raw event object
+    if (eventInfo.event) {
+      eventDef = eventInfo.event._def;
+      extendedProps = eventInfo.event._def.extendedProps;
+    } else {
+      eventDef = eventInfo; // raw event
+      extendedProps = eventInfo.extendedProps || {};
+    }
 
-  const { title = "", rowId, files, platform, postdate, status, socialPresets, thumbnailPresets, thumbnailFiles } = {
-    ...eventDef,
-    ...extendedProps
+    const {
+      title = "",
+      rowId,
+      files,
+      platform,
+      postdate,
+      status,
+      socialPresets,
+      thumbnailPresets,
+      thumbnailFiles,
+    } = {
+      ...eventDef,
+      ...extendedProps,
+    };
+
+    if (!platform || platform.length === 0) return false;
+
+    let result = await PostsService.getPostInsights(rowId);
+    let postInsights = [];
+    if (result.status === true) {
+      postInsights = result.data.postInsights;
+    }
+
+    const data = {
+      caption: title,
+      id: rowId,
+      files: files,
+      platforms: isJSON(platform) ? JSON.parse(platform) : platform,
+      status: status,
+      socialPresets: socialPresets ? JSON.parse(socialPresets) : null,
+      postInsights,
+      thumbnailPresets: thumbnailPresets ? JSON.parse(thumbnailPresets) : null,
+      thumbnailFiles: thumbnailFiles ? thumbnailFiles : [],
+    };
+
+    setPostData(data);
+    setCaption(title);
+    setFiles([...files]);
+    setScheduledDate(dayjs(postdate));
+    setIsEdit(true);
+
+    let idx =
+      indexOverride !== null
+        ? indexOverride
+        : events.findIndex((ev) => {
+            return ev.rowId === rowId;
+          });
+
+    setSelectedPostIndex(idx !== -1 ? idx : null);
+    if (openModalOverride) setModal(true);
   };
 
-  if (!platform || platform.length === 0) return false;
-
-  let result = await PostsService.getPostInsights(rowId);
-  let postInsights = [];
-  if (result.status === true) {
-    postInsights = result.data.postInsights;
-  }
-
-  const data = {
-    caption: title,
-    id: rowId,
-    files: files,
-    platforms: isJSON(platform) ? JSON.parse(platform) : platform,
-    status: status,
-    socialPresets: socialPresets ? JSON.parse(socialPresets) : null,
-    postInsights,
-    thumbnailPresets: thumbnailPresets ? JSON.parse(thumbnailPresets) : null,
-    thumbnailFiles: thumbnailFiles ? thumbnailFiles : [],
+  const handlePrevPost = async (e) => {
+    if (e) e.stopPropagation();
+    if (selectedPostIndex > 0) {
+      const prevEvent = events[selectedPostIndex - 1];
+      await updatePostData(prevEvent, true, selectedPostIndex - 1);
+    }
   };
 
-  setPostData(data);
-  setCaption(title);
-  setFiles([...files]);
-  setScheduledDate(dayjs(postdate));
-  setIsEdit(true);
-
-  let idx = indexOverride !== null
-    ? indexOverride
-    : events.findIndex(ev => ev.extendedProps && ev.extendedProps.rowId === rowId);
-
-  setSelectedPostIndex(idx !== -1 ? idx : null);
-
-  if (openModalOverride) setModal(true);
-};
-
-const handlePrevPost = async (e) => {
-  if (e) e.stopPropagation();
-  if (selectedPostIndex > 0) {
-    const prevEvent = events[selectedPostIndex - 1];
-    await updatePostData(prevEvent, true, selectedPostIndex - 1);
-  }
-};
-
-const handleNextPost = async (e) => {
-  if (e) e.stopPropagation();
-  if (selectedPostIndex < events.length - 1) {
-    const nextEvent = events[selectedPostIndex + 1];
-    await updatePostData(nextEvent, true, selectedPostIndex + 1);
-  }
-};
-
+  const handleNextPost = async (e) => {
+    if (e) e.stopPropagation();
+    if (selectedPostIndex < events.length - 1) {
+      const nextEvent = events[selectedPostIndex + 1];
+      await updatePostData(nextEvent, true, selectedPostIndex + 1);
+    }
+  };
 
   const renderEventContent = (eventInfo) => {
     const images_arr = eventInfo.event._def.extendedProps.files;
@@ -232,7 +252,7 @@ const handleNextPost = async (e) => {
       toastrError("Error updating post");
     }
   };
-console.log(connections,"connections");
+
   const eventDragStart = (info) => {
     const status = info.event._def.extendedProps.status;
     setDraggingEvent(status === "SaveAsDraft" || status === "Pending");
@@ -275,8 +295,6 @@ console.log(connections,"connections");
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
                     viewBox="0 0 20 20"
                   >
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
@@ -337,39 +355,40 @@ console.log(connections,"connections");
                 available posts in your plan this month.
                 {validations?.max_posts_monthly < 12000 &&
                   "Upgrade your plan to increase the limit."} */}
-                  Easily upgrade and downgrade your OnQue subscription to suite your clients needs.
+                Easily upgrade and downgrade your OnQue subscription to suite
+                your clients needs.
               </span>
               {/* {validations.max_posts_monthly < 12000 && ( */}
-                <Button
-                  variant="gradient"
-                  size="sm"
-                  className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
-                  onClick={() => navigate("/setting/price")}
-                >
-                  Upgrade
-                </Button>
+              <Button
+                variant="gradient"
+                size="sm"
+                className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
+                onClick={() => navigate("/setting/price")}
+              >
+                Upgrade
+              </Button>
               {/* )} */}
             </div>
 
             {/* {validations?.posts_count_monthly <
               validations?.max_posts_monthly && ( */}
-              <>
-                <Button
-                  size="sm"
-                  onClick={handleModal}
-                  className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
-                >
-                  <IoMdAdd className="w-5 h-5 mr-1" />
-                  Create Post
-                </Button>
-              </>
+            <>
+              <Button
+                size="sm"
+                onClick={handleModal}
+                className="text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm text-center flex items-center"
+              >
+                <IoMdAdd className="w-5 h-5 mr-1" />
+                Create Post
+              </Button>
+            </>
             {/* )} */}
           </>
         )}
 
         {/* Main content: calendar and drawer side by side */}
         <div className="flex w-full transition-all duration-300">
-        <div className="flex-1 min-w-0 transition-all duration-300">
+          <div className="flex-1 min-w-0 transition-all duration-300">
             <Card className="mt-2">
               <CardBody>
                 <FullCalendar
@@ -378,21 +397,23 @@ console.log(connections,"connections");
                   plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                   initialView="timeGridWeek"
                   headerToolbar={{
-                    right: `today prev,next${!drawerOpen ? ' feedPreview' : ' closePreview'}`,
-                    left: 'title'
+                    right: `today prev,next${
+                      !drawerOpen ? " feedPreview" : " closePreview"
+                    }`,
+                    left: "title",
                   }}
                   customButtons={{
                     feedPreview: {
-                      text: 'Feed Preview',
-                      click: () => setDrawerOpen(true)
+                      text: "Feed Preview",
+                      click: () => setDrawerOpen(true),
                     },
                     closePreview: {
-                      text: 'Close Preview',
-                      click: () => setDrawerOpen(false)
-                    }
+                      text: "Close Preview",
+                      click: () => setDrawerOpen(false),
+                    },
                   }}
                   buttonText={{
-                    today: 'Today'
+                    today: "Today",
                   }}
                   firstDay={1}
                   weekends={true}
@@ -459,7 +480,9 @@ console.log(connections,"connections");
           {/* Drawer as a sibling, not fixed */}
           <div
             onTransitionEnd={onDrawerTransitionEnd}
-            className={`transition-all duration-300 ${drawerOpen ? "w-88" : "w-0"} ...`}
+            className={`transition-all duration-300 ${
+              drawerOpen ? "w-88" : "w-0"
+            } ...`}
             style={{ width: drawerOpen ? "22rem" : 0 }}
           >
             {drawerOpen && (
@@ -471,11 +494,16 @@ console.log(connections,"connections");
                     connections.map((conn, idx) => {
                       const platformObj = SocialPlatforms[conn.platform];
                       if (!platformObj) return null;
-                      const isSelected = selectedConnection && selectedConnection.id === conn.id;
+                      const isSelected =
+                        selectedConnection && selectedConnection.id === conn.id;
                       return (
                         <div
                           key={conn.id}
-                          className={`cursor-pointer rounded-full p-1 border ${isSelected ? "border-blue-500 bg-blue-50" : "border-transparent"}`}
+                          className={`cursor-pointer rounded-full p-1 border ${
+                            isSelected
+                              ? "border-blue-500 bg-blue-50"
+                              : "border-transparent"
+                          }`}
                           onClick={() => setSelectedConnection(conn)}
                           title={conn.screenName}
                         >
@@ -487,7 +515,12 @@ console.log(connections,"connections");
                     })}
                 </div>
                 <div className="p-4 flex-1">
-                  <SocialPreviews connection={selectedConnection} statusFilter={statusFilter || []} refreshPreview={refreshPreview} setRefreshPreview={setRefreshPreview} />
+                  <SocialPreviews
+                    connection={selectedConnection}
+                    statusFilter={statusFilter || []}
+                    refreshPreview={refreshPreview}
+                    setRefreshPreview={setRefreshPreview}
+                  />
                 </div>
               </div>
             )}

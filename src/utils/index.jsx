@@ -95,7 +95,7 @@ const FacebookOptions = [
   },
   {
     icon: (width = 10, height = 10) => (
-        <StorySvg width={width} height={height} fill="#000000" />
+      <StorySvg width={width} height={height} fill="#000000" />
     ),
     label: FBStory,
     description: "Automatic posting",
@@ -540,3 +540,34 @@ export function toFixedNumber(value) {
   if (!value) return "";
   return value.toFixed(2);
 }
+
+export const subscriptionStatuses = {
+  trialing: {
+    title: "Trialing",
+    description: "Your subscription is in the trial period.",
+  },
+  active: {
+    title: "Active",
+    description: "Your subscription is active.",
+  },
+  past_due: {
+    title: "Past Due",
+    description: `We couldn’t process your payment. Please review your last invoice in the 'Invoice History' section to complete the payment.`,
+  },
+  unpaid: {
+    title: "Unpaid",
+    description: "Your subscription was canceled due to missed payments.",
+  },
+  canceled: {
+    title: "Canceled",
+    description: "Your subscription has been canceled.",
+  },
+  incomplete: {
+    title: "Incomplete",
+    description: "Your subscription couldn’t be started.",
+  },
+  incomplete_expired: {
+    title: "Incomplete Expired",
+    description: "Your subscription wasn’t completed in time.",
+  },
+};

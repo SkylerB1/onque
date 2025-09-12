@@ -746,12 +746,15 @@ const CreatePostModal = ({
     setSubmitButton(getSubmitButtonLabel());
     setSubmitButtonKey(getSubmitButtonKey());
 
-    if (
-      selectedPlaforms.length == 0 &&
-      connections &&
-      connections.length > 0 &&
-      !selectedPreview
-    ) {
+    // if (
+    //   selectedPlaforms.length == 0 &&
+    //   connections &&
+    //   connections.length > 0 &&
+    //   !selectedPreview
+    // ) {
+
+    // Removed the selectedPlaforms.length == 0  and !selectedPreview for updating the pateforms when prev and next clicked.
+    if (connections && connections.length > 0) {
       if (postData) {
         let { platforms, socialPresets } = postData;
 
@@ -785,7 +788,6 @@ const CreatePostModal = ({
           });
 
         setAdditionalPresets((prev) => ({ ...prev, ...presets }));
-
         setSelectedPlatforms(platforms);
         platforms[0] && setSelectedPreview(platforms[0]);
       } else {
@@ -2016,6 +2018,7 @@ const CreatePostModal = ({
                                         isDuplicating && "opacity-50"
                                       }`}
                                     >
+                                      {" "}
                                       <SocialPlatform
                                         id={item.id}
                                         brandId={brandId}

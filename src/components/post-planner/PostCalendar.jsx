@@ -73,7 +73,6 @@ const PostCalendar = (props) => {
     indexOverride = null
   ) => {
     let eventDef, extendedProps;
-
     // Handle both FullCalendar eventInfo and raw event object
     if (eventInfo.event) {
       eventDef = eventInfo.event._def;
@@ -128,27 +127,56 @@ const PostCalendar = (props) => {
       indexOverride !== null
         ? indexOverride
         : events.findIndex((ev) => {
-            return ev.rowId === rowId;
+            if (ev.rowId) {
+              return ev.rowId === rowId;
+            } else if (ev?.extendedProps?.rowId) {
+              return ev.extendedProps && ev.extendedProps.rowId === rowId;
+            }
           });
 
     setSelectedPostIndex(idx !== -1 ? idx : null);
     if (openModalOverride) setModal(true);
   };
 
-  const handlePrevPost = async (e) => {
+  const handlePrevPost = async (e, index = selectedPostIndex) => {
     if (e) e.stopPropagation();
-    if (selectedPostIndex > 0) {
-      const prevEvent = events[selectedPostIndex - 1];
-      await updatePostData(prevEvent, true, selectedPostIndex - 1);
+    let prevIndex = index - 1;
+    // Skip all STORY posts going backwards
+    while (prevIndex >= 0 && isPostContainStory(events[prevIndex])) {
+      prevIndex--;
+    }
+
+    // If a non-STORY event exists, process it
+    if (prevIndex >= 0) {
+      const prevEvent = events[prevIndex];
+      await updatePostData(prevEvent, true, prevIndex);
     }
   };
 
-  const handleNextPost = async (e) => {
+  const handleNextPost = async (e, index = selectedPostIndex) => {
     if (e) e.stopPropagation();
-    if (selectedPostIndex < events.length - 1) {
-      const nextEvent = events[selectedPostIndex + 1];
-      await updatePostData(nextEvent, true, selectedPostIndex + 1);
+
+    let nextIndex = index + 1;
+    // Skip all STORY posts
+    while (nextIndex < events.length && isPostContainStory(events[nextIndex])) {
+      nextIndex++;
     }
+
+    // If a non-STORY event exists, process it
+    if (nextIndex < events.length) {
+      const nextEvent = events[nextIndex];
+      await updatePostData(nextEvent, true, nextIndex);
+    }
+  };
+
+  const isPostContainStory = (event) => {
+    let { platform } = event || {};
+    if (platform) {
+      platform = isJSON(platform) ? JSON.parse(platform) : platform;
+
+      return platform.some((plat) => plat?.mediaType === "STORY");
+    }
+    return false;
   };
 
   const renderEventContent = (eventInfo) => {
@@ -355,7 +383,7 @@ const PostCalendar = (props) => {
                 available posts in your plan this month.
                 {validations?.max_posts_monthly < 12000 &&
                   "Upgrade your plan to increase the limit."} */}
-                Easily upgrade and downgrade your OnQue subscription to suite
+                Easily upgrade and downgrade your OnQue subscription to suit
                 your clients needs.
               </span>
               {/* {validations.max_posts_monthly < 12000 && ( */}

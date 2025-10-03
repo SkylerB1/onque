@@ -4,13 +4,16 @@ import Edit from "../svg/Edit";
 import PlayFilled from "../svg/PlayFilled";
 import { getSource, isContainImage, isContainVideo } from "../../utils";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from "react-redux";
 import { Oval } from "react-loader-spinner";
 import MenuItems from "../svg/menu-items";
 import PopoverMenu from "../modal/PopoverMenu";
 import ImgUploadModal from "../upload-modal/ImageUploadModal";
 
-import { addMedia, deleteMedia } from "../../redux/features/thumbnailMediaSlice";
+import {
+  addMedia,
+  deleteMedia,
+} from "../../redux/features/thumbnailMediaSlice";
 import OnFileClickableAction from "../FileClickable/FileClickableAction";
 import VideoSliderPopover from "../videoSliderPopover/videoSliderPopover";
 
@@ -26,15 +29,15 @@ const RenderFiles = ({
   selectedPlaforms,
   setModelImageForThumbnail,
   activeId,
-  isEdit
+  isEdit,
 }) => {
   const memoizedSources = useMemo(() => {
     return Array.isArray(files) && files.map((file) => getSource(file));
   }, [files]);
   const dispatch = useDispatch();
   const videoRef = useRef();
-  const [loadingStates, setLoadingStates] = useState({}); 
-  const [anchorEl, setAnchorEl] = useState(null); 
+  const [loadingStates, setLoadingStates] = useState({});
+  const [anchorEl, setAnchorEl] = useState(null);
   const [openPopover, setOpenPopover] = useState(false);
   const [showimgUploadModal, setimgUploadModal] = useState(false);
   const [droppableId, setDroppableId] = useState("");
@@ -62,45 +65,44 @@ const RenderFiles = ({
     setFiles(reorderedFiles);
   };
 
-const handleFile = (files, mediaType) => {
-  setimgUploadModal(false);
-  setModelImageForThumbnail(true);
-  dispatch(deleteMedia());
-  files.forEach((item) => {
-    const mediaUrl = getSource(item);
-    addMediaItem(mediaType, mediaUrl, item); // ✅ This is all you need
-  });
-};
+  const handleFile = (files, mediaType) => {
+    setimgUploadModal(false);
+    setModelImageForThumbnail(true);
+    dispatch(deleteMedia());
+    files.forEach((item) => {
+      const mediaUrl = getSource(item);
+      addMediaItem(mediaType, mediaUrl, item); // ✅ This is all you need
+    });
+  };
 
-  
-    const toggleimgUploadModal = () => {
-      setimgUploadModal(!showimgUploadModal);
-      setModelImageForThumbnail(true);
-    };
-  
-    const openImageModel = () => {
-      setModelImageForThumbnail(true);
-      setimgUploadModal(true);
-    };
+  const toggleimgUploadModal = () => {
+    setimgUploadModal(!showimgUploadModal);
+    setModelImageForThumbnail(true);
+  };
 
-      const addMediaItem = (mediaType, mediaUrl = "", file = null) => {
-        dispatch(addMedia({
-          id: media.length + 1,
-          mediaType: mediaType,
-          mediaUrl: mediaUrl,
-          navigationUrl: "https://example.com",
-          file: file,
-          clickedOnFileName: clickedFile?.name || null, // Store only serializable data
-        }));
-        setModelImageForThumbnail(false);
-      };
-  
+  const openImageModel = () => {
+    setModelImageForThumbnail(true);
+    setimgUploadModal(true);
+  };
+
+  const addMediaItem = (mediaType, mediaUrl = "", file = null) => {
+    dispatch(
+      addMedia({
+        id: media.length + 1,
+        mediaType: mediaType,
+        mediaUrl: mediaUrl,
+        navigationUrl: "https://example.com",
+        file: file,
+        clickedOnFileName: clickedFile?.name || null, // Store only serializable data
+      })
+    );
+    setModelImageForThumbnail(false);
+  };
+
   const openVideoSliderPopover = (file) => {
     setCurrentVideo(file);
     setShowVideoSlider(true);
   };
-      
-
 
   useEffect(() => {
     if (files.length) {
@@ -118,7 +120,6 @@ const handleFile = (files, mediaType) => {
     setOpenPopover(true);
     setClickedFile(file); // 👈 Save clicked file
   };
-  
 
   const handlePopoverClose = () => {
     setOpenPopover(false);
@@ -160,7 +161,7 @@ const handleFile = (files, mediaType) => {
                         {isContainVideo(file) ? (
                           <>
                             <video
-                            key={`${file.name}-${sliderTime.timeInSeconds}`}
+                              key={`${file.name}-${sliderTime.timeInSeconds}`}
                               ref={videoRef}
                               autoPlay={false}
                               muted={true}
@@ -172,8 +173,12 @@ const handleFile = (files, mediaType) => {
                                   videoRef.current?.duration,
                                   file.size
                                 );
-                                if (videoRef.current && sliderTime.fileName === file.name) {
-                                  videoRef.current.currentTime = sliderTime.timeInSeconds;
+                                if (
+                                  videoRef.current &&
+                                  sliderTime.fileName === file.name
+                                ) {
+                                  videoRef.current.currentTime =
+                                    sliderTime.timeInSeconds;
                                 }
                               }}
                               onLoadStart={() => handleLoadStart(index)} // Start loader when video starts loading
@@ -229,7 +234,9 @@ const handleFile = (files, mediaType) => {
                           onThumbnailUpload={openImageModel}
                           removeimg={removeimg}
                           index={index}
-                          onOpenVideoSlider={() => openVideoSliderPopover(clickedFile)}
+                          onOpenVideoSlider={() =>
+                            openVideoSliderPopover(clickedFile)
+                          }
                           selectedPlaforms={selectedPlaforms}
                         />
                       </div>

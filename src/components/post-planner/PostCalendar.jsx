@@ -68,7 +68,21 @@ const PostCalendar = (props) => {
   };
   const onDrawerTransitionEnd = () => {
     calendarRef.current?.getApi().updateSize();
-    window.dispatchEvent(new Event("resize"));
+
+    if (typeof window !== "undefined") {
+      let resizeEvent;
+
+      try {
+        // Modern browsers
+        resizeEvent = new Event("resize");
+      } catch (err) {
+        // Fallback for environments where Event is not a constructor
+        resizeEvent = document.createEvent("Event");
+        // @ts-ignore
+        resizeEvent.initEvent("resize", true, true);
+      }
+      window.dispatchEvent(resizeEvent);
+    }
   };
 
   const updatePostData = async (

@@ -32,6 +32,8 @@ import PostsService from "../../services/PostsService";
 import SocialPreviews from "../social-previews/SocialPreviews";
 import PostStatusIcon from "../common/PostStatusIcon";
 import PostStatusFilterDropdown from "../common/PostStatusFilterDropdown";
+import { useDispatch } from "react-redux";
+import { deleteMedia } from "../../redux/features/thumbnailMediaSlice";
 
 const PostCalendar = (props) => {
   const [statusFilter, setStatusFilter] = React.useState([]);
@@ -55,6 +57,8 @@ const PostCalendar = (props) => {
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
   const calendarRef = useRef(null);
+  const dispatch = useDispatch();
+
   const renderContentType = (type) => {
     if (type === "reels") {
       return <InstaReel height={12} width={12} />;
@@ -150,6 +154,7 @@ const PostCalendar = (props) => {
     if (prevIndex >= 0) {
       const prevEvent = events[prevIndex];
       await updatePostData(prevEvent, true, prevIndex);
+      dispatch(deleteMedia());
     }
   };
 
@@ -166,6 +171,7 @@ const PostCalendar = (props) => {
     if (nextIndex < events.length) {
       const nextEvent = events[nextIndex];
       await updatePostData(nextEvent, true, nextIndex);
+      dispatch(deleteMedia());
     }
   };
 
@@ -229,6 +235,7 @@ const PostCalendar = (props) => {
       clearPostData();
     } else {
       setModal(true);
+      dispatch(deleteMedia());
     }
   };
 

@@ -10,14 +10,20 @@ import dayjs from "dayjs";
 import { isJSON } from "../../utils/commonUtils";
 import useConnections from "../customHooks/useConnections";
 
-const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPreview }) => {
+const SocialPreviews = ({
+  connection,
+  statusFilter,
+  refreshPreview,
+  setRefreshPreview,
+}) => {
   const user = useSelector((state) => state.user.value);
   const brandId = user?.brand?.id;
 
-  const [selectedTypes, setSelectedTypes] = useState(['POST', 'REEL']); // Default both Post and Reel selected
+  const [selectedTypes, setSelectedTypes] = useState(["POST", "REEL"]); // Default both Post and Reel selected
   const [posts, setPosts] = useState([]);
   const [files, setFiles] = useState([]);
-  const [selectedPlatformForModal, setSelectedPlatformForModal] = useState(null);
+  const [selectedPlatformForModal, setSelectedPlatformForModal] =
+    useState(null);
 
   const [caption, setCaption] = useState("");
   const [postData, setPostData] = useState(null);
@@ -86,17 +92,17 @@ const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPr
         platform: platformsArray[0]?.platform || platformsArray[0] || "",
         status: status || "draft",
         scheduledDate: scheduledDate || new Date().toISOString(),
-  socialPresets: socialPresets
-    ? typeof socialPresets === "string"
-      ? JSON.parse(socialPresets)
-      : socialPresets
-    : [],
+        socialPresets: socialPresets
+          ? typeof socialPresets === "string"
+            ? JSON.parse(socialPresets)
+            : socialPresets
+          : [],
         postInsights,
-  thumbnailPresets: thumbnailPresets
-    ? (typeof thumbnailPresets === "string"
-        ? JSON.parse(thumbnailPresets)
-        : thumbnailPresets)
-    : null,
+        thumbnailPresets: thumbnailPresets
+          ? typeof thumbnailPresets === "string"
+            ? JSON.parse(thumbnailPresets)
+            : thumbnailPresets
+          : null,
         thumbnailFiles: thumbnailFiles || [],
       };
 
@@ -116,7 +122,10 @@ const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPr
     const fetchPosts = async () => {
       if (!connection) return;
       try {
-        const response = await PostsService.getPostData(brandId);
+        const response = await PostsService.fetchPostData(
+          brandId,
+          statusFilter
+        );
         if (response?.status === 200 && Array.isArray(response?.data)) {
           const filtered = response.data
             .filter((item) => {
@@ -144,16 +153,18 @@ const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPr
                 new Date(b.scheduledDate || b.createdAt) -
                 new Date(a.scheduledDate || a.createdAt)
             );
+
           setPosts(filtered);
         } else {
           setPosts([]);
         }
       } catch (err) {
+        console.error("Error fetching posts:", err);
         setPosts([]);
       }
     };
     fetchPosts();
-  }, [connection, selectedTypes, refreshPreview]);
+  }, [connection, selectedTypes, refreshPreview, statusFilter, brandId]);
 
   if (!connection || !SocialPlatforms[connection.platform]) {
     return <div>Select a social site to preview.</div>;
@@ -189,7 +200,9 @@ const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPr
                 onClick={() => {
                   if (isSelected) {
                     // Remove from selected types
-                    setSelectedTypes(selectedTypes.filter(type => type !== option.label));
+                    setSelectedTypes(
+                      selectedTypes.filter((type) => type !== option.label)
+                    );
                   } else {
                     // Add to selected types
                     setSelectedTypes([...selectedTypes, option.label]);
@@ -223,7 +236,10 @@ const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPr
               const currentFile = postFiles[activeIndex] || null;
 
               return (
-                <div key={post.id} className="flex flex-col items-center post-card-box">
+                <div
+                  key={post.id}
+                  className="flex flex-col items-center post-card-box"
+                >
                   {/* Post Card */}
                   <div
                     className="relative bg-white flex flex-col items-center w-full h-40 group cursor-pointer"
@@ -268,7 +284,6 @@ const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPr
                       <div className="text-xs text-gray-500">No media</div>
                     )}
                   </div>
-
                   {/* 🔥 Dots (below card, not inside card) */}
                   {postFiles.length > 1 && (
                     <div className="flex justify-center mt-1 gap-1">
@@ -282,9 +297,7 @@ const SocialPreviews = ({ connection, statusFilter, refreshPreview, setRefreshPr
                             }))
                           }
                           className={`w-2 h-2 rounded-full ${
-                            idx === activeIndex
-                              ? "bg-blue-500"
-                              : "bg-blue-200"
+                            idx === activeIndex ? "bg-blue-500" : "bg-blue-200"
                           } transition border-0 p-0`}
                           style={{ minWidth: "8px", minHeight: "8px" }}
                           aria-label={`Go to file ${idx + 1}`}

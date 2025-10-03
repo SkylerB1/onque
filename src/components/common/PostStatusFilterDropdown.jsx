@@ -1,21 +1,42 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import PostStatusIcon from "./PostStatusIcon";
 import { FiFilter } from "react-icons/fi";
 
 const statusOptions = [
   { label: "All Posts", value: "all", icon: null },
-  { label: "Drafts", value: "Drafts", icon: <PostStatusIcon status="Drafts" /> },
-  { label: "Scheduled", value: "Scheduled", icon: <PostStatusIcon status="Scheduled" /> },
-  { label: "Published", value: "Published", icon: <PostStatusIcon status="Published" /> },
-  { label: "Failed to Post", value: "Failed to Post", icon: <PostStatusIcon status="Error" /> },
+  {
+    label: "Drafts",
+    value: "Drafts",
+    icon: <PostStatusIcon status="Drafts" />,
+  },
+  {
+    label: "Scheduled",
+    value: "Scheduled",
+    icon: <PostStatusIcon status="Scheduled" />,
+  },
+  {
+    label: "Published",
+    value: "Published",
+    icon: <PostStatusIcon status="Published" />,
+  },
+  {
+    label: "Failed to Post",
+    value: "Failed to Post",
+    icon: <PostStatusIcon status="Error" />,
+  },
 ];
 
 function PostStatusFilterDropdown({ onStatusChange }) {
   const [showCard, setShowCard] = React.useState(false);
   const [showMenu, setShowMenu] = React.useState(false);
   // Default: all statuses selected (shows 'All Posts')
-  const [selected, setSelected] = React.useState(statusOptions.filter(opt => opt.value !== 'all').map(opt => opt.value));
+  const [selected, setSelected] = React.useState(
+    statusOptions.filter((opt) => opt.value !== "all").map((opt) => opt.value)
+  );
   const dropdownRef = useRef(null);
+  useEffect(() => {
+    onStatusChange(selected);
+  }, []);
 
   React.useEffect(() => {
     function handleClickOutside(event) {
@@ -24,11 +45,14 @@ function PostStatusFilterDropdown({ onStatusChange }) {
         setShowMenu(false);
       }
     }
-    if (showCard || showMenu) document.addEventListener("mousedown", handleClickOutside);
+    if (showCard || showMenu)
+      document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showCard, showMenu]);
 
-  const allStatusValues = statusOptions.filter(opt => opt.value !== "all").map(opt => opt.value);
+  const allStatusValues = statusOptions
+    .filter((opt) => opt.value !== "all")
+    .map((opt) => opt.value);
 
   const handleOption = (value) => {
     if (value === "all") {
@@ -57,7 +81,6 @@ function PostStatusFilterDropdown({ onStatusChange }) {
     }
   };
 
-
   // For display
   // For display: icons only
   let viewingIcons = [];
@@ -65,9 +88,13 @@ function PostStatusFilterDropdown({ onStatusChange }) {
     viewingIcons = [];
   } else if (selected.length === allStatusValues.length) {
     // All selected: show all status icons
-    viewingIcons = statusOptions.filter(opt => opt.value !== "all").map(opt => opt.icon);
+    viewingIcons = statusOptions
+      .filter((opt) => opt.value !== "all")
+      .map((opt) => opt.icon);
   } else {
-    viewingIcons = statusOptions.filter(opt => selected.includes(opt.value)).map(opt => opt.icon);
+    viewingIcons = statusOptions
+      .filter((opt) => selected.includes(opt.value))
+      .map((opt) => opt.icon);
   }
 
   return (
@@ -75,8 +102,10 @@ function PostStatusFilterDropdown({ onStatusChange }) {
       <div className="relative w-full justify-start">
         {/* Step 1: Filters button */}
         <button
-          className={`flex items-center gap-2 px-4 py-2 ml-5 bg-white border border-gray-300 rounded shadow-sm text-sm font-medium hover:bg-gray-100 focus:outline-none w-50 ${showCard ? "bg-blue-100" : ""}`}
-          onClick={e => {
+          className={`flex items-center gap-2 px-4 py-2 ml-5 bg-white border border-gray-300 rounded shadow-sm text-sm font-medium hover:bg-gray-100 focus:outline-none w-50 ${
+            showCard ? "bg-blue-100" : ""
+          }`}
+          onClick={(e) => {
             e.stopPropagation();
             if (!showCard) setShowCard(true);
           }}
@@ -100,16 +129,30 @@ function PostStatusFilterDropdown({ onStatusChange }) {
                 type="button"
               >
                 <div className="flex items-center gap-2">
-                {viewingIcons.length === 0 ? (
-                  <span className="text-xs text-gray-400 italic">No filter</span>
-                ) : (
-                  viewingIcons.map((icon, idx) => (
-                    <span key={idx}>{icon}</span>
-                  ))
-                )}
-              </div>
-                <span className={`ml-2 transition-transform ${showMenu ? "rotate-180" : "rotate-0"}`}>
-                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M6 8l4 4 4-4" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  {viewingIcons.length === 0 ? (
+                    <span className="text-xs text-gray-400 italic">
+                      No filter
+                    </span>
+                  ) : (
+                    viewingIcons.map((icon, idx) => (
+                      <span key={idx}>{icon}</span>
+                    ))
+                  )}
+                </div>
+                <span
+                  className={`ml-2 transition-transform ${
+                    showMenu ? "rotate-180" : "rotate-0"
+                  }`}
+                >
+                  <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                    <path
+                      d="M6 8l4 4 4-4"
+                      stroke="#222"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
                 </span>
               </button>
               {/* Step 3: Show menu only if showMenu is true */}
@@ -125,7 +168,9 @@ function PostStatusFilterDropdown({ onStatusChange }) {
                       ) : (
                         <span className="w-5 h-5 inline-block" />
                       )}
-                      <span className="flex-1 text-sm text-gray-800">{opt.label}</span>
+                      <span className="flex-1 text-sm text-gray-800">
+                        {opt.label}
+                      </span>
                       <input
                         type="checkbox"
                         checked={
@@ -134,7 +179,7 @@ function PostStatusFilterDropdown({ onStatusChange }) {
                             : selected.includes(opt.value)
                         }
                         onChange={() => handleOption(opt.value)}
-                        className="form-checkbox h-4 w-4 text-blue-600 bg-blue-600 rounded"
+                        className="form-checkbox h-4 w-4 text-blue-600 border-2 !border-gray-400 checked:!border-blue-600 rounded"
                       />
                     </label>
                   ))}

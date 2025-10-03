@@ -16,14 +16,26 @@ PostsService.getPostInsights = async function (postId) {
 };
 
 PostsService.getPostData = async function (brandId) {
-  const response = await axiosInstance.get(`user/getPostData/${brandId}`);
+  let url = `user/getPostData/${brandId}`;
+  const response = await axiosInstance.get(url);
   return response;
 };
 
+PostsService.fetchPostData = async function (brandId, postStatuses = null) {
+  let url = `user/fetchPostData/${brandId}`;
+  let data = {};
+  if (postStatuses !== null) {
+    data.postStatuses = postStatuses;
+  }
 
+  const response = await axiosInstance.post(url, data);
+  return response;
+};
 
 PostsService.getInstagramFeed = async function (brandId) {
-  const response = await axiosInstance.get(`auth/instagram/feed?brandId=${brandId}`);
+  const response = await axiosInstance.get(
+    `auth/instagram/feed?brandId=${brandId}`
+  );
   return response.data;
 };
 

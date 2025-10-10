@@ -20,6 +20,7 @@ const FacebookApi = ({
   const { broadcastConnection } = useAppContext();
   const GET_PAGES_URL =
     API_URL + `/auth/facebook/pages?brandId=${user?.brand?.id}`;
+
   const header = useMemo(() => ({
     title: "Facebook Page",
     subTitle: "Select the page you want to connect with this client.",

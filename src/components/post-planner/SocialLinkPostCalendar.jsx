@@ -162,7 +162,8 @@ const SocialLinkPostCalendar = ({ validations, role }) => {
                   )}
                 </div>
                 {fullAccess &&
-                  Array.isArray(socialMediaList) && socialMediaList.map((item, index) => {
+                  Array.isArray(socialMediaList) &&
+                  socialMediaList.map((item, index) => {
                     return (
                       <div
                         className="mt-5 cursor-pointer"

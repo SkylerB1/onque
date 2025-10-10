@@ -90,10 +90,12 @@ axiosInstance.interceptors.request.use(async (req) => {
 // API respone interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log(response, " is response");
     // return response.data;
     return response;
   },
   (error) => {
+    console.log(error, " is error in axios instance");
     let status = error?.response?.status || error?.response?.data?.status;
     if (status == 401) {
       Swal.fire({

@@ -56,7 +56,9 @@ const RenderFiles = ({
     if (!result.destination) return;
     const reorderedFiles = Array.from(files);
     const [movedFile] = reorderedFiles.splice(result.source.index, 1);
+
     reorderedFiles.splice(result.destination.index, 0, movedFile);
+
     dispatch(deleteMedia());
     reorderedFiles.forEach((file, index) => {
       const mediaUrl = getSource(file);

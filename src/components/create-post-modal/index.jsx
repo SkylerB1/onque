@@ -1216,6 +1216,18 @@ const CreatePostModal = ({
                 },
               ]);
             }
+
+            if (videosCount > 1) {
+              setErrors((prev) => [
+                ...prev,
+                {
+                  id: 0,
+                  type: "",
+                  platform: "facebook",
+                  error: "Facebook -  Max videos allowed 1.",
+                },
+              ]);
+            }
           } else if (item.mediaType == FBStory) {
             // Facebook Story Logic
             if (hasImages == false && hasVideos == false) {

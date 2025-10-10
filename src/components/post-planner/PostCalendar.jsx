@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react";
 import CreatePostModal from "../create-post-modal";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -11,7 +11,8 @@ import Grid from "../../assets/Grid";
 import useConnections from "../customHooks/useConnections";
 import dayjs from "dayjs";
 import { Card, CardBody, Button } from "@material-tailwind/react";
-import { IoMdAdd } from "react-icons/io";
+import { IoMdAdd, IoMdClose } from "react-icons/io";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   abbreviateString,
@@ -21,10 +22,21 @@ import {
 import StoryCarousel from "../mockups/facebook/StoryCarousel";
 import { useAppContext } from "../../context/AuthContext";
 import { axiosInstance } from "../../utils/Interceptor";
-import { API_URL, toastrError, toastrSuccess } from "../../utils";
+import {
+  API_URL,
+  SocialPlatforms,
+  toastrError,
+  toastrSuccess,
+} from "../../utils";
 import PostsService from "../../services/PostsService";
+import SocialPreviews from "../social-previews/SocialPreviews";
+import PostStatusIcon from "../common/PostStatusIcon";
+import PostStatusFilterDropdown from "../common/PostStatusFilterDropdown";
+import { useDispatch } from "react-redux";
+import { deleteMedia } from "../../redux/features/thumbnailMediaSlice";
 
 const PostCalendar = (props) => {
+  const [statusFilter, setStatusFilter] = React.useState([]);
   const { validations } = useAppContext();
   const navigate = useNavigate();
   const { getPostData, events, role } = props;
@@ -38,8 +50,14 @@ const PostCalendar = (props) => {
   const [textForRoleInfo, setTextForRoleInfo] = useState(null);
   const [draggingEvent, setDraggingEvent] = useState(false);
   const [showAlert, setShowAlert] = useState(true); // Add state to control visibility
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedConnection, setSelectedConnection] = useState(null);
+  const [refreshPreview, setRefreshPreview] = useState(false);
+  const [selectedPostIndex, setSelectedPostIndex] = useState(null);
   const { connections } = useConnections();
   const fullAccess = useMemo(() => !role || role?.fullAccessPlanner, [role]);
+  const calendarRef = useRef(null);
+  const dispatch = useDispatch();
 
   const renderContentType = (type) => {
     if (type === "reels") {
@@ -48,16 +66,57 @@ const PostCalendar = (props) => {
       return <Grid height={12} width={12} />;
     }
   };
+  const onDrawerTransitionEnd = () => {
+    calendarRef.current?.getApi().updateSize();
 
-  const updatePostData = async (eventInfo) => {
-    const { title = "", extendedProps = {} } = eventInfo.event._def;
+    if (typeof window !== "undefined") {
+      let resizeEvent;
 
-    const { rowId, files, platform, postdate, status, socialPresets, thumbnailPresets, thumbnailFiles } =
-      extendedProps;
+      try {
+        // Modern browsers
+        resizeEvent = new Event("resize");
+      } catch (err) {
+        // Fallback for environments where Event is not a constructor
+        resizeEvent = document.createEvent("Event");
+        // @ts-ignore
+        resizeEvent.initEvent("resize", true, true);
+      }
+      window.dispatchEvent(resizeEvent);
+    }
+  };
 
-    if (!platform || platform.length == 0) return false;
+  const updatePostData = async (
+    eventInfo,
+    openModalOverride = true,
+    indexOverride = null
+  ) => {
+    let eventDef, extendedProps;
+    // Handle both FullCalendar eventInfo and raw event object
+    if (eventInfo.event) {
+      eventDef = eventInfo.event._def;
+      extendedProps = eventInfo.event._def.extendedProps;
+    } else {
+      eventDef = eventInfo; // raw event
+      extendedProps = eventInfo.extendedProps || {};
+    }
 
-    // get the post insights data
+    const {
+      title = "",
+      rowId,
+      files,
+      platform,
+      postdate,
+      status,
+      socialPresets,
+      thumbnailPresets,
+      thumbnailFiles,
+    } = {
+      ...eventDef,
+      ...extendedProps,
+    };
+
+    if (!platform || platform.length === 0) return false;
+
     let result = await PostsService.getPostInsights(rowId);
     let postInsights = [];
     if (result.status === true) {
@@ -78,9 +137,66 @@ const PostCalendar = (props) => {
 
     setPostData(data);
     setCaption(title);
-    setFiles((prev) => [...prev, ...files]);
+    setFiles([...files]);
     setScheduledDate(dayjs(postdate));
-    handleModal();
+    setIsEdit(true);
+
+    let idx =
+      indexOverride !== null
+        ? indexOverride
+        : events.findIndex((ev) => {
+            if (ev.rowId) {
+              return ev.rowId === rowId;
+            } else if (ev?.extendedProps?.rowId) {
+              return ev.extendedProps && ev.extendedProps.rowId === rowId;
+            }
+          });
+
+    setSelectedPostIndex(idx !== -1 ? idx : null);
+    if (openModalOverride) setModal(true);
+  };
+
+  const handlePrevPost = async (e, index = selectedPostIndex) => {
+    if (e) e.stopPropagation();
+    let prevIndex = index - 1;
+    // Skip all STORY posts going backwards
+    while (prevIndex >= 0 && isPostContainStory(events[prevIndex])) {
+      prevIndex--;
+    }
+
+    // If a non-STORY event exists, process it
+    if (prevIndex >= 0) {
+      const prevEvent = events[prevIndex];
+      await updatePostData(prevEvent, true, prevIndex);
+      dispatch(deleteMedia());
+    }
+  };
+
+  const handleNextPost = async (e, index = selectedPostIndex) => {
+    if (e) e.stopPropagation();
+
+    let nextIndex = index + 1;
+    // Skip all STORY posts
+    while (nextIndex < events.length && isPostContainStory(events[nextIndex])) {
+      nextIndex++;
+    }
+
+    // If a non-STORY event exists, process it
+    if (nextIndex < events.length) {
+      const nextEvent = events[nextIndex];
+      await updatePostData(nextEvent, true, nextIndex);
+      dispatch(deleteMedia());
+    }
+  };
+
+  const isPostContainStory = (event) => {
+    let { platform } = event || {};
+    if (platform) {
+      platform = isJSON(platform) ? JSON.parse(platform) : platform;
+
+      return platform.some((plat) => plat?.mediaType === "STORY");
+    }
+    return false;
   };
 
   const renderEventContent = (eventInfo) => {
@@ -126,7 +242,15 @@ const PostCalendar = (props) => {
   };
 
   const handleModal = () => {
-    setModal(!openModal);
+    if (openModal) {
+      setModal(false);
+      setIsEdit(false);
+      setSelectedPostIndex(null);
+      clearPostData();
+    } else {
+      setModal(true);
+      dispatch(deleteMedia());
+    }
   };
 
   const selectData = (info) => {
@@ -140,7 +264,14 @@ const PostCalendar = (props) => {
     setCaption("");
     setFiles([]);
     setIsEdit(false);
+    setSelectedPostIndex(null);
   };
+
+  useEffect(() => {
+    if (calendarRef.current) {
+      calendarRef.current.getApi().updateSize();
+    }
+  }, [drawerOpen]);
 
   const handleEventDrop = async (info) => {
     const { event } = info;
@@ -188,9 +319,15 @@ const PostCalendar = (props) => {
     setTextForRoleInfo(textForRoleInfo);
   }, [role]);
 
+  useEffect(() => {
+    if (connections && connections.length > 0) {
+      setSelectedConnection(connections[0]);
+    }
+  }, [connections]);
+
   return (
     <>
-      <div className="md:my-2 xl:mt-24 lg:mt-24">
+      <div className="md:my-2 xl:mt-24 lg:mt-24 relative">
         {/* Role Info Section */}
         {textForRoleInfo != null &&
           textForRoleInfo.length != 0 &&
@@ -258,7 +395,7 @@ const PostCalendar = (props) => {
           <>
             <div className="flex items-center justify-between border-2 border-black rounded-md py-2 px-5 mb-5">
               <span className="text-sm text-black">
-                You have posted{" "}
+                {/* You have posted{" "}
                 <strong>
                   {" "}
                   {validations?.posts_count_monthly} out of your{" "}
@@ -266,22 +403,25 @@ const PostCalendar = (props) => {
                 </strong>{" "}
                 available posts in your plan this month.
                 {validations?.max_posts_monthly < 12000 &&
-                  "Upgrade your plan to increase the limit."}
+                  "Upgrade your plan to increase the limit."} */}
+                Easily upgrade and downgrade your OnQue subscription to suit
+                your clients needs.
               </span>
-              {validations.max_posts_monthly < 12000 && (
-                <Button
-                  variant="gradient"
-                  size="sm"
-                  className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
-                  onClick={() => navigate("/setting/price")}
-                >
-                  Upgrade
-                </Button>
-              )}
+              {/* {validations.max_posts_monthly < 12000 && ( */}
+              <Button
+                variant="gradient"
+                size="sm"
+                className="hidden lg:inline-block gradient-button-solid normal-case whitespace-nowrap text-sm md:text-sm mr-1"
+                onClick={() => navigate("/setting/price")}
+              >
+                Upgrade
+              </Button>
+              {/* )} */}
             </div>
 
-            {validations?.posts_count_monthly <
-              validations?.max_posts_monthly && (
+            {/* {validations?.posts_count_monthly <
+              validations?.max_posts_monthly && ( */}
+            <>
               <Button
                 size="sm"
                 onClick={handleModal}
@@ -290,71 +430,151 @@ const PostCalendar = (props) => {
                 <IoMdAdd className="w-5 h-5 mr-1" />
                 Create Post
               </Button>
-            )}
+            </>
+            {/* )} */}
           </>
         )}
-        <Card className="mt-2">
-          <CardBody>
-            <FullCalendar
-              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-              initialView="timeGridWeek"
-              firstDay={1}
-              weekends={true}
-              allDaySlot={false}
-              events={events}
-              nowIndicator={true}
-              eventContent={renderEventContent}
-              eventMinHeight={80}
-              eventBackgroundColor="transparent"
-              eventBorderColor="transparent"
-              eventTextColor="#000000"
-              eventMouseEnter={(e) => {
-                const x = e.el;
-                x.parentNode.style.zIndex = 999;
-              }}
-              eventMouseLeave={(e) => {
-                const x = e.el;
-                x.parentNode.style.zIndex = 1;
-              }}
-              eventClick={function (info) {
-                updatePostData(info);
-              }}
-              dateClick={function (info) {
-                if (info.date >= new Date()) {
-                  selectData(info);
-                }
-              }}
-              height="76vh"
-              editable={true}
-              droppable={true}
-              eventDrop={handleEventDrop}
-              eventDragStart={eventDragStart}
-              eventAllow={eventAllow}
-            />
 
-            {openModal && (
-              <CreatePostModal
-                openModal={openModal}
-                isEdit={isEdit}
-                setIsEdit={setIsEdit}
-                setModal={setModal}
-                handleModal={handleModal}
-                connections={connections}
-                postData={postData}
-                clearPostData={clearPostData}
-                files={files}
-                setFiles={setFiles}
-                videoDurations={videoDurations}
-                setVideoDurations={setVideoDurations}
-                setCaption={setCaption}
-                caption={caption}
-                getPostData={getPostData}
-                scheduledDate={scheduledDate}
-                setScheduledDate={setScheduledDate}
-              />
+        {/* Main content: calendar and drawer side by side */}
+        <div className="flex w-full transition-all duration-300">
+          <div className="flex-1 min-w-0 transition-all duration-300">
+            <Card className="mt-2">
+              <CardBody>
+                <FullCalendar
+                  key={`calendar-${drawerOpen}`}
+                  ref={calendarRef}
+                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                  initialView="timeGridWeek"
+                  headerToolbar={{
+                    right: `today prev,next${
+                      !drawerOpen ? " feedPreview" : " closePreview"
+                    }`,
+                    left: "title",
+                  }}
+                  customButtons={{
+                    feedPreview: {
+                      text: "Feed Preview",
+                      click: () => setDrawerOpen(true),
+                    },
+                    closePreview: {
+                      text: "Close Preview",
+                      click: () => setDrawerOpen(false),
+                    },
+                  }}
+                  buttonText={{
+                    today: "Today",
+                  }}
+                  firstDay={1}
+                  weekends={true}
+                  allDaySlot={false}
+                  events={events}
+                  nowIndicator={true}
+                  eventContent={renderEventContent}
+                  eventMinHeight={80}
+                  eventBackgroundColor="transparent"
+                  eventBorderColor="transparent"
+                  eventTextColor="#000000"
+                  eventMouseEnter={(e) => {
+                    const x = e.el;
+                    x.parentNode.style.zIndex = 999;
+                  }}
+                  eventMouseLeave={(e) => {
+                    const x = e.el;
+                    x.parentNode.style.zIndex = 1;
+                  }}
+                  eventClick={function (info) {
+                    updatePostData(info, true); // always open modal on calendar click
+                  }}
+                  dateClick={function (info) {
+                    if (info.date >= new Date()) {
+                      selectData(info);
+                    }
+                  }}
+                  height="76vh"
+                  editable={true}
+                  droppable={true}
+                  eventDrop={handleEventDrop}
+                  eventDragStart={eventDragStart}
+                  eventAllow={eventAllow}
+                />
+                {openModal && (
+                  <CreatePostModal
+                    openModal={openModal}
+                    isEdit={isEdit}
+                    setIsEdit={setIsEdit}
+                    setModal={setModal}
+                    handleModal={handleModal}
+                    connections={connections}
+                    postData={postData}
+                    clearPostData={clearPostData}
+                    files={files}
+                    setFiles={setFiles}
+                    videoDurations={videoDurations}
+                    setVideoDurations={setVideoDurations}
+                    setCaption={setCaption}
+                    caption={caption}
+                    getPostData={getPostData}
+                    scheduledDate={scheduledDate}
+                    setScheduledDate={setScheduledDate}
+                    setRefreshPreview={setRefreshPreview}
+                    onPrev={handlePrevPost}
+                    onNext={handleNextPost}
+                    canPrev={selectedPostIndex > 0}
+                    canNext={selectedPostIndex < events.length - 1}
+                  />
+                )}
+              </CardBody>
+            </Card>
+          </div>
+          {/* Drawer as a sibling, not fixed */}
+          <div
+            onTransitionEnd={onDrawerTransitionEnd}
+            className={`transition-all duration-300 ${
+              drawerOpen ? "w-88" : "w-0"
+            } ...`}
+            style={{ width: drawerOpen ? "22rem" : 0 }}
+          >
+            {drawerOpen && (
+              <div className="h-full flex flex-col">
+                <PostStatusFilterDropdown onStatusChange={setStatusFilter} />
+                {/* Only show icons for connections */}
+                <div className="flex gap-3 px-4 py-2 border-b">
+                  {connections &&
+                    connections.map((conn, idx) => {
+                      const platformObj = SocialPlatforms[conn.platform];
+                      if (!platformObj) return null;
+                      const isSelected =
+                        selectedConnection && selectedConnection.id === conn.id;
+                      return (
+                        <div
+                          key={conn.id}
+                          className={`cursor-pointer rounded-full p-1 border ${
+                            isSelected
+                              ? "border-blue-500 bg-blue-50"
+                              : "border-transparent"
+                          }`}
+                          onClick={() => setSelectedConnection(conn)}
+                          title={conn.screenName}
+                        >
+                          {isSelected
+                            ? platformObj.coloredIcon(28, 28)
+                            : platformObj.nonColoredIcon(28, 28)}
+                        </div>
+                      );
+                    })}
+                </div>
+                <div className="p-4 flex-1">
+                  <SocialPreviews
+                    connection={selectedConnection}
+                    statusFilter={statusFilter || []}
+                    refreshPreview={refreshPreview}
+                    setRefreshPreview={setRefreshPreview}
+                  />
+                </div>
+              </div>
             )}
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
     </>
   );

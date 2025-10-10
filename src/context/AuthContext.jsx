@@ -32,6 +32,7 @@ export function AppContextProvider({ children }) {
   const [validations, setValidations] = useState({});
   const [loadingValidations, setLoadingValidations] = useState(true);
   const [subscription, setSubscription] = useState(null);
+  const [lastSubscription, setLastSubscription] = useState(null);
   const [loadingSub, setLoadingSub] = useState(true);
 
   const [userInfo, setUserInfo] = useState(null);
@@ -57,7 +58,9 @@ export function AppContextProvider({ children }) {
   const getSubscriptions = async () => {
     try {
       const res = await SubscriptionServices.getSubscriptionsDetails();
-      setSubscription(res.data);
+      const { subscription, lastSubscription } = res?.data || {};
+      setSubscription(subscription);
+      setLastSubscription(lastSubscription);
       setLoadingSub(false);
     } catch (err) {
       console.log(err);
@@ -139,6 +142,7 @@ export function AppContextProvider({ children }) {
     blockUI,
     setblockUI,
     handlePostLogin,
+    lastSubscription,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }

@@ -8,7 +8,7 @@ import LoadingButton from "../../../../components/button/LoadingButton";
 import { toastrSuccess, toastrError } from "../../../../utils/index";
 import { axiosInstance } from "../../../../utils/Interceptor";
 import { getDateFromUnix } from "../../../../utils/dateUtils";
-import { planLabel } from "../../../../utils";
+import { planLabel, subscriptionStatuses } from "../../../../utils";
 import { useSelector } from "react-redux";
 
 const Price = () => {
@@ -17,6 +17,7 @@ const Price = () => {
     getSubscriptions,
     loadingSub: loading,
     getCounter,
+    lastSubscription,
   } = useAppContext();
   const subscriptionId = subscription?.subscriptionId || null;
   const user = useSelector((state) => state.user.value);
@@ -24,10 +25,13 @@ const Price = () => {
 
   const [loadingReactivate, setLoadingReactivate] = useState(false);
   const [loadingKeepCurrentPlan, setLoadingKeepCurrentPlan] = useState(false);
+  const [lastSubscriptionInfo, setLastSubscriptionInfo] = useState(null);
 
-  // useEffect(() => {
-  //   getSubscriptions();
-  // }, []);
+  useEffect(() => {
+    (async () => {
+      await getSubscriptions();
+    })();
+  }, []);
 
   const handleResumeSubscription = async () => {
     try {
@@ -71,8 +75,59 @@ const Price = () => {
 
   if (loading) return <Loader />;
 
+  useEffect(() => {
+    if (lastSubscription) {
+      const lastSubscriptionTitle =
+        subscriptionStatuses[lastSubscription?.status]?.title || "";
+      const lastSubscriptionDescription =
+        subscriptionStatuses[lastSubscription?.status]?.description || "";
+      setLastSubscriptionInfo({
+        title: lastSubscriptionTitle,
+        description: lastSubscriptionDescription,
+      });
+
+      console.log(lastSubscriptionTitle, " is lastSubscriptionTitle");
+      console.log(
+        lastSubscriptionDescription,
+        " is lastSubscriptionDescription"
+      );
+    }
+  }, [lastSubscription]);
+
   return (
     <>
+      {lastSubscriptionInfo && (
+        <>
+          <div
+            role="alert"
+            className="mb-5 relative flex w-full px-4 py-4 text-base text-white bg-gray-900 rounded-lg font-regular"
+          >
+            <div className="shrink-0">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"
+                ></path>
+              </svg>
+            </div>
+            <div className="ml-3 mr-12 flex flex-row">
+              <div>
+                Your subscription status is{" "}
+                <strong>{lastSubscriptionInfo.title}</strong>.{" "}
+                {lastSubscriptionInfo.description}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
       {subscription?.subscriptionScheduledId != null ? (
         <div
           role="alert"
@@ -150,6 +205,7 @@ const Price = () => {
       )}
       {subscriptionId ? (
         <>
+          {" "}
           <CurrentSubscription
             subscription={subscription}
             getSubscriptions={getSubscriptions}

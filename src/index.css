@@ -190,3 +190,7 @@ table thead {
     #f5ca32 134.01%
   );
 }
+
+.post-card-box {
+  width: calc(33.3% - 0.5rem);
+}

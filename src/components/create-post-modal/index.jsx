@@ -88,6 +88,7 @@ import {
   deleteMedia,
 } from "../../redux/features/thumbnailMediaSlice.js";
 import { useDispatch } from "react-redux";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 const schdulePostBtnLabel = [
   {
     label: "Save As Draft",
@@ -124,6 +125,11 @@ const CreatePostModal = ({
   setFiles,
   videoDurations,
   setVideoDurations,
+  setRefreshPreview,
+  onPrev,
+  onNext,
+  canPrev,
+  canNext,
 }) => {
   const isDuplicating = useMemo(
     // () => isEdit === "Published" || false,
@@ -148,12 +154,21 @@ const CreatePostModal = ({
   const [selectedPreview, setSelectedPreview] = useState(null);
   const [editIndex, setEditIndex] = useState(0);
   const [modelImageForThumbnail, setModelImageForThumbnail] = useState(false);
-  const [submitButton, setSubmitButton] = useState(
-    postData?.status == postStatuses?.saveAsDraft ? "Save As Draft" : "Schedule"
-  );
-  const [submitButtonKey, setSubmitButtonKey] = useState(
-    postData?.status == postStatuses?.saveAsDraft ? "saveAsDraft" : "schedule"
-  );
+
+  const getSubmitButtonLabel = () => {
+    return postData?.status === postStatuses?.saveAsDraft
+      ? "Save As Draft"
+      : "Schedule";
+  };
+
+  const [submitButton, setSubmitButton] = useState(getSubmitButtonLabel());
+
+  const getSubmitButtonKey = () => {
+    return postData?.status === postStatuses?.saveAsDraft
+      ? "saveAsDraft"
+      : "schedule";
+  };
+  const [submitButtonKey, setSubmitButtonKey] = useState(getSubmitButtonKey());
   const thumbnailMedia =
     useSelector((state) => state.thumbnailMedia.value) || [];
   const videoTimeData = useSelector((state) => state.videoSlider);
@@ -414,7 +429,7 @@ const CreatePostModal = ({
 
   const handleClose = () => {
     setModal(false);
-    setIsEdit(null);
+    setIsEdit(false); // always reset to false, not null
     clearPostData();
   };
   const handleLoading = (state) => {
@@ -436,9 +451,10 @@ const CreatePostModal = ({
       // const response = await axiosInstance.post(CREATE_POST_URL, data);
       if (response.status === 200) {
         await getPostData();
-
+        setRefreshPreview((prev) => !prev);
         handleClose();
         handleLoading(false);
+        dispatch(deleteMedia());
       }
     } catch (err) {
       if (err.response.status === 403) {
@@ -464,6 +480,7 @@ const CreatePostModal = ({
         getPostData();
         handleClose();
         handleLoading(false);
+        dispatch(deleteMedia());
       }
     } catch (err) {
       console.log(err);
@@ -689,7 +706,7 @@ const CreatePostModal = ({
       const Component = platformComponentMap[platform];
 
       const presets = additionalPresets[platform];
-      const date = dayjs(scheduledDate).format("DD MMM");
+      const date = dayjs(scheduledDate).format("ddd, DD/MM/YYYY hh:mm A");
 
       if (Component) {
         let component = Component({
@@ -725,14 +742,22 @@ const CreatePostModal = ({
 
   // It updates  when connection and post data changed
   useEffect(() => {
-    if (
-      selectedPlaforms.length == 0 &&
-      connections &&
-      connections.length > 0 &&
-      !selectedPreview
-    ) {
+    // Update the submit button labels on post changed
+    setSubmitButton(getSubmitButtonLabel());
+    setSubmitButtonKey(getSubmitButtonKey());
+
+    // if (
+    //   selectedPlaforms.length == 0 &&
+    //   connections &&
+    //   connections.length > 0 &&
+    //   !selectedPreview
+    // ) {
+
+    // Removed the selectedPlaforms.length == 0  and !selectedPreview for updating the pateforms when prev and next clicked.
+    if (connections && connections.length > 0) {
       if (postData) {
         let { platforms, socialPresets } = postData;
+
         const presets = {};
         // remove the twitter from connections if existing post has multiple platforms
         if (platforms.length > 1) {
@@ -763,7 +788,6 @@ const CreatePostModal = ({
           });
 
         setAdditionalPresets((prev) => ({ ...prev, ...presets }));
-
         setSelectedPlatforms(platforms);
         platforms[0] && setSelectedPreview(platforms[0]);
       } else {
@@ -2006,6 +2030,7 @@ const CreatePostModal = ({
                                         isDuplicating && "opacity-50"
                                       }`}
                                     >
+                                      {" "}
                                       <SocialPlatform
                                         id={item.id}
                                         brandId={brandId}
@@ -2051,6 +2076,7 @@ const CreatePostModal = ({
                             disablePast
                             timeSteps={{ hours: 1, minutes: 1, seconds: 5 }}
                             onChange={handleDateChange}
+                            format="ddd, DD/MM/YYYY hh:mm A"
                             className={`${isDuplicating && "opacity-50"}`}
                             disabled={loading}
                           />
@@ -2139,7 +2165,6 @@ const CreatePostModal = ({
                               <DeleteIconFilled />
                             </IconButton>
                           )}
-
                           {editAccess && isDuplicating && (
                             <div className="flex flex-row mx-2">
                               <Button
@@ -2157,8 +2182,8 @@ const CreatePostModal = ({
                           )}
 
                           {editAccess &&
-                            (isEdit == "SaveAsDraft" ||
-                              isEdit == "Pending" ||
+                            (postData?.status === "SaveAsDraft" ||
+                              postData?.status == "Pending" ||
                               isEdit == false ||
                               isEdit == null) && (
                               <div className="flex flex-row mr-2">
@@ -2251,6 +2276,32 @@ const CreatePostModal = ({
             )}
           </Dropzone>
         </DialogBody>
+        {/* Navigation Arrows */}
+        {isEdit && (
+          <div className="absolute inset-y-0 left-0 right-0 flex justify-between items-center pointer-events-none z-50">
+            <button
+              className="pointer-events-auto bg-white rounded-full shadow p-2 ml-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                onPrev?.(e);
+              }}
+              disabled={!canPrev}
+            >
+              <FaArrowLeft size={24} />
+            </button>
+            <button
+              className="pointer-events-auto bg-white rounded-full shadow p-2 mr-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                onNext?.(e);
+              }}
+              disabled={!canNext}
+            >
+              <FaArrowRight size={24} />
+            </button>
+          </div>
+        )}
+
         <ImgUploadModal
           show={showimgUploadModal}
           onChange={handleFile}
